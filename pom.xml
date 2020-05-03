@@ -24,6 +24,11 @@
 		</repository>
 	</distributionManagement>
 	<dependencies>
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.12</version>
+		</dependency>
 		<!-- LOMBOK -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
