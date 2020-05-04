@@ -12,7 +12,6 @@ public class Main {
 		ap.analyze(student);
 		System.out.println("-----------------");
 		ap.analyze(astudent);
-		
 	}
 
 }

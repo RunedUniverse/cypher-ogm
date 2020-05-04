@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(TYPE)
-public @interface NodeEntity{
+public @interface RelationshipEntity {
 	String label() default "";
 	InterpretationMode mode() default InterpretationMode.IMPLICIT;
 }
