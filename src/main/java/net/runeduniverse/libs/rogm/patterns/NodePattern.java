@@ -7,7 +7,4 @@ public class NodePattern extends AParameterHolder{
 	public NodePattern(Class<?> clazz, NodeEntity entity) {
 		super(clazz, entity.label());
 	}
-
-	
-	
 }

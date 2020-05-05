@@ -3,8 +3,8 @@ package net.runeduniverse.libs.rogm;
 import org.junit.Test;
 
 import net.runeduniverse.libs.rogm.data.AnnotationProcessor;
-import net.runeduniverse.libs.rogm.data.AnsaStudent;
-import net.runeduniverse.libs.rogm.data.Student;
+import net.runeduniverse.libs.rogm.model.AnsaStudent;
+import net.runeduniverse.libs.rogm.model.Student;
 
 public class AnnotationProcessorTests {
 

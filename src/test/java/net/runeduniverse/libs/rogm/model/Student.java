@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.data;
+package net.runeduniverse.libs.rogm.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ public class Student {
 	@GeneratedValue
 	private long id;
 
-	@Property
+	@Property()
 	private String address;
 
 	

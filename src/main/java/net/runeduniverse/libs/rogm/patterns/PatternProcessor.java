@@ -7,9 +7,12 @@ import java.util.List;
 import org.reflections.Reflections;
 import org.reflections.scanners.FieldAnnotationsScanner;
 import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
+import net.runeduniverse.libs.rogm.annotations.Id;
+import net.runeduniverse.libs.rogm.annotations.InterpretationMode;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Property;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
@@ -23,10 +26,10 @@ public class PatternProcessor {
 
 		Reflections rfl = new Reflections(new ConfigurationBuilder()
 				.forPackages((String[]) packages.toArray(new String[packages.size()])).setScanners(
-						new TypeAnnotationsScanner(), new FieldAnnotationsScanner(), new MethodAnnotationsScanner()));
+						new TypeAnnotationsScanner(), new SubTypesScanner(), new FieldAnnotationsScanner(), new MethodAnnotationsScanner()));
 
 		for (Class<?> clazz : rfl.getTypesAnnotatedWith(NodeEntity.class))
-			nodes.add(classParser(clazz, clazz.getAnnotation(NodeEntity.class)));
+			nodes.add(classParser(new NodePattern(clazz, clazz.getAnnotation(NodeEntity.class)), clazz, clazz.getAnnotation(NodeEntity.class).mode()));
 
 		for (Class<?> clazz : rfl.getTypesAnnotatedWith(RelationshipEntity.class)) {
 			RelationPattern relp = new RelationPattern(clazz, clazz.getAnnotation(RelationshipEntity.class));
@@ -35,38 +38,52 @@ public class PatternProcessor {
 			relations.add(relp);
 		}
 	}
-
-	private NodePattern classParser(Class<?> clazz, NodeEntity entity) {
-		NodePattern node = new NodePattern(clazz, entity);
-
-		for (Field v : clazz.getFields()) {
+	
+	private NodePattern classParser(NodePattern pattern, Class<?> clazz, InterpretationMode mode) {
+		if(clazz==null)
+			return pattern;
+		for (Field v : clazz.getDeclaredFields()) {
+			if(v.isAnnotationPresent(Id.class)) {
+				pattern.setId(new IdFieldPattern(v));
+				continue;
+			}
 			String tag = v.getName();
 			// TODO: do sth if needed
 			/*
 			 * if(clazz.isAnnotationPresent(Relationship.class)) { Relationship r =
 			 * clazz.getAnnotation(Relationship.class); continue; }
 			 */
-
+			
 			Property p = v.getAnnotation(Property.class);
-			switch (entity.mode()) {
+			switch (mode) {
 			case EXPLICIT:
 				if (p == null)
 					continue;
 			case IMPLICIT:
 			default:
-				if (p != null && p.tag().trim() != "")
+				if (p != null && !p.tag().isEmpty())
 					tag = p.tag().trim();
-
-				node.addField(tag, v);
+				
+				pattern.addField(tag, v);
 				break;
 			}
 		}
-
-		return node;
+		return classParser(pattern, clazz.getSuperclass(), mode);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder("::PatternProcessor::\nDetected Nodes:");
+		for (NodePattern n : this.nodes)
+			builder.append('\n'+n.toString());
+		builder.append("\nDetected Relations:");
+		for (RelationPattern r : this.relations)
+			builder.append('\n'+r.toString());
+		return builder.toString();
+	}
+	
 	// types
-	public class PatternProcessorBuilder {
+	public static class PatternProcessorBuilder {
 		private List<String> packages = new ArrayList<>();
 
 		// chainable methods
