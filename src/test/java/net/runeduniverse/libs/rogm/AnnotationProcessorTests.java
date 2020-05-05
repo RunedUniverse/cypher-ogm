@@ -1,10 +1,15 @@
 package net.runeduniverse.libs.rogm;
 
-import net.runeduniverse.libs.rogm.annotations.AnnotationProcessor;
+import org.junit.Test;
 
-public class Main {
+import net.runeduniverse.libs.rogm.data.AnnotationProcessor;
+import net.runeduniverse.libs.rogm.data.AnsaStudent;
+import net.runeduniverse.libs.rogm.data.Student;
 
-	public static void main(String[] args) {
+public class AnnotationProcessorTests {
+
+	@Test
+	public void classParsing() {
 		AnnotationProcessor ap = new AnnotationProcessor();
 		Student student = new Student("Am Baum 3");
 		AnsaStudent astudent = new AnsaStudent("Am Baum 3");
@@ -13,5 +18,6 @@ public class Main {
 		System.out.println("-----------------");
 		ap.analyze(astudent);
 	}
-
+	
+	
 }

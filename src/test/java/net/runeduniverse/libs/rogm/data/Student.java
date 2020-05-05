@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm;
+package net.runeduniverse.libs.rogm.data;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm;
+package net.runeduniverse.libs.rogm.data;
 
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Property;

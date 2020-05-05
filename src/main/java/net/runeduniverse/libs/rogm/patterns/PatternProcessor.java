@@ -34,7 +34,6 @@ public class PatternProcessor {
 
 			relations.add(relp);
 		}
-
 	}
 
 	private NodePattern classParser(Class<?> clazz, NodeEntity entity) {

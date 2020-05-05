@@ -1,11 +1,14 @@
-package net.runeduniverse.libs.rogm.annotations;
+package net.runeduniverse.libs.rogm.data;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import net.runeduniverse.libs.rogm.Student;
+import net.runeduniverse.libs.rogm.annotations.Id;
+import net.runeduniverse.libs.rogm.annotations.NodeEntity;
+import net.runeduniverse.libs.rogm.annotations.Property;
+import net.runeduniverse.libs.rogm.annotations.Transient;
 
 // annotation tests
 public class AnnotationProcessor {
