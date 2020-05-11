@@ -26,7 +26,7 @@ public class FieldPattern {
 	}
 	
 	public enum DataType{
-		BOOLEAN(long.class),
+		BOOLEAN(boolean.class),
 		SHORT(short.class),
 		INTEGER(int.class),
 		LONG(long.class),
@@ -39,7 +39,7 @@ public class FieldPattern {
 		LIST(ArrayList.class);
 		
 		
-		@Getter @Setter(value = AccessLevel.PRIVATE)
+		@Getter 
 		private Class<?> objectType = null;
 		// specifics
 		@Getter @Setter(value = AccessLevel.PRIVATE)

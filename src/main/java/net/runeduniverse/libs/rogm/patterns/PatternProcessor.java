@@ -12,10 +12,10 @@ import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
 import net.runeduniverse.libs.rogm.annotations.Id;
-import net.runeduniverse.libs.rogm.annotations.InterpretationMode;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Property;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
+import net.runeduniverse.libs.rogm.enums.InterpretationMode;
 
 public class PatternProcessor {
 
