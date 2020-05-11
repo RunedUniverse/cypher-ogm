@@ -29,6 +29,13 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.12</version>
 		</dependency>
+		<!-- OPTIONAL DRIVERS / DB CONNECTORS -->
+		<dependency>
+			<groupId>org.neo4j.driver</groupId>
+			<artifactId>neo4j-java-driver</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- LOMBOK -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
