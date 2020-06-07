@@ -22,6 +22,7 @@ public class Cypher implements Language {
 
 	private StringBuilder match(Map<Filter, String> map, Filter filter) throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
+		StringBuilder whereBuilder = new StringBuilder();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		List<Filter> cFilter = new ArrayList<>();
 		List<Filter> idcFilter = new ArrayList<>();
@@ -32,9 +33,12 @@ public class Cypher implements Language {
 		for (Filter f : map.keySet()) {
 			if (f instanceof IdentifiedFilter) {
 				String s = map.get(f);
+				if (!cFilter.contains(filter)) {
+					matchBuilder.append("MATCH (" + s + ")\n");
+					cFilter.add(f);
+				}
 				if (!idcFilter.contains(filter)) {
-					matchBuilder
-							.append("MATCH (" + s + ")\nWHERE id(" + s + ")=" + ((IdentifiedFilter) f).getId() + "\n");
+					whereBuilder.append("WHERE id(" + s + ")=" + ((IdentifiedFilter) f).getId() + "\n");
 					idcFilter.add(f);
 				}
 
@@ -73,13 +77,13 @@ public class Cypher implements Language {
 				matchBuilder.append(matchLine.toString() + '\n');
 			}
 		}
-		return matchBuilder;
+		return matchBuilder.append(whereBuilder);
 	}
 
 	private void parse(Map<Filter, String> map, Filter filter, StringVariableGenerator gen) throws Exception {
 		if (map.containsKey(filter))
 			return;
-		if(filter==null) {
+		if (filter == null) {
 			map.put(filter, "");
 			return;
 		}
