@@ -1,6 +1,8 @@
 package net.runeduniverse.libs.rogm.lang;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.runeduniverse.libs.rogm.querying.FNode;
@@ -14,9 +16,15 @@ public class Cypher implements Language {
 
 	@Override
 	public String buildQuery(Filter filter) throws Exception {
-		StringBuilder builder = new StringBuilder();
 		Map<Filter, String> map = new HashMap<>();
+		return match(map, filter).append("RETURN " + map.get(filter) + ';').toString();
+	}
+
+	private StringBuilder match(Map<Filter, String> map, Filter filter) throws Exception {
+		StringBuilder matchBuilder = new StringBuilder();
 		StringVariableGenerator gen = new StringVariableGenerator();
+		List<Filter> cFilter = new ArrayList<>();
+		List<Filter> idcFilter = new ArrayList<>();
 
 		parse(map, filter, gen);
 
@@ -24,13 +32,22 @@ public class Cypher implements Language {
 		for (Filter f : map.keySet()) {
 			if (f instanceof IdentifiedFilter) {
 				String s = map.get(f);
-				builder.append("MATCH (" + s + ")\nWHERE id(" + s + ")=" + ((IdentifiedFilter) f).getId() + "\n");
+				if (!idcFilter.contains(filter)) {
+					matchBuilder
+							.append("MATCH (" + s + ")\nWHERE id(" + s + ")=" + ((IdentifiedFilter) f).getId() + "\n");
+					idcFilter.add(f);
+				}
+
 			} else if (f instanceof FNode) {
-				builder.append("MATCH " + filterToString(map, f, true) + '\n');
+				if (!cFilter.contains(filter)) {
+					matchBuilder.append("MATCH " + filterToString(map, f, true, cFilter) + '\n');
+					cFilter.add(f);
+				}
+
 			} else if (f instanceof FRelation) {
 				FRelation rel = (FRelation) f;
-				builder.append("MATCH ");
-				StringBuilder matchLine = new StringBuilder(filterToString(map, rel.getStart(), true));
+				matchBuilder.append("MATCH ");
+				StringBuilder matchLine = new StringBuilder(filterToString(map, rel.getStart(), true, cFilter));
 
 				switch (rel.getDirection()) {
 				case INCOMING:
@@ -41,7 +58,7 @@ public class Cypher implements Language {
 					matchLine.append('-');
 				}
 
-				matchLine.append(filterToString(map, rel, false));
+				matchLine.append(filterToString(map, rel, false, cFilter));
 
 				switch (rel.getDirection()) {
 				case OUTGOING:
@@ -52,18 +69,20 @@ public class Cypher implements Language {
 					matchLine.append('-');
 				}
 
-				matchLine.append(filterToString(map, rel.getTarget(), true));
-				builder.append(matchLine.toString() + '\n');
+				matchLine.append(filterToString(map, rel.getTarget(), true, cFilter));
+				matchBuilder.append(matchLine.toString() + '\n');
 			}
 		}
-
-		builder.append("RETURN " + map.get(filter) + ';');
-		return builder.toString();
+		return matchBuilder;
 	}
 
 	private void parse(Map<Filter, String> map, Filter filter, StringVariableGenerator gen) throws Exception {
 		if (map.containsKey(filter))
 			return;
+		if(filter==null) {
+			map.put(filter, "");
+			return;
+		}
 		map.put(filter, gen.nextVal());
 
 		if (filter instanceof IdentifiedFilter) {
@@ -75,13 +94,13 @@ public class Cypher implements Language {
 			parse(map, ((FRelation) filter).getStart(), gen);
 			parse(map, ((FRelation) filter).getTarget(), gen);
 		} else
-			throw new Exception("Filter not supported");
+			throw new Exception("Filter<" + filter.toString() + "> not supported");
 	}
 
-	private String filterToString(Map<Filter, String> map, Filter filter, boolean isNode) {
+	private String filterToString(Map<Filter, String> map, Filter filter, boolean isNode, List<Filter> cFilter) {
 		StringBuilder builder = new StringBuilder(map.get(filter));
 
-		if (filter instanceof ParamFilter) {
+		if (!cFilter.contains(filter) && filter instanceof ParamFilter) {
 			ParamFilter param = (ParamFilter) filter;
 			for (String label : param.getLabels())
 				builder.append(':' + label.replace(' ', '_'));
@@ -89,6 +108,9 @@ public class Cypher implements Language {
 			builder.append(" {");
 			// add params
 			builder.append('}');
+
+			// disable future param parsing
+			cFilter.add(filter);
 		}
 
 		if (isNode)
