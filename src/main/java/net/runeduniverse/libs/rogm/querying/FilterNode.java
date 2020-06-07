@@ -20,7 +20,7 @@ public class FilterNode extends AParamFilter<FilterNode> implements FNode {
 		relations.add(relation);
 		return this;
 	}
-	public FilterNode addRelation(IdentifiedFilter relation) {
+	public FilterNode addRelation(IdentifiedFilter<?> relation) {
 		relations.add(relation);
 		return this;
 	}
@@ -28,7 +28,7 @@ public class FilterNode extends AParamFilter<FilterNode> implements FNode {
 		relations.add(relation.setStart(this).setTarget(target));
 		return this;
 	}
-	public FilterNode addRelation(FilterRelation relation, IdentifiedFilter target) {
+	public FilterNode addRelation(FilterRelation relation, IdentifiedFilter<?> target) {
 		relations.add(relation.setStart(this).setTarget(target));
 		return this;
 	}
@@ -37,7 +37,7 @@ public class FilterNode extends AParamFilter<FilterNode> implements FNode {
 		relations.add(new FilterRelation(this, node, Direction.OUTGOING));
 		return this;
 	}
-	public FilterNode addRelationTo(IdentifiedFilter idNode) {
+	public FilterNode addRelationTo(IdentifiedFilter<?> idNode) {
 		relations.add(new FilterRelation(this, null, Direction.OUTGOING).setTarget(idNode));
 		return this;
 	}
@@ -50,7 +50,7 @@ public class FilterNode extends AParamFilter<FilterNode> implements FNode {
 		relations.add(new FilterRelation(node, this, Direction.INCOMING));
 		return this;
 	}
-	public FilterNode addRelationFrom(IdentifiedFilter idNode) {
+	public FilterNode addRelationFrom(IdentifiedFilter<?> idNode) {
 		relations.add(new FilterRelation(null, this, Direction.INCOMING).setStart(idNode));
 		return this;
 	}

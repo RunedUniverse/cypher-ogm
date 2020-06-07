@@ -1,12 +1,14 @@
 package net.runeduniverse.libs.rogm.querying;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public class IDFilter implements IdentifiedFilter{
+public class IDFilter<ID extends Serializable> implements IdentifiedFilter<ID>{
 	
 	@Getter
-	private long id;
+	private ID id;
 
 }

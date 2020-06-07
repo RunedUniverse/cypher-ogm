@@ -20,4 +20,8 @@ public abstract class AParamFilter<F extends Filter> implements ParamFilter{
 		this.labels.add(label);
 		return this.instance;
 	}
+	public F addLabels(List<String> labels) {
+		this.labels.addAll(labels);
+		return this.instance;
+	}
 }

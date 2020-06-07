@@ -38,7 +38,7 @@ public class Cypher implements Language {
 					cFilter.add(f);
 				}
 				if (!idcFilter.contains(filter)) {
-					whereBuilder.append("WHERE id(" + s + ")=" + ((IdentifiedFilter) f).getId() + "\n");
+					whereBuilder.append("WHERE id(" + s + ")=" + ((IdentifiedFilter<?>) f).getId().toString() + "\n");
 					idcFilter.add(f);
 				}
 
@@ -90,7 +90,9 @@ public class Cypher implements Language {
 		map.put(filter, gen.nextVal());
 
 		if (filter instanceof IdentifiedFilter) {
-			// IdentifiedFilter has no relations
+			IdentifiedFilter<?> idf = (IdentifiedFilter<?>) filter;
+			if (!(idf.checkType(Long.class) || idf.checkType(Integer.class) || idf.checkType(Short.class)))
+				throw new Exception("Filter ID <" + idf.getId().getClass().toString() + "> not supported");
 		} else if (filter instanceof FNode) {
 			for (Filter f : ((FNode) filter).getRelations())
 				parse(map, f, gen);

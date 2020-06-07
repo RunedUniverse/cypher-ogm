@@ -41,12 +41,12 @@ public class FilterRelation extends AParamFilter<FilterRelation> implements FRel
 		return this;
 	}
 
-	public FilterRelation setStart(IdentifiedFilter node) {
+	public FilterRelation setStart(IdentifiedFilter<?> node) {
 		this.start = node;
 		return this;
 	}
 
-	public FilterRelation setTarget(IdentifiedFilter node) {
+	public FilterRelation setTarget(IdentifiedFilter<?> node) {
 		this.target = node;
 		return this;
 	}
