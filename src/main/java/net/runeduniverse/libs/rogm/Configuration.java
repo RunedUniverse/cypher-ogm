@@ -18,6 +18,7 @@ public class Configuration {
 	private String password;
 
 	public Configuration(DatabaseType type) {
+		this.dbType = type;
 		type.getModule().prepare(this);
 	}
 }
