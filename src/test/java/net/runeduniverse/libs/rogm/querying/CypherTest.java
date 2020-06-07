@@ -1,4 +1,6 @@
-package net.runeduniverse.libs.rogm;
+package net.runeduniverse.libs.rogm.querying;
+
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +11,7 @@ import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
 import net.runeduniverse.libs.rogm.querying.IDFilter;
 
-public class CypherFilterTest {
+public class CypherTest {
 
 	/*
 		ASSERTS NOT VIABLE BECAUSE IT SOMEWHAT CHANGES THE DIRECTIONS INSIDE THE QUERIES
@@ -18,14 +20,14 @@ public class CypherFilterTest {
 	
 	static Cypher cypher = new Cypher();
 
-	static IDFilter school;
+	static IDFilter<Integer> school;
 	static FilterNode student;
 	static FilterNode friends;
 	static FilterRelation anyRelationToSchool;
 
 	@Before
 	public void prep() {
-		school = new IDFilter(10);
+		school = new IDFilter<>(10);
 
 		student = new FilterNode()
 					.addLabel("HTLStudent")
@@ -39,6 +41,29 @@ public class CypherFilterTest {
 		anyRelationToSchool = new FilterRelation(Direction.BIDIRECTIONAL).setStart(school);
 	}
 
+	@Test
+	public void wrongID() {
+		boolean error = false;
+		try {
+			cypher.buildQuery(new IDFilter<String>("defaultId"));
+		} catch (Exception e) {
+			error = true;
+		}
+		assertTrue("String is not a valid id", error);
+	}
+	@Test
+	public void shortID() throws Exception {
+		cypher.buildQuery(new IDFilter<Short>((short) 3));
+	}
+	@Test
+	public void integerID() throws Exception {
+		cypher.buildQuery(new IDFilter<Integer>(45));
+	}
+	@Test
+	public void longID() throws Exception {
+		cypher.buildQuery(new IDFilter<Long>(54l));
+	}
+	
 	@Test
 	public void matchSchool() throws Exception {
 		System.out.println("[SCHOOL]\n" + cypher.buildQuery(school) + '\n');
