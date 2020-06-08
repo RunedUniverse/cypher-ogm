@@ -1,10 +1,16 @@
 package net.runeduniverse.libs.rogm;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.enums.DatabaseType;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
@@ -40,61 +46,80 @@ public final class CoreSession implements Session {
 	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
 		String qry = null;
+		String data = null;
 
 		try {
-			qry = lang.buildQuery(new IDFilter<ID>(id));
+			qry = this.lang.buildQuery(new IDFilter<ID>(id), this.parser);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 
 		// TODO request data
-		
-		// TODO parse data
-		
+
+		try {
+			return _merge(this.parser.deserialize(type, data), id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return null;
 	}
 
 	@Override
-	public <T> Collection<T> loadAll(Class<T> type) {
-		String qry = null;
-
+	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type) {
 		List<String> labels = new ArrayList<>();
-		
-		// TODO: retrieve all labels from type
+
+		// TODO retrieve all labels from type
+
 		labels.add(type.getSimpleName());
-		
-		
-		try {
-			qry = lang.buildQuery(new FilterNode().addLabels(labels));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-
-		// TODO request data
-		
-		// TODO parse data
-
-		return null;
+		return loadAll(type, new FilterNode().addLabels(labels));
 	}
 
 	@Override
-	public <T> Collection<T> loadAll(Class<T> type, Filter filter) {
+	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, Filter filter) {
 		String qry = null;
+		Map<ID, String> data = new HashMap<>();
+		Collection<T> results = new ArrayList<>();
 
 		try {
-			qry = lang.buildQuery(filter);
+			qry = lang.buildQuery(filter, this.parser);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 
 		// TODO request data
-		
-		// TODO parse data
-		
-		return null;
+
+		for (Entry<ID, String> entry : data.entrySet())
+			try {
+				results.add(_merge(this.parser.deserialize(type, entry.getValue()), entry.getKey()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		return results;
+	}
+
+	private <T, ID extends Serializable> T _merge(T obj, ID id) {
+
+		Field field = _findAnnotatedField(obj.getClass(), Id.class);
+		if (field != null)
+			try {
+				field.set(obj, field.getType().cast(id));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		return obj;
+	}
+
+	private <ANNO extends Annotation> Field _findAnnotatedField(Class<?> clazz, Class<ANNO> anno) {
+		if (clazz.isAssignableFrom(Object.class))
+			return null;
+		for (Field field : clazz.getDeclaredFields())
+			if (field.isAnnotationPresent(anno))
+				return field;
+		return _findAnnotatedField(clazz.getSuperclass(), anno);
 	}
 
 }

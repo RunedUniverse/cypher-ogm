@@ -1,11 +1,12 @@
 package net.runeduniverse.libs.rogm.querying;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.Getter;
 
-public abstract class AParamFilter<F extends Filter> implements ParamFilter{
+public abstract class AParamFilter<F extends Filter> extends FParamHolder implements ParamFilter{
 
 	private F instance = null;
 	protected void setInstance(F instance) {
@@ -13,7 +14,7 @@ public abstract class AParamFilter<F extends Filter> implements ParamFilter{
 	}
 	
 	@Getter
-	protected List<String> labels = new ArrayList<>();
+	protected Set<String> labels = new HashSet<>();
 	
 	// LABEL
 	public F addLabel(String label) {

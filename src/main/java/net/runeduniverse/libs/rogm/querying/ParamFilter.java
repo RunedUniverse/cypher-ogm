@@ -1,8 +1,8 @@
 package net.runeduniverse.libs.rogm.querying;
 
-import java.util.List;
+import java.util.Set;
 
-public interface ParamFilter {
+public interface ParamFilter extends ParamHolder {
 
-	List<String> getLabels();
+	Set<String> getLabels();
 }
