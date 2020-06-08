@@ -2,7 +2,7 @@ package net.runeduniverse.libs.rogm.parser;
 
 public interface Parser {
 	
-	String toJSON(Object object);
-	<T> T fromJSON(Class<T> clazz, String json);
+	String serialize(Object object) throws Exception;
+	<T> T deserialize(Class<T> clazz, String value) throws Exception;
 
 }
