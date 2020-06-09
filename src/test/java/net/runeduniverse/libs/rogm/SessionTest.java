@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import net.runeduniverse.libs.rogm.enums.DatabaseType;
 import net.runeduniverse.libs.rogm.lang.Language;
 
 public class SessionTest {

@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.enums;
+package net.runeduniverse.libs.rogm;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

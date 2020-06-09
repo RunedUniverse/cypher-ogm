@@ -6,7 +6,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import net.runeduniverse.libs.rogm.enums.InterpretationMode;
+import net.runeduniverse.libs.rogm.patterns.InterpretationMode;
 
 @Retention(RUNTIME)
 @Target(TYPE)

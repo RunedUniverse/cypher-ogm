@@ -2,7 +2,6 @@ package net.runeduniverse.libs.rogm;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.libs.rogm.enums.DatabaseType;
 
 @Getter
 public class Configuration {

@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.runeduniverse.libs.rogm.annotations.Id;
-import net.runeduniverse.libs.rogm.enums.DatabaseType;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
