@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.patterns;
+package net.runeduniverse.libs.rogm.annotations;
 
 public enum InterpretationMode {
 	IMPLICIT, EXPLICIT
