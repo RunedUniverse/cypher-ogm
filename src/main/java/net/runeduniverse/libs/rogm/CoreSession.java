@@ -5,7 +5,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,14 +19,34 @@ import net.runeduniverse.libs.rogm.querying.IDFilter;
 
 public final class CoreSession implements Session {
 
+	private DatabaseType dbType;
 	private Language lang;
 	private Parser parser;
-	private Module module;
+	private Module.Instance<?> module;
 
-	protected CoreSession(DatabaseType type) {
-		this.lang = type.getLang();
-		this.parser = type.getParser();
-		this.module = type.getModule();
+	protected CoreSession(Configuration cnf) {
+		this.dbType = cnf.getDbType();
+		this.lang = this.dbType.getLang();
+		this.parser = this.dbType.getParser();
+		this.module = this.dbType.getModule().build(cnf);
+
+		this.module.connect(cnf);
+	}
+
+	@Override
+	public void close() throws Exception {
+		this.module.disconnect();
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		this.close();
+		super.finalize();
+	}
+
+	@Override
+	public boolean isConnected() {
+		return this.module.isConnected();
 	}
 
 	@Override
@@ -54,7 +73,11 @@ public final class CoreSession implements Session {
 			return null;
 		}
 
-		// TODO request data
+		for (Entry<?, String> e : this.module.query(qry).entrySet()) {
+			// get only first entry
+			data = e.getValue();
+			break;
+		}
 
 		try {
 			return _merge(this.parser.deserialize(type, data), id);
@@ -75,10 +98,10 @@ public final class CoreSession implements Session {
 		return loadAll(type, new FilterNode().addLabels(labels));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, Filter filter) {
 		String qry = null;
-		Map<ID, String> data = new HashMap<>();
 		Collection<T> results = new ArrayList<>();
 
 		try {
@@ -88,7 +111,7 @@ public final class CoreSession implements Session {
 			return null;
 		}
 
-		// TODO request data
+		Map<ID, String> data = (Map<ID, String>) this.module.query(qry);
 
 		for (Entry<ID, String> entry : data.entrySet())
 			try {
@@ -103,6 +126,7 @@ public final class CoreSession implements Session {
 	private <T, ID extends Serializable> T _merge(T obj, ID id) {
 
 		Field field = _findAnnotatedField(obj.getClass(), Id.class);
+		field.setAccessible(true);
 		if (field != null)
 			try {
 				field.set(obj, field.getType().cast(id));

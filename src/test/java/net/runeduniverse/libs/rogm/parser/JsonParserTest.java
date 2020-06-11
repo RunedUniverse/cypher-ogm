@@ -47,25 +47,25 @@ public class JsonParserTest {
 
 	@Test
 	public void parseCityTest() throws Exception {
-		String s = "{\"name\":\"Moonland\","
-				+ "\"houses\":["
-				+ "{\"address\":{\"street\":\"Bakersstreet\",\"number\":12},\"people\":[{\"firstName\":\"Marry\",\"lastName\":\"Log\"},{\"firstName\":\"Frank\",\"lastName\":\"Log\"}]},"
-				+ "{\"address\":{\"street\":\"Gardenstreet\",\"number\":200},\"people\":[{\"firstName\":\"Georg\",\"lastName\":\"Baker\"},{\"firstName\":\"Luna\",\"lastName\":\"Moon\"}]},"
-				+ "{\"address\":{\"street\":\"Sundown Road\",\"number\":3},\"people\":[{\"firstName\":\"Elma\",\"lastName\":\"Light\"}]}"
+		String s = "{name:\"Moonland\","
+				+ "houses:["
+				+ "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\"},{firstName:\"Frank\",lastName:\"Log\"}]},"
+				+ "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\"},{firstName:\"Luna\",lastName:\"Moon\"}]},"
+				+ "{address:{street:\"Sundown Road\",number:3},people:[{firstName:\"Elma\",lastName:\"Light\"}]}"
 				+ "]}";
 		assertEquals(s, parser.serialize(c));
 	}
 
 	@Test
 	public void parseHouse() throws Exception {
-		String s = "{\"address\":{\"street\":\"Bakersstreet\",\"number\":12},\"people\":[{\"firstName\":\"Marry\",\"lastName\":\"Log\"},{\"firstName\":\"Frank\",\"lastName\":\"Log\"}]}";
+		String s = "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\"},{firstName:\"Frank\",lastName:\"Log\"}]}";
 		assertEquals(s, parser.serialize(h0));
 	}
 
 	@Test
 	public void parseHouseTransient() throws Exception {
 		// ignores empty varialbe while parsing and sets it as default true
-		String s = "{\"address\":{\"street\":\"Gardenstreet\",\"number\":200},\"people\":[{\"firstName\":\"Georg\",\"lastName\":\"Baker\"},{\"firstName\":\"Luna\",\"lastName\":\"Moon\"}], \"empty\":false}";
+		String s = "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\"},{firstName:\"Luna\",lastName:\"Moon\"}], \"empty\":false}";
 		assertEquals(h1, parser.deserialize(House.class, s));
 	}
 

@@ -1,14 +1,23 @@
 package net.runeduniverse.libs.rogm.modules;
 
+import java.io.Serializable;
+import java.util.Map;
 import net.runeduniverse.libs.rogm.Configuration;
 
 public interface Module {
 
 	void prepare(Configuration cnf);
 	
-	boolean connect(Configuration cnf);
-	boolean disconnect();
+	// cnf might not get used from every module 
+	// but is provided if needed
+	Instance<?> build(Configuration cnf);
 	
-	String query(String qry);
-	boolean update(String qry);
+	public interface Instance <ID extends Serializable>{
+		boolean connect(Configuration cnf);
+		boolean disconnect();
+		boolean isConnected();
+		
+		Map<ID, String> query(String qry);
+		boolean update(String qry);
+	}
 }

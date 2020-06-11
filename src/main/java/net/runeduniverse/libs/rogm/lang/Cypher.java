@@ -20,7 +20,7 @@ public class Cypher implements Language {
 		Map<Filter, String> map = new HashMap<>();
 		StringBuilder qry = match(map, filter, parser);
 		String key = map.get(filter);
-		return qry.append("RETURN id(" + key + "), " + key + ';').toString();
+		return qry.append("RETURN id(" + key + ") as id, " + key + ';').toString();
 	}
 
 	private StringBuilder match(Map<Filter, String> map, Filter filter, Parser parser) throws Exception {

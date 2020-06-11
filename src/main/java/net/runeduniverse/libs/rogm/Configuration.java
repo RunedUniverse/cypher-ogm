@@ -8,6 +8,8 @@ public class Configuration {
 
 	private DatabaseType dbType;
 	@Setter
+	private String uri;
+	@Setter
 	private String protocol;
 	@Setter
 	private int port;
@@ -16,8 +18,9 @@ public class Configuration {
 	@Setter
 	private String password;
 
-	public Configuration(DatabaseType type) {
+	public Configuration(DatabaseType type, String uri) {
 		this.dbType = type;
+		this.uri = uri;
 		type.getModule().prepare(this);
 	}
 }

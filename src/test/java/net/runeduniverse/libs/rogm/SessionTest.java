@@ -1,30 +1,41 @@
 package net.runeduniverse.libs.rogm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import org.junit.Test;
 
-import net.runeduniverse.libs.rogm.lang.Language;
+import net.runeduniverse.libs.rogm.model.ShadowPlayer;
 
 public class SessionTest {
 
 	@Test
 	public void buildSessionTest(){
-		System.out.println(DatabaseType.Neo4j.getLang() instanceof Language);
+		Configuration config = new Configuration(DatabaseType.Neo4j, "runeduniverse.net");
 		
-		
-		
-		Configuration config = new Configuration(DatabaseType.Neo4j);
-		
-		config.setUser("user");
+		config.setUser("neo4j");
 		config.setPassword("Qwerty!");
 		
 		assertEquals("bolt", config.getProtocol());
 		assertEquals(7687, config.getPort());
+		assertEquals("runeduniverse.net", config.getUri());
 		
 		Session session = Session.create(config);
 		
+		assertTrue(session.isConnected());
 		
+		
+		Collection<ShadowPlayer> players = session.loadAll(ShadowPlayer.class);
+		if(players.isEmpty())
+			System.out.println("NO PLAYERS FOUND");
+		for (ShadowPlayer player : players) {
+			System.out.println(player.toString());
+		}
 	}
 	
+	@Test
+	public void neo4jQryTest() {
+		
+	}
 }

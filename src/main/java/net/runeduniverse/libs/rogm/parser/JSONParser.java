@@ -1,5 +1,9 @@
 package net.runeduniverse.libs.rogm.parser;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -7,17 +11,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import net.runeduniverse.libs.rogm.querying.ParamFilter;
 
+@SuppressWarnings("deprecation")
 public class JSONParser implements Parser{
 
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 	
 	static {
+		MAPPER.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
+		MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		
 		AnnotationIntrospector serial = new AnnotationIntrospectorPair(new JsonAnnotationIntrospector(), MAPPER.getSerializationConfig().getAnnotationIntrospector());
 		AnnotationIntrospector deserial = new AnnotationIntrospectorPair(new JsonAnnotationIntrospector(), MAPPER.getDeserializationConfig().getAnnotationIntrospector());
 		
 		MAPPER.setAnnotationIntrospectors(serial, deserial);
 	}
-	
+
+
+	@Override
+	public String serialize(ParamFilter filter) throws JsonProcessingException {
+		return MAPPER.writeValueAsString(filter.getParams());
+	}
 	
 	@Override
 	public String serialize(Object object) throws JsonProcessingException {
@@ -25,13 +38,13 @@ public class JSONParser implements Parser{
 	}
 
 	@Override
-	public <T> T deserialize(Class<T> clazz, String value) throws JsonMappingException, JsonProcessingException {
-		return MAPPER.readValue(value, clazz);
+	public String serialize(Map<String, Object> map) throws Exception {
+		return MAPPER.writeValueAsString(map);
 	}
 
 	@Override
-	public String serialize(ParamFilter filter) throws JsonProcessingException {
-		return MAPPER.writeValueAsString(filter.getParams());
+	public <T> T deserialize(Class<T> clazz, String value) throws JsonMappingException, JsonProcessingException {
+		return MAPPER.readValue(value, clazz);
 	}
 
 }
