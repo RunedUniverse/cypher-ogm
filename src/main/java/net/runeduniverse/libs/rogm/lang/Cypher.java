@@ -1,9 +1,13 @@
 package net.runeduniverse.libs.rogm.lang;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.querying.AFilter;
 import net.runeduniverse.libs.rogm.querying.FNode;
 import net.runeduniverse.libs.rogm.querying.FRelation;
 import net.runeduniverse.libs.rogm.querying.Filter;
@@ -18,9 +22,21 @@ public class Cypher implements Language {
 	@Override
 	public String buildQuery(Filter filter, Parser parser) throws Exception {
 		ModifiableMap<Filter, String, FilterStatus> map = new ModifiableHashMap<>();
-		StringBuilder qry = match(map, filter, parser);
-		String key = map.get(filter);
-		return qry.append("RETURN id(" + key + ") as id, " + key + ';').toString();
+		StringBuilder qry = match(map, filter, parser).append("RETURN");
+		List<String> rt = new ArrayList<>();
+
+		map.forEach((f, c) -> {
+			if (f instanceof AFilter<?> && ((AFilter<?>) f).isReturned())
+				rt.add((rt.isEmpty() ? " " : ", ") + "id(" + c + ") as id_" + c + ", " + c);
+		});
+
+		if (rt.isEmpty()) {
+			String c = map.get(filter);
+			qry.append(" id(" + c + ") as id_" + c + ", " + c);
+		} else
+			qry.append(rt);
+
+		return qry.append(';').toString();
 	}
 
 	@Override

@@ -6,13 +6,8 @@ import java.util.Set;
 
 import lombok.Getter;
 
-public abstract class AParamFilter<F extends Filter> extends FParamHolder implements ParamFilter{
+public abstract class AParamFilter<F extends Filter> extends FParamHolder<F> implements ParamFilter{
 
-	private F instance = null;
-	protected void setInstance(F instance) {
-		this.instance = instance;
-	}
-	
 	@Getter
 	protected Set<String> labels = new HashSet<>();
 	
