@@ -27,6 +27,48 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 	}
 
 	@Override
+	public void setModifier(K key, M modifier) {
+		this.map.get(key).setModifier(modifier);
+	}
+
+	@Override
+	public M getModifier(K key) {
+		MEntry<V, M> entry = this.map.get(key);
+		if (entry == null)
+			return null;
+		return entry.getModifier();
+	}
+
+	@Override
+	public boolean containsKey(K key) {
+		return this.map.containsKey(key);
+	}
+
+	@Override
+	public boolean containsKey(K key, M modifier) {
+		MEntry<V, M> entry = this.map.get(key);
+		if (entry == null)
+			return false;
+		return entry.getModifier() == modifier;
+	}
+
+	@Override
+	public boolean containsValue(V value) {
+		for (MEntry<V, M> me : this.map.values())
+			if (me.getValue() == value)
+				return true;
+		return false;
+	}
+
+	@Override
+	public boolean containsValue(V value, M modifier) {
+		for (MEntry<V, M> me : this.map.values())
+			if (me.getModifier() == modifier && me.getValue() == value)
+				return true;
+		return false;
+	}
+
+	@Override
 	public void forEach(BiConsumer<K, V> action) {
 		for (Entry<K, MEntry<V, M>> entry : this.map.entrySet()) {
 			action.accept(entry.getKey(), entry.getValue().getValue());
