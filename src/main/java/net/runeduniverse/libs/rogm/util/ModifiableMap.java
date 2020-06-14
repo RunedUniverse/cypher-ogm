@@ -1,5 +1,6 @@
 package net.runeduniverse.libs.rogm.util;
 
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 public interface ModifiableMap<K, V, M> {
@@ -21,4 +22,6 @@ public interface ModifiableMap<K, V, M> {
 	void forEach(BiConsumer<K, V> action);
 
 	void forEach(M modifier, BiConsumer<K, V> action);
+	
+	Set<K> keySet();
 }

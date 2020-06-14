@@ -3,6 +3,7 @@ package net.runeduniverse.libs.rogm.util;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import lombok.Data;
@@ -80,6 +81,11 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 		for (Entry<K, MEntry<V, M>> entry : this.map.entrySet())
 			if (entry.getValue().getModifier().equals(modifier))
 				action.accept(entry.getKey(), entry.getValue().getValue());
+	}
+
+	@Override
+	public Set<K> keySet() {
+		return this.map.keySet();
 	}
 
 	@SuppressWarnings("hiding")
