@@ -14,17 +14,17 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 
 	@Override
 	public V put(K key, V value) {
-		return this.map.put(key, new MEntry<>(value)).getValue();
+		return MEntry.getValue(this.map.put(key, new MEntry<>(value)));
 	}
 
 	@Override
 	public V put(K key, V value, M modifier) {
-		return this.map.put(key, new MEntry<>(value, modifier)).getValue();
+		return MEntry.getValue(this.map.put(key, new MEntry<>(value, modifier)));
 	}
 
 	@Override
 	public V get(K key) {
-		return this.map.get(key).getValue();
+		return MEntry.getValue(this.map.get(key));
 	}
 
 	@Override
@@ -34,10 +34,7 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 
 	@Override
 	public M getModifier(K key) {
-		MEntry<V, M> entry = this.map.get(key);
-		if (entry == null)
-			return null;
-		return entry.getModifier();
+		return MEntry.getModifier(this.map.get(key));
 	}
 
 	@Override
@@ -48,7 +45,7 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 	@Override
 	public boolean containsKey(K key, M modifier) {
 		MEntry<V, M> entry = this.map.get(key);
-		if (entry == null)
+		if (entry == null || entry.getModifier() == null)
 			return false;
 		return entry.getModifier().equals(modifier);
 	}
@@ -64,23 +61,28 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 	@Override
 	public boolean containsValue(V value, M modifier) {
 		for (MEntry<V, M> me : this.map.values())
-			if (me.getModifier().equals(modifier) && me.getValue().equals(value))
+			if (me.getModifier() != null && me.getModifier().equals(modifier) && me.getValue().equals(value))
 				return true;
 		return false;
 	}
 
 	@Override
 	public void forEach(BiConsumer<K, V> action) {
-		for (Entry<K, MEntry<V, M>> entry : this.map.entrySet()) {
-			action.accept(entry.getKey(), entry.getValue().getValue());
-		}
+		for (Entry<K, MEntry<V, M>> entry : this.map.entrySet())
+			action.accept(entry.getKey(), MEntry.getValue(entry.getValue()));
 	}
 
 	@Override
 	public void forEach(M modifier, BiConsumer<K, V> action) {
 		for (Entry<K, MEntry<V, M>> entry : this.map.entrySet())
-			if (entry.getValue().getModifier().equals(modifier))
-				action.accept(entry.getKey(), entry.getValue().getValue());
+			if (MEntry.getModifier(entry.getValue()).equals(modifier))
+				action.accept(entry.getKey(), MEntry.getValue(entry.getValue()));
+	}
+
+	@Override
+	public void forEach(TriConsumer<K, V, M> action) {
+		for (Entry<K, MEntry<V, M>> entry : this.map.entrySet())
+			action.accept(entry.getKey(), MEntry.getValue(entry.getValue()), MEntry.getModifier(entry.getValue()));
 	}
 
 	@Override
@@ -88,9 +90,8 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 		return this.map.keySet();
 	}
 
-	@SuppressWarnings("hiding")
 	@Data
-	protected class MEntry<V, M> {
+	protected static class MEntry<V, M> {
 		private V value;
 		private M modifier;
 
@@ -102,6 +103,13 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 		protected MEntry(V value, M modifier) {
 			this.value = value;
 			this.modifier = modifier;
+		}
+
+		public static <V, M> V getValue(MEntry<V, M> entry) {
+			return entry == null ? null : entry.getValue();
+		}
+		public static <V, M> M getModifier(MEntry<V, M> entry) {
+			return entry == null ? null : entry.getModifier();
 		}
 	}
 

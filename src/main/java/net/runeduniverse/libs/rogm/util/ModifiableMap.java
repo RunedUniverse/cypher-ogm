@@ -22,6 +22,8 @@ public interface ModifiableMap<K, V, M> {
 	void forEach(BiConsumer<K, V> action);
 
 	void forEach(M modifier, BiConsumer<K, V> action);
+
+	void forEach(TriConsumer<K, V, M> action);
 	
 	Set<K> keySet();
 }
