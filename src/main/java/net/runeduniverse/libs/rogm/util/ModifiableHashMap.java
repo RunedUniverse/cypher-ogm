@@ -49,13 +49,13 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 		MEntry<V, M> entry = this.map.get(key);
 		if (entry == null)
 			return false;
-		return entry.getModifier() == modifier;
+		return entry.getModifier().equals(modifier);
 	}
 
 	@Override
 	public boolean containsValue(V value) {
 		for (MEntry<V, M> me : this.map.values())
-			if (me.getValue() == value)
+			if (me.getValue().equals(value))
 				return true;
 		return false;
 	}
@@ -63,7 +63,7 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 	@Override
 	public boolean containsValue(V value, M modifier) {
 		for (MEntry<V, M> me : this.map.values())
-			if (me.getModifier() == modifier && me.getValue() == value)
+			if (me.getModifier().equals(modifier) && me.getValue().equals(value))
 				return true;
 		return false;
 	}
@@ -78,7 +78,7 @@ public class ModifiableHashMap<K, V, M> implements ModifiableMap<K, V, M> {
 	@Override
 	public void forEach(M modifier, BiConsumer<K, V> action) {
 		for (Entry<K, MEntry<V, M>> entry : this.map.entrySet())
-			if (entry.getValue().getModifier() == modifier)
+			if (entry.getValue().getModifier().equals(modifier))
 				action.accept(entry.getKey(), entry.getValue().getValue());
 	}
 
