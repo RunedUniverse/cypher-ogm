@@ -20,8 +20,10 @@ public class JSONParser implements Parser{
 		MAPPER.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
 		MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		
-		AnnotationIntrospector serial = new AnnotationIntrospectorPair(new JsonAnnotationIntrospector(), MAPPER.getSerializationConfig().getAnnotationIntrospector());
-		AnnotationIntrospector deserial = new AnnotationIntrospectorPair(new JsonAnnotationIntrospector(), MAPPER.getDeserializationConfig().getAnnotationIntrospector());
+		JsonAnnotationIntrospector introspector = new JsonAnnotationIntrospector();
+		
+		AnnotationIntrospector serial = new AnnotationIntrospectorPair(introspector, MAPPER.getSerializationConfig().getAnnotationIntrospector());
+		AnnotationIntrospector deserial = new AnnotationIntrospectorPair(introspector, MAPPER.getDeserializationConfig().getAnnotationIntrospector());
 		
 		MAPPER.setAnnotationIntrospectors(serial, deserial);
 	}
