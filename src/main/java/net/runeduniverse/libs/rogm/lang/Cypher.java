@@ -22,6 +22,18 @@ public class Cypher implements Language {
 		String key = map.get(filter);
 		return qry.append("RETURN id(" + key + ") as id, " + key + ';').toString();
 	}
+	
+	@Override
+	public String buildInsert() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String buildUpdate() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	private StringBuilder match(Map<Filter, String> map, Filter filter, Parser parser) throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
@@ -131,5 +143,6 @@ public class Cypher implements Language {
 		else
 			return '[' + builder.toString() + ']';
 	}
+
 
 }
