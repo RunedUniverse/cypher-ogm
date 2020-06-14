@@ -1,28 +1,28 @@
 package net.runeduniverse.libs.rogm.lang;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.FNode;
 import net.runeduniverse.libs.rogm.querying.FRelation;
 import net.runeduniverse.libs.rogm.querying.Filter;
 import net.runeduniverse.libs.rogm.querying.IdentifiedFilter;
 import net.runeduniverse.libs.rogm.querying.ParamFilter;
+import net.runeduniverse.libs.rogm.util.ModifiableHashMap;
+import net.runeduniverse.libs.rogm.util.ModifiableMap;
 import net.runeduniverse.libs.rogm.util.StringVariableGenerator;
 
 public class Cypher implements Language {
 
 	@Override
 	public String buildQuery(Filter filter, Parser parser) throws Exception {
-		Map<Filter, String> map = new HashMap<>();
+		ModifiableMap<Filter, String, FilterStatus> map = new ModifiableHashMap<>();
 		StringBuilder qry = match(map, filter, parser);
 		String key = map.get(filter);
 		return qry.append("RETURN id(" + key + ") as id, " + key + ';').toString();
 	}
-	
+
 	@Override
 	public String buildInsert() throws Exception {
 		// TODO Auto-generated method stub
@@ -35,38 +35,36 @@ public class Cypher implements Language {
 		return null;
 	}
 
-	private StringBuilder match(Map<Filter, String> map, Filter filter, Parser parser) throws Exception {
+	private StringBuilder match(ModifiableMap<Filter, String, FilterStatus> map, Filter filter, Parser parser)
+			throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
 		StringBuilder whereBuilder = new StringBuilder();
 		StringVariableGenerator gen = new StringVariableGenerator();
-		List<Filter> cFilter = new ArrayList<>();
-		List<Filter> idcFilter = new ArrayList<>();
-
 		parse(map, filter, gen);
 
 		// MATCHES
-		for (Filter f : map.keySet()) {
+		map.forEach((f, code, modifier) -> {
 			if (f instanceof IdentifiedFilter) {
-				String s = map.get(f);
-				if (!cFilter.contains(filter)) {
-					matchBuilder.append("MATCH (" + s + ")\n");
-					cFilter.add(f);
-				}
-				if (!idcFilter.contains(filter)) {
-					whereBuilder.append("WHERE id(" + s + ")=" + ((IdentifiedFilter<?>) f).getId().toString() + "\n");
-					idcFilter.add(f);
+				if (!modifier.equals(FilterStatus.EXTENSION_PRINTED)) {
+					whereBuilder
+							.append("WHERE id(" + code + ")=" + ((IdentifiedFilter<?>) f).getId().toString() + "\n");
+					map.setModifier(f, FilterStatus.EXTENSION_PRINTED);
+
+					if (!modifier.equals(FilterStatus.PRINTED)) {
+						matchBuilder.append("MATCH (" + code + ")\n");
+						map.setModifier(f, FilterStatus.PRINTED);
+					}
 				}
 
 			} else if (f instanceof FNode) {
-				if (!cFilter.contains(filter)) {
-					matchBuilder.append("MATCH " + filterToString(map, f, true, cFilter, parser) + '\n');
-					cFilter.add(f);
+				if (!modifier.equals(FilterStatus.PRINTED)) {
+					matchBuilder.append("MATCH " + filterToString(map, f, true, parser) + '\n');
 				}
 
 			} else if (f instanceof FRelation) {
 				FRelation rel = (FRelation) f;
 				matchBuilder.append("MATCH ");
-				StringBuilder matchLine = new StringBuilder(filterToString(map, rel.getStart(), true, cFilter, parser));
+				StringBuilder matchLine = new StringBuilder(filterToString(map, rel.getStart(), true, parser));
 
 				switch (rel.getDirection()) {
 				case INCOMING:
@@ -77,7 +75,7 @@ public class Cypher implements Language {
 					matchLine.append('-');
 				}
 
-				matchLine.append(filterToString(map, rel, false, cFilter, parser));
+				matchLine.append(filterToString(map, rel, false, parser));
 
 				switch (rel.getDirection()) {
 				case OUTGOING:
@@ -88,21 +86,22 @@ public class Cypher implements Language {
 					matchLine.append('-');
 				}
 
-				matchLine.append(filterToString(map, rel.getTarget(), true, cFilter, parser));
+				matchLine.append(filterToString(map, rel.getTarget(), true, parser));
 				matchBuilder.append(matchLine.toString() + '\n');
 			}
-		}
+		});
 		return matchBuilder.append(whereBuilder);
 	}
 
-	private void parse(Map<Filter, String> map, Filter filter, StringVariableGenerator gen) throws Exception {
+	private void parse(ModifiableMap<Filter, String, FilterStatus> map, Filter filter, StringVariableGenerator gen)
+			throws Exception {
 		if (map.containsKey(filter))
 			return;
 		if (filter == null) {
-			map.put(filter, "");
+			map.put(filter, "", FilterStatus.INITIALIZED);
 			return;
 		}
-		map.put(filter, gen.nextVal());
+		map.put(filter, gen.nextVal(), FilterStatus.INITIALIZED);
 
 		if (filter instanceof IdentifiedFilter) {
 			IdentifiedFilter<?> idf = (IdentifiedFilter<?>) filter;
@@ -118,11 +117,11 @@ public class Cypher implements Language {
 			throw new Exception("Filter<" + filter.toString() + "> not supported");
 	}
 
-	private String filterToString(Map<Filter, String> map, Filter filter, boolean isNode, List<Filter> cFilter,
+	private String filterToString(ModifiableMap<Filter, String, FilterStatus> map, Filter filter, boolean isNode,
 			Parser parser) {
 		StringBuilder builder = new StringBuilder(map.get(filter));
 
-		if (!cFilter.contains(filter) && filter instanceof ParamFilter) {
+		if (!map.getModifier(filter).equals(FilterStatus.PRINTED) && filter instanceof ParamFilter) {
 			ParamFilter param = (ParamFilter) filter;
 			for (String label : param.getLabels())
 				builder.append(':' + label.replace(' ', '_'));
@@ -135,7 +134,7 @@ public class Cypher implements Language {
 				}
 
 			// disable future param parsing
-			cFilter.add(filter);
+			map.setModifier(filter, FilterStatus.PRINTED);
 		}
 
 		if (isNode)
@@ -144,5 +143,21 @@ public class Cypher implements Language {
 			return '[' + builder.toString() + ']';
 	}
 
+	@NoArgsConstructor
+	@AllArgsConstructor
+	protected static class FilterStatus {
+		public static final FilterStatus INITIALIZED = new FilterStatus(1);
+		public static final FilterStatus PRINTED = new FilterStatus(2);
+		public static final FilterStatus EXTENSION_PRINTED = new FilterStatus(3);
 
+		@Getter
+		private int status = 0;
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof FilterStatus)
+				return this.status >= ((FilterStatus) obj).getStatus();
+			return super.equals(obj);
+		}
+	}
 }
