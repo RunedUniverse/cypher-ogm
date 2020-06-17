@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
-import net.runeduniverse.libs.rogm.querying.ParamFilter;
 
 @SuppressWarnings("deprecation")
 public class JSONParser implements Parser{
@@ -28,11 +27,6 @@ public class JSONParser implements Parser{
 		MAPPER.setAnnotationIntrospectors(serial, deserial);
 	}
 
-
-	@Override
-	public String serialize(ParamFilter filter) throws JsonProcessingException {
-		return MAPPER.writeValueAsString(filter.getParams());
-	}
 	
 	@Override
 	public String serialize(Object object) throws JsonProcessingException {

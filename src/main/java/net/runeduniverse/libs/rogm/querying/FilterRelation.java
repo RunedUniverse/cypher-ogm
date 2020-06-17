@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public class FilterRelation extends AParamFilter<FilterRelation> implements FRelation {
 
-	private Filter start;
-	private Filter target;
+	private Filter start = null;
+	private Filter target = null;
 	private Direction direction;
 
 	public FilterRelation() {

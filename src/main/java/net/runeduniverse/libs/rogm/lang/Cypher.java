@@ -8,11 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.AFilter;
+import net.runeduniverse.libs.rogm.querying.DataHolder;
 import net.runeduniverse.libs.rogm.querying.FNode;
 import net.runeduniverse.libs.rogm.querying.FRelation;
 import net.runeduniverse.libs.rogm.querying.Filter;
 import net.runeduniverse.libs.rogm.querying.IdentifiedFilter;
-import net.runeduniverse.libs.rogm.querying.ParamFilter;
+import net.runeduniverse.libs.rogm.querying.LabelHolder;
+import net.runeduniverse.libs.rogm.querying.ParamHolder;
 import net.runeduniverse.libs.rogm.util.ModifiableHashMap;
 import net.runeduniverse.libs.rogm.util.ModifiableMap;
 import net.runeduniverse.libs.rogm.util.StringVariableGenerator;
@@ -22,6 +24,9 @@ public class Cypher implements Language {
 	@Override
 	public String buildQuery(Filter filter, Parser parser) throws Exception {
 		ModifiableMap<Filter, String, FilterStatus> map = new ModifiableHashMap<>();
+		StringVariableGenerator gen = new StringVariableGenerator();
+		parse(map, filter, gen);
+
 		StringBuilder qry = match(map, filter, parser).append("RETURN");
 		List<String> rt = new ArrayList<>();
 
@@ -55,11 +60,13 @@ public class Cypher implements Language {
 			throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
 		StringBuilder whereBuilder = new StringBuilder();
-		StringVariableGenerator gen = new StringVariableGenerator();
-		parse(map, filter, gen);
 
 		// MATCHES
 		map.forEach((f, code, modifier) -> {
+			if (f == null || modifier.equals(FilterStatus.PRINTED))
+				return;
+
+			matchBuilder.append("MATCH ");
 			if (f instanceof IdentifiedFilter) {
 				if (!modifier.equals(FilterStatus.EXTENSION_PRINTED)) {
 					whereBuilder
@@ -67,46 +74,49 @@ public class Cypher implements Language {
 					map.setModifier(f, FilterStatus.EXTENSION_PRINTED);
 
 					if (!modifier.equals(FilterStatus.PRINTED)) {
-						matchBuilder.append("MATCH (" + code + ")\n");
+						matchBuilder.append('(' + code + ')');
 						map.setModifier(f, FilterStatus.PRINTED);
 					}
 				}
 
 			} else if (f instanceof FNode) {
-				if (!modifier.equals(FilterStatus.PRINTED)) {
-					matchBuilder.append("MATCH " + filterToString(map, f, true, parser) + '\n');
-				}
+				if (!modifier.equals(FilterStatus.PRINTED))
+					matchBuilder.append(filterToString(map, f, true, parser));
 
-			} else if (f instanceof FRelation) {
-				FRelation rel = (FRelation) f;
-				matchBuilder.append("MATCH ");
-				StringBuilder matchLine = new StringBuilder(filterToString(map, rel.getStart(), true, parser));
-
-				switch (rel.getDirection()) {
-				case INCOMING:
-					matchLine.append("<-");
-					break;
-				case OUTGOING:
-				case BIDIRECTIONAL:
-					matchLine.append('-');
-				}
-
-				matchLine.append(filterToString(map, rel, false, parser));
-
-				switch (rel.getDirection()) {
-				case OUTGOING:
-					matchLine.append("->");
-					break;
-				case INCOMING:
-				case BIDIRECTIONAL:
-					matchLine.append('-');
-				}
-
-				matchLine.append(filterToString(map, rel.getTarget(), true, parser));
-				matchBuilder.append(matchLine.toString() + '\n');
-			}
+			} else if (f instanceof FRelation)
+				matchBuilder.append(translateRelation(map, parser, (FRelation) f).toString());
+			else
+				matchBuilder.append("()");
+			matchBuilder.append('\n');
 		});
 		return matchBuilder.append(whereBuilder);
+	}
+
+	private StringBuilder translateRelation(ModifiableMap<Filter, String, FilterStatus> map, Parser parser,
+			FRelation rel) {
+		StringBuilder matchLine = new StringBuilder(filterToString(map, rel.getStart(), true, parser));
+
+		switch (rel.getDirection()) {
+		case INCOMING:
+			matchLine.append("<-");
+			break;
+		case OUTGOING:
+		case BIDIRECTIONAL:
+			matchLine.append('-');
+		}
+
+		matchLine.append(filterToString(map, rel, false, parser));
+
+		switch (rel.getDirection()) {
+		case OUTGOING:
+			matchLine.append("->");
+			break;
+		case INCOMING:
+		case BIDIRECTIONAL:
+			matchLine.append('-');
+		}
+
+		return matchLine.append(filterToString(map, rel.getTarget(), true, parser));
 	}
 
 	private void parse(ModifiableMap<Filter, String, FilterStatus> map, Filter filter, StringVariableGenerator gen)
@@ -137,17 +147,30 @@ public class Cypher implements Language {
 			Parser parser) {
 		StringBuilder builder = new StringBuilder(map.get(filter));
 
-		if (!map.getModifier(filter).equals(FilterStatus.PRINTED) && filter instanceof ParamFilter) {
-			ParamFilter param = (ParamFilter) filter;
-			for (String label : param.getLabels())
-				builder.append(':' + label.replace(' ', '_'));
-
-			if (!param.getParams().isEmpty())
+		if (!map.getModifier(filter).equals(FilterStatus.PRINTED)) {
+			// PRINT LABELS
+			if (filter instanceof LabelHolder) {
+				LabelHolder holder = (LabelHolder) filter;
+				for (String label : holder.getLabels())
+					builder.append(':' + label.replace(' ', '_'));
+			}
+			// PRINT DATA
+			if (filter instanceof DataHolder) {
+				DataHolder holder = (DataHolder) filter;
 				try {
-					builder.append(' ' + parser.serialize(param));
+					builder.append(' ' + parser.serialize(holder.getData()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			} else if (filter instanceof ParamHolder) {
+				ParamHolder holder = (ParamHolder) filter;
+				if (!holder.getParams().isEmpty())
+					try {
+						builder.append(' ' + parser.serialize(holder.getParams()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+			}
 
 			// disable future param parsing
 			map.setModifier(filter, FilterStatus.PRINTED);
