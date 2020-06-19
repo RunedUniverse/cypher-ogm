@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class Address {
+public class Address extends AEntity {
 	String street;
 	Integer number;
 }

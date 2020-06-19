@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 public @interface Relationship {
 	String label() default "";
+	Direction direction() default Direction.OUTGOING;
 }

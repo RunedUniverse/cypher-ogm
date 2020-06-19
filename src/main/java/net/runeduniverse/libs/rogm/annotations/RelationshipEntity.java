@@ -10,5 +10,6 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface RelationshipEntity {
 	String label() default "";
+	Direction direction() default Direction.OUTGOING;
 	InterpretationMode mode() default InterpretationMode.IMPLICIT;
 }

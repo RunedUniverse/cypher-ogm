@@ -1,13 +1,7 @@
-package net.runeduniverse.libs.rogm;
-
-import org.junit.Test;
-
-import net.runeduniverse.libs.rogm.data.AnnotationProcessor;
-import net.runeduniverse.libs.rogm.model.AnsaStudent;
-import net.runeduniverse.libs.rogm.model.Student;
+package net.runeduniverse.libs.rogm.data;
 
 public class AnnotationProcessorTests {
-
+/*
 	@Test
 	public void classParsing() {
 		AnnotationProcessor ap = new AnnotationProcessor();
@@ -19,5 +13,5 @@ public class AnnotationProcessorTests {
 		ap.analyze(astudent);
 	}
 	
-	
+	*/
 }

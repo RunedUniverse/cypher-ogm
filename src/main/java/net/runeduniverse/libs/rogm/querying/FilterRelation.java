@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.querying;
 
 import lombok.Getter;
+import net.runeduniverse.libs.rogm.annotations.Direction;
 
 @Getter
 public class FilterRelation extends AParamFilter<FilterRelation> implements FRelation {

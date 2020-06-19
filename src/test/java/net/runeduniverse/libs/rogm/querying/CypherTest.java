@@ -8,10 +8,10 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.lang.Cypher;
 import net.runeduniverse.libs.rogm.parser.JSONParser;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.querying.FRelation.Direction;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
 import net.runeduniverse.libs.rogm.querying.IDFilter;
@@ -77,29 +77,35 @@ public class CypherTest {
 		cypher.buildQuery(new IDFilter<Long>(54l), parser);
 	}
 	
+	// MATCHES
 	@Test
 	public void matchSchool() throws Exception {
 		System.out.println("[SCHOOL]\n" + cypher.buildQuery(school, parser) + '\n');
 	}
-
 	@Test
 	public void matchStudent() throws Exception {
 		System.out.println("[STUDENT]\n" + cypher.buildQuery(student, parser) + '\n');
 	}
-
 	@Test
 	public void matchFriends() throws Exception {
 		System.out.println("[FRIENDS]\n" + cypher.buildQuery(friends, parser) + '\n');
 	}
-
 	@Test
 	public void matchAnyRelationToSchool() throws Exception {
 		System.out.println("[ANY REL]\n" + cypher.buildQuery(anyRelationToSchool, parser) + '\n');
 	}
-
 	@Test
 	public void matchCity() throws Exception {
 		System.out.println("[CITY]\n" + cypher.buildQuery(city, parser) + '\n');
 	}
 
+	// CREATE
+	// no id defined => merge
+	// id defined => create/merge
+	@Test
+	public void createArtist() throws Exception {
+		cypher.buildInsert();
+	}
+	
+	// UPDATE
 }

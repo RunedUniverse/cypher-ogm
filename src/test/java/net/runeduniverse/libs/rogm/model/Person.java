@@ -1,13 +1,28 @@
 package net.runeduniverse.libs.rogm.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@AllArgsConstructor
-@Data
 @NoArgsConstructor
-public class Person {
-	String firstName;
-	String lastName;
+@Getter
+@Setter
+@ToString
+public class Person extends AEntity {
+
+	private String firstName;
+	private String lastName;
+	private boolean fictional;
+	
+	public Person(String firstName, String lastName) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	public Person(String firstName, String lastName, boolean fictional) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.fictional = fictional;
+	}
 }

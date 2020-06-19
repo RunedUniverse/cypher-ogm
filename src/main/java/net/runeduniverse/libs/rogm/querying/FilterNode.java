@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
-import net.runeduniverse.libs.rogm.querying.FRelation.Direction;
+import net.runeduniverse.libs.rogm.annotations.Direction;
 
 public class FilterNode extends AParamFilter<FilterNode> implements FNode {
 	

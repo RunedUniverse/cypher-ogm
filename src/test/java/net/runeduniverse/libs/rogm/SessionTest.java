@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import java.util.Collection;
 import org.junit.Test;
 
-import net.runeduniverse.libs.rogm.model.ShadowPlayer;
+import net.runeduniverse.libs.rogm.model.Person;
 
 public class SessionTest {
 
@@ -25,11 +25,11 @@ public class SessionTest {
 		assertTrue(session.isConnected());
 		
 		
-		Collection<ShadowPlayer> players = session.loadAll(ShadowPlayer.class);
-		if(players.isEmpty())
-			System.out.println("NO PLAYERS FOUND");
-		for (ShadowPlayer player : players) {
-			System.out.println(player.toString());
+		Collection<Person> people = session.loadAll(Person.class);
+		if(people.isEmpty())
+			System.out.println("NO PEOPLE FOUND");
+		for (Person person : people) {
+			System.out.println(person.toString());
 		}
 	}
 	
