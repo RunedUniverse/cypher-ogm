@@ -27,7 +27,7 @@ public class Cypher implements Language {
 		StringVariableGenerator gen = new StringVariableGenerator();
 		parse(map, filter, gen);
 
-		StringBuilder qry = match(map, filter, parser).append("RETURN");
+		StringBuilder qry = select(map, parser, Phase.MATCH).append("RETURN");
 		List<String> rt = new ArrayList<>();
 
 		map.forEach((f, c) -> {
@@ -51,12 +51,18 @@ public class Cypher implements Language {
 	}
 
 	@Override
-	public String buildUpdate() throws Exception {
+	public String buildUpdate(IdentifiedFilter<Long> idnode, Parser parser) throws Exception {
+		ModifiableMap<Filter, String, FilterStatus> map = new ModifiableHashMap<>();
+		StringVariableGenerator gen = new StringVariableGenerator();
+		parse(map, idnode, gen);
+
+		StringBuilder qry = select(map, parser, Phase.MATCH);
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private StringBuilder match(ModifiableMap<Filter, String, FilterStatus> map, Filter filter, Parser parser)
+	private StringBuilder select(ModifiableMap<Filter, String, FilterStatus> map, Parser parser, Phase phase)
 			throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
 		StringBuilder whereBuilder = new StringBuilder();
@@ -66,8 +72,8 @@ public class Cypher implements Language {
 			if (f == null || modifier.equals(FilterStatus.PRINTED))
 				return;
 
-			matchBuilder.append("MATCH ");
-			if (f instanceof IdentifiedFilter) {
+			matchBuilder.append(phase.prefix);
+			if (phase != Phase.CREATE && f instanceof IdentifiedFilter) {
 				if (!modifier.equals(FilterStatus.EXTENSION_PRINTED)) {
 					whereBuilder
 							.append("WHERE id(" + code + ")=" + ((IdentifiedFilter<?>) f).getId().toString() + "\n");
@@ -198,5 +204,12 @@ public class Cypher implements Language {
 				return this.status >= ((FilterStatus) obj).getStatus();
 			return super.equals(obj);
 		}
+	}
+
+	@AllArgsConstructor
+	protected static enum Phase {
+		MATCH("MATCH "), CREATE("CREATE "), MERGE("MERGE ");
+
+		String prefix;
 	}
 }

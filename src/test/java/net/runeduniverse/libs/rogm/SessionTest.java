@@ -33,6 +33,9 @@ public class SessionTest {
 		}
 		
 		
+		Person shawn = session.load(Person.class, 23L);
+		System.out.println(shawn.toString());
+		
 		
 		session.close();
 	}
