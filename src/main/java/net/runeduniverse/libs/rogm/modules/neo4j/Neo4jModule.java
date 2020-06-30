@@ -1,5 +1,6 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,28 +63,65 @@ public class Neo4jModule implements Module {
 			return true;
 		}
 
-		@Override
-		public Map<Long, String> query(String qry){
-			Map<Long, String> qryResults = new HashMap<>();
+		private List<Record> _query(String qry) {
 			try (Session session = driver.session()) {
-				for (Record record : session.readTransaction(new TransactionWork<List<Record>>() {
+				return session.readTransaction(new TransactionWork<List<Record>>() {
 
 					@Override
 					public List<Record> execute(Transaction tx) {
 						return tx.run(qry).list();
 					}
-				}))
-					qryResults.put(record.get(0).asLong(), this.parser.serialize(record.get(1).asMap()));
+				});
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			return new ArrayList<Record>();
+		}
+
+		@Override
+		public List<Map<String, Object>> query(String qry) {
+			List<Map<String, Object>> lst = new ArrayList<Map<String,Object>>();
+			for (Record record : _query(qry))
+				lst.add(record.asMap());
+			return lst;
+		}
+
+		@Override
+		public Map<Long, String> queryObject(String qry) {
+			Map<Long, String> qryResults = new HashMap<>();
+
+			try {
+				for (Record record : _query(qry))
+					for (String key : record.keys()) {
+						if (key.startsWith("id_"))
+							continue;
+						qryResults.put(record.get("id_" + key).asLong(), this.parser.serialize(record.get(key).asMap()));
+					}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			return qryResults;
 		}
 
 		@Override
-		public boolean update(String qry) {
-			// TODO Auto-generated method stub
-			return false;
+		public Long execute(String qry) {
+			// -1 -> nothing (Exception)
+			// -2 -> not found
+
+			try (Session session = driver.session()) {
+				return session.writeTransaction(new TransactionWork<Long>() {
+
+					@Override
+					public Long execute(Transaction tx) {
+						return tx.run(qry).next().get("id", -2L);
+					}
+				}).longValue();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return -1L;
 		}
 	}
 }

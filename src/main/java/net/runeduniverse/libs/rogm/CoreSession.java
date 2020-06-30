@@ -73,7 +73,7 @@ public final class CoreSession implements Session {
 			return null;
 		}
 
-		for (Entry<?, String> e : this.module.query(qry).entrySet()) {
+		for (Entry<?, String> e : this.module.queryObject(qry).entrySet()) {
 			// get only first entry
 			data = e.getValue();
 			break;
@@ -111,7 +111,7 @@ public final class CoreSession implements Session {
 			return null;
 		}
 
-		Map<ID, String> data = (Map<ID, String>) this.module.query(qry);
+		Map<ID, String> data = (Map<ID, String>) this.module.queryObject(qry);
 
 		for (Entry<ID, String> entry : data.entrySet())
 			try {

@@ -10,7 +10,7 @@ import net.runeduniverse.libs.rogm.model.Person;
 public class SessionTest {
 
 	@Test
-	public void buildSessionTest(){
+	public void buildSessionTest() throws Exception{
 		Configuration config = new Configuration(DatabaseType.Neo4j, "runeduniverse.net");
 		
 		config.setUser("neo4j");
@@ -31,6 +31,10 @@ public class SessionTest {
 		for (Person person : people) {
 			System.out.println(person.toString());
 		}
+		
+		
+		
+		session.close();
 	}
 	
 	@Test
