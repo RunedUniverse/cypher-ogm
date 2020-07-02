@@ -51,15 +51,28 @@ public class Cypher implements Language {
 	}
 
 	@Override
-	public String buildUpdate(IdentifiedFilter<Long> idnode, Parser parser) throws Exception {
+	public String buildUpdate(DataFilter node, Parser parser) throws Exception {
 		ModifiableMap<Filter, String, FilterStatus> map = new ModifiableHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
-		parse(map, idnode, gen);
+		parse(map, node, gen);
 
 		StringBuilder qry = select(map, parser, Phase.MATCH);
+		
+		List<String> st = new ArrayList<>();
+		List<String> rt = new ArrayList<>();
 
-		// TODO Auto-generated method stub
-		return null;
+		map.forEach((f, c) -> {
+			try {
+				DataFilter d = (DataFilter) f;
+				st.add(c + '=' + parser.serialize(d.getData()));
+				rt.add("id(" + c + ") as id_" + c);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+
+		// SET + RETURN
+		return qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ").append(String.join(", ", rt)).append(';').toString();
 	}
 
 	private StringBuilder select(ModifiableMap<Filter, String, FilterStatus> map, Parser parser, Phase phase)
@@ -161,14 +174,7 @@ public class Cypher implements Language {
 					builder.append(':' + label.replace(' ', '_'));
 			}
 			// PRINT DATA
-			if (filter instanceof DataHolder) {
-				DataHolder holder = (DataHolder) filter;
-				try {
-					builder.append(' ' + parser.serialize(holder.getData()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if (filter instanceof ParamHolder) {
+			if (filter instanceof ParamHolder) {
 				ParamHolder holder = (ParamHolder) filter;
 				if (!holder.getParams().isEmpty())
 					try {
@@ -176,6 +182,13 @@ public class Cypher implements Language {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+			} else if (filter instanceof DataHolder) {
+				DataHolder holder = (DataHolder) filter;
+				try {
+					builder.append(' ' + parser.serialize(holder.getData()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 			// disable future param parsing

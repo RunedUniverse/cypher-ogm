@@ -8,9 +8,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.lang.Language;
+import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.Filter;
@@ -51,14 +55,41 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void save(Object object) {
-		// TODO Auto-generated method stub
+		// TODO: save
+		Field idField = _findAnnotatedField(object.getClass(), Id.class);
+		try {
+			if (idField == null) {
+				// create
+			} else
+				this._update(idField, object);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
+	private void _update(Field idField, Object object) throws Exception {
+		DataFilter df = null;
+		//class java.lang.Long
+		if (Serializable.class.isAssignableFrom(idField.getType())) {
+			// IdentifiedFilter
+			df = new IdentifiedUpdateFilter((Serializable) idField.get(object), object);
+		} else {
+			// ParamFilter
+		}
+		String qry = this.lang.buildUpdate(df, this.parser);
+		System.out.println("UPDATE:\n"+qry);
+		// TODO: debug & finish
+		
+		
+		this.module.execute(qry);
+		
 	}
 
 	@Override
 	public void saveAll(Collection<Object> objects) {
-		// TODO Auto-generated method stub
-
+		objects.forEach(o -> {
+			this.save(o);
+		});
 	}
 
 	@Override
@@ -126,7 +157,6 @@ public final class CoreSession implements Session {
 	private <T, ID extends Serializable> T _merge(T obj, ID id) {
 
 		Field field = _findAnnotatedField(obj.getClass(), Id.class);
-		field.setAccessible(true);
 		if (field != null)
 			try {
 				field.set(obj, field.getType().cast(id));
@@ -140,9 +170,29 @@ public final class CoreSession implements Session {
 		if (clazz.isAssignableFrom(Object.class))
 			return null;
 		for (Field field : clazz.getDeclaredFields())
-			if (field.isAnnotationPresent(anno))
+			if (field.isAnnotationPresent(anno)) {
+				field.setAccessible(true);
 				return field;
+			}
 		return _findAnnotatedField(clazz.getSuperclass(), anno);
 	}
 
+	@Getter
+	@Setter
+	@ToString
+	protected class IdentifiedUpdateFilter extends IDFilter<Serializable> implements Language.DataFilter {
+		private Object data;
+
+		public IdentifiedUpdateFilter(Serializable id, Object data) {
+			super(id);
+			this.data = data;
+		}
+	}
+
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	protected class ParamUpdateFilter extends FilterNode implements Language.DataFilter {
+		private Object data;
+	}
 }
