@@ -1,7 +1,9 @@
 package net.runeduniverse.libs.rogm.lang;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,15 +17,16 @@ import net.runeduniverse.libs.rogm.querying.Filter;
 import net.runeduniverse.libs.rogm.querying.IdentifiedFilter;
 import net.runeduniverse.libs.rogm.querying.LabelHolder;
 import net.runeduniverse.libs.rogm.querying.ParamHolder;
-import net.runeduniverse.libs.rogm.util.ModifiableHashMap;
-import net.runeduniverse.libs.rogm.util.ModifiableMap;
+import net.runeduniverse.libs.rogm.util.DataHashMap;
+import net.runeduniverse.libs.rogm.util.DataMap;
+import net.runeduniverse.libs.rogm.util.FieldAccessor;
 import net.runeduniverse.libs.rogm.util.StringVariableGenerator;
 
 public class Cypher implements Language {
 
 	@Override
 	public String buildQuery(Filter filter, Parser parser) throws Exception {
-		ModifiableMap<Filter, String, FilterStatus> map = new ModifiableHashMap<>();
+		DataMap<Filter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		parse(map, filter, gen);
 
@@ -32,27 +35,27 @@ public class Cypher implements Language {
 
 		map.forEach((f, c) -> {
 			if (f instanceof AFilter<?> && ((AFilter<?>) f).isReturned())
-				rt.add((rt.isEmpty() ? " " : ", ") + "id(" + c + ") as id_" + c + ", " + c);
+				rt.add("id(" + c + ") as id_" + c + ", " + c);
 		});
 
 		if (rt.isEmpty()) {
 			String c = map.get(filter);
 			qry.append(" id(" + c + ") as id_" + c + ", " + c);
 		} else
-			qry.append(rt);
+			qry.append(String.join(", ", rt));
 
 		return qry.append(';').toString();
 	}
 
 	@Override
-	public String buildInsert() throws Exception {
+	public Mapper buildInsert() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String buildUpdate(DataFilter node, Parser parser) throws Exception {
-		ModifiableMap<Filter, String, FilterStatus> map = new ModifiableHashMap<>();
+	public Mapper buildUpdate(DataFilter node, Parser parser) throws Exception {
+		DataMap<Filter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		parse(map, node, gen);
 
@@ -72,10 +75,10 @@ public class Cypher implements Language {
 		});
 
 		// SET + RETURN
-		return qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ").append(String.join(", ", rt)).append(';').toString();
+		return new Mapper(qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ").append(String.join(", ", rt)).append(';').toString(), map);
 	}
 
-	private StringBuilder select(ModifiableMap<Filter, String, FilterStatus> map, Parser parser, Phase phase)
+	private StringBuilder select(DataMap<Filter, String, FilterStatus> map, Parser parser, Phase phase)
 			throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
 		StringBuilder whereBuilder = new StringBuilder();
@@ -90,11 +93,11 @@ public class Cypher implements Language {
 				if (!modifier.equals(FilterStatus.EXTENSION_PRINTED)) {
 					whereBuilder
 							.append("WHERE id(" + code + ")=" + ((IdentifiedFilter<?>) f).getId().toString() + "\n");
-					map.setModifier(f, FilterStatus.EXTENSION_PRINTED);
+					map.setData(f, FilterStatus.EXTENSION_PRINTED);
 
 					if (!modifier.equals(FilterStatus.PRINTED)) {
 						matchBuilder.append('(' + code + ')');
-						map.setModifier(f, FilterStatus.PRINTED);
+						map.setData(f, FilterStatus.PRINTED);
 					}
 				}
 
@@ -111,7 +114,7 @@ public class Cypher implements Language {
 		return matchBuilder.append(whereBuilder);
 	}
 
-	private StringBuilder translateRelation(ModifiableMap<Filter, String, FilterStatus> map, Parser parser,
+	private StringBuilder translateRelation(DataMap<Filter, String, FilterStatus> map, Parser parser,
 			FRelation rel) {
 		StringBuilder matchLine = new StringBuilder(filterToString(map, rel.getStart(), true, parser));
 
@@ -138,7 +141,7 @@ public class Cypher implements Language {
 		return matchLine.append(filterToString(map, rel.getTarget(), true, parser));
 	}
 
-	private void parse(ModifiableMap<Filter, String, FilterStatus> map, Filter filter, StringVariableGenerator gen)
+	private void parse(DataMap<Filter, String, FilterStatus> map, Filter filter, StringVariableGenerator gen)
 			throws Exception {
 		if (map.containsKey(filter))
 			return;
@@ -162,11 +165,11 @@ public class Cypher implements Language {
 			throw new Exception("Filter<" + filter.toString() + "> not supported");
 	}
 
-	private String filterToString(ModifiableMap<Filter, String, FilterStatus> map, Filter filter, boolean isNode,
+	private String filterToString(DataMap<Filter, String, FilterStatus> map, Filter filter, boolean isNode,
 			Parser parser) {
 		StringBuilder builder = new StringBuilder(map.get(filter));
 
-		if (!map.getModifier(filter).equals(FilterStatus.PRINTED)) {
+		if (!map.getData(filter).equals(FilterStatus.PRINTED)) {
 			// PRINT LABELS
 			if (filter instanceof LabelHolder) {
 				LabelHolder holder = (LabelHolder) filter;
@@ -192,7 +195,7 @@ public class Cypher implements Language {
 			}
 
 			// disable future param parsing
-			map.setModifier(filter, FilterStatus.PRINTED);
+			map.setData(filter, FilterStatus.PRINTED);
 		}
 
 		if (isNode)
@@ -224,5 +227,30 @@ public class Cypher implements Language {
 		MATCH("MATCH "), CREATE("CREATE "), MERGE("MERGE ");
 
 		String prefix;
+	}
+	
+	protected static class Mapper implements Language.Mapper{
+
+		private String qry;
+		private DataMap<Filter, String, FilterStatus> map;
+		
+		protected Mapper(String qry, DataMap<Filter, String, FilterStatus> map) {
+			this.qry = qry;
+			this.map = map;
+		}
+		
+		@Override
+		public String qry() {
+			return qry;
+		}
+
+		@Override
+		public <ID extends Serializable> void updateObjectIds(FieldAccessor accessor, Map<String, ID> ids) {
+			this.map.forEach((filter, code)->{
+				if(filter instanceof DataFilter)
+					accessor.setObjectId((DataFilter) filter, ids.get(code));
+			});
+		}
+		
 	}
 }

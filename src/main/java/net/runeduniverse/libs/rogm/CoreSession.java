@@ -6,8 +6,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +18,9 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.Filter;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.IDFilter;
+import net.runeduniverse.libs.rogm.util.DataMap;
+import net.runeduniverse.libs.rogm.util.DataMap.Value;
+import net.runeduniverse.libs.rogm.util.FieldAccessor;
 
 public final class CoreSession implements Session {
 
@@ -56,7 +57,7 @@ public final class CoreSession implements Session {
 	@Override
 	public void save(Object object) {
 		// TODO: save
-		Field idField = _findAnnotatedField(object.getClass(), Id.class);
+		Field idField = FIELD_ACCESSOR.findAnnotatedField(object.getClass(), Id.class);
 		try {
 			if (idField == null) {
 				// create
@@ -69,20 +70,20 @@ public final class CoreSession implements Session {
 
 	private void _update(Field idField, Object object) throws Exception {
 		DataFilter df = null;
-		//class java.lang.Long
+		// class java.lang.Long
 		if (Serializable.class.isAssignableFrom(idField.getType())) {
 			// IdentifiedFilter
 			df = new IdentifiedUpdateFilter((Serializable) idField.get(object), object);
 		} else {
 			// ParamFilter
 		}
-		String qry = this.lang.buildUpdate(df, this.parser);
-		System.out.println("UPDATE:\n"+qry);
+		
+		Language.Mapper mapper = this.lang.buildUpdate(df, this.parser);
+		System.out.println("UPDATE:\n" + mapper.qry());
 		// TODO: debug & finish
 		
-		
-		this.module.execute(qry);
-		
+		mapper.updateObjectIds(FIELD_ACCESSOR, this.module.execute(mapper.qry()));
+
 	}
 
 	@Override
@@ -104,14 +105,14 @@ public final class CoreSession implements Session {
 			return null;
 		}
 
-		for (Entry<?, String> e : this.module.queryObject(qry).entrySet()) {
+		for (Value<String, ?> e : this.module.queryObject(qry).valueSet()) {
 			// get only first entry
 			data = e.getValue();
 			break;
 		}
 
 		try {
-			return _merge(this.parser.deserialize(type, data), id);
+			return FIELD_ACCESSOR.setObjectId(this.parser.deserialize(type, data), id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -142,40 +143,50 @@ public final class CoreSession implements Session {
 			return null;
 		}
 
-		Map<ID, String> data = (Map<ID, String>) this.module.queryObject(qry);
+		DataMap<ID, String, String> data = (DataMap<ID, String, String>) this.module.queryObject(qry);
 
-		for (Entry<ID, String> entry : data.entrySet())
+		data.forEach((id, d, code) -> {
 			try {
-				results.add(_merge(this.parser.deserialize(type, entry.getValue()), entry.getKey()));
+				results.add(FIELD_ACCESSOR.setObjectId(this.parser.deserialize(type, d), id));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		});
+
+		/*
+		 * for (Entry<ID, String> entry : data.entrySet()) try {
+		 * results.add(_merge(this.parser.deserialize(type, entry.getValue()),
+		 * entry.getKey())); } catch (Exception e) { e.printStackTrace(); }
+		 */
 
 		return results;
 	}
 
-	private <T, ID extends Serializable> T _merge(T obj, ID id) {
+	private final static FieldAccessor FIELD_ACCESSOR = new FieldAccessor() {
+	
+		public <T extends Object, ID extends Serializable> T setObjectId(T obj, ID id) {
 
-		Field field = _findAnnotatedField(obj.getClass(), Id.class);
-		if (field != null)
-			try {
-				field.set(obj, field.getType().cast(id));
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		return obj;
-	}
-
-	private <ANNO extends Annotation> Field _findAnnotatedField(Class<?> clazz, Class<ANNO> anno) {
-		if (clazz.isAssignableFrom(Object.class))
-			return null;
-		for (Field field : clazz.getDeclaredFields())
-			if (field.isAnnotationPresent(anno)) {
-				field.setAccessible(true);
-				return field;
-			}
-		return _findAnnotatedField(clazz.getSuperclass(), anno);
-	}
+			Field field = findAnnotatedField(obj.getClass(), Id.class);
+			if (field != null)
+				try {
+					field.set(obj, field.getType().cast(id));
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			return obj;
+		}
+		
+		public <ANNO extends Annotation> Field findAnnotatedField(Class<?> clazz, Class<ANNO> anno) {
+			if (clazz.isAssignableFrom(Object.class))
+				return null;
+			for (Field field : clazz.getDeclaredFields())
+				if (field.isAnnotationPresent(anno)) {
+					field.setAccessible(true);
+					return field;
+				}
+			return findAnnotatedField(clazz.getSuperclass(), anno);
+		}
+	};
 
 	@Getter
 	@Setter

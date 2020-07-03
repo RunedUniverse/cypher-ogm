@@ -14,6 +14,8 @@ import org.neo4j.driver.TransactionWork;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.util.DataHashMap;
+import net.runeduniverse.libs.rogm.util.DataMap;
 
 public class Neo4jModule implements Module {
 
@@ -80,48 +82,49 @@ public class Neo4jModule implements Module {
 
 		@Override
 		public List<Map<String, Object>> query(String qry) {
-			List<Map<String, Object>> lst = new ArrayList<Map<String,Object>>();
+			List<Map<String, Object>> lst = new ArrayList<Map<String, Object>>();
 			for (Record record : _query(qry))
 				lst.add(record.asMap());
 			return lst;
 		}
 
 		@Override
-		public Map<Long, String> queryObject(String qry) {
-			Map<Long, String> qryResults = new HashMap<>();
+		public DataMap<Long, String, String> queryObject(String qry) {
+			DataMap<Long, String, String> qryResults = new DataHashMap<>();
 
 			try {
 				for (Record record : _query(qry))
 					for (String key : record.keys()) {
 						if (key.startsWith("id_"))
 							continue;
-						qryResults.put(record.get("id_" + key).asLong(), this.parser.serialize(record.get(key).asMap()));
+						qryResults.put(record.get("id_" + key).asLong(), this.parser.serialize(record.get(key).asMap()),
+								key);
 					}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			return qryResults;
 		}
 
 		@Override
-		public Long execute(String qry) {
-			// -1 -> nothing (Exception)
-			// -2 -> not found
+		public Map<String, Long> execute(String qry) {
+			// -1 -> not found
 
 			try (Session session = driver.session()) {
-				return session.writeTransaction(new TransactionWork<Long>() {
+				return session.writeTransaction(new TransactionWork<Map<String, Long>>() {
 
 					@Override
-					public Long execute(Transaction tx) {
-						return tx.run(qry).next().get("id", -2L);
+					public Map<String, Long> execute(Transaction tx) {
+						Map<String, Long> results = new HashMap<>();
+						Record record = tx.run(qry).next();
+						record.keys().forEach(key -> {
+							results.put(key, record.get(key, -1L));
+						});
+						return results;
 					}
-				}).longValue();
-			} catch (Exception e) {
-				e.printStackTrace();
+				});
 			}
-
-			return -1L;
 		}
 	}
 }

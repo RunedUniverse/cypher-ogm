@@ -34,8 +34,10 @@ public class SessionTest {
 	public void loadAllPeople() {
 		assertTrue("Session is NOT connected", session.isConnected());
 		Collection<Person> people = session.loadAll(Person.class);
-		if(people.isEmpty())
+		if(people.isEmpty()) {
 			System.out.println("NO PEOPLE FOUND");
+			return;
+		}
 		for (Person person : people) {
 			System.out.println(person.toString());
 		}
