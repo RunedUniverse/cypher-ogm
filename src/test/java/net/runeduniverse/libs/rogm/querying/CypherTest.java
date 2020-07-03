@@ -104,7 +104,7 @@ public class CypherTest {
 	// id defined => create/merge
 	@Test
 	public void createArtist() throws Exception {
-		cypher.buildInsert();
+		//cypher.buildInsert();
 	}
 	
 	// UPDATE

@@ -8,6 +8,7 @@ import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 import org.neo4j.driver.TransactionWork;
@@ -116,8 +117,12 @@ public class Neo4jModule implements Module {
 
 					@Override
 					public Map<String, Long> execute(Transaction tx) {
+
+						Result result = tx.run(qry);
+						if (!result.hasNext())
+							return new HashMap<>();
 						Map<String, Long> results = new HashMap<>();
-						Record record = tx.run(qry).next();
+						Record record = result.next();
 						record.keys().forEach(key -> {
 							results.put(key, record.get(key, -1L));
 						});

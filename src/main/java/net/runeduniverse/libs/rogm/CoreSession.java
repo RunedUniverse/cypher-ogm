@@ -59,13 +59,27 @@ public final class CoreSession implements Session {
 		// TODO: save
 		Field idField = FIELD_ACCESSOR.findAnnotatedField(object.getClass(), Id.class);
 		try {
-			if (idField == null) {
-				// create
+			if (idField == null || idField.get(object)==null) {
+				this._create(object);
 			} else
 				this._update(idField, object);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void _create(Object object) throws Exception{
+		
+		ParamUpdateFilter createData = new ParamUpdateFilter(object);
+		
+		// TODO retrieve all labels from type
+		createData.addLabel(object.getClass().getSimpleName());
+		
+		Language.Mapper mapper = this.lang.buildInsert(createData, this.parser);
+		System.out.println(mapper.qry());
+		mapper.updateObjectIds(FIELD_ACCESSOR, this.module.execute(mapper.qry()));
+		System.out.println("CREATED");
+		
 	}
 
 	private void _update(Field idField, Object object) throws Exception {
@@ -76,6 +90,7 @@ public final class CoreSession implements Session {
 			df = new IdentifiedUpdateFilter((Serializable) idField.get(object), object);
 		} else {
 			// ParamFilter
+			df = new ParamUpdateFilter(object);
 		}
 		
 		Language.Mapper mapper = this.lang.buildUpdate(df, this.parser);
@@ -165,7 +180,7 @@ public final class CoreSession implements Session {
 	private final static FieldAccessor FIELD_ACCESSOR = new FieldAccessor() {
 	
 		public <T extends Object, ID extends Serializable> T setObjectId(T obj, ID id) {
-
+			// no @Id field -> skip
 			Field field = findAnnotatedField(obj.getClass(), Id.class);
 			if (field != null)
 				try {

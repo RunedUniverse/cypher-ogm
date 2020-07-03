@@ -48,9 +48,32 @@ public class Cypher implements Language {
 	}
 
 	@Override
-	public Mapper buildInsert() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public Mapper buildInsert(DataFilter node, Parser parser) throws Exception {
+		// create (a:Person:Artist:Actor)
+		// set a = {firstName: "Troy", lastName:"Baker"}
+		// return id(a) as id_a;
+		
+		DataMap<Filter, String, FilterStatus> map = new DataHashMap<>();
+		StringVariableGenerator gen = new StringVariableGenerator();
+		parse(map, node, gen);
+
+		StringBuilder qry = select(map, parser, Phase.CREATE);
+		
+		List<String> st = new ArrayList<>();
+		List<String> rt = new ArrayList<>();
+
+		map.forEach((f, c) -> {
+			try {
+				DataFilter d = (DataFilter) f;
+				st.add(c + '=' + parser.serialize(d.getData()));
+				rt.add("id(" + c + ") as id_" + c);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+
+		// SET + RETURN
+		return new Mapper(qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ").append(String.join(", ", rt)).append(';').toString(), map);
 	}
 
 	@Override
