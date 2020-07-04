@@ -46,10 +46,21 @@ public class SessionTest {
 	@Test
 	public void updatePerson() {
 		assertTrue("Session is NOT connected", session.isConnected());
-		Person shawn = session.load(Person.class, 23L);
+		Person shawn = session.load(Person.class, 40L);
 		System.out.println(shawn.toString());
+		shawn.setFirstName("Shawn");
+		shawn.setLastName("James");
 		shawn.setFictional(false);
 		session.save(shawn);
+		System.out.println(shawn.toString());
+	}
+	
+	@Test
+	public void createPerson() {
+		Person james = new Person("James", "North", true);
+		System.out.println(james.toString());
+		session.save(james);
+		System.out.println(james.toString());
 	}
 	
 	@After

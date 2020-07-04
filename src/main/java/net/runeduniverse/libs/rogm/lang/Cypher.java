@@ -271,7 +271,7 @@ public class Cypher implements Language {
 		public <ID extends Serializable> void updateObjectIds(FieldAccessor accessor, Map<String, ID> ids) {
 			this.map.forEach((filter, code)->{
 				if(filter instanceof DataFilter)
-					accessor.setObjectId((DataFilter) filter, ids.get(code));
+					accessor.setObjectId(((DataFilter) filter).getData(), ids.get("id_"+code));
 			});
 		}
 		
