@@ -3,10 +3,10 @@ package net.runeduniverse.libs.rogm.lang;
 import java.io.Serializable;
 import java.util.Map;
 
-import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.DataHolder;
 import net.runeduniverse.libs.rogm.querying.Filter;
+import net.runeduniverse.libs.rogm.util.Buffer;
 import net.runeduniverse.libs.rogm.util.FieldAccessor;
 
 public interface Language {
@@ -22,6 +22,6 @@ public interface Language {
 	public interface Mapper {
 		String qry();
 
-		<ID extends Serializable> void updateObjectIds(FieldAccessor accessor, Map<String, ID> ids);
+		<ID extends Serializable> void updateObjectIds(FieldAccessor accessor, Buffer nodeBuffer, Map<String, ID> ids);
 	}
 }

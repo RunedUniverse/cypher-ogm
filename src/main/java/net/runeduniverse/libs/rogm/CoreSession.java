@@ -19,6 +19,7 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.Filter;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.IDFilter;
+import net.runeduniverse.libs.rogm.util.Buffer;
 import net.runeduniverse.libs.rogm.util.DataMap;
 import net.runeduniverse.libs.rogm.util.DataMap.Value;
 import net.runeduniverse.libs.rogm.util.FieldAccessor;
@@ -29,6 +30,9 @@ public final class CoreSession implements Session {
 	private Language lang;
 	private Parser parser;
 	private Module.Instance<?> module;
+
+	private Buffer nodeBuffer = new Buffer();
+	private Buffer relationBuffer = new Buffer();
 
 	protected CoreSession(Configuration cnf) {
 		this.dbType = cnf.getDbType();
@@ -57,10 +61,9 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void save(Object object) {
-		// TODO: save
 		Field idField = FIELD_ACCESSOR.findAnnotatedField(object.getClass(), Id.class);
 		try {
-			if (idField == null || idField.get(object)==null) {
+			if (idField == null || idField.get(object) == null) {
 				this._create(object);
 			} else
 				this._update(idField, object);
@@ -68,19 +71,19 @@ public final class CoreSession implements Session {
 			e.printStackTrace();
 		}
 	}
-	
-	private void _create(Object object) throws Exception{
-		
+
+	private void _create(Object object) throws Exception {
+
 		ParamUpdateFilter createData = new ParamUpdateFilter(object);
-		
+
 		// TODO retrieve all labels from type
 		createData.addLabel(object.getClass().getSimpleName());
-		
+
 		Language.Mapper mapper = this.lang.buildInsert(createData, this.parser);
 		System.out.println(mapper.qry());
-		mapper.updateObjectIds(FIELD_ACCESSOR, this.module.execute(mapper.qry()));
+		mapper.updateObjectIds(FIELD_ACCESSOR, this.nodeBuffer, this.module.execute(mapper.qry()));
 		System.out.println("CREATED");
-		
+
 	}
 
 	private void _update(Field idField, Object object) throws Exception {
@@ -93,12 +96,9 @@ public final class CoreSession implements Session {
 			// ParamFilter
 			df = new ParamUpdateFilter(object);
 		}
-		
+
 		Language.Mapper mapper = this.lang.buildUpdate(df, this.parser);
-		System.out.println("UPDATE:\n" + mapper.qry());
-		// TODO: debug & finish
-		
-		mapper.updateObjectIds(FIELD_ACCESSOR, this.module.execute(mapper.qry()));
+		mapper.updateObjectIds(FIELD_ACCESSOR, this.nodeBuffer, this.module.execute(mapper.qry()));
 
 	}
 
@@ -111,6 +111,10 @@ public final class CoreSession implements Session {
 
 	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
+		T o = this.nodeBuffer.load(id, type);
+		if (o != null)
+			return o;
+
 		String qry = null;
 		String data = null;
 
@@ -128,7 +132,7 @@ public final class CoreSession implements Session {
 		}
 
 		try {
-			return FIELD_ACCESSOR.setObjectId(this.parser.deserialize(type, data), id);
+			return this.nodeBuffer.acquire(id, type, FIELD_ACCESSOR.setObjectId(this.parser.deserialize(type, data), id));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -142,22 +146,17 @@ public final class CoreSession implements Session {
 		// TODO retrieve all labels from type
 		// Stop when
 		/*
-		 * Super is Abstract
-		 * ... is Object
-		 * ... is Interface
-		 * */
+		 * Super is Abstract ... is Object ... is Interface
+		 */
 		HelperMethodForMethodAbove(type, labels);
-		labels.add(type.getSimpleName());
 		return loadAll(type, new FilterNode().addLabels(labels));
 	}
-	
+
 	private <T> void HelperMethodForMethodAbove(Class<T> type, List<String> labels) {
 		labels.add(type.getSimpleName());
-		if(Modifier.isAbstract(type.getSuperclass().getModifiers())||type.getSuperclass()==Object.class) {
+		if (Modifier.isAbstract(type.getSuperclass().getModifiers()) || type.getSuperclass() == Object.class)
 			return;
-		}else {
-			HelperMethodForMethodAbove(type.getSuperclass(), labels);
-		}
+		HelperMethodForMethodAbove(type.getSuperclass(), labels);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -177,23 +176,17 @@ public final class CoreSession implements Session {
 
 		data.forEach((id, d, code) -> {
 			try {
-				results.add(FIELD_ACCESSOR.setObjectId(this.parser.deserialize(type, d), id));
+				results.add(this.nodeBuffer.acquire(id, type, FIELD_ACCESSOR.setObjectId(this.parser.deserialize(type, d), id)));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});
 
-		/*
-		 * for (Entry<ID, String> entry : data.entrySet()) try {
-		 * results.add(_merge(this.parser.deserialize(type, entry.getValue()),
-		 * entry.getKey())); } catch (Exception e) { e.printStackTrace(); }
-		 */
-
 		return results;
 	}
 
 	private final static FieldAccessor FIELD_ACCESSOR = new FieldAccessor() {
-	
+
 		public <T extends Object, ID extends Serializable> T setObjectId(T obj, ID id) {
 			// no @Id field -> skip
 			Field field = findAnnotatedField(obj.getClass(), Id.class);
@@ -203,9 +196,10 @@ public final class CoreSession implements Session {
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
+			
 			return obj;
 		}
-		
+
 		public <ANNO extends Annotation> Field findAnnotatedField(Class<?> clazz, Class<ANNO> anno) {
 			if (clazz.isAssignableFrom(Object.class))
 				return null;

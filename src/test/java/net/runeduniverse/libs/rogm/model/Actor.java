@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
+import net.runeduniverse.libs.rogm.model.relations.ActorPlaysPersonRelation;
 
 @Getter
 @Setter
@@ -14,6 +15,6 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 public class Actor extends Person {
 	
 	@Relationship(label = "PLAYS")
-	private Set<Person> plays = new HashSet<>();
+	private Set<ActorPlaysPersonRelation> plays = new HashSet<>();
 
 }

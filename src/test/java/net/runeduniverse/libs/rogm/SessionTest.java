@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Person;
 
 public class SessionTest {
@@ -18,23 +19,23 @@ public class SessionTest {
 		config.setPassword("Qwerty!");
 		
 	}
-	
+
 	private Session session = null;
-	
+
 	@Before
 	public void prepare() {
 		assertEquals("bolt", config.getProtocol());
 		assertEquals(7687, config.getPort());
 		assertEquals("runeduniverse.net", config.getUri());
-		
+
 		this.session = Session.create(config);
 	}
-	
+
 	@Test
 	public void loadAllPeople() {
 		assertTrue("Session is NOT connected", session.isConnected());
 		Collection<Person> people = session.loadAll(Person.class);
-		if(people.isEmpty()) {
+		if (people.isEmpty()) {
 			System.out.println("NO PEOPLE FOUND");
 			return;
 		}
@@ -42,7 +43,7 @@ public class SessionTest {
 			System.out.println(person.toString());
 		}
 	}
-	
+
 	@Test
 	public void updatePerson() {
 		assertTrue("Session is NOT connected", session.isConnected());
@@ -54,7 +55,7 @@ public class SessionTest {
 		session.save(shawn);
 		System.out.println(shawn.toString());
 	}
-	
+
 	@Test
 	public void createPerson() {
 		Person james = new Person("James", "North", true);
@@ -62,7 +63,15 @@ public class SessionTest {
 		session.save(james);
 		System.out.println(james.toString());
 	}
-	
+
+	@Test
+	public void bufferTest() {
+		Artist ashley0 = session.load(Artist.class, 41L);
+		Person ashley1 = session.load(Person.class, 41L);
+		assertEquals(ashley1, ashley0);
+		assertTrue(ashley0 == ashley1);
+	}
+
 	@After
 	public void close() throws Exception {
 		session.close();
