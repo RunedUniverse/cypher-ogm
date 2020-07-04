@@ -17,6 +17,7 @@ import net.runeduniverse.libs.rogm.querying.Filter;
 import net.runeduniverse.libs.rogm.querying.IdentifiedFilter;
 import net.runeduniverse.libs.rogm.querying.LabelHolder;
 import net.runeduniverse.libs.rogm.querying.ParamHolder;
+import net.runeduniverse.libs.rogm.util.Buffer;
 import net.runeduniverse.libs.rogm.util.DataHashMap;
 import net.runeduniverse.libs.rogm.util.DataMap;
 import net.runeduniverse.libs.rogm.util.FieldAccessor;
@@ -52,13 +53,13 @@ public class Cypher implements Language {
 		// create (a:Person:Artist:Actor)
 		// set a = {firstName: "Troy", lastName:"Baker"}
 		// return id(a) as id_a;
-		
+
 		DataMap<Filter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		parse(map, node, gen);
 
 		StringBuilder qry = select(map, parser, Phase.CREATE);
-		
+
 		List<String> st = new ArrayList<>();
 		List<String> rt = new ArrayList<>();
 
@@ -73,7 +74,8 @@ public class Cypher implements Language {
 		});
 
 		// SET + RETURN
-		return new Mapper(qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ").append(String.join(", ", rt)).append(';').toString(), map);
+		return new Mapper(qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ")
+				.append(String.join(", ", rt)).append(';').toString(), map);
 	}
 
 	@Override
@@ -83,7 +85,7 @@ public class Cypher implements Language {
 		parse(map, node, gen);
 
 		StringBuilder qry = select(map, parser, Phase.MATCH);
-		
+
 		List<String> st = new ArrayList<>();
 		List<String> rt = new ArrayList<>();
 
@@ -98,7 +100,8 @@ public class Cypher implements Language {
 		});
 
 		// SET + RETURN
-		return new Mapper(qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ").append(String.join(", ", rt)).append(';').toString(), map);
+		return new Mapper(qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ")
+				.append(String.join(", ", rt)).append(';').toString(), map);
 	}
 
 	private StringBuilder select(DataMap<Filter, String, FilterStatus> map, Parser parser, Phase phase)
@@ -137,8 +140,7 @@ public class Cypher implements Language {
 		return matchBuilder.append(whereBuilder);
 	}
 
-	private StringBuilder translateRelation(DataMap<Filter, String, FilterStatus> map, Parser parser,
-			FRelation rel) {
+	private StringBuilder translateRelation(DataMap<Filter, String, FilterStatus> map, Parser parser, FRelation rel) {
 		StringBuilder matchLine = new StringBuilder(filterToString(map, rel.getStart(), true, parser));
 
 		switch (rel.getDirection()) {
@@ -251,29 +253,33 @@ public class Cypher implements Language {
 
 		String prefix;
 	}
-	
-	protected static class Mapper implements Language.Mapper{
+
+	protected static class Mapper implements Language.Mapper {
 
 		private String qry;
 		private DataMap<Filter, String, FilterStatus> map;
-		
+
 		protected Mapper(String qry, DataMap<Filter, String, FilterStatus> map) {
 			this.qry = qry;
 			this.map = map;
 		}
-		
+
 		@Override
 		public String qry() {
 			return qry;
 		}
 
 		@Override
-		public <ID extends Serializable> void updateObjectIds(FieldAccessor accessor, Map<String, ID> ids) {
-			this.map.forEach((filter, code)->{
-				if(filter instanceof DataFilter)
-					accessor.setObjectId(((DataFilter) filter).getData(), ids.get("id_"+code));
+		public <ID extends Serializable> void updateObjectIds(FieldAccessor accessor, Buffer nodeBuffer, Map<String, ID> ids) {
+			this.map.forEach((filter, code) -> {
+				if (filter instanceof DataFilter) {
+					Object data = ((DataFilter) filter).getData();
+					Serializable id = ids.get("id_" + code);
+					nodeBuffer.save(id, data);
+					accessor.setObjectId(data, id);
+				}
 			});
 		}
-		
+
 	}
 }
