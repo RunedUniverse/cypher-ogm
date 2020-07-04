@@ -146,17 +146,17 @@ public final class CoreSession implements Session {
 		 * ... is Object
 		 * ... is Interface
 		 * */
-		HelperMethodForMethodAbove(type, labels);
+		helperMethodForMethodAbove(type, labels);
 		labels.add(type.getSimpleName());
 		return loadAll(type, new FilterNode().addLabels(labels));
 	}
 	
-	private <T> void HelperMethodForMethodAbove(Class<T> type, List<String> labels) {
+	private <T> void helperMethodForMethodAbove(Class<T> type, List<String> labels) {
 		labels.add(type.getSimpleName());
 		if(Modifier.isAbstract(type.getSuperclass().getModifiers())||type.getSuperclass()==Object.class) {
 			return;
 		}else {
-			HelperMethodForMethodAbove(type.getSuperclass(), labels);
+			helperMethodForMethodAbove(type.getSuperclass(), labels);
 		}
 	}
 
