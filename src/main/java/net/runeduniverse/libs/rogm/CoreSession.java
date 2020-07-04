@@ -16,6 +16,7 @@ import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.querying.Filter;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.IDFilter;
@@ -30,6 +31,7 @@ public final class CoreSession implements Session {
 	private Language lang;
 	private Parser parser;
 	private Module.Instance<?> module;
+	private PatternStorage storage;
 
 	private Buffer nodeBuffer = new Buffer();
 	private Buffer relationBuffer = new Buffer();
@@ -39,7 +41,8 @@ public final class CoreSession implements Session {
 		this.lang = this.dbType.getLang();
 		this.parser = this.dbType.getParser();
 		this.module = this.dbType.getModule().build(cnf);
-
+		this.storage = new PatternStorage(cnf.getPkgs());
+		
 		this.module.connect(cnf);
 	}
 

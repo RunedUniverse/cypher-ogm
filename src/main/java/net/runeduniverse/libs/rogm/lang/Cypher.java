@@ -50,10 +50,6 @@ public class Cypher implements Language {
 
 	@Override
 	public Mapper buildInsert(DataFilter node, Parser parser) throws Exception {
-		// create (a:Person:Artist:Actor)
-		// set a = {firstName: "Troy", lastName:"Baker"}
-		// return id(a) as id_a;
-
 		DataMap<Filter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		parse(map, node, gen);

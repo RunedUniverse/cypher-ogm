@@ -15,6 +15,9 @@ public class SessionTest {
 
 	static Configuration config = new Configuration(DatabaseType.Neo4j, "runeduniverse.net");
 	static {
+		config.addPackage("net.runeduniverse.libs.rogm.model");
+		config.addPackage("net.runeduniverse.libs.rogm.model.relations");
+		
 		config.setUser("neo4j");
 		config.setPassword("Qwerty!");
 		
