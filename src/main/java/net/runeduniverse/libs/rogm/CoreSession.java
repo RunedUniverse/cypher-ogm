@@ -3,6 +3,7 @@ package net.runeduniverse.libs.rogm;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -138,11 +139,25 @@ public final class CoreSession implements Session {
 	@Override
 	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type) {
 		List<String> labels = new ArrayList<>();
-
 		// TODO retrieve all labels from type
-
+		// Stop when
+		/*
+		 * Super is Abstract
+		 * ... is Object
+		 * ... is Interface
+		 * */
+		HelperMethodForMethodAbove(type, labels);
 		labels.add(type.getSimpleName());
 		return loadAll(type, new FilterNode().addLabels(labels));
+	}
+	
+	private <T> void HelperMethodForMethodAbove(Class<T> type, List<String> labels) {
+		labels.add(type.getSimpleName());
+		if(Modifier.isAbstract(type.getSuperclass().getModifiers())||type.getSuperclass()==Object.class) {
+			return;
+		}else {
+			HelperMethodForMethodAbove(type.getSuperclass(), labels);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
