@@ -147,15 +147,15 @@ public final class CoreSession implements Session {
 	@Override
 	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type) {
 		List<String> labels = new ArrayList<>();
-		helperMethodForMethodAbove(type, labels);
+		getLabelsForClass(type, labels);
 		return loadAll(type, new FilterNode().addLabels(labels));
 	}
 
-	private <T> void helperMethodForMethodAbove(Class<T> type, List<String> labels) {
+	private <T> void getLabelsForClass(Class<T> type, List<String> labels) {
 		labels.add(type.getSimpleName());
 		if (Modifier.isAbstract(type.getSuperclass().getModifiers()) || type.getSuperclass() == Object.class)
 			return;
-		helperMethodForMethodAbove(type.getSuperclass(), labels);
+		getLabelsForClass(type.getSuperclass(), labels);
 	}
 
 	@SuppressWarnings("unchecked")
