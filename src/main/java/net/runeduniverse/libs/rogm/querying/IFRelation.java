@@ -2,8 +2,8 @@ package net.runeduniverse.libs.rogm.querying;
 
 import net.runeduniverse.libs.rogm.annotations.Direction;
 
-public interface FRelation extends Filter, LabelHolder{
-	Filter getStart();
-	Filter getTarget();
+public interface IFRelation extends IFilter, ILabeled{
+	IFilter getStart();
+	IFilter getTarget();
 	Direction getDirection();
 }

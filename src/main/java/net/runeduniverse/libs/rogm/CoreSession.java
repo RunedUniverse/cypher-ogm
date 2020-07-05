@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,9 +16,10 @@ import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.PatternStorage;
-import net.runeduniverse.libs.rogm.querying.Filter;
+import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
-import net.runeduniverse.libs.rogm.querying.IDFilter;
+import net.runeduniverse.libs.rogm.querying.IDFilterNode;
+import net.runeduniverse.libs.rogm.querying.IDFilterRelation;
 import net.runeduniverse.libs.rogm.util.Buffer;
 import net.runeduniverse.libs.rogm.util.DataMap;
 import net.runeduniverse.libs.rogm.util.DataMap.Value;
@@ -42,7 +42,7 @@ public final class CoreSession implements Session {
 		this.parser = this.dbType.getParser();
 		this.module = this.dbType.getModule().build(cnf);
 		this.storage = new PatternStorage(cnf.getPkgs());
-		
+
 		this.module.connect(cnf);
 	}
 
@@ -77,7 +77,7 @@ public final class CoreSession implements Session {
 
 	private void _create(Object object) throws Exception {
 
-		ParamUpdateFilter createData = new ParamUpdateFilter(object);
+		ParamUpdateFilterNode createData = new ParamUpdateFilterNode(object);
 
 		// TODO retrieve all labels from type
 		createData.addLabel(object.getClass().getSimpleName());
@@ -92,12 +92,12 @@ public final class CoreSession implements Session {
 	private void _update(Field idField, Object object) throws Exception {
 		DataFilter df = null;
 		// class java.lang.Long
-		if (Serializable.class.isAssignableFrom(idField.getType())) {
-			// IdentifiedFilter
-			df = new IdentifiedUpdateFilter((Serializable) idField.get(object), object);
+		if (Number.class.isAssignableFrom(idField.getType())) {
+			// IIdentified
+			df = new IdentifiedUpdateFilterNode((Number) idField.get(object), object);
 		} else {
 			// ParamFilter
-			df = new ParamUpdateFilter(object);
+			df = new ParamUpdateFilterNode((Serializable) idField.get(object), object);
 		}
 
 		Language.Mapper mapper = this.lang.buildUpdate(df, this.parser);
@@ -122,7 +122,17 @@ public final class CoreSession implements Session {
 		String data = null;
 
 		try {
-			qry = this.lang.buildQuery(new IDFilter<ID>(id), this.parser);
+			switch (this.storage.getEntityType(type)) {
+			case NODE:
+				qry = this.lang.buildQuery(new IDFilterNode<ID>(id), this.parser);
+				break;
+			case RELATION:
+				qry = this.lang.buildQuery(new IDFilterRelation<ID>(id), this.parser);
+				break;
+
+			default:
+				throw new Exception("Unable to identify Entity");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -160,7 +170,7 @@ public final class CoreSession implements Session {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, Filter filter) {
+	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, IFilter filter) {
 		String qry = null;
 		Collection<T> results = new ArrayList<>();
 
@@ -215,10 +225,10 @@ public final class CoreSession implements Session {
 	@Getter
 	@Setter
 	@ToString
-	protected class IdentifiedUpdateFilter extends IDFilter<Serializable> implements Language.DataFilter {
+	protected class IdentifiedUpdateFilterNode extends IDFilterNode<Serializable> implements Language.DataFilter {
 		private Object data;
 
-		public IdentifiedUpdateFilter(Serializable id, Object data) {
+		public IdentifiedUpdateFilterNode(Serializable id, Object data) {
 			super(id);
 			this.data = data;
 		}
@@ -226,8 +236,15 @@ public final class CoreSession implements Session {
 
 	@Getter
 	@Setter
-	@AllArgsConstructor
-	protected class ParamUpdateFilter extends FilterNode implements Language.DataFilter {
+	protected class ParamUpdateFilterNode extends FilterNode implements Language.DataFilter {
 		private Object data;
+		
+		public ParamUpdateFilterNode(Object data) {
+			this.data = data;
+		}
+		public ParamUpdateFilterNode(Serializable id, Object data) {
+			this.data = data;
+			this.addParam("_id", id);
+		}
 	}
 }

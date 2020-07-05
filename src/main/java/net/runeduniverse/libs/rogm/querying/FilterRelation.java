@@ -4,10 +4,10 @@ import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 
 @Getter
-public class FilterRelation extends AParamFilter<FilterRelation> implements FRelation {
+public class FilterRelation extends AParamFilter<FilterRelation> implements IFRelation {
 
-	private Filter start = null;
-	private Filter target = null;
+	private IFilter start = null;
+	private IFilter target = null;
 	private Direction direction;
 
 	public FilterRelation() {
@@ -20,7 +20,7 @@ public class FilterRelation extends AParamFilter<FilterRelation> implements FRel
 		this.direction = direction;
 	}
 
-	public FilterRelation(FNode start, FNode target, Direction direction) {
+	public FilterRelation(IFNode start, IFNode target, Direction direction) {
 		super.setInstance(this);
 		this.start = start;
 		this.target = target;
@@ -32,22 +32,12 @@ public class FilterRelation extends AParamFilter<FilterRelation> implements FRel
 		return this;
 	}
 
-	public FilterRelation setStart(FNode node) {
+	public FilterRelation setStart(IFNode node) {
 		this.start = node;
 		return this;
 	}
 
-	public FilterRelation setTarget(FNode node) {
-		this.target = node;
-		return this;
-	}
-
-	public FilterRelation setStart(IdentifiedFilter<?> node) {
-		this.start = node;
-		return this;
-	}
-
-	public FilterRelation setTarget(IdentifiedFilter<?> node) {
+	public FilterRelation setTarget(IFNode node) {
 		this.target = node;
 		return this;
 	}

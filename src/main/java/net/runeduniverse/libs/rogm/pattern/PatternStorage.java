@@ -10,7 +10,7 @@ import org.reflections.scanners.TypeAnnotationsScanner;
 
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.libs.rogm.querying.Filter;
+import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class PatternStorage {
 
@@ -22,26 +22,33 @@ public class PatternStorage {
 				new SubTypesScanner(true));
 
 		reflections.getTypesAnnotatedWith(NodeEntity.class).forEach(c -> {
-			this.patterns.put(c, _parse(c));
+			this.patterns.put(c, _parse(c, EntityType.NODE));
 		});
 		reflections.getTypesAnnotatedWith(RelationshipEntity.class).forEach(c -> {
-			this.patterns.put(c, _parse(c));
+			this.patterns.put(c, _parse(c, EntityType.RELATION));
 		});
 	}
 
-	public Filter createFilter(Class<?> type, int depth) {
+	public EntityType getEntityType(Class<?> clazz) {
+		if (!this.patterns.containsKey(clazz))
+			return EntityType.UNKNOWN;
+		return this.patterns.get(clazz).getEntityType();
+	}
+
+	public IFilter createFilter(Class<?> type, int depth) {
 		if (!this.patterns.containsKey(type))
 			return null;
 		return this.patterns.get(type).createFilter(depth);
 	}
 
-	private IPattern _parse(Class<?> type) {
-		if (type.isAnnotationPresent(NodeEntity.class))
-			return new NodePattern();
-
-		if (type.isAnnotationPresent(RelationshipEntity.class))
-			return new RelationPattern();
-
-		return null;
+	private IPattern _parse(Class<?> type, EntityType entityType) {
+		switch (entityType) {
+		case NODE:
+			return new NodePattern(type);
+		case RELATION:
+			return new RelationPattern(type);
+		default:
+			return null;
+		}
 	}
 }

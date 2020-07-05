@@ -14,7 +14,6 @@ import net.runeduniverse.libs.rogm.parser.JSONParser;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
-import net.runeduniverse.libs.rogm.querying.IDFilter;
 
 public class CypherTest {
 
@@ -26,7 +25,7 @@ public class CypherTest {
 	static Cypher cypher = new Cypher();
 	static Parser parser = new JSONParser();
 
-	static IDFilter<Integer> school;
+	static IDFilterNode<Integer> school;
 	static FilterNode student;
 	static FilterNode friends;
 	static FilterRelation anyRelationToSchool;
@@ -34,7 +33,7 @@ public class CypherTest {
 
 	@Before
 	public void prep() {
-		school = new IDFilter<>(10);
+		school = new IDFilterNode<>(10);
 
 		student = new FilterNode()
 					.addLabel("HTLStudent")
@@ -58,7 +57,7 @@ public class CypherTest {
 	public void wrongID() {
 		boolean error = false;
 		try {
-			cypher.buildQuery(new IDFilter<String>("defaultId"), parser);
+			cypher.buildQuery(new IDFilterNode<String>("defaultId"), parser);
 		} catch (Exception e) {
 			error = true;
 		}
@@ -66,15 +65,15 @@ public class CypherTest {
 	}
 	@Test
 	public void shortID() throws Exception {
-		cypher.buildQuery(new IDFilter<Short>((short) 3), parser);
+		cypher.buildQuery(new IDFilterNode<Short>((short) 3), parser);
 	}
 	@Test
 	public void integerID() throws Exception {
-		cypher.buildQuery(new IDFilter<Integer>(45), parser);
+		cypher.buildQuery(new IDFilterNode<Integer>(45), parser);
 	}
 	@Test
 	public void longID() throws Exception {
-		cypher.buildQuery(new IDFilter<Long>(54l), parser);
+		cypher.buildQuery(new IDFilterNode<Long>(54l), parser);
 	}
 	
 	// MATCHES

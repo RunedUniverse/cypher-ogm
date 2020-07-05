@@ -1,7 +1,8 @@
 package net.runeduniverse.libs.rogm.pattern;
 
-import net.runeduniverse.libs.rogm.querying.Filter;
+import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface IPattern {
-	public Filter createFilter(int depth);
+	public EntityType getEntityType();
+	public IFilter createFilter(int depth);
 }

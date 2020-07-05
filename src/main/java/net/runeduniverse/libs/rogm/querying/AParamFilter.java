@@ -6,7 +6,7 @@ import java.util.Set;
 
 import lombok.Getter;
 
-public abstract class AParamFilter<F extends Filter> extends AParamHolder<F> implements LabelHolder{
+public abstract class AParamFilter<F extends IFilter> extends AParamHolder<F> implements ILabeled{
 
 	@Getter
 	protected Set<String> labels = new HashSet<>();
