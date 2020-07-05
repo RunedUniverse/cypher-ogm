@@ -2,7 +2,7 @@ package net.runeduniverse.libs.rogm.querying;
 
 import lombok.Getter;
 
-public abstract class AFilter<F extends Filter> {
+public abstract class AFilter<F extends Filter> implements ReturnHolder {
 	
 	protected F instance = null;
 	@Getter
