@@ -9,10 +9,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.*;
 
@@ -27,11 +25,10 @@ import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.relations.ActorPlaysPersonRelation;
 import net.runeduniverse.libs.rogm.parser.JSONParser;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.querying.FNode;
-import net.runeduniverse.libs.rogm.querying.FRelation;
-import net.runeduniverse.libs.rogm.querying.Filter;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
+import net.runeduniverse.libs.rogm.querying.IFNode;
+import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class RelationshipTests {
 
@@ -59,12 +56,12 @@ public class RelationshipTests {
 		System.out.println(cypher.buildQuery(giveFilterNodeOrRelation(Actor.class), parser));
 	}
 
-	Map<Class<?>, Filter> classMap = new HashMap<Class<?>, Filter>();
+	Map<Class<?>, IFilter> classMap = new HashMap<Class<?>, IFilter>();
 
-	private Filter giveFilterNodeOrRelation(Class<?> clazz) throws Exception {
+	private IFilter giveFilterNodeOrRelation(Class<?> clazz) throws Exception {
 
-		System.out.println("ClassMapContent:"+classMap);
-		
+		System.out.println("ClassMapContent:" + classMap);
+
 		if (classMap.containsKey(clazz)) {
 			return classMap.get(clazz);
 		}
@@ -84,11 +81,13 @@ public class RelationshipTests {
 					Relationship r = ff.getAnnotation(Relationship.class);
 					String label = r.label().isEmpty() ? ff.getName() : r.label();
 					if (isOfTypeCollection(ffClazz)) {
-						/*System.out.println("TEST1:"+ff);
-						System.out.println("TEST2:"+ffClazz);
-						System.out.println("TEST3:"+ff.getGenericType());
-						System.out.println("TEST4:"+ff.getGenericType().getTypeName());
-						System.out.println("TEST5:"+((ParameterizedType) ff.getGenericType()).getRawType());*/
+						/*
+						 * System.out.println("TEST1:"+ff); System.out.println("TEST2:"+ffClazz);
+						 * System.out.println("TEST3:"+ff.getGenericType());
+						 * System.out.println("TEST4:"+ff.getGenericType().getTypeName());
+						 * System.out.println("TEST5:"+((ParameterizedType)
+						 * ff.getGenericType()).getRawType());
+						 */
 						ffClazz = getClassFromCollectionField(ff);
 					}
 					if (ffClazz.isAnnotationPresent(RelationshipEntity.class)) {
@@ -98,7 +97,7 @@ public class RelationshipTests {
 						fn.addRelation(fr);
 					} else {
 						FilterRelation fr = new FilterRelation(r.direction()).addLabel(label);
-						fn.addRelation(fr, (FNode) giveFilterNodeOrRelation(ffClazz));
+						fn.addRelation(fr, (IFNode) giveFilterNodeOrRelation(ffClazz));
 					}
 				}
 			}
@@ -122,10 +121,10 @@ public class RelationshipTests {
 						throw new Exception("A Collection inside RelationshipEntity is not allowed!!!");
 					if (field.isAnnotationPresent(StartNode.class)) {
 						startNode = true;
-						fr.setStart((FNode) giveFilterNodeOrRelation(fieldClass));
+						fr.setStart((IFNode) giveFilterNodeOrRelation(fieldClass));
 					} else if (field.isAnnotationPresent(EndNode.class)) {
 						endNode = true;
-						fr.setTarget((FNode) giveFilterNodeOrRelation(fieldClass));
+						fr.setTarget((IFNode) giveFilterNodeOrRelation(fieldClass));
 					}
 				}
 				if (!(startNode && endNode))
@@ -142,22 +141,23 @@ public class RelationshipTests {
 
 	private Class<?> getClassFromCollectionField(Field collectionClass) throws ClassNotFoundException {
 		ParameterizedType type = (ParameterizedType) collectionClass.getGenericType();
-		//System.out.println("TTEST1:"+type);
-		//System.out.println("TTEST2:"+Class.forName("net.runeduniverse.libs.rogm.model.Actor"));
+		// System.out.println("TTEST1:"+type);
+		// System.out.println("TTEST2:"+Class.forName("net.runeduniverse.libs.rogm.model.Actor"));
 		Type[] typeArgs = type.getActualTypeArguments();
-		//System.out.println("TTEST3:"+typeArgs);
-		/*for (Type type2 : typeArgs) {
-			System.out.println("TTEST4:"+type2);
-		}*/
-		//System.out.println("TTEST5:"+typeArgs[0]);
-		Type t = typeArgs[0];
-		//System.out.println("TTEST6:"+t);
-		Class<?> c = (Class<?>) t;
-		//System.out.println("TTEST7:"+c);
+		// System.out.println("TTEST3:"+typeArgs);
 		/*
-		ParameterizedType type = (ParameterizedType) collectionClass.getGenericType();
-		return (Class<?>) type.getActualTypeArguments()[0];
-		*/
+		 * for (Type type2 : typeArgs) { System.out.println("TTEST4:"+type2); }
+		 */
+		// System.out.println("TTEST5:"+typeArgs[0]);
+		Type t = typeArgs[0];
+		// System.out.println("TTEST6:"+t);
+		Class<?> c = (Class<?>) t;
+		// System.out.println("TTEST7:"+c);
+		/*
+		 * ParameterizedType type = (ParameterizedType)
+		 * collectionClass.getGenericType(); return (Class<?>)
+		 * type.getActualTypeArguments()[0];
+		 */
 		return c;
 	}
 
