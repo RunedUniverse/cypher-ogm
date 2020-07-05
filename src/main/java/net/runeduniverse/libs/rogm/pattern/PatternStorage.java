@@ -13,36 +13,34 @@ import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.querying.Filter;
 
 public class PatternStorage {
-	
+
 	private Map<Class<?>, IPattern> patterns = new HashMap<>();
-	
+
 	public PatternStorage(List<String> pkts) {
-		
-		Reflections reflections = new Reflections(pkts.toArray(), new TypeAnnotationsScanner(), new SubTypesScanner(true));
-		
-		reflections.getTypesAnnotatedWith(NodeEntity.class).forEach(c->{
+
+		Reflections reflections = new Reflections(pkts.toArray(), new TypeAnnotationsScanner(),
+				new SubTypesScanner(true));
+
+		reflections.getTypesAnnotatedWith(NodeEntity.class).forEach(c -> {
 			this.patterns.put(c, _parse(c));
 		});
-		reflections.getTypesAnnotatedWith(RelationshipEntity.class).forEach(c->{
+		reflections.getTypesAnnotatedWith(RelationshipEntity.class).forEach(c -> {
 			this.patterns.put(c, _parse(c));
 		});
 	}
-	
+
 	public Filter createFilter(Class<?> type, int depth) {
-		
-		
-		return null;
+		if (!this.patterns.containsKey(type))
+			return null;
+		return this.patterns.get(type).createFilter(depth);
 	}
-	
-	
-	
+
 	private IPattern _parse(Class<?> type) {
 		if (type.isAnnotationPresent(NodeEntity.class))
 			return new NodePattern();
 
 		if (type.isAnnotationPresent(RelationshipEntity.class))
 			return new RelationPattern();
-
 
 		return null;
 	}
