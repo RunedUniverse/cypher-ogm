@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -93,12 +92,12 @@ public final class CoreSession implements Session {
 	private void _update(Field idField, Object object) throws Exception {
 		DataFilter df = null;
 		// class java.lang.Long
-		if (Serializable.class.isAssignableFrom(idField.getType())) {
+		if (Number.class.isAssignableFrom(idField.getType())) {
 			// IIdentified
-			df = new IdentifiedUpdateFilterNode((Serializable) idField.get(object), object);
+			df = new IdentifiedUpdateFilterNode((Number) idField.get(object), object);
 		} else {
 			// ParamFilter
-			df = new ParamUpdateFilterNode(object);
+			df = new ParamUpdateFilterNode((Serializable) idField.get(object), object);
 		}
 
 		Language.Mapper mapper = this.lang.buildUpdate(df, this.parser);
@@ -237,8 +236,15 @@ public final class CoreSession implements Session {
 
 	@Getter
 	@Setter
-	@AllArgsConstructor
 	protected class ParamUpdateFilterNode extends FilterNode implements Language.DataFilter {
 		private Object data;
+		
+		public ParamUpdateFilterNode(Object data) {
+			this.data = data;
+		}
+		public ParamUpdateFilterNode(Serializable id, Object data) {
+			this.data = data;
+			this.addParam("_id", id);
+		}
 	}
 }
