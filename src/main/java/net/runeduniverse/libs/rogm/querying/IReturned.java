@@ -1,5 +1,5 @@
 package net.runeduniverse.libs.rogm.querying;
 
-public interface ReturnHolder {
+public interface IReturned {
 	public boolean isReturned();
 }

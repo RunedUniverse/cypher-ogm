@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public class IDFilter<ID extends Serializable> implements IdentifiedFilter<ID>{
+public abstract class AIdFilter<ID extends Serializable> implements IIdentified<ID>{
 	
 	@Getter
 	private ID id;

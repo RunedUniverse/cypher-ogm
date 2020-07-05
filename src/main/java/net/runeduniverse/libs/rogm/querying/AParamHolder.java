@@ -5,7 +5,7 @@ import java.util.Map;
 
 import lombok.Getter;
 
-public abstract class AParamHolder<F extends Filter> extends AFilter<F> implements ParamHolder {
+public abstract class AParamHolder<F extends IFilter> extends AFilter<F> implements IParameterized {
 
 	@Getter
 	private Map<String, Object> params = new HashMap<>();

@@ -15,16 +15,16 @@ import net.runeduniverse.libs.rogm.util.*;
 public class Cypher implements Language {
 
 	@Override
-	public String buildQuery(Filter filter, Parser parser) throws Exception {
-		DataMap<Filter, String, FilterStatus> map = new DataHashMap<>();
+	public String buildQuery(IFilter filter, Parser parser) throws Exception {
+		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
-		parse(map, filter, gen);
+		_parse(map, filter, gen);
 
-		StringBuilder qry = select(map, parser, Phase.MATCH).append("RETURN");
+		StringBuilder qry = _select(map, parser, Phase.MATCH).append("RETURN");
 		List<String> rt = new ArrayList<>();
 
 		map.forEach((f, c) -> {
-			if (f instanceof ReturnHolder && ((ReturnHolder) f).isReturned())
+			if (f instanceof IReturned && ((IReturned) f).isReturned())
 				rt.add("id(" + c + ") as id_" + c + ", " + c);
 		});
 
@@ -39,11 +39,11 @@ public class Cypher implements Language {
 
 	@Override
 	public Mapper buildInsert(DataFilter node, Parser parser) throws Exception {
-		DataMap<Filter, String, FilterStatus> map = new DataHashMap<>();
+		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
-		parse(map, node, gen);
+		_parse(map, node, gen);
 
-		StringBuilder qry = select(map, parser, Phase.CREATE);
+		StringBuilder qry = _select(map, parser, Phase.CREATE);
 
 		List<String> st = new ArrayList<>();
 		List<String> rt = new ArrayList<>();
@@ -65,11 +65,11 @@ public class Cypher implements Language {
 
 	@Override
 	public Mapper buildUpdate(DataFilter node, Parser parser) throws Exception {
-		DataMap<Filter, String, FilterStatus> map = new DataHashMap<>();
+		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
-		parse(map, node, gen);
+		_parse(map, node, gen);
 
-		StringBuilder qry = select(map, parser, Phase.MATCH);
+		StringBuilder qry = _select(map, parser, Phase.MATCH);
 
 		List<String> st = new ArrayList<>();
 		List<String> rt = new ArrayList<>();
@@ -89,7 +89,7 @@ public class Cypher implements Language {
 				.append(String.join(", ", rt)).append(';').toString(), map);
 	}
 
-	private void parse(DataMap<Filter, String, FilterStatus> map, Filter filter, StringVariableGenerator gen)
+	private void _parse(DataMap<IFilter, String, FilterStatus> map, IFilter filter, StringVariableGenerator gen)
 			throws Exception {
 		if (map.containsKey(filter))
 			return;
@@ -99,24 +99,19 @@ public class Cypher implements Language {
 		}
 		map.put(filter, gen.nextVal(), FilterStatus.INITIALIZED);
 
-		// vv START - to be remodeled
-		if (filter instanceof IdentifiedFilter) {
-			IdentifiedFilter<?> idf = (IdentifiedFilter<?>) filter;
-			if (!(idf.checkType(Long.class) || idf.checkType(Integer.class) || idf.checkType(Short.class)))
-				throw new Exception("Filter ID <" + idf.getId().getClass().toString() + "> not supported");
+		if (filter instanceof IFNode) {
+			IIdentified.checkType(Number.class, filter);
+			for (IFilter f : ((IFNode) filter).getRelations())
+				_parse(map, f, gen);
+		} else if (filter instanceof IFRelation) {
+			IIdentified.checkType(Number.class, filter);
+			_parse(map, ((IFRelation) filter).getStart(), gen);
+			_parse(map, ((IFRelation) filter).getTarget(), gen);
 		} else
-		// ^^ END
-		if (filter instanceof FNode) {
-			for (Filter f : ((FNode) filter).getRelations())
-				parse(map, f, gen);
-		} else if (filter instanceof FRelation) {
-			parse(map, ((FRelation) filter).getStart(), gen);
-			parse(map, ((FRelation) filter).getTarget(), gen);
-		} else
-			throw new Exception("Filter<" + filter.toString() + "> not supported");
+			throw new Exception("IFilter<" + filter.toString() + "> not supported");
 	}
 
-	private StringBuilder select(DataMap<Filter, String, FilterStatus> map, Parser parser, Phase phase)
+	private StringBuilder _select(DataMap<IFilter, String, FilterStatus> map, Parser parser, Phase phase)
 			throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
 		StringBuilder whereBuilder = new StringBuilder();
@@ -127,36 +122,32 @@ public class Cypher implements Language {
 				return;
 
 			matchBuilder.append(phase.prefix);
-			// vv START - to be remodeled
-			if (phase != Phase.CREATE && f instanceof IdentifiedFilter) {
-				if (!modifier.equals(FilterStatus.EXTENSION_PRINTED)) {
-					whereBuilder
-							.append("WHERE id(" + code + ")=" + ((IdentifiedFilter<?>) f).getId().toString() + "\n");
-					map.setData(f, FilterStatus.EXTENSION_PRINTED);
-
-					if (!modifier.equals(FilterStatus.PRINTED)) {
-						matchBuilder.append('(' + code + ')');
-						map.setData(f, FilterStatus.PRINTED);
-					}
-				}
-
-			} else
-			// ^^ END
-			if (f instanceof FNode) {
+			if (f instanceof IFNode) {
+				if (phase != Phase.CREATE && f instanceof IIdentified
+						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
+					_where(map, whereBuilder, f, code);
 				if (!modifier.equals(FilterStatus.PRINTED))
-					matchBuilder.append(filterToString(map, f, true, parser));
-
-			} else if (f instanceof FRelation)
-				matchBuilder.append(translateRelation(map, parser, (FRelation) f).toString());
-			else
+					matchBuilder.append(_filterToString(map, f, true, parser));
+			} else if (f instanceof IFRelation) {
+				if (phase != Phase.CREATE && f instanceof IIdentified
+						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
+					_where(map, whereBuilder, f, code);
+				matchBuilder.append(_translateRelation(map, parser, (IFRelation) f).toString());
+			} else
 				matchBuilder.append("()");
 			matchBuilder.append('\n');
 		});
 		return matchBuilder.append(whereBuilder);
 	}
 
-	private StringBuilder translateRelation(DataMap<Filter, String, FilterStatus> map, Parser parser, FRelation rel) {
-		StringBuilder matchLine = new StringBuilder(filterToString(map, rel.getStart(), true, parser));
+	private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code) {
+		IIdentified<?> i = (IIdentified<?>) f;
+		builder.append("WHERE id(" + code + ")=" + ((Number) i.getId()).longValue() + "\n");
+		map.setData(f, FilterStatus.EXTENSION_PRINTED);
+	}
+
+	private StringBuilder _translateRelation(DataMap<IFilter, String, FilterStatus> map, Parser parser, IFRelation rel) {
+		StringBuilder matchLine = new StringBuilder(_filterToString(map, rel.getStart(), true, parser));
 
 		switch (rel.getDirection()) {
 		case INCOMING:
@@ -167,7 +158,7 @@ public class Cypher implements Language {
 			matchLine.append('-');
 		}
 
-		matchLine.append(filterToString(map, rel, false, parser));
+		matchLine.append(_filterToString(map, rel, false, parser));
 
 		switch (rel.getDirection()) {
 		case OUTGOING:
@@ -178,31 +169,31 @@ public class Cypher implements Language {
 			matchLine.append('-');
 		}
 
-		return matchLine.append(filterToString(map, rel.getTarget(), true, parser));
+		return matchLine.append(_filterToString(map, rel.getTarget(), true, parser));
 	}
 
-	private String filterToString(DataMap<Filter, String, FilterStatus> map, Filter filter, boolean isNode,
+	private String _filterToString(DataMap<IFilter, String, FilterStatus> map, IFilter filter, boolean isNode,
 			Parser parser) {
 		StringBuilder builder = new StringBuilder(map.get(filter));
 
 		if (!map.getData(filter).equals(FilterStatus.PRINTED)) {
 			// PRINT LABELS
-			if (filter instanceof LabelHolder) {
-				LabelHolder holder = (LabelHolder) filter;
+			if (filter instanceof ILabeled) {
+				ILabeled holder = (ILabeled) filter;
 				for (String label : holder.getLabels())
 					builder.append(':' + label.replace(' ', '_'));
 			}
 			// PRINT DATA
-			if (filter instanceof ParamHolder) {
-				ParamHolder holder = (ParamHolder) filter;
+			if (filter instanceof IParameterized) {
+				IParameterized holder = (IParameterized) filter;
 				if (!holder.getParams().isEmpty())
 					try {
 						builder.append(' ' + parser.serialize(holder.getParams()));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-			} else if (filter instanceof DataHolder) {
-				DataHolder holder = (DataHolder) filter;
+			} else if (filter instanceof IDataContainer) {
+				IDataContainer holder = (IDataContainer) filter;
 				try {
 					builder.append(' ' + parser.serialize(holder.getData()));
 				} catch (Exception e) {
@@ -248,9 +239,9 @@ public class Cypher implements Language {
 	protected static class Mapper implements Language.Mapper {
 
 		private String qry;
-		private DataMap<Filter, String, FilterStatus> map;
+		private DataMap<IFilter, String, FilterStatus> map;
 
-		protected Mapper(String qry, DataMap<Filter, String, FilterStatus> map) {
+		protected Mapper(String qry, DataMap<IFilter, String, FilterStatus> map) {
 			this.qry = qry;
 			this.map = map;
 		}

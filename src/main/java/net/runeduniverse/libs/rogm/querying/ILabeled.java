@@ -2,7 +2,7 @@ package net.runeduniverse.libs.rogm.querying;
 
 import java.util.Set;
 
-public interface LabelHolder {
+public interface ILabeled {
 
 	Set<String> getLabels();
 }

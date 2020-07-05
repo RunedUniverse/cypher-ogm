@@ -2,6 +2,6 @@ package net.runeduniverse.libs.rogm.querying;
 
 import java.util.Map;
 
-public interface ParamHolder {
+public interface IParameterized {
 	Map<String, Object> getParams();
 }

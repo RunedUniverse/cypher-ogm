@@ -6,39 +6,27 @@ import java.util.List;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 
-public class FilterNode extends AParamFilter<FilterNode> implements FNode {
+public class FilterNode extends AParamFilter<FilterNode> implements IFNode {
 	
 	@Getter
-	List<Filter> relations = new ArrayList<>();
+	List<IFilter> relations = new ArrayList<>();
 	
 	public FilterNode() {
 		super.setInstance(this);
 	}
 	
 	// Relations
-	public FilterNode addRelation(FRelation relation) {
+	public FilterNode addRelation(IFRelation relation) {
 		relations.add(relation);
 		return this;
 	}
-	public FilterNode addRelation(IdentifiedFilter<?> relation) {
-		relations.add(relation);
-		return this;
-	}
-	public FilterNode addRelation(FilterRelation relation, FNode target) {
-		relations.add(relation.setStart(this).setTarget(target));
-		return this;
-	}
-	public FilterNode addRelation(FilterRelation relation, IdentifiedFilter<?> target) {
+	public FilterNode addRelation(FilterRelation relation, IFNode target) {
 		relations.add(relation.setStart(this).setTarget(target));
 		return this;
 	}
 	// Relations TO
-	public FilterNode addRelationTo(FNode node) {
+	public FilterNode addRelationTo(IFNode node) {
 		relations.add(new FilterRelation(this, node, Direction.OUTGOING));
-		return this;
-	}
-	public FilterNode addRelationTo(IdentifiedFilter<?> idNode) {
-		relations.add(new FilterRelation(this, null, Direction.OUTGOING).setTarget(idNode));
 		return this;
 	}
 	public FilterNode addRelationTo(FilterRelation relation) {
@@ -46,12 +34,8 @@ public class FilterNode extends AParamFilter<FilterNode> implements FNode {
 		return this;
 	}
 	// Relations From
-	public FilterNode addRelationFrom(FNode node) {
+	public FilterNode addRelationFrom(IFNode node) {
 		relations.add(new FilterRelation(node, this, Direction.INCOMING));
-		return this;
-	}
-	public FilterNode addRelationFrom(IdentifiedFilter<?> idNode) {
-		relations.add(new FilterRelation(null, this, Direction.INCOMING).setStart(idNode));
 		return this;
 	}
 	public FilterNode addRelationFrom(FilterRelation relation) {
