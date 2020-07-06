@@ -98,7 +98,9 @@ public class Neo4jModule implements Module {
 					for (String key : record.keys()) {
 						if (key.startsWith("id_"))
 							continue;
-						qryResults.put(record.get("id_" + key).asLong(), this.parser.serialize(record.get(key).asMap()),
+						if (key.startsWith("labels_"))
+							continue;
+						qryResults.put(record.get("id_" + key).asLong(-1L), this.parser.serialize(record.get(key).asMap()),
 								key);
 					}
 			} catch (Exception e) {

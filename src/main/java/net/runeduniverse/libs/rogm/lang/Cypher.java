@@ -18,19 +18,19 @@ public class Cypher implements Language {
 	public String buildQuery(IFilter filter, Parser parser) throws Exception {
 		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
-		_parse(map, filter, gen);
+		_parse(map, filter, gen, false);
 
-		StringBuilder qry = _select(map, parser, Phase.MATCH).append("RETURN");
+		StringBuilder qry = _select(map, parser, Phase.MATCH).append("RETURN ");
 		List<String> rt = new ArrayList<>();
 
 		map.forEach((f, c) -> {
 			if (f instanceof IReturned && ((IReturned) f).isReturned())
-				rt.add("id(" + c + ") as id_" + c + ", " + c);
+				rt.add(_returnId(c) + ", " + _returnLabel(c, f instanceof IFNode) + ", " + c);
 		});
 
 		if (rt.isEmpty()) {
 			String c = map.get(filter);
-			qry.append(" id(" + c + ") as id_" + c + ", " + c);
+			qry.append(_returnId(c) + ", " + _returnLabel(c, filter instanceof IFNode) + ", " + c);
 		} else
 			qry.append(String.join(", ", rt));
 
@@ -41,7 +41,7 @@ public class Cypher implements Language {
 	public Mapper buildInsert(DataFilter node, Parser parser) throws Exception {
 		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
-		_parse(map, node, gen);
+		_parse(map, node, gen, false);
 
 		StringBuilder qry = _select(map, parser, Phase.CREATE);
 
@@ -52,7 +52,7 @@ public class Cypher implements Language {
 			try {
 				DataFilter d = (DataFilter) f;
 				st.add(c + '=' + parser.serialize(d.getData()));
-				rt.add("id(" + c + ") as id_" + c);
+				rt.add(_returnId(c));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -67,7 +67,7 @@ public class Cypher implements Language {
 	public Mapper buildUpdate(DataFilter node, Parser parser) throws Exception {
 		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
-		_parse(map, node, gen);
+		_parse(map, node, gen, false);
 
 		StringBuilder qry = _select(map, parser, Phase.MATCH);
 
@@ -78,7 +78,7 @@ public class Cypher implements Language {
 			try {
 				DataFilter d = (DataFilter) f;
 				st.add(c + '=' + parser.serialize(d.getData()));
-				rt.add("id(" + c + ") as id_" + c);
+				rt.add(_returnId(c));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -89,24 +89,37 @@ public class Cypher implements Language {
 				.append(String.join(", ", rt)).append(';').toString(), map);
 	}
 
-	private void _parse(DataMap<IFilter, String, FilterStatus> map, IFilter filter, StringVariableGenerator gen)
-			throws Exception {
-		if (map.containsKey(filter))
+	private String _returnId(String code) {
+		return "id(" + code + ") as id_" + code;
+	}
+
+	private String _returnLabel(String code, boolean isNode) {
+		if (isNode)
+			return "labels(" + code + ") as labels_" + code;
+		return "type(" + code + ") as labels_" + code;
+	}
+
+	private void _parse(DataMap<IFilter, String, FilterStatus> map, IFilter filter, StringVariableGenerator gen,
+			boolean included) throws Exception {
+		if (map.containsKey(filter)) {
+			if (included)
+				map.setData(filter, FilterStatus.PRE_PRINTED);
 			return;
+		}
 		if (filter == null) {
 			map.put(filter, "", FilterStatus.INITIALIZED);
 			return;
 		}
-		map.put(filter, gen.nextVal(), FilterStatus.INITIALIZED);
+		map.put(filter, gen.nextVal(), included ? FilterStatus.PRE_PRINTED : FilterStatus.INITIALIZED);
 
 		if (filter instanceof IFNode) {
 			IIdentified.checkType(Number.class, filter);
 			for (IFilter f : ((IFNode) filter).getRelations())
-				_parse(map, f, gen);
+				_parse(map, f, gen, false);
 		} else if (filter instanceof IFRelation) {
 			IIdentified.checkType(Number.class, filter);
-			_parse(map, ((IFRelation) filter).getStart(), gen);
-			_parse(map, ((IFRelation) filter).getTarget(), gen);
+			_parse(map, ((IFRelation) filter).getStart(), gen, true);
+			_parse(map, ((IFRelation) filter).getTarget(), gen, true);
 		} else
 			throw new Exception("IFilter<" + filter.toString() + "> not supported");
 	}
@@ -114,30 +127,46 @@ public class Cypher implements Language {
 	private StringBuilder _select(DataMap<IFilter, String, FilterStatus> map, Parser parser, Phase phase)
 			throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
+		StringBuilder optionalMatchBuilder = new StringBuilder();
 		StringBuilder whereBuilder = new StringBuilder();
 
-		// MATCHES
 		map.forEach((f, code, modifier) -> {
-			if (f == null || modifier.equals(FilterStatus.PRINTED))
+			StringBuilder activeBuilder = null;
+			boolean optional = false;
+
+			if (phase == Phase.MATCH && f instanceof IOptional && ((IOptional) f).isOptional())
+				optional = true;
+
+			if (f == null || modifier.equals(FilterStatus.PRINTED)
+					|| optional && modifier.equals(FilterStatus.PRE_PRINTED))
 				return;
 
-			matchBuilder.append(phase.prefix);
+			if (optional)
+				activeBuilder = optionalMatchBuilder.append("OPTIONAL ");
+			else
+				activeBuilder = matchBuilder;
+
+			activeBuilder.append(phase.prefix);
 			if (f instanceof IFNode) {
+
 				if (phase != Phase.CREATE && f instanceof IIdentified
 						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
 					_where(map, whereBuilder, f, code);
-				if (!modifier.equals(FilterStatus.PRINTED))
-					matchBuilder.append(_filterToString(map, f, true, parser));
+
+				if (!(modifier.equals(FilterStatus.PRE_PRINTED) && optional))
+					activeBuilder.append(_filterToString(map, f, true, parser, false));
+
 			} else if (f instanceof IFRelation) {
 				if (phase != Phase.CREATE && f instanceof IIdentified
 						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
 					_where(map, whereBuilder, f, code);
-				matchBuilder.append(_translateRelation(map, parser, (IFRelation) f).toString());
+
+				activeBuilder.append(_translateRelation(map, parser, (IFRelation) f, optional).toString());
 			} else
-				matchBuilder.append("()");
-			matchBuilder.append('\n');
+				activeBuilder.append("()");
+			activeBuilder.append('\n');
 		});
-		return matchBuilder.append(whereBuilder);
+		return matchBuilder.append(optionalMatchBuilder).append(whereBuilder);
 	}
 
 	private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code) {
@@ -146,8 +175,9 @@ public class Cypher implements Language {
 		map.setData(f, FilterStatus.EXTENSION_PRINTED);
 	}
 
-	private StringBuilder _translateRelation(DataMap<IFilter, String, FilterStatus> map, Parser parser, IFRelation rel) {
-		StringBuilder matchLine = new StringBuilder(_filterToString(map, rel.getStart(), true, parser));
+	private StringBuilder _translateRelation(DataMap<IFilter, String, FilterStatus> map, Parser parser, IFRelation rel,
+			boolean optional) {
+		StringBuilder matchLine = new StringBuilder(_filterToString(map, rel.getStart(), true, parser, optional));
 
 		switch (rel.getDirection()) {
 		case INCOMING:
@@ -158,7 +188,7 @@ public class Cypher implements Language {
 			matchLine.append('-');
 		}
 
-		matchLine.append(_filterToString(map, rel, false, parser));
+		matchLine.append(_filterToString(map, rel, false, parser, false));
 
 		switch (rel.getDirection()) {
 		case OUTGOING:
@@ -169,11 +199,11 @@ public class Cypher implements Language {
 			matchLine.append('-');
 		}
 
-		return matchLine.append(_filterToString(map, rel.getTarget(), true, parser));
+		return matchLine.append(_filterToString(map, rel.getTarget(), true, parser, optional));
 	}
 
 	private String _filterToString(DataMap<IFilter, String, FilterStatus> map, IFilter filter, boolean isNode,
-			Parser parser) {
+			Parser parser, boolean optional) {
 		StringBuilder builder = new StringBuilder(map.get(filter));
 
 		if (!map.getData(filter).equals(FilterStatus.PRINTED)) {
@@ -202,7 +232,10 @@ public class Cypher implements Language {
 			}
 
 			// disable future param printing
-			map.setData(filter, FilterStatus.PRINTED);
+			if (optional)
+				map.setData(filter, FilterStatus.PRE_PRINTED);
+			else
+				map.setData(filter, FilterStatus.PRINTED);
 		}
 
 		if (isNode)
@@ -215,8 +248,9 @@ public class Cypher implements Language {
 	@AllArgsConstructor
 	protected static class FilterStatus {
 		public static final FilterStatus INITIALIZED = new FilterStatus(1);
-		public static final FilterStatus PRINTED = new FilterStatus(2);
-		public static final FilterStatus EXTENSION_PRINTED = new FilterStatus(3);
+		public static final FilterStatus PRE_PRINTED = new FilterStatus(2);
+		public static final FilterStatus PRINTED = new FilterStatus(3);
+		public static final FilterStatus EXTENSION_PRINTED = new FilterStatus(4);
 
 		@Getter
 		private int status = 0;

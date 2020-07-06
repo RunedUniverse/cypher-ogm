@@ -22,6 +22,8 @@ import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.lang.Cypher;
 import net.runeduniverse.libs.rogm.model.Actor;
 import net.runeduniverse.libs.rogm.model.Artist;
+import net.runeduniverse.libs.rogm.model.Company;
+import net.runeduniverse.libs.rogm.model.Game;
 import net.runeduniverse.libs.rogm.model.relations.ActorPlaysPersonRelation;
 import net.runeduniverse.libs.rogm.parser.JSONParser;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -53,12 +55,20 @@ public class RelationshipTests {
 
 	@Test
 	public void testUsingActorClass() throws Exception {
-		System.out.println(cypher.buildQuery(giveFilterNodeOrRelation(Actor.class), parser));
+		System.out.println(cypher.buildQuery(giveFilterNodeOrRelation(Actor.class, false), parser));
+	}
+	@Test
+	public void testUsingGameClass() throws Exception {
+		System.out.println(cypher.buildQuery(giveFilterNodeOrRelation(Game.class, false), parser));
+	}
+	@Test
+	public void testUsingCompanyClass() throws Exception {
+		System.out.println(cypher.buildQuery(giveFilterNodeOrRelation(Company.class, false), parser));
 	}
 
 	Map<Class<?>, IFilter> classMap = new HashMap<Class<?>, IFilter>();
 
-	private IFilter giveFilterNodeOrRelation(Class<?> clazz) throws Exception {
+	private IFilter giveFilterNodeOrRelation(Class<?> clazz, boolean isChild) throws Exception {
 
 		System.out.println("ClassMapContent:" + classMap);
 
@@ -68,11 +78,13 @@ public class RelationshipTests {
 
 		// Create FilterNode
 		if (checkIfClassIsNode(clazz)) {
-			FilterNode fn = new FilterNode();
+			FilterNode fn = new FilterNode().setReturned(true).setOptional(isChild);
 			classMap.put(clazz, fn);
+			
 			List<String> labels = new ArrayList<String>();
 			getLabelsForClass(clazz, labels);
 			fn.addLabels(labels);
+			
 			Field[] f = clazz.getDeclaredFields();
 			for (int i = 0; i < f.length; i++) {
 				Field ff = f[i];
@@ -91,13 +103,13 @@ public class RelationshipTests {
 						ffClazz = getClassFromCollectionField(ff);
 					}
 					if (ffClazz.isAnnotationPresent(RelationshipEntity.class)) {
-						FilterRelation fr = (FilterRelation) giveFilterNodeOrRelation(ffClazz);
+						FilterRelation fr = (FilterRelation) giveFilterNodeOrRelation(ffClazz, true);
 						if (fr.getLabels().isEmpty())
 							fr.addLabel(label);
 						fn.addRelation(fr);
 					} else {
-						FilterRelation fr = new FilterRelation(r.direction()).addLabel(label);
-						fn.addRelation(fr, (IFNode) giveFilterNodeOrRelation(ffClazz));
+						FilterRelation fr = new FilterRelation(r.direction()).addLabel(label).setReturned(true).setOptional(true);
+						fn.addRelation(fr, (IFNode) giveFilterNodeOrRelation(ffClazz, true));
 					}
 				}
 			}
@@ -106,12 +118,14 @@ public class RelationshipTests {
 			// Create FilterRelation
 			if (checkIfClassIsRelationshipEntity(clazz)) {
 				Boolean startNode = false, endNode = false;
-				FilterRelation fr = new FilterRelation();
+				FilterRelation fr = new FilterRelation().setReturned(true).setOptional(isChild);
 				classMap.put(clazz, fr);
+				
 				RelationshipEntity re = clazz.getAnnotation(RelationshipEntity.class);
 				fr.setDirection(re.direction());
 				if (!re.label().isEmpty())
 					fr.addLabel(re.label());
+				
 				Field[] fields = clazz.getDeclaredFields();
 				for (Field field : fields) {
 					Class<?> fieldClass = field.getType();
@@ -121,10 +135,10 @@ public class RelationshipTests {
 						throw new Exception("A Collection inside RelationshipEntity is not allowed!!!");
 					if (field.isAnnotationPresent(StartNode.class)) {
 						startNode = true;
-						fr.setStart((IFNode) giveFilterNodeOrRelation(fieldClass));
+						fr.setStart((IFNode) giveFilterNodeOrRelation(fieldClass, true));
 					} else if (field.isAnnotationPresent(EndNode.class)) {
 						endNode = true;
-						fr.setTarget((IFNode) giveFilterNodeOrRelation(fieldClass));
+						fr.setTarget((IFNode) giveFilterNodeOrRelation(fieldClass, true));
 					}
 				}
 				if (!(startNode && endNode))

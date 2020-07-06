@@ -39,7 +39,9 @@ public class JSONParser implements Parser{
 	}
 
 	@Override
-	public <T> T deserialize(Class<T> clazz, String value) throws JsonMappingException, JsonProcessingException {
+	public <T> T deserialize(Class<T> clazz, String value) throws JsonMappingException, JsonProcessingException, InstantiationException, IllegalAccessException {
+		if(value==null)
+			return clazz.newInstance();
 		return MAPPER.readValue(value, clazz);
 	}
 
