@@ -22,10 +22,10 @@ public class PatternStorage {
 				new SubTypesScanner(true));
 
 		reflections.getTypesAnnotatedWith(NodeEntity.class).forEach(c -> {
-			this.patterns.put(c, _parse(c, EntityType.NODE));
+			this.patterns.put(c, new NodePattern(this, c));
 		});
 		reflections.getTypesAnnotatedWith(RelationshipEntity.class).forEach(c -> {
-			this.patterns.put(c, _parse(c, EntityType.RELATION));
+			this.patterns.put(c, new RelationPattern(this, c));
 		});
 	}
 
@@ -39,16 +39,5 @@ public class PatternStorage {
 		if (!this.patterns.containsKey(type))
 			return null;
 		return this.patterns.get(type).createFilter(depth);
-	}
-
-	private IPattern _parse(Class<?> type, EntityType entityType) {
-		switch (entityType) {
-		case NODE:
-			return new NodePattern(type);
-		case RELATION:
-			return new RelationPattern(type);
-		default:
-			return null;
-		}
 	}
 }

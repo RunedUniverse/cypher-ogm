@@ -10,9 +10,9 @@ public abstract class AParamHolder<F extends IFilter> extends AFilter<F> impleme
 	@Getter
 	private Map<String, Object> params = new HashMap<>();
 
-	public AParamHolder<F> addParam(String label, Object value) {
+	public F addParam(String label, Object value) {
 		this.params.put(label, value);
-		return this;
+		return this.instance;
 	}
 	
 }

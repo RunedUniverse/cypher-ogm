@@ -225,7 +225,7 @@ public final class CoreSession implements Session {
 	@Getter
 	@Setter
 	@ToString
-	protected class IdentifiedUpdateFilterNode extends IDFilterNode<Serializable> implements Language.DataFilter {
+	public class IdentifiedUpdateFilterNode extends IDFilterNode<Serializable> implements Language.DataFilter {
 		private Object data;
 
 		public IdentifiedUpdateFilterNode(Serializable id, Object data) {
@@ -236,7 +236,7 @@ public final class CoreSession implements Session {
 
 	@Getter
 	@Setter
-	protected class ParamUpdateFilterNode extends FilterNode implements Language.DataFilter {
+	public class ParamUpdateFilterNode extends FilterNode implements Language.DataFilter {
 		private Object data;
 		
 		public ParamUpdateFilterNode(Object data) {
