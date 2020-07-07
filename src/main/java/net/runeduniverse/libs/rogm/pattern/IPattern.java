@@ -5,7 +5,9 @@ import java.io.Serializable;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface IPattern {
-	public EntityType getEntityType();
-	public IFilter createFilter(int depth);
-	public <ID extends Serializable> IFilter createFilter(int depth, ID id);
+	IFilter createFilter();
+
+	Object setId(Object object, Serializable id) throws IllegalArgumentException;
+
+	Object parse(Serializable id, String data) throws Exception;
 }

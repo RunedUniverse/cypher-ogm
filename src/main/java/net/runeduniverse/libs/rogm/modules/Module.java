@@ -14,6 +14,8 @@ public interface Module {
 	// but is provided if needed
 	Instance<?> build(Configuration cnf);
 	
+	boolean checkIdType(Class<?> type);
+	
 	public interface Instance <ID extends Serializable>{
 		boolean connect(Configuration cnf);
 		boolean disconnect();

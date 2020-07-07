@@ -5,14 +5,18 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import lombok.RequiredArgsConstructor;
+import net.runeduniverse.libs.rogm.annotations.Direction;
+import net.runeduniverse.libs.rogm.annotations.EndNode;
 import net.runeduniverse.libs.rogm.annotations.Id;
+import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.IDFilterNode;
+import net.runeduniverse.libs.rogm.querying.IFNode;
+import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class NodePattern implements IPattern {
 
-	public static final EntityType ENITIY_TYPE = EntityType.NODE;
 	private final PatternStorage storage;
 	private final Class<?> type;
 	private Field idField;
@@ -20,15 +24,32 @@ public class NodePattern implements IPattern {
 	public NodePattern(PatternStorage storage, Class<?> type) {
 		this.storage = storage;
 		this.type = type;
-		// TODO Parse all data from type
+		this._parse(this.type);
+	}
+	
+	private void _parse(Class<?> type) {
+		for (Field field : type.getDeclaredFields()) {
+			field.setAccessible(true);
+			if (field.isAnnotationPresent(Id.class) && this.idField == null) {
+				this.idField = field;
+				continue;
+			}
+
+			// TODO Parse all data from type
+		}
+		if (type.getSuperclass().equals(Object.class))
+			return;
+		_parse(type.getSuperclass());
 	}
 
-	@Override
-	public EntityType getEntityType() {
-		return ENITIY_TYPE;
+	public IFilter createFilter() {
+		return null;// includes ALL relation filters
 	}
-
-	@Override
+	public IFNode createFilter(IFRelation caller) {
+		return null;// includes ONLY 1 relation filters
+	}
+	
+	// TODO depth gets moved to CoreSession
 	public IFilter createFilter(int depth) {
 		if(depth<1)
 			return null;
@@ -38,7 +59,6 @@ public class NodePattern implements IPattern {
 		return node;
 	}
 
-	@Override
 	public <ID extends Serializable> IFilter createFilter(int depth, ID id) {
 		if(depth<1)
 			return null;
@@ -54,28 +74,22 @@ public class NodePattern implements IPattern {
 		return new FilterNode().addParam("_id", id);
 	}
 
-	// helper methods for later use
-	public <T extends Object, ID extends Serializable> T setObjectId(T obj, ID id) {
-		// no @Id field -> skip
-		Field field = findAnnotatedField(obj.getClass(), Id.class);
-		if (field != null)
-			try {
-				field.set(obj, field.getType().cast(id));
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
+	
 
-		return obj;
+	@Override
+	public Object setId(Object object, Serializable id) throws IllegalArgumentException {
+		if (this.idField == null)
+			return object;
+		try {
+			this.idField.set(object, id);
+		} catch (IllegalAccessException e) {
+		}
+		return object;
 	}
 
-	public <ANNO extends Annotation> Field findAnnotatedField(Class<?> clazz, Class<ANNO> anno) {
-		if (clazz.isAssignableFrom(Object.class))
-			return null;
-		for (Field field : clazz.getDeclaredFields())
-			if (field.isAnnotationPresent(anno)) {
-				field.setAccessible(true);
-				return field;
-			}
-		return findAnnotatedField(clazz.getSuperclass(), anno);
+	@Override
+	public Object parse(Serializable id, String data) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

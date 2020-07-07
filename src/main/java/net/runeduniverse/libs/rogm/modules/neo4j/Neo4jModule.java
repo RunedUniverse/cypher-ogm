@@ -35,6 +35,11 @@ public class Neo4jModule implements Module {
 		return cnf.getProtocol() + "://" + cnf.getUri() + ':' + cnf.getPort();
 	}
 
+	@Override
+	public boolean checkIdType(Class<?> type) {
+		return Number.class.isAssignableFrom(type);
+	}
+
 	public class Neo4jModuleInstance implements Module.Instance<Long> {
 		private Driver driver = null;
 		private Parser parser = null;
@@ -100,8 +105,8 @@ public class Neo4jModule implements Module {
 							continue;
 						if (key.startsWith("labels_"))
 							continue;
-						qryResults.put(record.get("id_" + key).asLong(-1L), this.parser.serialize(record.get(key).asMap()),
-								key);
+						qryResults.put(record.get("id_" + key).asLong(-1L),
+								this.parser.serialize(record.get(key).asMap()), key);
 					}
 			} catch (Exception e) {
 				e.printStackTrace();
