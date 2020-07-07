@@ -48,33 +48,6 @@ public class NodePattern implements IPattern {
 	public IFNode createFilter(IFRelation caller) {
 		return null;// includes ONLY 1 relation filters
 	}
-	
-	// TODO depth gets moved to CoreSession
-	public IFilter createFilter(int depth) {
-		if(depth<1)
-			return null;
-		// TODO call recursively the other Patterns and acquire their filters (depth-1)
-		FilterNode node = new FilterNode();
-		// TODO add Labels & Relations
-		return node;
-	}
-
-	public <ID extends Serializable> IFilter createFilter(int depth, ID id) {
-		if(depth<1)
-			return null;
-		// TODO call recursively the other Patterns and acquire their filters (depth-1)
-		
-		// TODO add Labels & Relations
-		// class java.lang.Long
-		if (Number.class.isAssignableFrom(idField.getType())) {
-			// IIdentified
-			return new IDFilterNode<ID>(id);
-		}
-		// ParamFilter
-		return new FilterNode().addParam("_id", id);
-	}
-
-	
 
 	@Override
 	public Object setId(Object object, Serializable id) throws IllegalArgumentException {
