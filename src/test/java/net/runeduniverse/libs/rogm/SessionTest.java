@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.model.Actor;
 import net.runeduniverse.libs.rogm.model.Address;
 import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Person;
@@ -28,7 +29,7 @@ public class SessionTest {
 	private Session session = null;
 
 	@Before
-	public void prepare() {
+	public void prepare() throws Exception {
 		assertEquals("bolt", config.getProtocol());
 		assertEquals(7687, config.getPort());
 		assertEquals("runeduniverse.net", config.getUri());
@@ -72,8 +73,8 @@ public class SessionTest {
 
 	@Test
 	public void bufferTest() {
-		Artist ashley0 = session.load(Artist.class, 41L);
-		Person ashley1 = session.load(Person.class, 41L);
+		Actor ashley0 = session.load(Actor.class, 11L);
+		Person ashley1 = session.load(Person.class, 11L);
 		assertEquals(ashley1, ashley0);
 		assertTrue(ashley0 == ashley1);
 	}

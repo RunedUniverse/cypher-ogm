@@ -14,7 +14,7 @@ import net.runeduniverse.libs.rogm.model.relations.ActorPlaysPersonRelation;
 @ToString
 public class Actor extends Person {
 	
-	@Relationship(label = "PLAYS")
+	@Relationship
 	private Set<ActorPlaysPersonRelation> plays = new HashSet<>();
 
 }

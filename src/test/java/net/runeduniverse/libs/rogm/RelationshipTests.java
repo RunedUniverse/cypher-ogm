@@ -56,24 +56,29 @@ public class RelationshipTests {
 
 	@Test
 	public void testUsingActorClass() throws Exception {
-		System.out.println(cypher.buildQuery(giveFilterNodeOrRelation(Actor.class, false), parser));
+		System.out.println(_build(Actor.class));
 	}
 
 	@Test
 	public void testUsingGameClass() throws Exception {
-		System.out.println(cypher.buildQuery(giveFilterNodeOrRelation(Game.class, false), parser));
+		System.out.println(_build(Game.class));
 	}
 
 	@Test
 	public void testUsingCompanyClass() throws Exception {
-		System.out.println(cypher.buildQuery(giveFilterNodeOrRelation(Company.class, false), parser));
+		System.out.println(_build(Company.class));
+	}
+
+	private String _build(Class<?> clazz) throws Exception {
+		return '[' + clazz.getSimpleName() + "]\n" + cypher.buildQuery(giveFilterNodeOrRelation(clazz, false), parser)
+				+ '\n';
 	}
 
 	Map<Class<?>, IFilter> classMap = new HashMap<Class<?>, IFilter>();
 
 	private IFilter giveFilterNodeOrRelation(Class<?> clazz, boolean isChild) throws Exception {
 
-		System.out.println("ClassMapContent:" + classMap);
+		// System.out.println("ClassMapContent:" + classMap);
 
 		if (classMap.containsKey(clazz)) {
 			return classMap.get(clazz);

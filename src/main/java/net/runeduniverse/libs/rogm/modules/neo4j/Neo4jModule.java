@@ -105,8 +105,11 @@ public class Neo4jModule implements Module {
 							continue;
 						if (key.startsWith("labels_"))
 							continue;
-						qryResults.put(record.get("id_" + key).asLong(-1L),
-								this.parser.serialize(record.get(key).asMap()), key);
+
+						Object value = null;
+						if (!record.get(key).isNull())
+							value = record.get(key).asMap();
+						qryResults.put(record.get("id_" + key).asLong(-1L), this.parser.serialize(value), key);
 					}
 			} catch (Exception e) {
 				e.printStackTrace();

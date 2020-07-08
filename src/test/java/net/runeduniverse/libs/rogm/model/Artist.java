@@ -15,10 +15,13 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 @ToString
 public class Artist extends Person {
 
-	@Relationship(label = "SINGS")
-	private Set<Song> sings = new HashSet<>();
-
 	@Relationship(label = "CREATED")
 	private Set<Song> created = new HashSet<>();
+	
+	@Relationship(label = "SINGS")
+	private Set<Song> sang = new HashSet<>();
+
+	@Relationship(label = "PLAYS")
+	private Set<Song> played = new HashSet<>();
 
 }

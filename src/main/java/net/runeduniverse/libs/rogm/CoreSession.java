@@ -6,7 +6,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -36,7 +39,7 @@ public final class CoreSession implements Session {
 	private Buffer nodeBuffer = new Buffer();
 	private Buffer relationBuffer = new Buffer();
 
-	protected CoreSession(Configuration cnf) {
+	protected CoreSession(Configuration cnf) throws Exception {
 		this.dbType = cnf.getDbType();
 		this.lang = this.dbType.getLang();
 		this.parser = this.dbType.getParser();
@@ -66,39 +69,31 @@ public final class CoreSession implements Session {
 	public void save(Object object) {
 		Field idField = FIELD_ACCESSOR.findAnnotatedField(object.getClass(), Id.class);
 		try {
-			if (idField == null || idField.get(object) == null) {
-				this._create(object);
-			} else
+			if (this.storage.isIdSet(object))
 				this._update(idField, object);
+			else
+				this._create(object);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void _create(Object object) throws Exception {
+		Set<String> labels = new HashSet<>();
+		labels.add(object.getClass().getSimpleName());
 
-		ParamUpdateFilterNode createData = new ParamUpdateFilterNode(object);
+		DataFilter df = this.storage.getFactory().createDataNode(labels, new ArrayList<IFilter>(), object);
 
-		// TODO retrieve all labels from type
-		createData.addLabel(object.getClass().getSimpleName());
-
-		Language.Mapper mapper = this.lang.buildInsert(createData, this.parser);
-		System.out.println(mapper.qry());
+		Language.Mapper mapper = this.lang.buildInsert(df, this.parser);
+		//System.out.println(mapper.qry());
 		mapper.updateObjectIds(FIELD_ACCESSOR, this.nodeBuffer, this.module.execute(mapper.qry()));
-		System.out.println("CREATED");
+		//System.out.println("CREATED: " + object);
 
 	}
 
 	private void _update(Field idField, Object object) throws Exception {
-		DataFilter df = null;
-		// class java.lang.Long
-		if (Number.class.isAssignableFrom(idField.getType())) {
-			// IIdentified
-			df = new IdentifiedUpdateFilterNode((Number) idField.get(object), object);
-		} else {
-			// ParamFilter
-			df = new ParamUpdateFilterNode((Serializable) idField.get(object), object);
-		}
+		DataFilter df = this.storage.getFactory().createIdDataNode(new HashSet<>(), new ArrayList<>(),
+				(Serializable) idField.get(object), object);
 
 		Language.Mapper mapper = this.lang.buildUpdate(df, this.parser);
 		mapper.updateObjectIds(FIELD_ACCESSOR, this.nodeBuffer, this.module.execute(mapper.qry()));
@@ -122,17 +117,7 @@ public final class CoreSession implements Session {
 		String data = null;
 
 		try {
-			switch (this.storage.getEntityType(type)) {
-			case NODE:
-				qry = this.lang.buildQuery(new IDFilterNode<ID>(id), this.parser);
-				break;
-			case RELATION:
-				qry = this.lang.buildQuery(new IDFilterRelation<ID>(id), this.parser);
-				break;
-
-			default:
-				throw new Exception("Unable to identify Entity");
-			}
+			qry = this.lang.buildQuery(this.storage.createIdFilter(type, id), this.parser);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -238,10 +223,11 @@ public final class CoreSession implements Session {
 	@Setter
 	public class ParamUpdateFilterNode extends FilterNode implements Language.DataFilter {
 		private Object data;
-		
+
 		public ParamUpdateFilterNode(Object data) {
 			this.data = data;
 		}
+
 		public ParamUpdateFilterNode(Serializable id, Object data) {
 			this.data = data;
 			this.addParam("_id", id);

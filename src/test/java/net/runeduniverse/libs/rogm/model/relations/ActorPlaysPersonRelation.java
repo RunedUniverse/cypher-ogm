@@ -7,7 +7,7 @@ import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.model.Actor;
 import net.runeduniverse.libs.rogm.model.Person;
 
-@RelationshipEntity(direction = Direction.OUTGOING)
+@RelationshipEntity(direction = Direction.OUTGOING, label = "PLAYS")
 public class ActorPlaysPersonRelation {
 
 	@StartNode

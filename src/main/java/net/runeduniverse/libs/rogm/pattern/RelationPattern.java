@@ -2,7 +2,8 @@ package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-
+import java.util.HashMap;
+import java.util.Map;
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
 import lombok.Getter;
@@ -11,19 +12,18 @@ import net.runeduniverse.libs.rogm.annotations.EndNode;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
+import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
+import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataNode;
+import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
-public class RelationPattern implements IPattern {
-
-	private final PatternStorage storage;
-	private final Class<?> type;
+public class RelationPattern extends APattern {
 
 	private String label = null;
 	private Direction direction = null;
-	private Field idField = null;
 	private Field startField = null;
 	private Field targetField = null;
 	// start eq target
@@ -31,8 +31,7 @@ public class RelationPattern implements IPattern {
 	private boolean stEqTr = false;
 
 	public RelationPattern(PatternStorage storage, Class<?> type) {
-		this.storage = storage;
-		this.type = type;
+		super(storage, type);
 		RelationshipEntity typeAnno = this.type.getAnnotation(RelationshipEntity.class);
 		this.direction = typeAnno.direction();
 		this.label = typeAnno.label();
@@ -64,7 +63,14 @@ public class RelationPattern implements IPattern {
 	}
 
 	public IFilter createFilter() {
-		Relation relation = this.storage.getFactory().createRelation(this.direction);
+		return _complete(this.storage.getFactory().createRelation(this.direction));
+	}
+
+	public IFilter createIdFilter(Serializable id) throws Exception {
+		return _complete(this.storage.getFactory().createIdRelation(this.direction, id));
+	}
+
+	private Relation _complete(Relation relation) {
 		if (!isBlank(this.label))
 			relation.getLabels().add(label);
 
@@ -103,6 +109,59 @@ public class RelationPattern implements IPattern {
 		return relation;
 	}
 
+	@Override
+	public DataFilter createFilter(Object entity) throws Exception {
+		return this.createFilter(entity, null, this.direction, new HashMap<>());
+	}
+
+	public DataRelation createFilter(Object entity, DataNode caller, Direction direction,
+			Map<Object, DataFilter> includedData) throws Exception {
+		if (includedData.containsKey(entity))
+			return (DataRelation) includedData.get(entity);
+
+		DataRelation relation = null;
+		if (this.isIdSet(entity))
+			// update (id)
+			relation = this.storage.getFactory().createIdDataRelation(this.direction, this.getId(entity), entity);
+		else
+			// create (!id)
+			relation = this.storage.getFactory().createDataRelation(this.direction, entity);
+		relation.setReturned(true);
+		includedData.put(entity, relation);
+
+		if (!isBlank(this.label))
+			relation.getLabels().add(this.label);
+
+		if (caller == null) {
+			// Relation gets called first
+			caller = _getDataNode(this.startField, entity, includedData, relation);
+			relation.setStart(caller);
+
+			if (this.stEqTr)
+				relation.setTarget(caller);
+			else
+				relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation));
+
+			return relation;
+		}
+
+		if (this.stEqTr) {
+			relation.setStart(caller);
+			relation.setTarget(caller);
+			return relation;
+		}
+
+		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
+				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING)) {
+			relation.setTarget(caller);
+			relation.setStart(_getDataNode(this.startField, entity, includedData, relation));
+		} else {
+			relation.setStart(caller);
+			relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation));
+		}
+		return relation;
+	}
+
 	private IFNode _getNode(Class<?> type, IFRelation relation) {
 		NodePattern node = this.storage.getNode(type);
 		if (node == null)
@@ -110,18 +169,13 @@ public class RelationPattern implements IPattern {
 		return node.createFilter(relation);
 	}
 
-	public Object setId(Object object, Serializable id) throws IllegalArgumentException {
-		if (this.idField == null)
-			return object;
-		try {
-			this.idField.set(object, id);
-		} catch (IllegalAccessException e) {
-		}
-		return object;
-	}
-
-	public Object parse(Serializable id, String data) throws Exception {
-		return this.setId(this.storage.getParser().deserialize(this.type, data), id);
+	private DataNode _getDataNode(Field field, Object entity, Map<Object, DataFilter> includedData, DataRelation relation) throws Exception {
+		NodePattern node = this.storage.getNode(field.getType());
+		if (node == null)
+			return null;
+		DataNode dataNode = node.createFilter(field.get(entity), includedData);
+		dataNode.getRelations().add(relation);
+		return dataNode;
 	}
 
 }

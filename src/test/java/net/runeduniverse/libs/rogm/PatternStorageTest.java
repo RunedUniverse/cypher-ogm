@@ -19,8 +19,23 @@ public class PatternStorageTest {
 	private static final Module module = dbType.getModule();
 	private PatternStorage storage = null;
 
+	private static final Person testi;
+	private static final Artist ennio;
+
+	static {
+		testi = new Person("Testi", "West", true);
+		testi.setAddress(new Address("Sundown Road", 3));
+
+		ennio = new Artist();
+		ennio.setFirstName("Ennio");
+		ennio.setLastName("Morricone");
+		Song s = new Song("C’era una volta il West");
+		ennio.getCreated().add(s);
+		ennio.getPlayed().add(s);
+	}
+
 	@Before
-	public void before() {
+	public void before() throws Exception {
 		List<String> pkgs = new ArrayList<>();
 		pkgs.add("net.runeduniverse.libs.rogm.model");
 		pkgs.add("net.runeduniverse.libs.rogm.model.relations");
@@ -28,23 +43,42 @@ public class PatternStorageTest {
 	}
 
 	@Test
-	public void testCompany() throws Exception {
-		System.out.println(_build(Company.class));
+	public void queryCompany() throws Exception {
+		System.out.println(_query(Company.class));
 	}
 
 	@Test
-	public void testActor() throws Exception {
-		System.out.println(_build(Actor.class));
+	public void queryActor() throws Exception {
+		System.out.println(_query(Actor.class));
 	}
 
 	@Test
-	public void testHouse() throws Exception {
-		System.out.println(_build(House.class));
+	public void queryHouse() throws Exception {
+		System.out.println(_query(House.class));
 	}
 
-	private String _build(Class<?> clazz) throws Exception {
-		return '['+clazz.getSimpleName() + "]\n" + lang.buildQuery(this.storage.getNode(clazz).createFilter(), parser)
-				+ '\n';
+	@Test
+	public void savePerson() throws Exception {
+		System.out.println(_update(testi));
 	}
 
+	@Test
+	public void saveArtist() throws Exception {
+		System.out.println(_create(ennio));
+	}
+
+	private String _query(Class<?> clazz) throws Exception {
+		return "[QUERY][" + clazz.getSimpleName() + "]\n"
+				+ lang.buildQuery(this.storage.getNode(clazz).createFilter(), parser) + '\n';
+	}
+
+	private String _update(Object entity) throws Exception {
+		return "[UPDATE][" + entity.getClass().getSimpleName() + "]\n"
+				+ lang.buildUpdate(this.storage.createFilter(entity), parser).qry() + '\n';
+	}
+
+	private String _create(Object entity) throws Exception {
+		return "[CREATE][" + entity.getClass().getSimpleName() + "]\n"
+				+ lang.buildInsert(this.storage.createFilter(entity), parser).qry() + '\n';
+	}
 }

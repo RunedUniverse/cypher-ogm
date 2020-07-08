@@ -51,7 +51,8 @@ public class Cypher implements Language {
 		map.forEach((f, c) -> {
 			try {
 				DataFilter d = (DataFilter) f;
-				st.add(c + '=' + parser.serialize(d.getData()));
+				if (d.getData() != null)
+					st.add(c + '=' + parser.serialize(d.getData()));
 				rt.add(_returnId(c));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -77,7 +78,8 @@ public class Cypher implements Language {
 		map.forEach((f, c) -> {
 			try {
 				DataFilter d = (DataFilter) f;
-				st.add(c + '=' + parser.serialize(d.getData()));
+				if (d.getData() != null)
+					st.add(c + '=' + parser.serialize(d.getData()));
 				rt.add(_returnId(c));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -166,7 +168,7 @@ public class Cypher implements Language {
 				activeBuilder.append("()");
 			activeBuilder.append('\n');
 		});
-		return matchBuilder.append(optionalMatchBuilder).append(whereBuilder);
+		return matchBuilder.append(whereBuilder).append(optionalMatchBuilder);
 	}
 
 	private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code) {
