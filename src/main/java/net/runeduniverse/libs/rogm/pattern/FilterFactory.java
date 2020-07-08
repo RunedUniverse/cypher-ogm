@@ -13,13 +13,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IIdentified;
+import net.runeduniverse.libs.rogm.querying.IOptional;
 import net.runeduniverse.libs.rogm.querying.IParameterized;
+import net.runeduniverse.libs.rogm.querying.IReturned;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class FilterFactory {
@@ -52,10 +55,15 @@ public class FilterFactory {
 		// TODO properly convert id to String
 	}
 	
+	@Getter @Setter
+	protected abstract class Filter implements IOptional, IReturned{
+		protected boolean returned = false;
+		protected boolean optional = false;
+	}
 	
 	@Getter
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	protected class Node implements IFNode {
+	protected class Node extends Filter implements IFNode {
 		protected Set<String> labels = new HashSet<>();
 		protected List<IFilter> relations = new ArrayList<>();
 	}
@@ -80,7 +88,7 @@ public class FilterFactory {
 	}
 
 	@Data
-	protected class Relation implements IFRelation {
+	protected class Relation extends Filter implements IFRelation {
 		protected IFilter start;
 		protected IFilter target;
 		protected Direction direction;

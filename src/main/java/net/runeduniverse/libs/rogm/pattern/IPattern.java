@@ -5,7 +5,7 @@ import java.io.Serializable;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface IPattern {
-	IFilter createFilter();
+	IFilter createFilter() throws Exception;
 
 	Object setId(Object object, Serializable id) throws IllegalArgumentException;
 

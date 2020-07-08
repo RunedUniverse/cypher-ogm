@@ -77,10 +77,11 @@ public class RelationPattern implements IPattern {
 
 		relation.setStart(this._getNode(this.startField.getType(), relation));
 		relation.setTarget(this._getNode(this.targetField.getType(), relation));
+		relation.setReturned(true);
 		return relation;
 	}
 
-	public IFRelation createFilter(IFNode caller, Direction direction) {
+	public Relation createFilter(IFNode caller, Direction direction) {
 		Relation relation = this.storage.getFactory().createRelation(this.direction);
 		if (isBlank(this.label))
 			relation.getLabels().add(this.label);

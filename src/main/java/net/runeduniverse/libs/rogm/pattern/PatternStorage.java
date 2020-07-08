@@ -13,7 +13,6 @@ import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class PatternStorage {
 
@@ -53,11 +52,5 @@ public class PatternStorage {
 
 	public RelationPattern getRelation(Class<?> clazz) {
 		return this.relations.get(clazz);
-	}
-
-	public IFilter createFilter(Class<?> type, int depth) {
-		// if (!this.patterns.containsKey(type))
-		return null;
-		// return this.patterns.get(type).createFilter(depth);
 	}
 }
