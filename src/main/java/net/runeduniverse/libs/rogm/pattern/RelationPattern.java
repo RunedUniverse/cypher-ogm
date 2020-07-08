@@ -16,6 +16,7 @@ import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
+import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -120,12 +121,15 @@ public class RelationPattern extends APattern {
 			return (DataRelation) includedData.get(entity);
 
 		DataRelation relation = null;
-		if (this.isIdSet(entity))
+		if (this.isIdSet(entity)) {
 			// update (id)
 			relation = this.storage.getFactory().createIdDataRelation(this.direction, this.getId(entity), entity);
-		else
+			relation.setFilterType(FilterType.UPDATE);
+		} else {
 			// create (!id)
 			relation = this.storage.getFactory().createDataRelation(this.direction, entity);
+			relation.setFilterType(FilterType.CREATE);
+		}
 		relation.setReturned(true);
 		includedData.put(entity, relation);
 
@@ -169,7 +173,8 @@ public class RelationPattern extends APattern {
 		return node.createFilter(relation);
 	}
 
-	private DataNode _getDataNode(Field field, Object entity, Map<Object, DataFilter> includedData, DataRelation relation) throws Exception {
+	private DataNode _getDataNode(Field field, Object entity, Map<Object, DataFilter> includedData,
+			DataRelation relation) throws Exception {
 		NodePattern node = this.storage.getNode(field.getType());
 		if (node == null)
 			return null;

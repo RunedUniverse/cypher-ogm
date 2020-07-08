@@ -59,12 +59,12 @@ public class PatternStorageTest {
 
 	@Test
 	public void savePerson() throws Exception {
-		System.out.println(_update(testi));
+		System.out.println(_save(testi));
 	}
 
 	@Test
 	public void saveArtist() throws Exception {
-		System.out.println(_create(ennio));
+		System.out.println(_save(ennio));
 	}
 
 	private String _query(Class<?> clazz) throws Exception {
@@ -72,13 +72,8 @@ public class PatternStorageTest {
 				+ lang.buildQuery(this.storage.getNode(clazz).createFilter(), parser) + '\n';
 	}
 
-	private String _update(Object entity) throws Exception {
-		return "[UPDATE][" + entity.getClass().getSimpleName() + "]\n"
-				+ lang.buildUpdate(this.storage.createFilter(entity), parser).qry() + '\n';
-	}
-
-	private String _create(Object entity) throws Exception {
-		return "[CREATE][" + entity.getClass().getSimpleName() + "]\n"
-				+ lang.buildInsert(this.storage.createFilter(entity), parser).qry() + '\n';
+	private String _save(Object entity) throws Exception {
+		return "[SAVE][" + entity.getClass().getSimpleName() + "]\n"
+				+ lang.buildSave(this.storage.createFilter(entity), parser).qry() + '\n';
 	}
 }

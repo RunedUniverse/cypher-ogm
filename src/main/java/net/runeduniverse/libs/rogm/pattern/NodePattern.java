@@ -23,6 +23,7 @@ import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
+import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -130,12 +131,15 @@ public class NodePattern extends APattern {
 
 		List<IFilter> relations = new ArrayList<>();
 		DataNode node = null;
-		if (this.isIdSet(entity))
+		if (this.isIdSet(entity)) {
 			// update (id)
 			node = this.storage.getFactory().createIdDataNode(this.labels, relations, this.getId(entity), entity);
-		else
+			node.setFilterType(FilterType.UPDATE);
+		} else {
 			// create (!id)
 			node = this.storage.getFactory().createDataNode(this.labels, relations, entity);
+			node.setFilterType(FilterType.CREATE);
+		}
 		node.setReturned(true);
 		includedData.put(entity, node);
 
@@ -167,6 +171,7 @@ public class NodePattern extends APattern {
 			relation = this.storage.getRelation(clazz).createFilter(relEntity, node, anno.direction(), includedData);
 		else {
 			relation = this.storage.getFactory().createDataRelation(anno.direction(), null);
+			relation.setFilterType(FilterType.UPDATE);
 			relation.setStart(node);
 			relation.setTarget(this.storage.getNode(clazz).createFilter(relEntity, includedData));
 		}

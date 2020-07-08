@@ -16,6 +16,7 @@ import lombok.Setter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -84,9 +85,11 @@ public class FilterFactory {
 
 	
 	protected interface DataNode extends DataFilter, ILabeled, IReturned, IFNode{
+		void setFilterType(FilterType type);
 		void setReturned(boolean returned);
 	}
 	protected interface DataRelation extends DataFilter, ILabeled, IReturned, IFRelation{
+		void setFilterType(FilterType type);
 		void setReturned(boolean returned);
 		void setStart(IFilter start);
 		void setTarget(IFilter target);
@@ -98,6 +101,7 @@ public class FilterFactory {
 	protected abstract class Filter implements IOptional, IReturned {
 		protected boolean returned = false;
 		protected boolean optional = false;
+		protected FilterType filterType = FilterType.MATCH;
 	}
 
 	@Getter

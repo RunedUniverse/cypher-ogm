@@ -1,28 +1,20 @@
 package net.runeduniverse.libs.rogm;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.lang.Language;
-import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.IDFilterNode;
-import net.runeduniverse.libs.rogm.querying.IDFilterRelation;
 import net.runeduniverse.libs.rogm.util.Buffer;
 import net.runeduniverse.libs.rogm.util.DataMap;
 import net.runeduniverse.libs.rogm.util.DataMap.Value;
@@ -67,37 +59,15 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void save(Object object) {
-		Field idField = FIELD_ACCESSOR.findAnnotatedField(object.getClass(), Id.class);
 		try {
-			if (this.storage.isIdSet(object))
-				this._update(idField, object);
-			else
-				this._create(object);
+			// TODO move insert/update to pattern
+			Language.Mapper mapper = this.lang.buildSave(this.storage.createFilter(object), this.parser);
+			mapper.updateObjectIds(FIELD_ACCESSOR, this.nodeBuffer, this.module.execute(mapper.qry()));
+
+			System.out.println(mapper.qry() + '\n');
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void _create(Object object) throws Exception {
-		Set<String> labels = new HashSet<>();
-		labels.add(object.getClass().getSimpleName());
-
-		DataFilter df = this.storage.getFactory().createDataNode(labels, new ArrayList<IFilter>(), object);
-
-		Language.Mapper mapper = this.lang.buildInsert(df, this.parser);
-		//System.out.println(mapper.qry());
-		mapper.updateObjectIds(FIELD_ACCESSOR, this.nodeBuffer, this.module.execute(mapper.qry()));
-		//System.out.println("CREATED: " + object);
-
-	}
-
-	private void _update(Field idField, Object object) throws Exception {
-		DataFilter df = this.storage.getFactory().createIdDataNode(new HashSet<>(), new ArrayList<>(),
-				(Serializable) idField.get(object), object);
-
-		Language.Mapper mapper = this.lang.buildUpdate(df, this.parser);
-		mapper.updateObjectIds(FIELD_ACCESSOR, this.nodeBuffer, this.module.execute(mapper.qry()));
-
 	}
 
 	@Override
@@ -107,6 +77,7 @@ public final class CoreSession implements Session {
 		});
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
 		T o = this.nodeBuffer.load(id, type);
@@ -130,8 +101,7 @@ public final class CoreSession implements Session {
 		}
 
 		try {
-			return this.nodeBuffer.acquire(id, type,
-					FIELD_ACCESSOR.setObjectId(this.parser.deserialize(type, data), id));
+			return this.nodeBuffer.acquire(id, type, (T) this.storage.parse(type, id, data));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -180,30 +150,16 @@ public final class CoreSession implements Session {
 		return results;
 	}
 
-	private final static FieldAccessor FIELD_ACCESSOR = new FieldAccessor() {
+	private final FieldAccessor FIELD_ACCESSOR = new FieldAccessor() {
 
 		public <T extends Object, ID extends Serializable> T setObjectId(T obj, ID id) {
 			// no @Id field -> skip
-			Field field = findAnnotatedField(obj.getClass(), Id.class);
-			if (field != null)
-				try {
-					field.set(obj, field.getType().cast(id));
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					e.printStackTrace();
-				}
-
+			try {
+				storage.setId(obj, id);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			return obj;
-		}
-
-		public <ANNO extends Annotation> Field findAnnotatedField(Class<?> clazz, Class<ANNO> anno) {
-			if (clazz.isAssignableFrom(Object.class))
-				return null;
-			for (Field field : clazz.getDeclaredFields())
-				if (field.isAnnotationPresent(anno)) {
-					field.setAccessible(true);
-					return field;
-				}
-			return findAnnotatedField(clazz.getSuperclass(), anno);
 		}
 	};
 

@@ -12,9 +12,7 @@ import net.runeduniverse.libs.rogm.util.FieldAccessor;
 public interface Language {
 	String buildQuery(IFilter filter, Parser parser) throws Exception;
 
-	Mapper buildInsert(DataFilter node, Parser parser) throws Exception;
-
-	Mapper buildUpdate(DataFilter node, Parser parser) throws Exception;
+	Mapper buildSave(DataFilter node, Parser parser) throws Exception;
 
 	public interface DataFilter extends IFilter, IDataContainer {
 	}

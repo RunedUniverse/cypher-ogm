@@ -9,8 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import net.runeduniverse.libs.rogm.model.Actor;
-import net.runeduniverse.libs.rogm.model.Address;
-import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Person;
 
 public class SessionTest {

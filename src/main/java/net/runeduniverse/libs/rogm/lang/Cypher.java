@@ -20,7 +20,7 @@ public class Cypher implements Language {
 		StringVariableGenerator gen = new StringVariableGenerator();
 		_parse(map, filter, gen, false);
 
-		StringBuilder qry = _select(map, parser, Phase.MATCH).append("RETURN ");
+		StringBuilder qry = _select(map, parser).append("RETURN ");
 		List<String> rt = new ArrayList<>();
 
 		map.forEach((f, c) -> {
@@ -38,39 +38,12 @@ public class Cypher implements Language {
 	}
 
 	@Override
-	public Mapper buildInsert(DataFilter node, Parser parser) throws Exception {
+	public Mapper buildSave(DataFilter node, Parser parser) throws Exception {
 		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		_parse(map, node, gen, false);
 
-		StringBuilder qry = _select(map, parser, Phase.CREATE);
-
-		List<String> st = new ArrayList<>();
-		List<String> rt = new ArrayList<>();
-
-		map.forEach((f, c) -> {
-			try {
-				DataFilter d = (DataFilter) f;
-				if (d.getData() != null)
-					st.add(c + '=' + parser.serialize(d.getData()));
-				rt.add(_returnId(c));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-
-		// SET + RETURN
-		return new Mapper(qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ")
-				.append(String.join(", ", rt)).append(';').toString(), map);
-	}
-
-	@Override
-	public Mapper buildUpdate(DataFilter node, Parser parser) throws Exception {
-		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
-		StringVariableGenerator gen = new StringVariableGenerator();
-		_parse(map, node, gen, false);
-
-		StringBuilder qry = _select(map, parser, Phase.MATCH);
+		StringBuilder qry = _select(map, parser);
 
 		List<String> st = new ArrayList<>();
 		List<String> rt = new ArrayList<>();
@@ -126,9 +99,9 @@ public class Cypher implements Language {
 			throw new Exception("IFilter<" + filter.toString() + "> not supported");
 	}
 
-	private StringBuilder _select(DataMap<IFilter, String, FilterStatus> map, Parser parser, Phase phase)
-			throws Exception {
+	private StringBuilder _select(DataMap<IFilter, String, FilterStatus> map, Parser parser) throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
+		StringBuilder mergeBuilder = new StringBuilder();
 		StringBuilder optionalMatchBuilder = new StringBuilder();
 		StringBuilder whereBuilder = new StringBuilder();
 
@@ -136,7 +109,8 @@ public class Cypher implements Language {
 			StringBuilder activeBuilder = null;
 			boolean optional = false;
 
-			if (phase == Phase.MATCH && f instanceof IOptional && ((IOptional) f).isOptional())
+			if (f != null && f.getFilterType() == FilterType.MATCH && f instanceof IOptional
+					&& ((IOptional) f).isOptional())
 				optional = true;
 
 			if (f == null || modifier.equals(FilterStatus.PRINTED)
@@ -145,13 +119,15 @@ public class Cypher implements Language {
 
 			if (optional)
 				activeBuilder = optionalMatchBuilder.append("OPTIONAL ");
+			else if (_isMerge(f))
+				activeBuilder = mergeBuilder;
 			else
 				activeBuilder = matchBuilder;
 
-			activeBuilder.append(phase.prefix);
+			activeBuilder.append(_prefix(f));
 			if (f instanceof IFNode) {
 
-				if (phase != Phase.CREATE && f instanceof IIdentified
+				if (f.getFilterType() != FilterType.CREATE && f instanceof IIdentified
 						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
 					_where(map, whereBuilder, f, code);
 
@@ -159,7 +135,7 @@ public class Cypher implements Language {
 					activeBuilder.append(_filterToString(map, f, true, parser, false));
 
 			} else if (f instanceof IFRelation) {
-				if (phase != Phase.CREATE && f instanceof IIdentified
+				if (f.getFilterType() != FilterType.CREATE && f instanceof IIdentified
 						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
 					_where(map, whereBuilder, f, code);
 
@@ -168,7 +144,32 @@ public class Cypher implements Language {
 				activeBuilder.append("()");
 			activeBuilder.append('\n');
 		});
-		return matchBuilder.append(whereBuilder).append(optionalMatchBuilder);
+		return matchBuilder.append(mergeBuilder).append(whereBuilder).append(optionalMatchBuilder);
+	}
+
+	private boolean _isMerge(IFilter filter) {
+		switch (filter.getFilterType()) {
+		case CREATE:
+		case UPDATE:
+			if (filter instanceof IFRelation)
+				return true;
+		default:
+			return false;
+		}
+	}
+
+	private String _prefix(IFilter filter) {
+		if (_isMerge(filter))
+			return "MERGE ";
+
+		switch (filter.getFilterType()) {
+		case CREATE:
+			return "CREATE ";
+		case UPDATE:
+		case MATCH:
+		default:
+			return "MATCH ";
+		}
 	}
 
 	private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code) {
@@ -234,7 +235,7 @@ public class Cypher implements Language {
 			}
 
 			// disable future param printing
-			if (optional)
+			if (filter != null && (optional || filter.getFilterType() == FilterType.CREATE))
 				map.setData(filter, FilterStatus.PRE_PRINTED);
 			else
 				map.setData(filter, FilterStatus.PRINTED);
@@ -263,13 +264,6 @@ public class Cypher implements Language {
 				return this.status >= ((FilterStatus) obj).getStatus();
 			return super.equals(obj);
 		}
-	}
-
-	@AllArgsConstructor
-	protected static enum Phase {
-		MATCH("MATCH "), CREATE("CREATE "), MERGE("MERGE ");
-
-		String prefix;
 	}
 
 	protected static class Mapper implements Language.Mapper {

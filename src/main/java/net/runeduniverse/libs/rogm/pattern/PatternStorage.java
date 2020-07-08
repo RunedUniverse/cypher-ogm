@@ -54,28 +54,36 @@ public class PatternStorage {
 	public RelationPattern getRelation(Class<?> clazz) {
 		return this.relations.get(clazz);
 	}
+	
+	public IPattern getPattern(Class<?> clazz) throws Exception {
+		if (this.nodes.containsKey(clazz))
+			return this.nodes.get(clazz);
+		if (this.relations.containsKey(clazz))
+			return this.relations.get(clazz);
+		throw new Exception("Unsupported Class<" + clazz.getName() + "> as @Relation found!");
+	}
 
 	public boolean isIdSet(Object entity) {
-		if (this.nodes.containsKey(entity.getClass()))
-			return this.nodes.get(entity.getClass()).isIdSet(entity);
-		if (this.relations.containsKey(entity.getClass()))
-			return this.relations.get(entity.getClass()).isIdSet(entity);
-		return false;
+		try {
+			return this.getPattern(entity.getClass()).isIdSet(entity);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public IFilter createIdFilter(Class<?> clazz, Serializable id) throws Exception {
-		if (this.nodes.containsKey(clazz))
-			return this.nodes.get(clazz).createIdFilter(id);
-		if (this.relations.containsKey(clazz))
-			return this.relations.get(clazz).createIdFilter(id);
-		throw new Exception("Unsupported Class<" + clazz.getName() + "> as @Relation found!");
+		return this.getPattern(clazz).createIdFilter(id);
 	}
 	
 	public DataFilter createFilter(Object entity) throws Exception{
-		if (this.nodes.containsKey(entity.getClass()))
-			return this.nodes.get(entity.getClass()).createFilter(entity);
-		if (this.relations.containsKey(entity.getClass()))
-			return this.relations.get(entity.getClass()).createFilter(entity);
-		throw new Exception("Unsupported Class<" + entity.getClass().getName() + "> as @Relation found!");
+		return this.getPattern(entity.getClass()).createFilter(entity);
+	}
+	
+	public Object setId(Object entity, Serializable id) throws IllegalArgumentException, Exception {
+		return this.getPattern(entity.getClass()).setId(entity, id);
+	}
+	
+	public Object parse(Class<?> clazz, Serializable id, String data) throws Exception{
+		return this.getPattern(clazz).parse(id, data);
 	}
 }

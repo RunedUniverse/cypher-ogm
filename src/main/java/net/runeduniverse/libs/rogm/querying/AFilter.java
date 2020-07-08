@@ -9,6 +9,8 @@ public abstract class AFilter<F extends IFilter> implements IReturned, IOptional
 	private boolean returned = false;
 	@Getter
 	private boolean optional = false;
+	@Getter
+	private FilterType filterType = FilterType.MATCH;
 	
 	protected void setInstance(F instance) {
 		this.instance = instance;
