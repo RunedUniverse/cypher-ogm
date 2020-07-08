@@ -23,11 +23,11 @@ public class PatternStorage {
 	private final Map<Class<?>, NodePattern> nodes = new HashMap<>();
 	private final Map<Class<?>, RelationPattern> relations = new HashMap<>();
 
-	public PatternStorage(List<String> pkts, Module module, Parser parser) {
+	public PatternStorage(List<String> pkgs, Module module, Parser parser) {
 		this.factory = new FilterFactory(module);
 		this.parser = parser;
 
-		Reflections reflections = new Reflections(pkts.toArray(), new TypeAnnotationsScanner(),
+		Reflections reflections = new Reflections(pkgs.toArray(), new TypeAnnotationsScanner(),
 				new SubTypesScanner(true));
 
 		reflections.getTypesAnnotatedWith(NodeEntity.class).forEach(c -> {

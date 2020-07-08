@@ -10,7 +10,6 @@ import java.util.Set;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -87,7 +86,7 @@ public class FilterFactory {
 		}
 	}
 
-	@Data
+	@Getter @Setter
 	protected class Relation extends Filter implements IFRelation {
 		protected IFilter start;
 		protected IFilter target;

@@ -109,6 +109,7 @@ public class NodePattern implements IPattern {
 		relations.add(caller);
 		Node node = this.storage.getFactory().createNode(this.labels, relations);
 		node.setReturned(true);
+		node.setOptional(true);
 		return node;// includes ONLY 1 relation filters
 	}
 	

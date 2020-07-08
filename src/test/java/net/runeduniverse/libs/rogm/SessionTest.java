@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.model.Address;
 import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Person;
 
@@ -51,7 +52,7 @@ public class SessionTest {
 	@Test
 	public void updatePerson() {
 		assertTrue("Session is NOT connected", session.isConnected());
-		Person shawn = session.load(Person.class, 40L);
+		Person shawn = session.load(Person.class, 10L);
 		System.out.println(shawn.toString());
 		shawn.setFirstName("Shawn");
 		shawn.setLastName("James");
@@ -63,6 +64,7 @@ public class SessionTest {
 	@Test
 	public void createPerson() {
 		Person james = new Person("James", "North", true);
+		//james.setAddress(new Address("Sundown Road", 3));
 		System.out.println(james.toString());
 		session.save(james);
 		System.out.println(james.toString());
