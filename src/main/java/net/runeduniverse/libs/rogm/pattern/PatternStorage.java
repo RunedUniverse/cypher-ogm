@@ -16,6 +16,7 @@ import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.util.Buffer;
 
 public class PatternStorage {
 
@@ -25,6 +26,10 @@ public class PatternStorage {
 	private final Parser parser;
 	private final Map<Class<?>, NodePattern> nodes = new HashMap<>();
 	private final Map<Class<?>, RelationPattern> relations = new HashMap<>();
+	@Getter
+	private final Buffer nodeBuffer = new Buffer();
+	@Getter
+	private final Buffer relationBuffer = new Buffer();
 
 	public PatternStorage(List<String> pkgs, Module module, Parser parser) throws Exception {
 		this.factory = new FilterFactory(module);
@@ -54,7 +59,7 @@ public class PatternStorage {
 	public RelationPattern getRelation(Class<?> clazz) {
 		return this.relations.get(clazz);
 	}
-	
+
 	public IPattern getPattern(Class<?> clazz) throws Exception {
 		if (this.nodes.containsKey(clazz))
 			return this.nodes.get(clazz);
@@ -71,19 +76,27 @@ public class PatternStorage {
 		}
 	}
 
+	public IFilter createFilter(Class<?> clazz) throws Exception {
+		return this.getPattern(clazz).createFilter();
+	}
+
+	public DataFilter createFilter(Object entity) throws Exception {
+		return this.getPattern(entity.getClass()).createFilter(entity);
+	}
+
 	public IFilter createIdFilter(Class<?> clazz, Serializable id) throws Exception {
 		return this.getPattern(clazz).createIdFilter(id);
 	}
-	
-	public DataFilter createFilter(Object entity) throws Exception{
-		return this.getPattern(entity.getClass()).createFilter(entity);
+
+	public Object setId(Object entity, Serializable id) {
+		try {
+			return this.getPattern(entity.getClass()).setId(entity, id);
+		} catch (Exception e) {
+		}
+		return entity;
 	}
-	
-	public Object setId(Object entity, Serializable id) throws IllegalArgumentException, Exception {
-		return this.getPattern(entity.getClass()).setId(entity, id);
-	}
-	
-	public Object parse(Class<?> clazz, Serializable id, String data) throws Exception{
+
+	public Object parse(Class<?> clazz, Serializable id, String data) throws Exception {
 		return this.getPattern(clazz).parse(id, data);
 	}
 }

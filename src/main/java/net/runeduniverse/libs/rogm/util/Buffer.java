@@ -22,11 +22,11 @@ public class Buffer {
 		this.buffer.put(id, object);
 	}
 
-	public <T, ID extends Serializable> T acquire(ID id, Class<T> type, T object) {
-		T o = this.load(id, type);
+	public Object acquire(Serializable serializable, Class<?> type, Object object) {
+		Object o = this.load(serializable, type);
 		if (o != null)
 			return o;
-		this.save(id, object);
+		this.save(serializable, object);
 		return object;
 	}
 

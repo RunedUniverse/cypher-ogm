@@ -3,12 +3,14 @@ package net.runeduniverse.libs.rogm.pattern;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public abstract class APattern implements IPattern {
 
 	protected final PatternStorage storage;
+	@Getter
 	protected final Class<?> type;
 	protected Field idField = null;
 	

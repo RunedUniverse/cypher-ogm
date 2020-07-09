@@ -1,16 +1,18 @@
 package net.runeduniverse.libs.rogm.lang;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
+import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.util.Buffer;
-import net.runeduniverse.libs.rogm.util.FieldAccessor;
 
 public interface Language {
-	String buildQuery(IFilter filter, Parser parser) throws Exception;
+	Mapper buildQuery(IFilter filter, Parser parser) throws Exception;
 
 	Mapper buildSave(DataFilter node, Parser parser) throws Exception;
 
@@ -20,6 +22,8 @@ public interface Language {
 	public interface Mapper {
 		String qry();
 
-		<ID extends Serializable> void updateObjectIds(FieldAccessor accessor, Buffer nodeBuffer, Map<String, ID> ids);
+		<ID extends Serializable> void updateObjectIds(PatternStorage storage, Map<String, ID> ids);
+		Object parseObject(Map<String, Data> record);
+		Collection<Object> parseObjects(List<Map<String, Data>> records);
 	}
 }

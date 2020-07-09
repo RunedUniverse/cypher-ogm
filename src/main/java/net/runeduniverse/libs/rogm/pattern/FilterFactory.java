@@ -24,6 +24,7 @@ import net.runeduniverse.libs.rogm.querying.IIdentified;
 import net.runeduniverse.libs.rogm.querying.ILabeled;
 import net.runeduniverse.libs.rogm.querying.IOptional;
 import net.runeduniverse.libs.rogm.querying.IParameterized;
+import net.runeduniverse.libs.rogm.querying.IPatternContainer;
 import net.runeduniverse.libs.rogm.querying.IReturned;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -98,7 +99,8 @@ public class FilterFactory {
 	
 	@Getter
 	@Setter
-	protected abstract class Filter implements IOptional, IReturned {
+	protected abstract class Filter implements IOptional, IReturned, IPatternContainer {
+		protected IPattern pattern = null;
 		protected boolean returned = false;
 		protected boolean optional = false;
 		protected FilterType filterType = FilterType.MATCH;

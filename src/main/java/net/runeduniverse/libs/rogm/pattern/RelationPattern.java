@@ -3,6 +3,7 @@ package net.runeduniverse.libs.rogm.pattern;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
@@ -20,6 +21,7 @@ import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.util.Buffer;
 
 public class RelationPattern extends APattern {
 
@@ -37,6 +39,11 @@ public class RelationPattern extends APattern {
 		this.direction = typeAnno.direction();
 		this.label = typeAnno.label();
 		_parse(this.type);
+	}
+
+	@Override
+	public Buffer getBuffer() {
+		return this.storage.getRelationBuffer();
 	}
 
 	private void _parse(Class<?> type) {
@@ -84,12 +91,14 @@ public class RelationPattern extends APattern {
 
 		relation.setStart(this._getNode(this.startField.getType(), relation));
 		relation.setTarget(this._getNode(this.targetField.getType(), relation));
+		relation.setPattern(this);
 		relation.setReturned(true);
 		return relation;
 	}
 
 	public Relation createFilter(IFNode caller, Direction direction) {
 		Relation relation = this.storage.getFactory().createRelation(this.direction);
+		relation.setPattern(this);
 		if (!isBlank(this.label))
 			relation.getLabels().add(this.label);
 
@@ -181,6 +190,23 @@ public class RelationPattern extends APattern {
 		DataNode dataNode = node.createFilter(field.get(entity), includedData);
 		dataNode.getRelations().add(relation);
 		return dataNode;
+	}
+	
+	@Override
+	public Object parse(List<Data> data) throws Exception {
+		Data primary = data.get(0);
+		Object relation = this.getBuffer().acquire(primary.getId(), this.type, this.parse(primary.getId(), primary.getData()));
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// TODO Auto-generated method stub
+		return relation;
 	}
 
 }

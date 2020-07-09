@@ -2,8 +2,11 @@ package net.runeduniverse.libs.rogm.modules.neo4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -12,11 +15,11 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 import org.neo4j.driver.TransactionWork;
+import org.neo4j.driver.Value;
+import lombok.Getter;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.util.DataHashMap;
-import net.runeduniverse.libs.rogm.util.DataMap;
 
 public class Neo4jModule implements Module {
 
@@ -95,22 +98,21 @@ public class Neo4jModule implements Module {
 		}
 
 		@Override
-		public DataMap<Long, String, String> queryObject(String qry) {
-			DataMap<Long, String, String> qryResults = new DataHashMap<>();
+		public List<Map<String, Module.Data>> queryObject(String qry) {
+			List<Map<String, Module.Data>> qryResults = new ArrayList<>();
 
 			try {
-				for (Record record : _query(qry))
+				for (Record record : _query(qry)) {
+					Map<String, Module.Data> data = new HashMap<>();
 					for (String key : record.keys()) {
 						if (key.startsWith("id_"))
 							continue;
 						if (key.startsWith("labels_"))
 							continue;
-
-						Object value = null;
-						if (!record.get(key).isNull())
-							value = record.get(key).asMap();
-						qryResults.put(record.get("id_" + key).asLong(-1L), this.parser.serialize(value), key);
+						data.put(key, new Data(this.parser, record, key));
 					}
+					qryResults.add(data);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -127,19 +129,48 @@ public class Neo4jModule implements Module {
 
 					@Override
 					public Map<String, Long> execute(Transaction tx) {
-
 						Result result = tx.run(qry);
 						if (!result.hasNext())
 							return new HashMap<>();
 						Map<String, Long> results = new HashMap<>();
 						Record record = result.next();
+						System.out.println(record.keys());
 						record.keys().forEach(key -> {
+							System.out.println(key + " : " + record.get(key, -1L));
 							results.put(key, record.get(key, -1L));
 						});
 						return results;
 					}
 				});
 			}
+		}
+	}
+
+	@Getter
+	public class Data implements Module.Data {
+
+		private Long id;
+		private Set<String> labels = new HashSet<>();
+		private String data;
+		private String alias;
+
+		protected Data(Parser parser, Record record, String key) throws Exception {
+			this.alias = key;
+			Value idProperty = record.get("id_" + key);
+			if(idProperty.isNull())
+				return;
+			this.id = record.get("id_" + key).asLong();
+			if (record.get(key).isNull())
+				this.data = parser.serialize(null);
+			else
+				this.data = parser.serialize(record.get(key).asMap());
+
+			Value labelsProperty = record.get("labels_" + key);
+			if (List.class.isAssignableFrom(labelsProperty.asObject().getClass()))
+				for (Object o : record.get("labels_" + key).asList())
+					this.labels.add((String) o);
+			else
+				this.labels.add(labelsProperty.asString());
 		}
 	}
 }

@@ -27,6 +27,7 @@ import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.util.Buffer;
 
 public class NodePattern extends APattern {
 
@@ -36,6 +37,11 @@ public class NodePattern extends APattern {
 	public NodePattern(PatternStorage storage, Class<?> type) throws Exception {
 		super(storage, type);
 		this._parse(this.type);
+	}
+
+	@Override
+	public Buffer getBuffer() {
+		return this.storage.getNodeBuffer();
 	}
 
 	private void _parse(Class<?> type) throws Exception {
@@ -72,6 +78,7 @@ public class NodePattern extends APattern {
 	public IFilter createFilter() throws Exception {
 		List<IFilter> relations = new ArrayList<>();
 		Node node = this.storage.getFactory().createNode(this.labels, relations);
+		node.setPattern(this);
 		node.setReturned(true);
 		_createFilterRelations(node, relations);
 
@@ -81,6 +88,7 @@ public class NodePattern extends APattern {
 	public IFilter createIdFilter(Serializable id) throws Exception {
 		List<IFilter> relations = new ArrayList<>();
 		Node node = this.storage.getFactory().createIdNode(this.labels, relations, id);
+		node.setPattern(this);
 		node.setReturned(true);
 		_createFilterRelations(node, relations);
 		return node;
@@ -115,6 +123,7 @@ public class NodePattern extends APattern {
 		List<IFilter> relations = new ArrayList<>();
 		relations.add(caller);
 		Node node = this.storage.getFactory().createNode(this.labels, relations);
+		node.setPattern(this);
 		node.setReturned(true);
 		node.setOptional(true);
 		return node;// includes ONLY 1 relation filters
@@ -187,6 +196,17 @@ public class NodePattern extends APattern {
 		if (node == null)
 			throw new Exception("Unsupported Class<" + type.getName() + "> as @Relation found!");
 		return node.createFilter(relation);
+	}
+
+	@Override
+	public Object parse(List<Data> data) throws Exception {
+		Data primary = data.get(0);
+		Object node = this.getBuffer().acquire(primary.getId(),
+				this.type/* ((IPatternContainer) primary.getFilter()).getPattern().getType() */,
+				this.parse(primary.getId(), primary.getData()));
+
+		// TODO Auto-generated method stub
+		return node;
 	}
 
 }

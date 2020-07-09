@@ -3,8 +3,9 @@ package net.runeduniverse.libs.rogm.modules;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.util.DataMap;
 
 public interface Module {
 
@@ -23,9 +24,16 @@ public interface Module {
 		
 		// return the raw data
 		List<Map<String, Object>> query(String qry);
-		// returns a Map with the ALIAS, the ID and the DATA
-		DataMap<ID, String, String> queryObject(String qry);
+		// returns a Map with the ALIAS as Key and DATA as Value
+		List<Map<String, Data>> queryObject(String qry);
 		// returns a Map with the ALIAS and the ID
 		Map<String, ID> execute(String qry);
+	}
+	
+	public interface Data{
+		Serializable getId();
+		Set<String> getLabels();
+		String getData();
+		String getAlias();
 	}
 }

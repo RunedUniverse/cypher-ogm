@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import net.runeduniverse.libs.rogm.model.Actor;
-import net.runeduniverse.libs.rogm.model.Address;
 import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Person;
 import net.runeduniverse.libs.rogm.model.Song;
@@ -48,6 +47,19 @@ public class SessionTest {
 		}
 		for (Person person : people) {
 			System.out.println(person.toString());
+		}
+	}
+	
+	@Test
+	public void loadAllArtists() {
+		assertTrue("Session is NOT connected", session.isConnected());
+		Collection<Artist> people = session.loadAll(Artist.class);
+		if (people.isEmpty()) {
+			System.out.println("NO ARTIST FOUND");
+			return;
+		}
+		for (Artist	artist : people) {
+			System.out.println(artist.toString());
 		}
 	}
 

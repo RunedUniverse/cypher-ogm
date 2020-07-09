@@ -2,20 +2,26 @@ package net.runeduniverse.libs.rogm.lang;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.IPattern;
+import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.querying.*;
 import net.runeduniverse.libs.rogm.util.*;
 
 public class Cypher implements Language {
 
 	@Override
-	public String buildQuery(IFilter filter, Parser parser) throws Exception {
+	public Mapper buildQuery(IFilter filter, Parser parser) throws Exception {
 		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		_parse(map, filter, gen, false);
@@ -34,7 +40,7 @@ public class Cypher implements Language {
 		} else
 			qry.append(String.join(", ", rt));
 
-		return qry.append(';').toString();
+		return new Mapper(qry.append(';').toString(), map);
 	}
 
 	@Override
@@ -134,7 +140,7 @@ public class Cypher implements Language {
 
 				if (!(modifier.equals(FilterStatus.PRE_PRINTED) && optional)) {
 					activeBuilder.append(_filterToString(map, f, true, parser, false, false));
-					map.setData(f, FilterStatus.PRINTED);					
+					map.setData(f, FilterStatus.PRINTED);
 				}
 
 			} else if (f instanceof IFRelation) {
@@ -183,7 +189,8 @@ public class Cypher implements Language {
 
 	private StringBuilder _translateRelation(DataMap<IFilter, String, FilterStatus> map, Parser parser, IFRelation rel,
 			boolean optional, boolean isMerge) {
-		StringBuilder matchLine = new StringBuilder(_filterToString(map, rel.getStart(), true, parser, optional, isMerge));
+		StringBuilder matchLine = new StringBuilder(
+				_filterToString(map, rel.getStart(), true, parser, optional, isMerge));
 
 		switch (rel.getDirection()) {
 		case INCOMING:
@@ -212,7 +219,7 @@ public class Cypher implements Language {
 			Parser parser, boolean optional, boolean skipData) {
 		StringBuilder builder = new StringBuilder(map.get(filter));
 
-		if (!skipData&&!map.getData(filter).equals(FilterStatus.PRINTED)) {
+		if (!skipData && !map.getData(filter).equals(FilterStatus.PRINTED)) {
 			// PRINT LABELS
 			if (filter instanceof ILabeled) {
 				ILabeled holder = (ILabeled) filter;
@@ -285,17 +292,62 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public <ID extends Serializable> void updateObjectIds(FieldAccessor accessor, Buffer nodeBuffer,
+		public <ID extends Serializable> void updateObjectIds(PatternStorage storage,
 				Map<String, ID> ids) {
 			this.map.forEach((filter, code) -> {
 				if (filter instanceof DataFilter) {
 					Object data = ((DataFilter) filter).getData();
 					Serializable id = ids.get("id_" + code);
-					nodeBuffer.save(id, data);
-					accessor.setObjectId(data, id);
+					storage.getNodeBuffer().save(id, data);
+					storage.setId(data, id);
 				}
 			});
 		}
 
+		@Override
+		public Object parseObject(Map<String, Data> record) {
+			IPatternContainer container = null;
+			List<IPattern.Data> list = new ArrayList<>();
+
+			for (IFilter filter : this.map.keySet()) {
+				if (container == null) {
+					if (!(filter instanceof IPatternContainer))
+						return null;
+					container = (IPatternContainer) filter;
+				}
+
+				list.add(new PData(record.get(this.map.get(filter)), filter));
+			}
+
+			try {
+				return container.getPattern().parse(list);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		@Override
+		public Collection<Object> parseObjects(List<Map<String, Data>> records) {
+			Collection<Object> list = new ArrayList<>();
+			for (Map<String, Data> record : records)
+				list.add(this.parseObject(record));
+			return list;
+		}
+	}
+
+	@Getter
+	protected static class PData implements IPattern.Data {
+		private Serializable id;
+		private Set<String> labels;
+		private String data;
+		private IFilter filter;
+
+		protected PData(Module.Data data, IFilter filter) {
+			this.id = data.getId();
+			this.labels = data.getLabels();
+			this.data = data.getData();
+			this.filter = filter;
+		}
 	}
 }
