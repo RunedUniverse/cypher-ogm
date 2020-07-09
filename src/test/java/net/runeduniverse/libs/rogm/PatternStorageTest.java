@@ -24,7 +24,6 @@ public class PatternStorageTest {
 
 	static {
 		testi = new Person("Testi", "West", true);
-		testi.setAddress(new Address("Sundown Road", 3));
 
 		ennio = new Artist();
 		ennio.setFirstName("Ennio");

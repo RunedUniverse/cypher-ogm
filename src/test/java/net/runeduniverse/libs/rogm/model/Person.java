@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import net.runeduniverse.libs.rogm.annotations.Property;
 
 @NoArgsConstructor
 @Getter
@@ -15,9 +14,6 @@ public class Person extends AEntity {
 	private String firstName;
 	private String lastName;
 	private boolean fictional;
-	
-	@Property
-	private Address address;
 	
 	public Person(String firstName, String lastName) {
 		this.firstName = firstName;

@@ -108,6 +108,7 @@ public class Cypher implements Language {
 		map.forEach((f, code, modifier) -> {
 			StringBuilder activeBuilder = null;
 			boolean optional = false;
+			boolean isMerge = _isMerge(f);
 
 			if (f != null && f.getFilterType() == FilterType.MATCH && f instanceof IOptional
 					&& ((IOptional) f).isOptional())
@@ -119,7 +120,7 @@ public class Cypher implements Language {
 
 			if (optional)
 				activeBuilder = optionalMatchBuilder.append("OPTIONAL ");
-			else if (_isMerge(f))
+			else if (isMerge)
 				activeBuilder = mergeBuilder;
 			else
 				activeBuilder = matchBuilder;
@@ -131,15 +132,17 @@ public class Cypher implements Language {
 						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
 					_where(map, whereBuilder, f, code);
 
-				if (!(modifier.equals(FilterStatus.PRE_PRINTED) && optional))
-					activeBuilder.append(_filterToString(map, f, true, parser, false));
+				if (!(modifier.equals(FilterStatus.PRE_PRINTED) && optional)) {
+					activeBuilder.append(_filterToString(map, f, true, parser, false, false));
+					map.setData(f, FilterStatus.PRINTED);					
+				}
 
 			} else if (f instanceof IFRelation) {
 				if (f.getFilterType() != FilterType.CREATE && f instanceof IIdentified
 						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
 					_where(map, whereBuilder, f, code);
 
-				activeBuilder.append(_translateRelation(map, parser, (IFRelation) f, optional).toString());
+				activeBuilder.append(_translateRelation(map, parser, (IFRelation) f, optional, isMerge).toString());
 			} else
 				activeBuilder.append("()");
 			activeBuilder.append('\n');
@@ -179,8 +182,8 @@ public class Cypher implements Language {
 	}
 
 	private StringBuilder _translateRelation(DataMap<IFilter, String, FilterStatus> map, Parser parser, IFRelation rel,
-			boolean optional) {
-		StringBuilder matchLine = new StringBuilder(_filterToString(map, rel.getStart(), true, parser, optional));
+			boolean optional, boolean isMerge) {
+		StringBuilder matchLine = new StringBuilder(_filterToString(map, rel.getStart(), true, parser, optional, isMerge));
 
 		switch (rel.getDirection()) {
 		case INCOMING:
@@ -191,7 +194,7 @@ public class Cypher implements Language {
 			matchLine.append('-');
 		}
 
-		matchLine.append(_filterToString(map, rel, false, parser, false));
+		matchLine.append(_filterToString(map, rel, false, parser, false, false));
 
 		switch (rel.getDirection()) {
 		case OUTGOING:
@@ -202,14 +205,14 @@ public class Cypher implements Language {
 			matchLine.append('-');
 		}
 
-		return matchLine.append(_filterToString(map, rel.getTarget(), true, parser, optional));
+		return matchLine.append(_filterToString(map, rel.getTarget(), true, parser, optional, isMerge));
 	}
 
 	private String _filterToString(DataMap<IFilter, String, FilterStatus> map, IFilter filter, boolean isNode,
-			Parser parser, boolean optional) {
+			Parser parser, boolean optional, boolean skipData) {
 		StringBuilder builder = new StringBuilder(map.get(filter));
 
-		if (!map.getData(filter).equals(FilterStatus.PRINTED)) {
+		if (!skipData&&!map.getData(filter).equals(FilterStatus.PRINTED)) {
 			// PRINT LABELS
 			if (filter instanceof ILabeled) {
 				ILabeled holder = (ILabeled) filter;

@@ -49,16 +49,16 @@ public class JsonParserTest {
 	public void parseCityTest() throws Exception {
 		String s = "{name:\"Moonland\","
 				+ "houses:["
-				+ "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\",fictional:true,address:null},{firstName:\"Frank\",lastName:\"Log\",fictional:true,address:null}]},"
-				+ "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\",fictional:true,address:null},{firstName:\"Luna\",lastName:\"Moon\",fictional:true,address:null}]},"
-				+ "{address:{street:\"Sundown Road\",number:3},people:[{firstName:\"Elma\",lastName:\"Light\",fictional:true,address:null}]}"
+				+ "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\",fictional:true},{firstName:\"Frank\",lastName:\"Log\",fictional:true}]},"
+				+ "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\",fictional:true},{firstName:\"Luna\",lastName:\"Moon\",fictional:true}]},"
+				+ "{address:{street:\"Sundown Road\",number:3},people:[{firstName:\"Elma\",lastName:\"Light\",fictional:true}]}"
 				+ "]}";
 		assertEquals(s, parser.serialize(c));
 	}
 
 	@Test
 	public void parseHouse() throws Exception {
-		String s = "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\",fictional:true,address:null},{firstName:\"Frank\",lastName:\"Log\",fictional:true,address:null}]}";
+		String s = "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\",fictional:true},{firstName:\"Frank\",lastName:\"Log\",fictional:true}]}";
 		assertEquals(s, parser.serialize(h0));
 	}
 

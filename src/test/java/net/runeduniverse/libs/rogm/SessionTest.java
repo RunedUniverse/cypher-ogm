@@ -9,7 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import net.runeduniverse.libs.rogm.model.Actor;
+import net.runeduniverse.libs.rogm.model.Address;
+import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Person;
+import net.runeduniverse.libs.rogm.model.Song;
 
 public class SessionTest {
 
@@ -63,10 +66,22 @@ public class SessionTest {
 	@Test
 	public void createPerson() {
 		Person james = new Person("James", "North", true);
-		//james.setAddress(new Address("Sundown Road", 3));
 		System.out.println(james.toString());
 		session.save(james);
 		System.out.println(james.toString());
+	}
+	
+	@Test
+	public void createArtist() {
+		Artist ennio = new Artist();
+		ennio.setFirstName("Ennio");
+		ennio.setLastName("Morricone");
+		Song s = new Song("C’era una volta il West");
+		ennio.getCreated().add(s);
+		ennio.getPlayed().add(s);
+		System.out.println(ennio.toString());
+		session.save(ennio);
+		System.out.println(ennio.toString());
 	}
 
 	@Test
