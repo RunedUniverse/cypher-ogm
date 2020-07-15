@@ -19,8 +19,8 @@ import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataNode;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataRelation;
+import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
+import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
 import net.runeduniverse.libs.rogm.querying.FilterType;
@@ -134,12 +134,12 @@ public class NodePattern extends APattern {
 		return this.createFilter(entity, new HashMap<>());
 	}
 
-	public DataNode createFilter(Object entity, Map<Object, DataFilter> includedData) throws Exception {
+	public IDataNode createFilter(Object entity, Map<Object, DataFilter> includedData) throws Exception {
 		if (includedData.containsKey(entity))
-			return (DataNode) includedData.get(entity);
+			return (IDataNode) includedData.get(entity);
 
 		List<IFilter> relations = new ArrayList<>();
-		DataNode node = null;
+		IDataNode node = null;
 		if (this.isIdSet(entity)) {
 			// update (id)
 			node = this.storage.getFactory().createIdDataNode(this.labels, relations, this.getId(entity), entity);
@@ -169,12 +169,12 @@ public class NodePattern extends APattern {
 		return node;
 	}
 
-	private DataRelation _getRelation(DataNode node, Relationship anno, String fieldName, Object relEntity,
+	private IDataRelation _getRelation(IDataNode node, Relationship anno, String fieldName, Object relEntity,
 			Map<Object, DataFilter> includedData) throws Exception {
 
 		// TODO retrieve DataRelations for all relations
 
-		DataRelation relation = null;
+		IDataRelation relation = null;
 		Class<?> clazz = relEntity.getClass();
 		if (clazz.isAnnotationPresent(RelationshipEntity.class))
 			relation = this.storage.getRelation(clazz).createFilter(relEntity, node, anno.direction(), includedData);

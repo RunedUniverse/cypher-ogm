@@ -9,23 +9,14 @@ import java.util.Map;
 import java.util.Set;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
-import net.runeduniverse.libs.rogm.querying.FilterType;
-import net.runeduniverse.libs.rogm.querying.IFNode;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
-import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.querying.IIdentified;
-import net.runeduniverse.libs.rogm.querying.ILabeled;
-import net.runeduniverse.libs.rogm.querying.IOptional;
-import net.runeduniverse.libs.rogm.querying.IParameterized;
-import net.runeduniverse.libs.rogm.querying.IPatternContainer;
-import net.runeduniverse.libs.rogm.querying.IReturned;
+import net.runeduniverse.libs.rogm.querying.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class FilterFactory {
@@ -38,24 +29,24 @@ public class FilterFactory {
 
 	public Node createIdNode(Set<String> labels, List<IFilter> relations, Serializable id) {
 		if (this.module.checkIdType(id.getClass()))
-			return new IDNode(labels, relations, id);
-		ParamNode node = new ParamNode(labels, relations);
+			return new Node(id, labels, relations);
+		Node node = new Node(labels, relations);
 		node.getParams().put("_id", id);
 		return node;
 		// TODO properly convert id to String
 	}
 
-	public DataNode createIdDataNode(Set<String> labels, List<IFilter> relations, Serializable id, Object data) {
+	public IDataNode createIdDataNode(Set<String> labels, List<IFilter> relations, Serializable id, Object data) {
 		if (this.module.checkIdType(id.getClass()))
-			return new IDDataNode(labels, relations, id, data);
-		ParamDataNode node = new ParamDataNode(labels, relations, data);
+			return new DataNode(data, id, labels, relations);
+		DataNode node = new DataNode(data, labels, relations);
 		node.getParams().put("_id", id);
 		return node;
 		// TODO properly convert id to String
 	}
 
-	public DataNode createDataNode(Set<String> labels, List<IFilter> relations, Object data) {
-		return new ParamDataNode(labels, relations, data);
+	public IDataNode createDataNode(Set<String> labels, List<IFilter> relations, Object data) {
+		return new DataNode(data, labels, relations);
 	}
 
 	public Relation createRelation(Direction direction) {
@@ -64,89 +55,84 @@ public class FilterFactory {
 
 	public Relation createIdRelation(Direction direction, Serializable id) {
 		if (this.module.checkIdType(id.getClass()))
-			return new IDRelation(direction, id);
-		ParamRelation node = new ParamRelation(direction);
+			return new Relation(id, direction);
+		Relation node = new Relation(direction);
 		node.getParams().put("_id", id);
 		return node;
 		// TODO properly convert id to String
 	}
 
-	public DataRelation createIdDataRelation(Direction direction, Serializable id, Object data) {
+	public IDataRelation createIdDataRelation(Direction direction, Serializable id, Object data) {
 		if (this.module.checkIdType(id.getClass()))
-			return new IDDataRelation(direction, id, data);
-		ParamDataRelation node = new ParamDataRelation(direction, data);
+			return new DataRelation(data, id, direction);
+		DataRelation node = new DataRelation(data, direction);
 		node.getParams().put("_id", id);
 		return node;
 		// TODO properly convert id to String
 	}
 
-	public DataRelation createDataRelation(Direction direction, Object data) {
-		return new ParamDataRelation(direction, data);
+	public IDataRelation createDataRelation(Direction direction, Object data) {
+		return new DataRelation(data, direction);
 	}
 
-	
-	protected interface DataNode extends DataFilter, ILabeled, IReturned, IFNode{
+	protected interface IDataNode extends IFNode, DataFilter, ILabeled, IReturned {
 		void setFilterType(FilterType type);
+
 		void setReturned(boolean returned);
 	}
-	protected interface DataRelation extends DataFilter, ILabeled, IReturned, IFRelation{
+
+	protected interface IDataRelation extends IFRelation, DataFilter, ILabeled, IReturned {
 		void setFilterType(FilterType type);
+
 		void setReturned(boolean returned);
+
 		void setStart(IFilter start);
+
 		void setTarget(IFilter target);
 	}
-	
-	
+
 	@Getter
 	@Setter
-	protected abstract class Filter implements IOptional, IReturned, IPatternContainer {
+	@NoArgsConstructor
+	protected abstract class Filter implements IIdentified<Serializable>, IParameterized, IOptional, IReturned, IPatternContainer {
+		protected Serializable id;
+		protected Map<String, Object> params = new HashMap<>();
 		protected IPattern pattern = null;
 		protected boolean returned = false;
 		protected boolean optional = false;
 		protected FilterType filterType = FilterType.MATCH;
-	}
-
-	@Getter
-	@AllArgsConstructor(access = AccessLevel.PRIVATE)
-	protected class Node extends Filter implements IFNode {
-		protected Set<String> labels = new HashSet<>();
-		protected List<IFilter> relations = new ArrayList<>();
-	}
-
-	@Getter
-	private class IDNode extends Node implements IIdentified<Serializable> {
-		protected Serializable id;
-
-		private IDNode(Set<String> labels, List<IFilter> relations, Serializable id) {
-			super(labels, relations);
+		
+		protected Filter(Serializable id) {
 			this.id = id;
 		}
 	}
 
 	@Getter
-	private class ParamNode extends Node implements IParameterized {
-		private Map<String, Object> params = new HashMap<>();
+	protected class Node extends Filter implements IFNode  {
+		protected Set<String> labels = new HashSet<>();
+		protected List<IFilter> relations = new ArrayList<>();
 
-		private ParamNode(Set<String> labels, List<IFilter> relations) {
-			super(labels, relations);
+		private Node(Set<String> labels, List<IFilter> relations) {
+			this.labels = labels;
+			this.relations = relations;
+		}
+		
+		private Node(Serializable id, Set<String> labels, List<IFilter> relations) {
+			super(id);
+			this.labels = labels;
+			this.relations = relations;
 		}
 	}
 
 	@Getter
-	private class IDDataNode extends IDNode implements DataNode {
+	private class DataNode extends Node implements IDataNode {
 		private Object data;
 
-		private IDDataNode(Set<String> labels, List<IFilter> relations, Serializable id, Object data) {
-			super(labels, relations, id);
+		private DataNode(Object data, Serializable id, Set<String> labels, List<IFilter> relations) {
+			super(id, labels, relations);
 			this.data = data;
 		}
-	}
-
-	@Getter
-	private class ParamDataNode extends ParamNode implements DataNode {
-		private Object data;
-
-		private ParamDataNode(Set<String> labels, List<IFilter> relations, Object data) {
+		private DataNode(Object data, Set<String> labels, List<IFilter> relations) {
 			super(labels, relations);
 			this.data = data;
 		}
@@ -154,7 +140,7 @@ public class FilterFactory {
 
 	@Getter
 	@Setter
-	protected class Relation extends Filter implements IFRelation {
+	protected class Relation extends Filter implements IFRelation{
 		protected IFilter start;
 		protected IFilter target;
 		protected Direction direction;
@@ -163,43 +149,24 @@ public class FilterFactory {
 		private Relation(Direction direction) {
 			this.direction = direction;
 		}
-	}
 
-	@Getter
-	private class IDRelation extends Relation implements IIdentified<Serializable> {
-		private Serializable id;
-
-		private IDRelation(Direction direction, Serializable id) {
-			super(direction);
-			this.id = id;
+		private Relation(Serializable id, Direction direction) {
+			super(id);
+			this.direction = direction;
 		}
 	}
 
 	@Getter
-	private class ParamRelation extends Relation implements IParameterized {
-		private Map<String, Object> params = new HashMap<>();
-
-		private ParamRelation(Direction direction) {
-			super(direction);
-		}
-	}
-
-	@Getter
-	private class IDDataRelation extends IDRelation implements DataRelation {
+	private class DataRelation extends Relation implements IDataRelation {
 		private Object data;
 
-		private IDDataRelation(Direction direction, Serializable id, Object data) {
-			super(direction, id);
+		private DataRelation(Object data, Direction direction) {
+			super(direction);
 			this.data = data;
 		}
-	}
 
-	@Getter
-	private class ParamDataRelation extends ParamRelation implements DataRelation {
-		private Object data;
-
-		private ParamDataRelation(Direction direction, Object data) {
-			super(direction);
+		private DataRelation(Object data, Serializable id, Direction direction) {
+			super(id, direction);
 			this.data = data;
 		}
 	}

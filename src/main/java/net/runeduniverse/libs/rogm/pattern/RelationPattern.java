@@ -14,8 +14,8 @@ import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataNode;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataRelation;
+import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
+import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
 import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFNode;
@@ -124,12 +124,12 @@ public class RelationPattern extends APattern {
 		return this.createFilter(entity, null, this.direction, new HashMap<>());
 	}
 
-	public DataRelation createFilter(Object entity, DataNode caller, Direction direction,
+	public IDataRelation createFilter(Object entity, IDataNode caller, Direction direction,
 			Map<Object, DataFilter> includedData) throws Exception {
 		if (includedData.containsKey(entity))
-			return (DataRelation) includedData.get(entity);
+			return (IDataRelation) includedData.get(entity);
 
-		DataRelation relation = null;
+		IDataRelation relation = null;
 		if (this.isIdSet(entity)) {
 			// update (id)
 			relation = this.storage.getFactory().createIdDataRelation(this.direction, this.getId(entity), entity);
@@ -182,12 +182,12 @@ public class RelationPattern extends APattern {
 		return node.createFilter(relation);
 	}
 
-	private DataNode _getDataNode(Field field, Object entity, Map<Object, DataFilter> includedData,
-			DataRelation relation) throws Exception {
+	private IDataNode _getDataNode(Field field, Object entity, Map<Object, DataFilter> includedData,
+			IDataRelation relation) throws Exception {
 		NodePattern node = this.storage.getNode(field.getType());
 		if (node == null)
 			return null;
-		DataNode dataNode = node.createFilter(field.get(entity), includedData);
+		IDataNode dataNode = node.createFilter(field.get(entity), includedData);
 		dataNode.getRelations().add(relation);
 		return dataNode;
 	}
