@@ -133,10 +133,7 @@ public class Cypher implements Language {
 
 			activeBuilder.append(_prefix(f));
 			if (f instanceof IFNode) {
-
-				if (f.getFilterType() != FilterType.CREATE && f instanceof IIdentified
-						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
-					_where(map, whereBuilder, f, code);
+				_where(map, whereBuilder, f, code, modifier);
 
 				if (!(modifier.equals(FilterStatus.PRE_PRINTED) && optional)) {
 					activeBuilder.append(_filterToString(map, f, true, parser, false, false));
@@ -144,9 +141,7 @@ public class Cypher implements Language {
 				}
 
 			} else if (f instanceof IFRelation) {
-				if (f.getFilterType() != FilterType.CREATE && f instanceof IIdentified
-						&& !modifier.equals(FilterStatus.EXTENSION_PRINTED))
-					_where(map, whereBuilder, f, code);
+				_where(map, whereBuilder, f, code, modifier);
 
 				activeBuilder.append(_translateRelation(map, parser, (IFRelation) f, optional, isMerge).toString());
 			} else
@@ -157,6 +152,8 @@ public class Cypher implements Language {
 	}
 
 	private boolean _isMerge(IFilter filter) {
+		if (filter == null)
+			return false;
 		switch (filter.getFilterType()) {
 		case CREATE:
 		case UPDATE:
@@ -181,7 +178,11 @@ public class Cypher implements Language {
 		}
 	}
 
-	private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code) {
+	private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code,
+			FilterStatus modifier) {
+		if (!(f.getFilterType() != FilterType.CREATE && IIdentified.identify(f)
+				&& !modifier.equals(FilterStatus.EXTENSION_PRINTED)))
+			return;
 		IIdentified<?> i = (IIdentified<?>) f;
 		builder.append("WHERE id(" + code + ")=" + ((Number) i.getId()).longValue() + "\n");
 		map.setData(f, FilterStatus.EXTENSION_PRINTED);
@@ -292,8 +293,7 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public <ID extends Serializable> void updateObjectIds(PatternStorage storage,
-				Map<String, ID> ids) {
+		public <ID extends Serializable> void updateObjectIds(PatternStorage storage, Map<String, ID> ids) {
 			this.map.forEach((filter, code) -> {
 				if (filter instanceof DataFilter) {
 					Object data = ((DataFilter) filter).getData();
@@ -333,6 +333,11 @@ public class Cypher implements Language {
 			for (Map<String, Data> record : records)
 				list.add(this.parseObject(record));
 			return list;
+		}
+
+		@Override
+		public String toString() {
+			return this.qry;
 		}
 	}
 

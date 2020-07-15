@@ -25,7 +25,7 @@ public class CypherTest {
 	static Cypher cypher = new Cypher();
 	static Parser parser = new JSONParser();
 
-	static IDFilterNode<Integer> school;
+	static FilterNode school;
 	static FilterNode student;
 	static FilterNode friends;
 	static FilterRelation anyRelationToSchool;
@@ -33,7 +33,7 @@ public class CypherTest {
 
 	@Before
 	public void prep() {
-		school = new IDFilterNode<>(10);
+		school = new FilterNode(10);
 
 		student = new FilterNode()
 					.addLabel("HTLStudent")
@@ -57,7 +57,7 @@ public class CypherTest {
 	public void wrongID() {
 		boolean error = false;
 		try {
-			cypher.buildQuery(new IDFilterNode<String>("defaultId"), parser);
+			cypher.buildQuery(new FilterNode("defaultId"), parser);
 		} catch (Exception e) {
 			error = true;
 		}
@@ -65,15 +65,15 @@ public class CypherTest {
 	}
 	@Test
 	public void shortID() throws Exception {
-		cypher.buildQuery(new IDFilterNode<Short>((short) 3), parser);
+		cypher.buildQuery(new FilterNode((short) 3), parser);
 	}
 	@Test
 	public void integerID() throws Exception {
-		cypher.buildQuery(new IDFilterNode<Integer>(45), parser);
+		cypher.buildQuery(new FilterNode(45), parser);
 	}
 	@Test
 	public void longID() throws Exception {
-		cypher.buildQuery(new IDFilterNode<Long>(54l), parser);
+		cypher.buildQuery(new FilterNode(54l), parser);
 	}
 	
 	// MATCHES
