@@ -3,7 +3,6 @@ package net.runeduniverse.libs.rogm.pattern;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
@@ -187,26 +186,9 @@ public class RelationPattern extends APattern {
 		NodePattern node = this.storage.getNode(field.getType());
 		if (node == null)
 			return null;
-		IDataNode dataNode = node.createFilter(field.get(entity), includedData);
+		IDataNode dataNode = node.createFilter(field.get(entity), includedData, false);
 		dataNode.getRelations().add(relation);
 		return dataNode;
-	}
-	
-	@Override
-	public Object parse(List<Data> data) throws Exception {
-		Data primary = data.get(0);
-		Object relation = this.getBuffer().acquire(primary.getId(), this.type, this.parse(primary.getId(), primary.getData()));
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		// TODO Auto-generated method stub
-		return relation;
 	}
 
 }

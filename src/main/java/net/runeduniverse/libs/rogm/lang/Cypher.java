@@ -2,7 +2,7 @@ package net.runeduniverse.libs.rogm.lang;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +14,7 @@ import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.querying.*;
 import net.runeduniverse.libs.rogm.util.*;
@@ -40,7 +41,7 @@ public class Cypher implements Language {
 		} else
 			qry.append(String.join(", ", rt));
 
-		return new Mapper(qry.append(';').toString(), map);
+		return new Mapper(filter, qry.append(';').toString(), map);
 	}
 
 	@Override
@@ -66,7 +67,7 @@ public class Cypher implements Language {
 		});
 
 		// SET + RETURN
-		return new Mapper(qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ")
+		return new Mapper(node, qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ")
 				.append(String.join(", ", rt)).append(';').toString(), map);
 	}
 
@@ -279,10 +280,12 @@ public class Cypher implements Language {
 
 	protected static class Mapper implements Language.Mapper {
 
+		private final IFilter primary;
 		private String qry;
 		private DataMap<IFilter, String, FilterStatus> map;
 
-		protected Mapper(String qry, DataMap<IFilter, String, FilterStatus> map) {
+		protected Mapper(IFilter primaryFilter, String qry, DataMap<IFilter, String, FilterStatus> map) {
+			this.primary = primaryFilter;
 			this.qry = qry;
 			this.map = map;
 		}
@@ -305,34 +308,38 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public Object parseObject(Map<String, Data> record) {
-			IPatternContainer container = null;
-			List<IPattern.Data> list = new ArrayList<>();
+		public IPattern.DataRecord parseData(List<Map<String, Data>> records) {
+			/*
+			 * List => 1 Map per Record-line Map => key = a - value = all data from a
+			 */
 
-			for (IFilter filter : this.map.keySet()) {
-				if (container == null) {
-					if (!(filter instanceof IPatternContainer))
-						return null;
-					container = (IPatternContainer) filter;
+			Map<Serializable, List<IPattern.Data>> map = new HashMap<>();
+
+			for (Map<String, Data> record : records) {
+				Serializable primId = record.get(this.map.get(this.primary)).getId();
+				List<IPattern.Data> list = new ArrayList<>();
+				if (map.containsKey(primId))
+					list = map.get(primId);
+				else
+					map.put(primId, list);
+
+				for (IFilter filter : this.map.keySet()) {
+					Module.Data data = record.get(this.map.get(filter));
+					if (data.getId() == null)
+						continue;
+					list.add(new PData(data, filter));
+				}
+			}
+
+			return new IPattern.DataRecord() {
+				public IPattern.IPatternContainer getPrimaryFilter() {
+					return (IPatternContainer) primary;
 				}
 
-				list.add(new PData(record.get(this.map.get(filter)), filter));
-			}
-
-			try {
-				return container.getPattern().parse(list);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		@Override
-		public Collection<Object> parseObjects(List<Map<String, Data>> records) {
-			Collection<Object> list = new ArrayList<>();
-			for (Map<String, Data> record : records)
-				list.add(this.parseObject(record));
-			return list;
+				public Map<Serializable, List<IPattern.Data>> getData() {
+					return map;
+				}
+			};
 		}
 
 		@Override

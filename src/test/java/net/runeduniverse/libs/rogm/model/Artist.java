@@ -12,7 +12,7 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class Artist extends Person {
 
 	@Relationship(label = "CREATED")

@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
 import net.runeduniverse.libs.rogm.annotations.Id;
@@ -67,7 +65,7 @@ public class NodePattern extends APattern {
 		Node node = this.storage.getFactory().createNode(this.labels, new ArrayList<>());
 		node.setPattern(this);
 		node.setReturned(true);
-		for (FieldPattern field : this.relFields) 			
+		for (FieldPattern field : this.relFields)
 			node.getRelations().add(field.queryRelation(node));
 
 		return node;// includes ALL relation filters
@@ -77,7 +75,7 @@ public class NodePattern extends APattern {
 		Node node = this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id);
 		node.setPattern(this);
 		node.setReturned(true);
-		for (FieldPattern field : this.relFields) 			
+		for (FieldPattern field : this.relFields)
 			node.getRelations().add(field.queryRelation(node));
 		return node;
 	}
@@ -92,17 +90,19 @@ public class NodePattern extends APattern {
 
 	@Override
 	public DataFilter createFilter(Object entity) throws Exception {
-		return this.createFilter(entity, new HashMap<>());
+		return this.createFilter(entity, new HashMap<>(), true);
 	}
 
-	public IDataNode createFilter(Object entity, Map<Object, DataFilter> includedData) throws Exception {
+	public IDataNode createFilter(Object entity, Map<Object, DataFilter> includedData, boolean includeRelations)
+			throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataNode) includedData.get(entity);
 
 		IDataNode node = null;
 		if (this.isIdSet(entity)) {
 			// update (id)
-			node = this.storage.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity), entity);
+			node = this.storage.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity),
+					entity);
 			node.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
@@ -112,25 +112,14 @@ public class NodePattern extends APattern {
 		node.setReturned(true);
 		includedData.put(entity, node);
 
-		for (FieldPattern field : this.relFields)
-			field.saveRelation(entity, node, includedData);
+		if (includeRelations)
+			for (FieldPattern field : this.relFields)
+				field.saveRelation(entity, node, includedData);
 
 		return node;
 	}
-
 	
-
-	
-
-	@Override
-	public Object parse(List<Data> data) throws Exception {
-		Data primary = data.get(0);
-		Object node = this.getBuffer().acquire(primary.getId(),
-				this.type/* ((IPatternContainer) primary.getFilter()).getPattern().getType() */,
-				this.parse(primary.getId(), primary.getData()));
-
-		// TODO Auto-generated method stub
-		return node;
+	public void parseRelation(Object entity, Data data) {
+		
 	}
-
 }

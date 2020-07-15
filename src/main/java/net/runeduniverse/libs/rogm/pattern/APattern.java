@@ -46,4 +46,13 @@ public abstract class APattern implements IPattern {
 		return this.setId(this.storage.getParser().deserialize(this.type, data), id);
 	}
 
+	@Override
+	public Object parse(Data data) throws Exception {
+		Object node = this.getBuffer().load(data.getId(), this.type);
+		if (node != null)
+			return node;
+		node = this.parse(data.getId(), data.getData());
+		this.getBuffer().save(data.getId(), node);
+		return node;
+	}
 }

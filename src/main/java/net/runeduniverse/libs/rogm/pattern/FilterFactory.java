@@ -23,11 +23,11 @@ public class FilterFactory {
 
 	private final Module module;
 
-	public Node createNode(Set<String> labels, List<IFilter> relations) {
+	public Node createNode(Set<String> labels, List<IFRelation> relations) {
 		return new Node(labels, relations);
 	}
 
-	public Node createIdNode(Set<String> labels, List<IFilter> relations, Serializable id) {
+	public Node createIdNode(Set<String> labels, List<IFRelation> relations, Serializable id) {
 		if (this.module.checkIdType(id.getClass()))
 			return new Node(id, labels, relations);
 		Node node = new Node(labels, relations);
@@ -36,7 +36,7 @@ public class FilterFactory {
 		// TODO properly convert id to String
 	}
 
-	public IDataNode createIdDataNode(Set<String> labels, List<IFilter> relations, Serializable id, Object data) {
+	public IDataNode createIdDataNode(Set<String> labels, List<IFRelation> relations, Serializable id, Object data) {
 		if (this.module.checkIdType(id.getClass()))
 			return new DataNode(data, id, labels, relations);
 		DataNode node = new DataNode(data, labels, relations);
@@ -45,7 +45,7 @@ public class FilterFactory {
 		// TODO properly convert id to String
 	}
 
-	public IDataNode createDataNode(Set<String> labels, List<IFilter> relations, Object data) {
+	public IDataNode createDataNode(Set<String> labels, List<IFRelation> relations, Object data) {
 		return new DataNode(data, labels, relations);
 	}
 
@@ -95,7 +95,7 @@ public class FilterFactory {
 	@Setter
 	@NoArgsConstructor
 	protected abstract class Filter
-			implements IIdentified<Serializable>, IParameterized, IOptional, IReturned, IPatternContainer {
+			implements IIdentified<Serializable>, IParameterized, IOptional, IReturned, IPattern.IPatternContainer {
 		protected Serializable id;
 		protected Map<String, Object> params = new HashMap<>();
 		protected IPattern pattern = null;
@@ -111,14 +111,14 @@ public class FilterFactory {
 	@Getter
 	protected class Node extends Filter implements IFNode {
 		protected Set<String> labels = new HashSet<>();
-		protected List<IFilter> relations = new ArrayList<>();
+		protected List<IFRelation> relations = new ArrayList<>();
 
-		private Node(Set<String> labels, List<IFilter> relations) {
+		private Node(Set<String> labels, List<IFRelation> relations) {
 			this.labels = labels;
 			this.relations = relations;
 		}
 
-		private Node(Serializable id, Set<String> labels, List<IFilter> relations) {
+		private Node(Serializable id, Set<String> labels, List<IFRelation> relations) {
 			super(id);
 			this.labels = labels;
 			this.relations = relations;
@@ -129,12 +129,12 @@ public class FilterFactory {
 	private class DataNode extends Node implements IDataNode {
 		private Object data;
 
-		private DataNode(Object data, Serializable id, Set<String> labels, List<IFilter> relations) {
+		private DataNode(Object data, Serializable id, Set<String> labels, List<IFRelation> relations) {
 			super(id, labels, relations);
 			this.data = data;
 		}
 
-		private DataNode(Object data, Set<String> labels, List<IFilter> relations) {
+		private DataNode(Object data, Set<String> labels, List<IFRelation> relations) {
 			super(labels, relations);
 			this.data = data;
 		}

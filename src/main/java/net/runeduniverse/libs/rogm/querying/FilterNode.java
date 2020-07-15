@@ -10,7 +10,7 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 public class FilterNode extends AParamFilter<FilterNode> implements IFNode, IIdentified<Serializable> {
 
 	@Getter
-	List<IFilter> relations = new ArrayList<>();
+	List<IFRelation> relations = new ArrayList<>();
 	@Getter
 	private Serializable id;
 

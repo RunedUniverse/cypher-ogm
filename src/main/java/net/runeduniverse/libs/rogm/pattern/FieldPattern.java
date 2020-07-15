@@ -103,7 +103,7 @@ public class FieldPattern {
 			relation = this.storage.getFactory().createDataRelation(this.direction, null);
 			relation.setFilterType(FilterType.UPDATE);
 			relation.setStart(node);
-			relation.setTarget(this.storage.getNode(clazz).createFilter(relEntity, includedData));
+			relation.setTarget(this.storage.getNode(clazz).createFilter(relEntity, includedData, false));
 		}
 
 		if (relation.getLabels().isEmpty())

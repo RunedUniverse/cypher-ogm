@@ -2,6 +2,7 @@ package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
@@ -30,12 +31,25 @@ public interface IPattern {
 
 	Object parse(Serializable id, String data) throws Exception;
 	
-	Object parse(List<Data> data) throws Exception;
+	Object parse(Data data) throws Exception;
+	
+	public interface IPatternContainer extends IFilter{
+		IPattern getPattern();
+	
+		public static boolean identify(IFilter filter) {
+			return filter instanceof IPatternContainer && ((IPatternContainer) filter).getPattern() != null;
+		}
+	}
 	
 	public interface Data{
 		Serializable getId();
 		Set<String> getLabels();
 		String getData();
 		IFilter getFilter();
+	}
+	
+	public interface DataRecord{
+		IPatternContainer getPrimaryFilter();
+		Map<Serializable, List<Data>> getData();
 	}
 }

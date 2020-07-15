@@ -1,10 +1,13 @@
 package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -15,6 +18,11 @@ import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.IPattern.Data;
+import net.runeduniverse.libs.rogm.pattern.IPattern.DataRecord;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
+import net.runeduniverse.libs.rogm.querying.IFNode;
+import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.util.Buffer;
 
@@ -42,14 +50,6 @@ public class PatternStorage {
 			this.nodes.put(c, new NodePattern(this, c));
 		for (Class<?> c : reflections.getTypesAnnotatedWith(RelationshipEntity.class))
 			this.relations.put(c, new RelationPattern(this, c));
-	}
-
-	public EntityType getEntityType(Class<?> clazz) {
-		if (this.nodes.containsKey(clazz))
-			return EntityType.NODE;
-		if (this.relations.containsKey(clazz))
-			return EntityType.RELATION;
-		return EntityType.UNKNOWN;
 	}
 
 	public NodePattern getNode(Class<?> clazz) {
@@ -98,5 +98,45 @@ public class PatternStorage {
 
 	public Object parse(Class<?> clazz, Serializable id, String data) throws Exception {
 		return this.getPattern(clazz).parse(id, data);
+	}
+
+	public <T> Collection<T> parse(Class<T> type, DataRecord record) throws Exception {
+		// type || vv
+		IPattern primaryPattern = record.getPrimaryFilter().getPattern();
+
+		// preloads all mentioned nodes
+		for (List<Data> dataList : record.getData().values())
+			for (Data data : dataList)
+				if (IPatternContainer.identify(data.getFilter()))
+					((IPatternContainer) data.getFilter()).getPattern().parse(data);
+
+		if (primaryPattern instanceof NodePattern)
+			return parseNode(type, record);
+		// if (primaryPattern instanceof RelationPattern)
+		// return parseRelation(record);
+		return new ArrayList<T>();
+	}
+
+	private <T> Collection<T> parseNode(Class<T> type, DataRecord record) {
+
+		IFNode primFilter = (IFNode) record.getPrimaryFilter();
+
+		for (List<Data> list : record.getData().values()) {
+
+			for (Data data : list) {
+
+				/*
+				 * 
+				 * if(primFilter.getRelations().contains(data.getFilter()))
+				 * this.getNode(node.getClass()).parseRelation(node, data);
+				 */
+
+			}
+		}
+
+		Set<T> nodes = new HashSet<>();
+		for (Serializable primId : record.getData().keySet())
+			nodes.add(this.nodeBuffer.load(primId, type));
+		return nodes;
 	}
 }

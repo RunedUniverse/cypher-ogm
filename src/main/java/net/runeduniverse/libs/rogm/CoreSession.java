@@ -3,19 +3,12 @@ package net.runeduniverse.libs.rogm;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
-import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.querying.FilterNode;
-import net.runeduniverse.libs.rogm.querying.IDFilterNode;
 
 public final class CoreSession implements Session {
 
@@ -73,7 +66,6 @@ public final class CoreSession implements Session {
 			this.save(o);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
 		T o = this.storage.getNodeBuffer().load(id, type);
@@ -81,10 +73,13 @@ public final class CoreSession implements Session {
 			return o;
 
 		try {
-			Language.Mapper m = this.lang.buildQuery(this.storage.createIdFilter(type, id), this.parser);
-			for (Map<String, Data> d : this.module.queryObject(m.qry()))
-				// get only first entry
-				return (T) m.parseObject(d);
+			Collection<T> all = this.loadAll(type, this.storage.createIdFilter(type, id));
+			if (all.isEmpty())
+				return null;
+			else
+				for (T t : all)
+					return t;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,42 +96,16 @@ public final class CoreSession implements Session {
 		return new ArrayList<T>();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, IFilter filter) {
 		try {
 			Language.Mapper m = lang.buildQuery(filter, this.parser);
-			return (Collection<T>) m.parseObjects(this.module.queryObject(m.qry()));
+			IPattern.DataRecord record = m.parseData(this.module.queryObject(m.qry()));
+			
+			return this.storage.parse(type, record);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<T>();
-		}
-	}
-
-	@Getter
-	@Setter
-	@ToString
-	public class IdentifiedUpdateFilterNode extends IDFilterNode<Serializable> implements Language.DataFilter {
-		private Object data;
-
-		public IdentifiedUpdateFilterNode(Serializable id, Object data) {
-			super(id);
-			this.data = data;
-		}
-	}
-
-	@Getter
-	@Setter
-	public class ParamUpdateFilterNode extends FilterNode implements Language.DataFilter {
-		private Object data;
-
-		public ParamUpdateFilterNode(Object data) {
-			this.data = data;
-		}
-
-		public ParamUpdateFilterNode(Serializable id, Object data) {
-			this.data = data;
-			this.addParam("_id", id);
 		}
 	}
 }
