@@ -3,9 +3,8 @@ package net.runeduniverse.libs.rogm.pattern;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,12 +16,9 @@ import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
-import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
 import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
@@ -32,7 +28,7 @@ import net.runeduniverse.libs.rogm.util.Buffer;
 public class NodePattern extends APattern {
 
 	private Set<String> labels = new HashSet<>();
-	private Set<Field> relFields = new HashSet<>();
+	private Set<FieldPattern> relFields = new HashSet<>();
 
 	public NodePattern(PatternStorage storage, Class<?> type) throws Exception {
 		super(storage, type);
@@ -59,16 +55,8 @@ public class NodePattern extends APattern {
 				continue;
 			}
 
-			if (!field.isAnnotationPresent(Relationship.class))
-				continue;
-
-			Class<?> clazz = field.getType();
-			if (Collection.class.isAssignableFrom(clazz))
-				clazz = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
-
-			if (!(clazz.isAnnotationPresent(NodeEntity.class) || clazz.isAnnotationPresent(RelationshipEntity.class)))
-				throw new Exception("Unsupported Class<" + clazz.getName() + "> as @Relation found!");
-			this.relFields.add(field);
+			if (field.isAnnotationPresent(Relationship.class))
+				this.relFields.add(new FieldPattern(this.storage, field));
 		}
 		if (type.getSuperclass().equals(Object.class))
 			return;
@@ -76,53 +64,26 @@ public class NodePattern extends APattern {
 	}
 
 	public IFilter createFilter() throws Exception {
-		List<IFilter> relations = new ArrayList<>();
-		Node node = this.storage.getFactory().createNode(this.labels, relations);
+		Node node = this.storage.getFactory().createNode(this.labels, new ArrayList<>());
 		node.setPattern(this);
 		node.setReturned(true);
-		_createFilterRelations(node, relations);
+		for (FieldPattern field : this.relFields) 			
+			node.getRelations().add(field.queryRelation(node));
 
 		return node;// includes ALL relation filters
 	}
 
 	public IFilter createIdFilter(Serializable id) throws Exception {
-		List<IFilter> relations = new ArrayList<>();
-		Node node = this.storage.getFactory().createIdNode(this.labels, relations, id);
+		Node node = this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id);
 		node.setPattern(this);
 		node.setReturned(true);
-		_createFilterRelations(node, relations);
+		for (FieldPattern field : this.relFields) 			
+			node.getRelations().add(field.queryRelation(node));
 		return node;
 	}
 
-	private void _createFilterRelations(IFNode node, List<IFilter> relations) throws Exception {
-		for (Field field : this.relFields) {
-			Relationship fieldAnno = field.getAnnotation(Relationship.class);
-			Class<?> clazz = field.getType();
-			if (Collection.class.isAssignableFrom(clazz))
-				clazz = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
-
-			Relation relation = null;
-			if (clazz.isAnnotationPresent(RelationshipEntity.class))
-				relation = this.storage.getRelation(clazz).createFilter(node, fieldAnno.direction());
-			else {
-				relation = this.storage.getFactory().createRelation(fieldAnno.direction());
-				relation.setStart(node);
-				relation.setTarget(this._getNode(clazz, relation));
-			}
-
-			if (relation.getLabels().isEmpty())
-				relation.getLabels().add(isBlank(fieldAnno.label()) ? field.getName() : fieldAnno.label());
-
-			relation.setReturned(true);
-			relation.setOptional(true);
-			relations.add(relation);
-		}
-	}
-
 	public IFNode createFilter(IFRelation caller) {
-		List<IFilter> relations = new ArrayList<>();
-		relations.add(caller);
-		Node node = this.storage.getFactory().createNode(this.labels, relations);
+		Node node = this.storage.getFactory().createNode(this.labels, Arrays.asList(caller));
 		node.setPattern(this);
 		node.setReturned(true);
 		node.setOptional(true);
@@ -138,65 +99,28 @@ public class NodePattern extends APattern {
 		if (includedData.containsKey(entity))
 			return (IDataNode) includedData.get(entity);
 
-		List<IFilter> relations = new ArrayList<>();
 		IDataNode node = null;
 		if (this.isIdSet(entity)) {
 			// update (id)
-			node = this.storage.getFactory().createIdDataNode(this.labels, relations, this.getId(entity), entity);
+			node = this.storage.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity), entity);
 			node.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
-			node = this.storage.getFactory().createDataNode(this.labels, relations, entity);
+			node = this.storage.getFactory().createDataNode(this.labels, new ArrayList<>(), entity);
 			node.setFilterType(FilterType.CREATE);
 		}
 		node.setReturned(true);
 		includedData.put(entity, node);
 
-		for (Field field : this.relFields) {
-			Relationship fieldAnno = field.getAnnotation(Relationship.class);
-			if (Collection.class.isAssignableFrom(field.getType()))
-				// Collection
-				for (Object relNode : (Collection<?>) field.get(entity))
-					relations.add(_getRelation(node, fieldAnno, field.getName(), relNode, includedData));
-			else {
-				// Variable
-				Object relNode = field.get(entity);
-				if (relNode != null)
-					relations.add(_getRelation(node, fieldAnno, field.getName(), relNode, includedData));
-			}
-		}
+		for (FieldPattern field : this.relFields)
+			field.saveRelation(entity, node, includedData);
 
 		return node;
 	}
 
-	private IDataRelation _getRelation(IDataNode node, Relationship anno, String fieldName, Object relEntity,
-			Map<Object, DataFilter> includedData) throws Exception {
+	
 
-		// TODO retrieve DataRelations for all relations
-
-		IDataRelation relation = null;
-		Class<?> clazz = relEntity.getClass();
-		if (clazz.isAnnotationPresent(RelationshipEntity.class))
-			relation = this.storage.getRelation(clazz).createFilter(relEntity, node, anno.direction(), includedData);
-		else {
-			relation = this.storage.getFactory().createDataRelation(anno.direction(), null);
-			relation.setFilterType(FilterType.UPDATE);
-			relation.setStart(node);
-			relation.setTarget(this.storage.getNode(clazz).createFilter(relEntity, includedData));
-		}
-
-		if (relation.getLabels().isEmpty())
-			relation.getLabels().add(isBlank(anno.label()) ? fieldName : anno.label());
-
-		return relation;
-	}
-
-	private IFNode _getNode(Class<?> type, IFRelation relation) throws Exception {
-		NodePattern node = this.storage.getNode(type);
-		if (node == null)
-			throw new Exception("Unsupported Class<" + type.getName() + "> as @Relation found!");
-		return node.createFilter(relation);
-	}
+	
 
 	@Override
 	public Object parse(List<Data> data) throws Exception {

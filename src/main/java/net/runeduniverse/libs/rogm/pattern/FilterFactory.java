@@ -94,21 +94,22 @@ public class FilterFactory {
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	protected abstract class Filter implements IIdentified<Serializable>, IParameterized, IOptional, IReturned, IPatternContainer {
+	protected abstract class Filter
+			implements IIdentified<Serializable>, IParameterized, IOptional, IReturned, IPatternContainer {
 		protected Serializable id;
 		protected Map<String, Object> params = new HashMap<>();
 		protected IPattern pattern = null;
 		protected boolean returned = false;
 		protected boolean optional = false;
 		protected FilterType filterType = FilterType.MATCH;
-		
+
 		protected Filter(Serializable id) {
 			this.id = id;
 		}
 	}
 
 	@Getter
-	protected class Node extends Filter implements IFNode  {
+	protected class Node extends Filter implements IFNode {
 		protected Set<String> labels = new HashSet<>();
 		protected List<IFilter> relations = new ArrayList<>();
 
@@ -116,7 +117,7 @@ public class FilterFactory {
 			this.labels = labels;
 			this.relations = relations;
 		}
-		
+
 		private Node(Serializable id, Set<String> labels, List<IFilter> relations) {
 			super(id);
 			this.labels = labels;
@@ -132,6 +133,7 @@ public class FilterFactory {
 			super(id, labels, relations);
 			this.data = data;
 		}
+
 		private DataNode(Object data, Set<String> labels, List<IFilter> relations) {
 			super(labels, relations);
 			this.data = data;
@@ -140,7 +142,7 @@ public class FilterFactory {
 
 	@Getter
 	@Setter
-	protected class Relation extends Filter implements IFRelation{
+	protected class Relation extends Filter implements IFRelation {
 		protected IFilter start;
 		protected IFilter target;
 		protected Direction direction;
@@ -153,6 +155,12 @@ public class FilterFactory {
 		private Relation(Serializable id, Direction direction) {
 			super(id);
 			this.direction = direction;
+		}
+
+		@Override
+		protected Filter clone() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 
