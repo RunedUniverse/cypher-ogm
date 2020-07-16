@@ -2,7 +2,7 @@ package net.runeduniverse.libs.rogm.lang;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -312,32 +312,36 @@ public class Cypher implements Language {
 			/*
 			 * List => 1 Map per Record-line Map => key = a - value = all data from a
 			 */
-
-			Map<Serializable, List<IPattern.Data>> map = new HashMap<>();
+			Set<Serializable> ids = new HashSet<>();
+			List<Set<IPattern.Data>> recordData = new ArrayList<>();
 
 			for (Map<String, Data> record : records) {
-				Serializable primId = record.get(this.map.get(this.primary)).getId();
-				List<IPattern.Data> list = new ArrayList<>();
-				if (map.containsKey(primId))
-					list = map.get(primId);
-				else
-					map.put(primId, list);
+				ids.add(record.get(this.map.get(this.primary)).getId());
+				
+				Set<IPattern.Data> set = new HashSet<IPattern.Data>();
+				recordData.add(set);
 
 				for (IFilter filter : this.map.keySet()) {
 					Module.Data data = record.get(this.map.get(filter));
 					if (data.getId() == null)
 						continue;
-					list.add(new PData(data, filter));
+					set.add(new PData(data, filter));
 				}
 			}
-
+			
 			return new IPattern.DataRecord() {
 				public IPattern.IPatternContainer getPrimaryFilter() {
 					return (IPatternContainer) primary;
 				}
 
-				public Map<Serializable, List<IPattern.Data>> getData() {
-					return map;
+				@Override
+				public Set<Serializable> getIds() {
+					return ids;
+				}
+
+				@Override
+				public List<Set<IPattern.Data>> getData() {
+					return recordData;
 				}
 			};
 		}
@@ -360,6 +364,11 @@ public class Cypher implements Language {
 			this.labels = data.getLabels();
 			this.data = data.getData();
 			this.filter = filter;
+		}
+		
+		@Override
+		public String toString() {
+			return "PDATA filter:<"+filter.getClass().getSimpleName()+"> id<"+id+"> labels<"+labels+"> data<"+data+">";
 		}
 	}
 }

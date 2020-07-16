@@ -12,7 +12,7 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 @Setter
 @ToString
 public class Video extends AEntity {
-	
+
 	@Relationship(label = "CONTAINS")
 	private Set<Person> characters = new HashSet<>();
 

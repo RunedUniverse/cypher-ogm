@@ -12,7 +12,7 @@ import net.runeduniverse.libs.rogm.parser.*;
 @Getter
 public enum DatabaseType {
 	Neo4j(new Cypher(), new JSONParser(), new Neo4jModule());
-	
+
 	private Language lang;
 	private Parser parser;
 	private Module module;

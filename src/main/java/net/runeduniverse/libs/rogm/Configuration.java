@@ -27,11 +27,12 @@ public class Configuration {
 		this.uri = uri;
 		type.getModule().prepare(this);
 	}
-	
+
 	public Configuration addPackage(String pkg) {
 		this.pkgs.add(pkg);
 		return this;
 	}
+
 	public Configuration addPackage(List<String> pkgs) {
 		this.pkgs.addAll(pkgs);
 		return this;

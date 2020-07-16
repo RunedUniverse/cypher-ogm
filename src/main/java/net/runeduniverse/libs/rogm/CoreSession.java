@@ -47,14 +47,8 @@ public final class CoreSession implements Session {
 	@Override
 	public void save(Object object) {
 		try {
-			// TODO move insert/update to pattern
 			Language.Mapper mapper = this.lang.buildSave(this.storage.createFilter(object), this.parser);
-
-			System.out.println(mapper.qry());
-
 			mapper.updateObjectIds(this.storage, this.module.execute(mapper.qry()));
-
-			System.out.println(mapper.qry() + '\n');
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,7 +95,7 @@ public final class CoreSession implements Session {
 		try {
 			Language.Mapper m = lang.buildQuery(filter, this.parser);
 			IPattern.DataRecord record = m.parseData(this.module.queryObject(m.qry()));
-			
+
 			return this.storage.parse(type, record);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -14,5 +14,5 @@ public abstract class AParamHolder<F extends IFilter> extends AFilter<F> impleme
 		this.params.put(label, value);
 		return this.instance;
 	}
-	
+
 }

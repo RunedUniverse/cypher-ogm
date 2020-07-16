@@ -47,8 +47,7 @@ public class JsonParserTest {
 
 	@Test
 	public void parseCityTest() throws Exception {
-		String s = "{name:\"Moonland\","
-				+ "houses:["
+		String s = "{name:\"Moonland\"," + "houses:["
 				+ "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\",fictional:true},{firstName:\"Frank\",lastName:\"Log\",fictional:true}]},"
 				+ "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\",fictional:true},{firstName:\"Luna\",lastName:\"Moon\",fictional:true}]},"
 				+ "{address:{street:\"Sundown Road\",number:3},people:[{firstName:\"Elma\",lastName:\"Light\",fictional:true}]}"
@@ -65,7 +64,9 @@ public class JsonParserTest {
 	@Test
 	public void parseHouseTransient() throws Exception {
 		// ignores empty varialbe while parsing and sets it as default true
-		//String serial = "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\"},{firstName:\"Luna\",lastName:\"Moon\"}], \"empty\":false}";
+		// String serial =
+		// "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\"},{firstName:\"Luna\",lastName:\"Moon\"}],
+		// \"empty\":false}";
 		String s = "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\",fictional:true},{firstName:\"Luna\",lastName:\"Moon\",fictional:true}], \"empty\":false}}";
 		// Direct equals fails -> probably due to Sets
 		assertEquals(h1.toString(), parser.deserialize(House.class, s).toString());

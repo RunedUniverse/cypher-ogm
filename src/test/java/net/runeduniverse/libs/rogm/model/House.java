@@ -10,9 +10,10 @@ import lombok.ToString;
 import net.runeduniverse.libs.rogm.annotations.Transient;
 
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @ToString
-public class House extends AEntity{
+public class House extends AEntity {
 	Address address;
 	List<Person> people = new ArrayList<>();
 	@Transient

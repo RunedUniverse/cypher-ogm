@@ -19,11 +19,12 @@ public class SessionTest {
 	static {
 		config.addPackage("net.runeduniverse.libs.rogm.model");
 		config.addPackage("net.runeduniverse.libs.rogm.model.relations");
-		
+
 		config.setUser("neo4j");
 		config.setPassword("Qwerty!");
-		config.setPassword("t3fGGkgUbd7y8cJ8s5sUKBBDqkqDRLBw6Re8XbA2xaxpVe7Y7nQdZVj4mEsSHQnPXBWnsn7nFxtxKYTyge77HzMPtm3Jj7L45DYBK9Xy7fntrECnx5QMZWwFnUqCZ3JyN8d6LnZXnJbRxEkYD5rCpQhSpEtYz7DwQNA9Yd8T8RUuTduqrTCgvpCRZfHYhGbuKcHyR7QALXvQ9feSdX2ZhsvP8LmBzSh6s2TWLy37KatsYbrzQkCDpCE3zjyX9dzUd");
-		
+		config.setPassword(
+				"t3fGGkgUbd7y8cJ8s5sUKBBDqkqDRLBw6Re8XbA2xaxpVe7Y7nQdZVj4mEsSHQnPXBWnsn7nFxtxKYTyge77HzMPtm3Jj7L45DYBK9Xy7fntrECnx5QMZWwFnUqCZ3JyN8d6LnZXnJbRxEkYD5rCpQhSpEtYz7DwQNA9Yd8T8RUuTduqrTCgvpCRZfHYhGbuKcHyR7QALXvQ9feSdX2ZhsvP8LmBzSh6s2TWLy37KatsYbrzQkCDpCE3zjyX9dzUd");
+
 	}
 
 	private Session session = null;
@@ -49,7 +50,7 @@ public class SessionTest {
 			System.out.println(person.toString());
 		}
 	}
-	
+
 	@Test
 	public void loadAllArtists() {
 		assertTrue("Session is NOT connected", session.isConnected());
@@ -58,7 +59,7 @@ public class SessionTest {
 			System.out.println("NO ARTIST FOUND");
 			return;
 		}
-		for (Artist	artist : people) {
+		for (Artist artist : people) {
 			System.out.println(artist.toString());
 		}
 	}
@@ -82,7 +83,7 @@ public class SessionTest {
 		session.save(james);
 		System.out.println(james.toString());
 	}
-	
+
 	@Test
 	public void createArtist() {
 		Artist ennio = new Artist();

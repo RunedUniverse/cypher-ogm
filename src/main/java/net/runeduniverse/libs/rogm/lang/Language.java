@@ -23,6 +23,7 @@ public interface Language {
 		String qry();
 
 		<ID extends Serializable> void updateObjectIds(PatternStorage storage, Map<String, ID> ids);
+
 		IPattern.DataRecord parseData(List<Map<String, Data>> records);
 	}
 }

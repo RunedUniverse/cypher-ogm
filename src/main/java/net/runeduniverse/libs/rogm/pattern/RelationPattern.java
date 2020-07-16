@@ -174,7 +174,7 @@ public class RelationPattern extends APattern {
 		}
 		return relation;
 	}
-	
+
 	public void setStart(Object entity, Object value) {
 		try {
 			this.startField.set(entity, value);
@@ -182,6 +182,7 @@ public class RelationPattern extends APattern {
 			e.printStackTrace();
 		}
 	}
+
 	public void setTarget(Object entity, Object value) {
 		try {
 			this.targetField.set(entity, value);

@@ -14,5 +14,5 @@ public class ActorPlaysPersonRelation {
 	private Actor actor;
 	@EndNode
 	private Person person;
-	
+
 }

@@ -110,7 +110,7 @@ public class PatternStorage {
 		List<DataMap<IFilter, Data, DataType>> dataRecords = new ArrayList<>();
 
 		// preloads all mentioned nodes
-		for (List<Data> dataList : record.getData().values()) {
+		for (Set<Data> dataList : record.getData()) {
 			DataMap<IFilter, Data, DataType> map = new DataHashMap<>();
 			dataRecords.add(map);
 			for (Data data : dataList) {
@@ -153,7 +153,7 @@ public class PatternStorage {
 		}
 
 		Set<T> nodes = new HashSet<>();
-		for (Serializable primId : record.getData().keySet())
+		for (Serializable primId : record.getIds())
 			nodes.add(primaryPattern.getBuffer().load(primId, type));
 
 		return nodes;

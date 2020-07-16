@@ -17,7 +17,7 @@ public class Artist extends Person {
 
 	@Relationship(label = "CREATED")
 	private Set<Song> created = new HashSet<>();
-	
+
 	@Relationship(label = "SINGS")
 	private Set<Song> sang = new HashSet<>();
 

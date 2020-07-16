@@ -120,10 +120,11 @@ public class NodePattern extends APattern {
 
 		return node;
 	}
-	
+
 	public void setRelation(Direction direction, String label, Object entity, Object value) {
 		for (FieldPattern field : this.relFields)
-			if(field.getDirection().equals(direction)&&field.getLabel().equals(label)&&field.getType().isAssignableFrom(value.getClass())) {
+			if (field.getDirection().equals(direction) && field.getLabel().equals(label)
+					&& field.getType().isAssignableFrom(value.getClass())) {
 				field.putValue(entity, value);
 				return;
 			}

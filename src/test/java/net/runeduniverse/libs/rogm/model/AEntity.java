@@ -12,7 +12,7 @@ import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 @Getter
 @Setter
 public abstract class AEntity {
-	
+
 	@Id
 	@GeneratedValue
 	// TODO: add compatibility to long = Long

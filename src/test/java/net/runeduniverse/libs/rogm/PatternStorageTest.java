@@ -55,7 +55,7 @@ public class PatternStorageTest {
 	public void queryHouse() throws Exception {
 		System.out.println(_query(House.class));
 	}
-	
+
 	@Test
 	public void queryArtist() throws Exception {
 		System.out.println(_query(Artist.class));

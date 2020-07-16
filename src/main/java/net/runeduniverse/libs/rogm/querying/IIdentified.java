@@ -17,7 +17,7 @@ public interface IIdentified<ID extends Serializable> extends IFilter {
 		if (!idf.checkType(type))
 			throw new Exception("IFilter ID <" + idf.getId().getClass().toString() + "> not supported");
 	}
-	
+
 	public static boolean identify(IFilter filter) {
 		if (filter == null || !(filter instanceof IIdentified) || ((IIdentified<?>) filter).getId() == null)
 			return false;

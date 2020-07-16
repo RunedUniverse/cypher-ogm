@@ -134,9 +134,7 @@ public class Neo4jModule implements Module {
 							return new HashMap<>();
 						Map<String, Long> results = new HashMap<>();
 						Record record = result.next();
-						System.out.println(record.keys());
 						record.keys().forEach(key -> {
-							System.out.println(key + " : " + record.get(key, -1L));
 							results.put(key, record.get(key, -1L));
 						});
 						return results;
@@ -157,7 +155,7 @@ public class Neo4jModule implements Module {
 		protected Data(Parser parser, Record record, String key) throws Exception {
 			this.alias = key;
 			Value idProperty = record.get("id_" + key);
-			if(idProperty.isNull())
+			if (idProperty.isNull())
 				return;
 			this.id = record.get("id_" + key).asLong();
 			if (record.get(key).isNull())

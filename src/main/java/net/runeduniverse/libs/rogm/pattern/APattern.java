@@ -13,15 +13,15 @@ public abstract class APattern implements IPattern {
 	@Getter
 	protected final Class<?> type;
 	protected Field idField = null;
-	
+
 	@Override
 	public boolean isIdSet(Object entity) throws IllegalArgumentException {
-		return this.getId(entity)!=null;
+		return this.getId(entity) != null;
 	}
 
 	@Override
 	public Serializable getId(Object entity) {
-		if(this.idField == null)
+		if (this.idField == null)
 			return null;
 		try {
 			return (Serializable) this.idField.get(entity);

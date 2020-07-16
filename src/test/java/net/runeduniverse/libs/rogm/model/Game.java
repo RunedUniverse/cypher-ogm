@@ -14,10 +14,10 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 public class Game extends AEntity {
 
 	private String name;
-	
+
 	@Relationship(label = "CHARACTER")
 	private Set<Person> characters = new HashSet<Person>();
-	
+
 	@Relationship(label = "TRAILER")
 	private Video trailer;
 }

@@ -14,7 +14,7 @@ public class Person extends AEntity {
 	private String firstName;
 	private String lastName;
 	private boolean fictional;
-	
+
 	public Person(String firstName, String lastName) {
 		this.firstName = firstName;
 		this.lastName = lastName;

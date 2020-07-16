@@ -12,24 +12,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 
 @SuppressWarnings("deprecation")
-public class JSONParser implements Parser{
+public class JSONParser implements Parser {
 
 	private static final ObjectMapper MAPPER = new ObjectMapper();
-	
+
 	static {
 		MAPPER.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
 		MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		
+
 		JsonAnnotationIntrospector introspector = new JsonAnnotationIntrospector();
-		
-		AnnotationIntrospector serial = new AnnotationIntrospectorPair(introspector, MAPPER.getSerializationConfig().getAnnotationIntrospector());
-		AnnotationIntrospector deserial = new AnnotationIntrospectorPair(introspector, MAPPER.getDeserializationConfig().getAnnotationIntrospector());
-		
+
+		AnnotationIntrospector serial = new AnnotationIntrospectorPair(introspector,
+				MAPPER.getSerializationConfig().getAnnotationIntrospector());
+		AnnotationIntrospector deserial = new AnnotationIntrospectorPair(introspector,
+				MAPPER.getDeserializationConfig().getAnnotationIntrospector());
+
 		MAPPER.setAnnotationIntrospectors(serial, deserial);
 		MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
-	
 	@Override
 	public String serialize(Object object) throws JsonProcessingException {
 		return MAPPER.writeValueAsString(object);
@@ -41,8 +42,9 @@ public class JSONParser implements Parser{
 	}
 
 	@Override
-	public <T> T deserialize(Class<T> clazz, String value) throws JsonMappingException, JsonProcessingException, InstantiationException, IllegalAccessException {
-		if(value==null)
+	public <T> T deserialize(Class<T> clazz, String value)
+			throws JsonMappingException, JsonProcessingException, InstantiationException, IllegalAccessException {
+		if (value == null)
 			return clazz.newInstance();
 		return MAPPER.readValue(value, clazz);
 	}
