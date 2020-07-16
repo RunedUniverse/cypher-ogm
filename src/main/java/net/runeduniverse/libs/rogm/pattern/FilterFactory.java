@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
+import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.querying.*;
 
@@ -75,13 +75,13 @@ public class FilterFactory {
 		return new DataRelation(data, direction);
 	}
 
-	protected interface IDataNode extends IFNode, DataFilter, ILabeled, IReturned {
+	protected interface IDataNode extends IFNode, IDataFilter, ILabeled, IReturned {
 		void setFilterType(FilterType type);
 
 		void setReturned(boolean returned);
 	}
 
-	protected interface IDataRelation extends IFRelation, DataFilter, ILabeled, IReturned {
+	protected interface IDataRelation extends IFRelation, IDataFilter, ILabeled, IReturned {
 		void setFilterType(FilterType type);
 
 		void setReturned(boolean returned);

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
+import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.util.Buffer;
 
@@ -24,13 +24,23 @@ public interface IPattern {
 	IFilter createIdFilter(Serializable id) throws Exception;
 
 	// for saving
-	DataFilter createFilter(Object entity) throws Exception;
+	ISaveContainer createFilter(Object entity) throws Exception;
 
 	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
 
 	Object parse(Serializable id, String data) throws Exception;
 
-	Object parse(Data data) throws Exception;
+	Object parse(IData data) throws Exception;
+
+	void preSave(Object entity);
+
+	void preDelete(Object entity);
+
+	void postLoad(Object entity);
+
+	void postSave(Object entity);
+
+	void postDelete(Object entity);
 
 	public interface IPatternContainer extends IFilter {
 		IPattern getPattern();
@@ -40,7 +50,7 @@ public interface IPattern {
 		}
 	}
 
-	public interface Data {
+	public interface IData {
 		Serializable getId();
 
 		Set<String> getLabels();
@@ -50,11 +60,17 @@ public interface IPattern {
 		IFilter getFilter();
 	}
 
-	public interface DataRecord {
+	public interface IDataRecord {
 		IPatternContainer getPrimaryFilter();
 
 		Set<Serializable> getIds();
 
-		List<Set<Data>> getData();
+		List<Set<IData>> getData();
+	}
+
+	public interface ISaveContainer {
+		IDataFilter getDataFilter() throws Exception;
+
+		void postSave();
 	}
 }

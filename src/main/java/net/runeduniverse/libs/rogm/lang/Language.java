@@ -12,18 +12,18 @@ import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface Language {
-	Mapper buildQuery(IFilter filter, Parser parser) throws Exception;
+	IMapper buildQuery(IFilter filter, Parser parser) throws Exception;
 
-	Mapper buildSave(DataFilter node, Parser parser) throws Exception;
+	IMapper buildSave(IDataFilter node, Parser parser) throws Exception;
 
-	public interface DataFilter extends IFilter, IDataContainer {
+	public interface IDataFilter extends IFilter, IDataContainer {
 	}
 
-	public interface Mapper {
+	public interface IMapper {
 		String qry();
 
 		<ID extends Serializable> void updateObjectIds(PatternStorage storage, Map<String, ID> ids);
 
-		IPattern.DataRecord parseData(List<Map<String, Data>> records);
+		IPattern.IDataRecord parseData(List<Map<String, Data>> records);
 	}
 }

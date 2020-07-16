@@ -16,7 +16,7 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
-import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
+import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
 import net.runeduniverse.libs.rogm.querying.FilterType;
@@ -58,6 +58,8 @@ public class NodePattern extends APattern {
 			if (field.isAnnotationPresent(Relationship.class))
 				this.relFields.add(new FieldPattern(this.storage, field));
 		}
+		this.parseMethods();
+		
 		if (type.getSuperclass().equals(Object.class))
 			return;
 		_parse(type.getSuperclass());
@@ -91,14 +93,33 @@ public class NodePattern extends APattern {
 	}
 
 	@Override
-	public DataFilter createFilter(Object entity) throws Exception {
-		return this.createFilter(entity, new HashMap<>(), true);
+	public ISaveContainer createFilter(Object entity) throws Exception {
+		Map<Object, IDataFilter> includedData = new HashMap<>();
+		return new ISaveContainer() {
+			
+			@Override
+			public IDataFilter getDataFilter() throws Exception {
+				return createFilter(entity, includedData, true);
+			}
+			
+			@Override
+			public void postSave() {
+				for (Object object : includedData.keySet())
+					try {
+						storage.getPattern(object.getClass()).postSave(object);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+			}
+		};
 	}
 
-	public IDataNode createFilter(Object entity, Map<Object, DataFilter> includedData, boolean includeRelations)
+	public IDataNode createFilter(Object entity, Map<Object, IDataFilter> includedData, boolean includeRelations)
 			throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataNode) includedData.get(entity);
+		
+		this.preSave(entity);
 
 		IDataNode node = null;
 		if (this.isIdSet(entity)) {

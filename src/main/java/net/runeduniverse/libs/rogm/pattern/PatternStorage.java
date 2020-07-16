@@ -16,12 +16,12 @@ import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.pattern.IPattern.Data;
-import net.runeduniverse.libs.rogm.pattern.IPattern.DataRecord;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
+import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -83,7 +83,7 @@ public class PatternStorage {
 		return this.getPattern(clazz).createFilter();
 	}
 
-	public DataFilter createFilter(Object entity) throws Exception {
+	public ISaveContainer createFilter(Object entity) throws Exception {
 		return this.getPattern(entity.getClass()).createFilter(entity);
 	}
 
@@ -103,24 +103,25 @@ public class PatternStorage {
 		return this.getPattern(clazz).parse(id, data);
 	}
 
-	public <T> Collection<T> parse(Class<T> type, DataRecord record) throws Exception {
+	public <T> Collection<T> parse(Class<T> type, IDataRecord record) throws Exception {
 		// type || vv
 		IPattern primaryPattern = record.getPrimaryFilter().getPattern();
 
-		List<DataMap<IFilter, Data, DataType>> dataRecords = new ArrayList<>();
+		List<DataMap<IFilter, IData, DataType>> dataRecords = new ArrayList<>();
+		List<Object> loadedObjects = new ArrayList<>();
 
 		// preloads all mentioned nodes
-		for (Set<Data> dataList : record.getData()) {
-			DataMap<IFilter, Data, DataType> map = new DataHashMap<>();
+		for (Set<IData> dataList : record.getData()) {
+			DataMap<IFilter, IData, DataType> map = new DataHashMap<>();
 			dataRecords.add(map);
-			for (Data data : dataList) {
+			for (IData data : dataList) {
 				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
 				if (IPatternContainer.identify(data.getFilter()))
-					((IPatternContainer) data.getFilter()).getPattern().parse(data);
+					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern().parse(data));
 			}
 		}
 
-		for (DataMap<IFilter, Data, DataType> dataMap : dataRecords) {
+		for (DataMap<IFilter, IData, DataType> dataMap : dataRecords) {
 
 			dataMap.forEach(DataType.RELATION, (filter, data) -> {
 				IFRelation fRelation = (IFRelation) filter;
@@ -156,6 +157,9 @@ public class PatternStorage {
 		for (Serializable primId : record.getIds())
 			nodes.add(primaryPattern.getBuffer().load(primId, type));
 
+		for (Object object : loadedObjects)
+			this.getPattern(object.getClass()).postLoad(object);
+		
 		return nodes;
 	}
 

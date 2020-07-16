@@ -8,6 +8,7 @@ import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.PatternStorage;
+import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public final class CoreSession implements Session {
@@ -47,8 +48,10 @@ public final class CoreSession implements Session {
 	@Override
 	public void save(Object object) {
 		try {
-			Language.Mapper mapper = this.lang.buildSave(this.storage.createFilter(object), this.parser);
+			ISaveContainer container = this.storage.createFilter(object);
+			Language.IMapper mapper = this.lang.buildSave(container.getDataFilter(), this.parser);
 			mapper.updateObjectIds(this.storage, this.module.execute(mapper.qry()));
+			container.postSave();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -93,8 +96,8 @@ public final class CoreSession implements Session {
 	@Override
 	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, IFilter filter) {
 		try {
-			Language.Mapper m = lang.buildQuery(filter, this.parser);
-			IPattern.DataRecord record = m.parseData(this.module.queryObject(m.qry()));
+			Language.IMapper m = lang.buildQuery(filter, this.parser);
+			IPattern.IDataRecord record = m.parseData(this.module.queryObject(m.qry()));
 
 			return this.storage.parse(type, record);
 		} catch (Exception e) {

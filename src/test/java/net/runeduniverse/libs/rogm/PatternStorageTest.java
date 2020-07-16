@@ -78,6 +78,6 @@ public class PatternStorageTest {
 
 	private String _save(Object entity) throws Exception {
 		return "[SAVE][" + entity.getClass().getSimpleName() + "]\n"
-				+ lang.buildSave(this.storage.createFilter(entity), parser).qry() + '\n';
+				+ lang.buildSave(this.storage.createFilter(entity).getDataFilter(), parser).qry() + '\n';
 	}
 }

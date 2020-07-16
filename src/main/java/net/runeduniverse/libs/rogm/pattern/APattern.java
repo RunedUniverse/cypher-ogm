@@ -2,9 +2,16 @@ package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.runeduniverse.libs.rogm.annotations.PostDelete;
+import net.runeduniverse.libs.rogm.annotations.PostLoad;
+import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
+import net.runeduniverse.libs.rogm.annotations.PreDelete;
+import net.runeduniverse.libs.rogm.annotations.PreSave;
 
 @RequiredArgsConstructor
 public abstract class APattern implements IPattern {
@@ -13,6 +20,39 @@ public abstract class APattern implements IPattern {
 	@Getter
 	protected final Class<?> type;
 	protected Field idField = null;
+
+	// Events
+	protected Method preSave = null;
+	protected Method preDelete = null;
+	protected Method postLoad = null;
+	protected Method postSave = null;
+	protected Method postDelete = null;
+
+	protected void parseMethods() {
+		for (Method method : type.getDeclaredMethods()) {
+			if (method.getParameterCount() != 0)
+				continue;
+			method.setAccessible(true);
+			if (method.isAnnotationPresent(PreSave.class)) {
+				this.preSave = method;
+				continue;
+			}
+			if (method.isAnnotationPresent(PreDelete.class)) { // TODO implement
+				this.preDelete = method;
+				continue;
+			}
+			if (method.isAnnotationPresent(PostLoad.class)) {
+				this.postLoad = method;
+				continue;
+			}
+			if (method.isAnnotationPresent(Post⁮Save.class)) {
+				this.postSave = method;
+				continue;
+			}
+			if (method.isAnnotationPresent(PostDelete.class)) // TODO implement
+				this.postDelete = method;
+		}
+	}
 
 	@Override
 	public boolean isIdSet(Object entity) throws IllegalArgumentException {
@@ -47,12 +87,62 @@ public abstract class APattern implements IPattern {
 	}
 
 	@Override
-	public Object parse(Data data) throws Exception {
+	public Object parse(IData data) throws Exception {
 		Object node = this.getBuffer().load(data.getId(), this.type);
 		if (node != null)
 			return node;
 		node = this.parse(data.getId(), data.getData());
 		this.getBuffer().save(data.getId(), node);
 		return node;
+	}
+
+	@Override
+	public void preSave(Object entity) {
+		if (this.preSave != null)
+			try {
+				this.preSave.invoke(entity);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	}
+
+	@Override
+	public void preDelete(Object entity) {
+		if (this.preDelete != null)
+			try {
+				this.preDelete.invoke(entity);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	}
+
+	@Override
+	public void postLoad(Object entity) {
+		if (this.postLoad != null)
+			try {
+				this.postLoad.invoke(entity);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	}
+
+	@Override
+	public void postSave(Object entity) {
+		if (this.postSave != null)
+			try {
+				this.postSave.invoke(entity);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	}
+
+	@Override
+	public void postDelete(Object entity) {
+		if (this.postDelete != null)
+			try {
+				this.postDelete.invoke(entity);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
 	}
 }

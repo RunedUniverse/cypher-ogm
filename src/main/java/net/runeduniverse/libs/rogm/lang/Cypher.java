@@ -45,7 +45,7 @@ public class Cypher implements Language {
 	}
 
 	@Override
-	public Mapper buildSave(DataFilter node, Parser parser) throws Exception {
+	public Mapper buildSave(IDataFilter node, Parser parser) throws Exception {
 		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		_parse(map, node, gen, false);
@@ -57,7 +57,7 @@ public class Cypher implements Language {
 
 		map.forEach((f, c) -> {
 			try {
-				DataFilter d = (DataFilter) f;
+				IDataFilter d = (IDataFilter) f;
 				if (d.getData() != null)
 					st.add(c + '=' + parser.serialize(d.getData()));
 				rt.add(_returnId(c));
@@ -278,7 +278,7 @@ public class Cypher implements Language {
 		}
 	}
 
-	protected static class Mapper implements Language.Mapper {
+	protected static class Mapper implements Language.IMapper {
 
 		private final IFilter primary;
 		private String qry;
@@ -298,8 +298,8 @@ public class Cypher implements Language {
 		@Override
 		public <ID extends Serializable> void updateObjectIds(PatternStorage storage, Map<String, ID> ids) {
 			this.map.forEach((filter, code) -> {
-				if (filter instanceof DataFilter) {
-					Object data = ((DataFilter) filter).getData();
+				if (filter instanceof IDataFilter) {
+					Object data = ((IDataFilter) filter).getData();
 					Serializable id = ids.get("id_" + code);
 					storage.getNodeBuffer().save(id, data);
 					storage.setId(data, id);
@@ -308,17 +308,17 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public IPattern.DataRecord parseData(List<Map<String, Data>> records) {
+		public IPattern.IDataRecord parseData(List<Map<String, Data>> records) {
 			/*
 			 * List => 1 Map per Record-line Map => key = a - value = all data from a
 			 */
 			Set<Serializable> ids = new HashSet<>();
-			List<Set<IPattern.Data>> recordData = new ArrayList<>();
+			List<Set<IPattern.IData>> recordData = new ArrayList<>();
 
 			for (Map<String, Data> record : records) {
 				ids.add(record.get(this.map.get(this.primary)).getId());
 				
-				Set<IPattern.Data> set = new HashSet<IPattern.Data>();
+				Set<IPattern.IData> set = new HashSet<IPattern.IData>();
 				recordData.add(set);
 
 				for (IFilter filter : this.map.keySet()) {
@@ -329,7 +329,7 @@ public class Cypher implements Language {
 				}
 			}
 			
-			return new IPattern.DataRecord() {
+			return new IPattern.IDataRecord() {
 				public IPattern.IPatternContainer getPrimaryFilter() {
 					return (IPatternContainer) primary;
 				}
@@ -340,7 +340,7 @@ public class Cypher implements Language {
 				}
 
 				@Override
-				public List<Set<IPattern.Data>> getData() {
+				public List<Set<IPattern.IData>> getData() {
 					return recordData;
 				}
 			};
@@ -353,7 +353,7 @@ public class Cypher implements Language {
 	}
 
 	@Getter
-	protected static class PData implements IPattern.Data {
+	protected static class PData implements IPattern.IData {
 		private Serializable id;
 		private Set<String> labels;
 		private String data;
