@@ -8,8 +8,8 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 @Getter
 public class FilterRelation extends AParamFilter<FilterRelation> implements IFRelation, IIdentified<Serializable> {
 
-	private IFilter start = null;
-	private IFilter target = null;
+	private IFNode start = null;
+	private IFNode target = null;
 	private Direction direction;
 	private Serializable id;
 

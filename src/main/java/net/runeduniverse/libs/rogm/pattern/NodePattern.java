@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
+import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
@@ -119,7 +121,11 @@ public class NodePattern extends APattern {
 		return node;
 	}
 	
-	public void parseRelation(Object entity, Data data) {
-		
+	public void setRelation(Direction direction, String label, Object entity, Object value) {
+		for (FieldPattern field : this.relFields)
+			if(field.getDirection().equals(direction)&&field.getLabel().equals(label)&&field.getType().isAssignableFrom(value.getClass())) {
+				field.putValue(entity, value);
+				return;
+			}
 	}
 }

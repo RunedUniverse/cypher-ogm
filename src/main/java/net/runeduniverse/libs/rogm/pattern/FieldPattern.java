@@ -36,7 +36,6 @@ public class FieldPattern {
 		this.field = field;
 		this.field.setAccessible(true);
 		Relationship fieldAnno = this.field.getAnnotation(Relationship.class);
-		this.label = isBlank(fieldAnno.label()) ? this.field.getName() : fieldAnno.label();
 		this.direction = fieldAnno.direction();
 		Class<?> clazz = this.field.getType();
 		this.collection = Collection.class.isAssignableFrom(clazz);
@@ -44,12 +43,17 @@ public class FieldPattern {
 			clazz = (Class<?>) ((ParameterizedType) this.field.getGenericType()).getActualTypeArguments()[0];
 		this.type = clazz;
 
+		String label = null;
 		if (this.type.isAnnotationPresent(NodeEntity.class))
 			this.defined = false;
-		else if (clazz.isAnnotationPresent(RelationshipEntity.class))
+		else if (clazz.isAnnotationPresent(RelationshipEntity.class)) {
+			label = this.storage.getRelation(clazz).getLabel();
 			this.defined = true;
-		else
+		} else
 			throw new Exception("Unsupported Class<" + clazz.getName() + "> as @Relation found!");
+		if (isBlank(label))
+			label = isBlank(fieldAnno.label()) ? this.field.getName() : fieldAnno.label();
+		this.label = label;
 	}
 
 	public IFRelation queryRelation(IFNode origin) throws Exception {
@@ -115,6 +119,19 @@ public class FieldPattern {
 	public void setValue(Object holder, Object value) throws IllegalArgumentException {
 		try {
 			this.field.set(holder, value);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void putValue(Object entity, Object value) throws IllegalArgumentException {
+		try {
+			if (this.collection) {
+				((Collection<Object>) this.field.get(entity)).add(value);
+				return;
+			}
+			this.field.set(entity, value);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}

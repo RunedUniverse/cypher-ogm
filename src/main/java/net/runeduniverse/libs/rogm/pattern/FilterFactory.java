@@ -86,9 +86,9 @@ public class FilterFactory {
 
 		void setReturned(boolean returned);
 
-		void setStart(IFilter start);
+		void setStart(IFNode start);
 
-		void setTarget(IFilter target);
+		void setTarget(IFNode target);
 	}
 
 	@Getter
@@ -143,8 +143,8 @@ public class FilterFactory {
 	@Getter
 	@Setter
 	protected class Relation extends Filter implements IFRelation {
-		protected IFilter start;
-		protected IFilter target;
+		protected IFNode start;
+		protected IFNode target;
 		protected Direction direction;
 		protected Set<String> labels = new HashSet<>();
 
@@ -155,12 +155,6 @@ public class FilterFactory {
 		private Relation(Serializable id, Direction direction) {
 			super(id);
 			this.direction = direction;
-		}
-
-		@Override
-		protected Filter clone() {
-			// TODO Auto-generated method stub
-			return null;
 		}
 	}
 

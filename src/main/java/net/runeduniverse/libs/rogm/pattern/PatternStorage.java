@@ -13,6 +13,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 
 import lombok.Getter;
+import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.lang.Language.DataFilter;
@@ -25,6 +26,8 @@ import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.util.Buffer;
+import net.runeduniverse.libs.rogm.util.DataHashMap;
+import net.runeduniverse.libs.rogm.util.DataMap;
 
 public class PatternStorage {
 
@@ -46,10 +49,10 @@ public class PatternStorage {
 		Reflections reflections = new Reflections(pkgs.toArray(), new TypeAnnotationsScanner(),
 				new SubTypesScanner(true));
 
-		for (Class<?> c : reflections.getTypesAnnotatedWith(NodeEntity.class))
-			this.nodes.put(c, new NodePattern(this, c));
 		for (Class<?> c : reflections.getTypesAnnotatedWith(RelationshipEntity.class))
 			this.relations.put(c, new RelationPattern(this, c));
+		for (Class<?> c : reflections.getTypesAnnotatedWith(NodeEntity.class))
+			this.nodes.put(c, new NodePattern(this, c));
 	}
 
 	public NodePattern getNode(Class<?> clazz) {
@@ -104,39 +107,72 @@ public class PatternStorage {
 		// type || vv
 		IPattern primaryPattern = record.getPrimaryFilter().getPattern();
 
+		List<DataMap<IFilter, Data, DataType>> dataRecords = new ArrayList<>();
+
 		// preloads all mentioned nodes
-		for (List<Data> dataList : record.getData().values())
-			for (Data data : dataList)
+		for (List<Data> dataList : record.getData().values()) {
+			DataMap<IFilter, Data, DataType> map = new DataHashMap<>();
+			dataRecords.add(map);
+			for (Data data : dataList) {
+				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
 				if (IPatternContainer.identify(data.getFilter()))
 					((IPatternContainer) data.getFilter()).getPattern().parse(data);
-
-		if (primaryPattern instanceof NodePattern)
-			return parseNode(type, record);
-		// if (primaryPattern instanceof RelationPattern)
-		// return parseRelation(record);
-		return new ArrayList<T>();
-	}
-
-	private <T> Collection<T> parseNode(Class<T> type, DataRecord record) {
-
-		IFNode primFilter = (IFNode) record.getPrimaryFilter();
-
-		for (List<Data> list : record.getData().values()) {
-
-			for (Data data : list) {
-
-				/*
-				 * 
-				 * if(primFilter.getRelations().contains(data.getFilter()))
-				 * this.getNode(node.getClass()).parseRelation(node, data);
-				 */
-
 			}
+		}
+
+		for (DataMap<IFilter, Data, DataType> dataMap : dataRecords) {
+
+			dataMap.forEach(DataType.RELATION, (filter, data) -> {
+				IFRelation fRelation = (IFRelation) filter;
+				String label = fRelation.getPrimaryLabel();
+				IFNode fStartNode = fRelation.getStart();
+				NodePattern pStartNode = (NodePattern) ((IPatternContainer) fStartNode).getPattern();
+				Object eStartNode = pStartNode.getBuffer().load(dataMap.get(fStartNode).getId(), pStartNode.getType());
+				IFNode fTargetNode = fRelation.getTarget();
+				NodePattern pTargetNode = (NodePattern) ((IPatternContainer) fTargetNode).getPattern();
+				Object eTargetNode = pTargetNode.getBuffer().load(dataMap.get(fTargetNode).getId(),
+						pTargetNode.getType());
+
+				if (!IPatternContainer.identify(fRelation)) {
+					pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, eTargetNode);
+					pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode,
+							eStartNode);
+					return;
+				}
+
+				// RelationshipEntity
+				RelationPattern rel = (RelationPattern) ((IPatternContainer) fRelation).getPattern();
+				Object relEntity = rel.getBuffer().load(data.getId(), rel.getType());
+
+				rel.setStart(relEntity, eStartNode);
+				rel.setTarget(relEntity, eTargetNode);
+
+				pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, relEntity);
+				pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode, relEntity);
+			});
 		}
 
 		Set<T> nodes = new HashSet<>();
 		for (Serializable primId : record.getData().keySet())
-			nodes.add(this.nodeBuffer.load(primId, type));
+			nodes.add(primaryPattern.getBuffer().load(primId, type));
+
 		return nodes;
 	}
+
+	private enum DataType {
+		NODE, RELATION, UNKNOWN;
+
+		private static DataType fromFilter(IFilter filter) {
+			if (filter instanceof IFNode)
+				return NODE;
+			if (filter instanceof IFRelation)
+				return RELATION;
+			return UNKNOWN;
+		}
+	}
 }
+
+/*
+ * if(primFilter.getRelations().contains(data.getFilter()))
+ * this.getNode(node.getClass()).parseRelation(node, data);
+ */

@@ -24,6 +24,7 @@ import net.runeduniverse.libs.rogm.util.Buffer;
 
 public class RelationPattern extends APattern {
 
+	@Getter
 	private String label = null;
 	private Direction direction = null;
 	private Field startField = null;
@@ -172,6 +173,21 @@ public class RelationPattern extends APattern {
 			relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation));
 		}
 		return relation;
+	}
+	
+	public void setStart(Object entity, Object value) {
+		try {
+			this.startField.set(entity, value);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+	public void setTarget(Object entity, Object value) {
+		try {
+			this.targetField.set(entity, value);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private IFNode _getNode(Class<?> type, IFRelation relation) {
