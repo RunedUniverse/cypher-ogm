@@ -28,28 +28,28 @@ public abstract class APattern implements IPattern {
 	protected Method postSave = null;
 	protected Method postDelete = null;
 
-	protected void parseMethods() {
+	protected void parseMethods(Class<?> type) {
 		for (Method method : type.getDeclaredMethods()) {
 			if (method.getParameterCount() != 0)
 				continue;
 			method.setAccessible(true);
-			if (method.isAnnotationPresent(PreSave.class)) {
+			if (this.preSave == null && method.isAnnotationPresent(PreSave.class)) {
 				this.preSave = method;
 				continue;
 			}
-			if (method.isAnnotationPresent(PreDelete.class)) { // TODO implement
+			if (this.preDelete == null && method.isAnnotationPresent(PreDelete.class)) { // TODO implement
 				this.preDelete = method;
 				continue;
 			}
-			if (method.isAnnotationPresent(PostLoad.class)) {
+			if (this.postLoad == null && method.isAnnotationPresent(PostLoad.class)) {
 				this.postLoad = method;
 				continue;
 			}
-			if (method.isAnnotationPresent(Post⁮Save.class)) {
+			if (this.postSave == null && method.isAnnotationPresent(Post⁮Save.class)) {
 				this.postSave = method;
 				continue;
 			}
-			if (method.isAnnotationPresent(PostDelete.class)) // TODO implement
+			if (this.postDelete == null && method.isAnnotationPresent(PostDelete.class)) // TODO implement
 				this.postDelete = method;
 		}
 	}

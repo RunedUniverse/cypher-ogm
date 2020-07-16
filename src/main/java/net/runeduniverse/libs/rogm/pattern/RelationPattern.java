@@ -65,7 +65,7 @@ public class RelationPattern extends APattern {
 			if (field.isAnnotationPresent(EndNode.class))
 				this.targetField = field;
 		}
-		this.parseMethods();
+		this.parseMethods(type);
 
 		if (type.getSuperclass().equals(Object.class))
 			return;

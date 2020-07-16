@@ -58,8 +58,8 @@ public class NodePattern extends APattern {
 			if (field.isAnnotationPresent(Relationship.class))
 				this.relFields.add(new FieldPattern(this.storage, field));
 		}
-		this.parseMethods();
-		
+		this.parseMethods(type);
+
 		if (type.getSuperclass().equals(Object.class))
 			return;
 		_parse(type.getSuperclass());
@@ -96,12 +96,12 @@ public class NodePattern extends APattern {
 	public ISaveContainer createFilter(Object entity) throws Exception {
 		Map<Object, IDataFilter> includedData = new HashMap<>();
 		return new ISaveContainer() {
-			
+
 			@Override
 			public IDataFilter getDataFilter() throws Exception {
 				return createFilter(entity, includedData, true);
 			}
-			
+
 			@Override
 			public void postSave() {
 				for (Object object : includedData.keySet())
@@ -118,7 +118,7 @@ public class NodePattern extends APattern {
 			throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataNode) includedData.get(entity);
-		
+
 		this.preSave(entity);
 
 		IDataNode node = null;

@@ -108,7 +108,7 @@ public class PatternStorage {
 		IPattern primaryPattern = record.getPrimaryFilter().getPattern();
 
 		List<DataMap<IFilter, IData, DataType>> dataRecords = new ArrayList<>();
-		List<Object> loadedObjects = new ArrayList<>();
+		Set<Object> loadedObjects = new HashSet<>();
 
 		// preloads all mentioned nodes
 		for (Set<IData> dataList : record.getData()) {

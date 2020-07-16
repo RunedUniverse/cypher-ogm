@@ -28,19 +28,19 @@ public class Person extends AEntity {
 		this.lastName = lastName;
 		this.fictional = fictional;
 	}
-	
+
 	@PreSave
 	private void preSave() {
-		System.out.println("[PRE-SAVE] "+toString());
+		System.out.println("[PRE-SAVE] " + toString());
 	}
-	
+
 	@Post⁮Save
 	private void postSave() {
-		System.out.println("[POST-SAVE] "+toString());
+		System.out.println("[POST-SAVE] " + toString());
 	}
-	
+
 	@PostLoad
 	private void postLoad() {
-		System.out.println("[POST-LOAD] "+toString());
+		System.out.println("[POST-LOAD] " + toString());
 	}
 }
