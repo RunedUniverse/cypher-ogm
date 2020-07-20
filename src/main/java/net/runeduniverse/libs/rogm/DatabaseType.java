@@ -7,6 +7,7 @@ import net.runeduniverse.libs.rogm.lang.*;
 import net.runeduniverse.libs.rogm.modules.*;
 import net.runeduniverse.libs.rogm.modules.neo4j.Neo4jModule;
 import net.runeduniverse.libs.rogm.parser.*;
+import net.runeduniverse.libs.rogm.parser.json.JSONParser;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter

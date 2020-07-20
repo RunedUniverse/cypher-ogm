@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.parser;
+package net.runeduniverse.libs.rogm.parser.json;
 
 import java.util.Map;
 
@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
+import net.runeduniverse.libs.rogm.parser.Parser;
 
 @SuppressWarnings("deprecation")
 public class JSONParser implements Parser {
@@ -48,5 +49,4 @@ public class JSONParser implements Parser {
 			return clazz.newInstance();
 		return MAPPER.readValue(value, clazz);
 	}
-
 }

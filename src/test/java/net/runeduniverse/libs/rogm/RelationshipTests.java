@@ -25,7 +25,7 @@ import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Company;
 import net.runeduniverse.libs.rogm.model.Game;
 import net.runeduniverse.libs.rogm.model.relations.ActorPlaysPersonRelation;
-import net.runeduniverse.libs.rogm.parser.JSONParser;
+import net.runeduniverse.libs.rogm.parser.json.JSONParser;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;

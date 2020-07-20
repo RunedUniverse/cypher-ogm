@@ -159,7 +159,7 @@ public class PatternStorage {
 
 		for (Object object : loadedObjects)
 			this.getPattern(object.getClass()).postLoad(object);
-		
+
 		return nodes;
 	}
 
@@ -175,8 +175,3 @@ public class PatternStorage {
 		}
 	}
 }
-
-/*
- * if(primFilter.getRelations().contains(data.getFilter()))
- * this.getNode(node.getClass()).parseRelation(node, data);
- */

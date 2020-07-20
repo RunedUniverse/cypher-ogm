@@ -132,7 +132,7 @@ public class Cypher implements Language {
 			else
 				activeBuilder = matchBuilder;
 
-			activeBuilder.append(_prefix(f));
+			activeBuilder.append(_prefix(f, isMerge));
 			if (f instanceof IFNode) {
 				_where(map, whereBuilder, f, code, modifier);
 
@@ -158,15 +158,17 @@ public class Cypher implements Language {
 		switch (filter.getFilterType()) {
 		case CREATE:
 		case UPDATE:
-			if (filter instanceof IFRelation)
+			// TODO: _id
+			if (filter instanceof IFRelation
+					|| filter instanceof IParameterized && ((IParameterized) filter).getParams().containsKey("id"))
 				return true;
 		default:
 			return false;
 		}
 	}
 
-	private String _prefix(IFilter filter) {
-		if (_isMerge(filter))
+	private String _prefix(IFilter filter, Boolean isMerge) {
+		if (isMerge)
 			return "MERGE ";
 
 		switch (filter.getFilterType()) {
@@ -317,7 +319,7 @@ public class Cypher implements Language {
 
 			for (Map<String, Data> record : records) {
 				ids.add(record.get(this.map.get(this.primary)).getId());
-				
+
 				Set<IPattern.IData> set = new HashSet<IPattern.IData>();
 				recordData.add(set);
 
@@ -328,7 +330,7 @@ public class Cypher implements Language {
 					set.add(new PData(data, filter));
 				}
 			}
-			
+
 			return new IPattern.IDataRecord() {
 				public IPattern.IPatternContainer getPrimaryFilter() {
 					return (IPatternContainer) primary;
@@ -365,10 +367,11 @@ public class Cypher implements Language {
 			this.data = data.getData();
 			this.filter = filter;
 		}
-		
+
 		@Override
 		public String toString() {
-			return "PDATA filter:<"+filter.getClass().getSimpleName()+"> id<"+id+"> labels<"+labels+"> data<"+data+">";
+			return "PDATA filter:<" + filter.getClass().getSimpleName() + "> id<" + id + "> labels<" + labels
+					+ "> data<" + data + ">";
 		}
 	}
 }

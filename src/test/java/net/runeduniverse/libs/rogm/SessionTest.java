@@ -3,6 +3,7 @@ package net.runeduniverse.libs.rogm;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import net.runeduniverse.libs.rogm.model.Actor;
 import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Person;
+import net.runeduniverse.libs.rogm.model.Player;
 import net.runeduniverse.libs.rogm.model.Song;
 
 public class SessionTest {
@@ -95,6 +97,21 @@ public class SessionTest {
 		System.out.println(ennio.toString());
 		session.save(ennio);
 		System.out.println(ennio.toString());
+	}
+
+	@Test
+	public void createPlayer_UUID_Id() {
+		Player player = new Player(UUID.randomUUID(), "Testi");
+		System.out.println(player.toString());
+		session.save(player);
+		System.out.println(player.toString());
+	}
+
+	@Test
+	public void loadPlayer_UUID_Id() {
+		Player player = session.load(Player.class, UUID.fromString("e9625def-f7e1-4312-b86a-86e404f07f31"));
+		assertNotNull("NO Entries in DB found", player);
+		System.out.println(player.toString());
 	}
 
 	@Test

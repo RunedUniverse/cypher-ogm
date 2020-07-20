@@ -10,6 +10,7 @@ import net.runeduniverse.libs.rogm.model.Address;
 import net.runeduniverse.libs.rogm.model.City;
 import net.runeduniverse.libs.rogm.model.House;
 import net.runeduniverse.libs.rogm.model.Person;
+import net.runeduniverse.libs.rogm.parser.json.JSONParser;
 
 public class JsonParserTest {
 

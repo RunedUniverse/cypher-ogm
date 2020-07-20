@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.parser;
+package net.runeduniverse.libs.rogm.parser.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -23,7 +23,7 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 
 	@Override
 	public boolean hasIgnoreMarker(AnnotatedMember m) {
-		return _isTransient(m) || _isId(m) || _isRelationship(m) || _isRelationshipEntity(m);
+		return _isTransient(m) ||  _isId(m) ||  _isRelationship(m) || _isRelationshipEntity(m);
 	}
 
 	private JsonInclude.Value _isProperty(Annotated a) {

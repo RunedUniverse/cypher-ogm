@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.lang.Cypher;
-import net.runeduniverse.libs.rogm.parser.JSONParser;
+import net.runeduniverse.libs.rogm.parser.json.JSONParser;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
