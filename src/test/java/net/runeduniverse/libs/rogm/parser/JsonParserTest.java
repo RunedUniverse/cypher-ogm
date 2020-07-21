@@ -6,15 +6,18 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.ATest;
+import net.runeduniverse.libs.rogm.DatabaseType;
 import net.runeduniverse.libs.rogm.model.Address;
 import net.runeduniverse.libs.rogm.model.City;
 import net.runeduniverse.libs.rogm.model.House;
 import net.runeduniverse.libs.rogm.model.Person;
-import net.runeduniverse.libs.rogm.parser.json.JSONParser;
 
-public class JsonParserTest {
+public class JsonParserTest extends ATest {
 
-	private static final Parser parser = new JSONParser();
+	public JsonParserTest() {
+		super(DatabaseType.Neo4j);
+	}
 
 	private House h0;
 	private House h1;
@@ -53,13 +56,13 @@ public class JsonParserTest {
 				+ "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\",fictional:true},{firstName:\"Luna\",lastName:\"Moon\",fictional:true}]},"
 				+ "{address:{street:\"Sundown Road\",number:3},people:[{firstName:\"Elma\",lastName:\"Light\",fictional:true}]}"
 				+ "]}";
-		assertEquals(s, parser.serialize(c));
+		assertEquals(s, iParser.serialize(c));
 	}
 
 	@Test
 	public void parseHouse() throws Exception {
 		String s = "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\",fictional:true},{firstName:\"Frank\",lastName:\"Log\",fictional:true}]}";
-		assertEquals(s, parser.serialize(h0));
+		assertEquals(s, iParser.serialize(h0));
 	}
 
 	@Test
@@ -70,7 +73,7 @@ public class JsonParserTest {
 		// \"empty\":false}";
 		String s = "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\",fictional:true},{firstName:\"Luna\",lastName:\"Moon\",fictional:true}], \"empty\":false}}";
 		// Direct equals fails -> probably due to Sets
-		assertEquals(h1.toString(), parser.deserialize(House.class, s).toString());
+		assertEquals(h1.toString(), iParser.deserialize(House.class, s).toString());
 	}
 
 }

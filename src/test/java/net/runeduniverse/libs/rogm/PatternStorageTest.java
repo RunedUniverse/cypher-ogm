@@ -5,18 +5,15 @@ import java.util.List;
 
 import org.junit.*;
 
-import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.model.*;
-import net.runeduniverse.libs.rogm.modules.Module;
-import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 
-public class PatternStorageTest {
+public class PatternStorageTest extends ATest {
 
-	private static final DatabaseType dbType = DatabaseType.Neo4j;
-	private static final Language lang = dbType.getLang();
-	private static final Parser parser = dbType.getParser();
-	private static final Module module = dbType.getModule();
+	public PatternStorageTest() {
+		super(DatabaseType.Neo4j);
+	}
+
 	private PatternStorage storage = null;
 
 	private static final Person testi;
@@ -38,7 +35,7 @@ public class PatternStorageTest {
 		List<String> pkgs = new ArrayList<>();
 		pkgs.add("net.runeduniverse.libs.rogm.model");
 		pkgs.add("net.runeduniverse.libs.rogm.model.relations");
-		storage = new PatternStorage(pkgs, module, parser);
+		storage = new PatternStorage(pkgs, module, iParser);
 	}
 
 	@Test
@@ -73,11 +70,11 @@ public class PatternStorageTest {
 
 	private String _query(Class<?> clazz) throws Exception {
 		return "[QUERY][" + clazz.getSimpleName() + "]\n"
-				+ lang.buildQuery(this.storage.getNode(clazz).createFilter(), parser) + '\n';
+				+ iLanguage.buildQuery(this.storage.getNode(clazz).createFilter()) + '\n';
 	}
 
 	private String _save(Object entity) throws Exception {
 		return "[SAVE][" + entity.getClass().getSimpleName() + "]\n"
-				+ lang.buildSave(this.storage.createFilter(entity).getDataFilter(), parser).qry() + '\n';
+				+ iLanguage.buildSave(this.storage.createFilter(entity).getDataFilter()).qry() + '\n';
 	}
 }

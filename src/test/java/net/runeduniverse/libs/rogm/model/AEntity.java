@@ -16,5 +16,5 @@ public abstract class AEntity {
 	@Id
 	@GeneratedValue
 	// TODO: add compatibility to long = Long
-	private Long id;
+	private Long myid;
 }

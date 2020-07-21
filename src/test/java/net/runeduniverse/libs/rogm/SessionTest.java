@@ -15,7 +15,7 @@ import net.runeduniverse.libs.rogm.model.Person;
 import net.runeduniverse.libs.rogm.model.Player;
 import net.runeduniverse.libs.rogm.model.Song;
 
-public class SessionTest {
+public class SessionTest extends ATest {
 
 	static Configuration config = new Configuration(DatabaseType.Neo4j, "runeduniverse.net");
 	static {
@@ -27,6 +27,10 @@ public class SessionTest {
 		config.setPassword(
 				"t3fGGkgUbd7y8cJ8s5sUKBBDqkqDRLBw6Re8XbA2xaxpVe7Y7nQdZVj4mEsSHQnPXBWnsn7nFxtxKYTyge77HzMPtm3Jj7L45DYBK9Xy7fntrECnx5QMZWwFnUqCZ3JyN8d6LnZXnJbRxEkYD5rCpQhSpEtYz7DwQNA9Yd8T8RUuTduqrTCgvpCRZfHYhGbuKcHyR7QALXvQ9feSdX2ZhsvP8LmBzSh6s2TWLy37KatsYbrzQkCDpCE3zjyX9dzUd");
 
+	}
+
+	public SessionTest() {
+		super(config);
 	}
 
 	private Session session = null;
@@ -109,7 +113,7 @@ public class SessionTest {
 
 	@Test
 	public void loadPlayer_UUID_Id() {
-		Player player = session.load(Player.class, UUID.fromString("e9625def-f7e1-4312-b86a-86e404f07f31"));
+		Player player = session.load(Player.class, UUID.fromString("12553411-d527-448d-b82b-33261e4f1618"));
 		assertNotNull("NO Entries in DB found", player);
 		System.out.println(player.toString());
 	}

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
@@ -12,9 +13,14 @@ import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface Language {
-	IMapper buildQuery(IFilter filter, Parser parser) throws Exception;
 
-	IMapper buildSave(IDataFilter node, Parser parser) throws Exception;
+	Instance build(Parser.Instance parser, Module module);
+
+	public interface Instance {
+		IMapper buildQuery(IFilter filter) throws Exception;
+
+		IMapper buildSave(IDataFilter node) throws Exception;
+	}
 
 	public interface IDataFilter extends IFilter, IDataContainer {
 	}

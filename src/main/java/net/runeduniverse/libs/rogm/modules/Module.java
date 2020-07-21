@@ -17,6 +17,8 @@ public interface Module {
 
 	boolean checkIdType(Class<?> type);
 
+	String getIdAlias();
+
 	public interface Instance<ID extends Serializable> {
 		boolean connect(Configuration cnf);
 

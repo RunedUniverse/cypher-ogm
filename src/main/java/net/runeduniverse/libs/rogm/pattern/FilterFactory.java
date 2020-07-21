@@ -31,8 +31,7 @@ public class FilterFactory {
 		if (this.module.checkIdType(id.getClass()))
 			return new Node(id, labels, relations);
 		Node node = new Node(labels, relations);
-		//TODO: _id
-		node.getParams().put("id", id);
+		node.getParams().put(this.module.getIdAlias(), id);
 		return node;
 		// TODO properly convert id to String
 	}
@@ -41,8 +40,7 @@ public class FilterFactory {
 		if (this.module.checkIdType(id.getClass()))
 			return new DataNode(data, id, labels, relations);
 		DataNode node = new DataNode(data, labels, relations);
-		//TODO: _id
-		node.getParams().put("id", id);
+		node.getParams().put(this.module.getIdAlias(), id);
 		return node;
 		// TODO properly convert id to String
 	}
