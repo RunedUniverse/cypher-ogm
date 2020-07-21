@@ -6,16 +6,14 @@ public interface IIdentified<ID extends Serializable> extends IFilter {
 
 	ID getId();
 
-	public default <T extends Serializable> boolean checkType(Class<T> type) {
-		return type.isInstance(this.getId());
+	public default Class<?> getIdType() {
+		return getId().getClass();
 	}
 
-	public static <T extends Serializable> void checkType(Class<T> type, IFilter filter) throws Exception {
+	public static Class<?> getIdType(IFilter filter) {
 		if (!identify(filter))
-			return;
-		IIdentified<?> idf = (IIdentified<?>) filter;
-		if (!idf.checkType(type))
-			throw new Exception("IFilter ID <" + idf.getId().getClass().toString() + "> not supported");
+			return null;
+		return ((IIdentified<?>) filter).getIdType();
 	}
 
 	public static boolean identify(IFilter filter) {

@@ -106,11 +106,11 @@ public class Cypher implements Language {
 			map.put(filter, gen.nextVal(), included ? FilterStatus.PRE_PRINTED : FilterStatus.INITIALIZED);
 
 			if (filter instanceof IFNode) {
-				IIdentified.checkType(Number.class, filter);
+				_checkIdType(filter);
 				for (IFilter f : ((IFNode) filter).getRelations())
 					_parse(map, f, gen, false);
 			} else if (filter instanceof IFRelation) {
-				IIdentified.checkType(Number.class, filter);
+				_checkIdType(filter);
 				_parse(map, ((IFRelation) filter).getStart(), gen, true);
 				_parse(map, ((IFRelation) filter).getTarget(), gen, true);
 			} else
@@ -189,6 +189,12 @@ public class Cypher implements Language {
 			default:
 				return "MATCH ";
 			}
+		}
+
+		private void _checkIdType(IFilter filter) throws Exception {
+			Class<?> clazz = IIdentified.getIdType(filter);
+			if (clazz != null && !this.module.checkIdType(clazz))
+				throw new Exception("IFilter ID <" + clazz + "> not supported");
 		}
 
 		private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code,

@@ -42,6 +42,8 @@ public class Neo4jModule implements Module {
 
 	@Override
 	public boolean checkIdType(Class<?> type) {
+		if (type == null)
+			return false;
 		return Number.class.isAssignableFrom(type);
 	}
 
