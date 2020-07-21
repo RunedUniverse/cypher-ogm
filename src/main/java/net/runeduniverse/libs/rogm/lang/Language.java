@@ -13,15 +13,15 @@ import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface Language {
-	
+
 	Instance build(Parser.Instance parser, Module module);
-	
-	public interface Instance{
+
+	public interface Instance {
 		IMapper buildQuery(IFilter filter) throws Exception;
 
-		IMapper buildSave(IDataFilter node) throws Exception;	
+		IMapper buildSave(IDataFilter node) throws Exception;
 	}
-	
+
 	public interface IDataFilter extends IFilter, IDataContainer {
 	}
 

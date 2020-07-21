@@ -7,8 +7,8 @@ import net.runeduniverse.libs.rogm.Configuration;
 public interface Parser {
 
 	Instance build(Configuration cnf);
-	
-	public interface Instance{
+
+	public interface Instance {
 		String serialize(Map<String, Object> map) throws Exception;
 
 		String serialize(Object object) throws Exception;

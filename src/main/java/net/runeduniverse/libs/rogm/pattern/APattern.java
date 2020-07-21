@@ -71,7 +71,7 @@ public abstract class APattern implements IPattern {
 	}
 
 	@Override
-	public Object setId(Object object, Serializable id) /*throws IllegalArgumentException */{
+	public Object setId(Object object, Serializable id) /* throws IllegalArgumentException */ {
 		if (this.idField == null)
 			return object;
 		try {

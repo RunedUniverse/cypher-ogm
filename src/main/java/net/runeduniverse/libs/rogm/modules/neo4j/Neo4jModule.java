@@ -24,7 +24,7 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 public class Neo4jModule implements Module {
 
 	private static final String ID_ALIAS = "_id";
-	
+
 	@Override
 	public void prepare(Configuration cnf) {
 		cnf.setProtocol("bolt");
@@ -48,7 +48,7 @@ public class Neo4jModule implements Module {
 	public String getIdAlias() {
 		return ID_ALIAS;
 	}
-	
+
 	public class Neo4jModuleInstance implements Module.Instance<Long> {
 		private Driver driver = null;
 		private Parser.Instance parser = null;
@@ -105,7 +105,6 @@ public class Neo4jModule implements Module {
 
 		@Override
 		public List<Map<String, Module.Data>> queryObject(String qry) {
-			System.out.println(qry);
 			List<Map<String, Module.Data>> qryResults = new ArrayList<>();
 
 			try {
@@ -129,7 +128,6 @@ public class Neo4jModule implements Module {
 
 		@Override
 		public Map<String, Long> execute(String qry) {
-			System.out.println(qry);
 			// -1 -> not found
 
 			try (Session session = driver.session()) {

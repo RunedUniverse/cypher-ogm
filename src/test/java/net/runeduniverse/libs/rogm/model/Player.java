@@ -16,10 +16,10 @@ import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 @AllArgsConstructor
 @ToString
 public class Player {
-	
+
 	@Id
 	private UUID uuid;
-	
+
 	@Setter
 	private String name;
 }
