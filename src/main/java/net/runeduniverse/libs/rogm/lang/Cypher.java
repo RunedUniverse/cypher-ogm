@@ -62,7 +62,6 @@ public class Cypher implements Language {
 			_parse(map, node, gen, false);
 
 			StringBuilder qry = _select(map);
-			System.out.println("qry1 >> " + qry);
 
 			List<String> st = new ArrayList<>();
 			List<String> rt = new ArrayList<>();
