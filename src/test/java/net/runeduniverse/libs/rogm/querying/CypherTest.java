@@ -14,13 +14,13 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
 
-public class CypherTest extends ATest{
+public class CypherTest extends ATest {
 
 	/*
 	 * ASSERTS NOT VIABLE BECAUSE IT SOMEWHAT CHANGES THE DIRECTIONS INSIDE THE
 	 * QUERIES !! THE QUERIES MUST BE CHECKED MANUALLY!!
 	 */
-	
+
 	public CypherTest() {
 		super(DatabaseType.Neo4j);
 	}
@@ -51,7 +51,7 @@ public class CypherTest extends ATest{
 	public void wrongID() {
 		boolean error = false;
 		try {
-			iLanguage.buildQuery(new FilterNode("defaultId"), iParser);
+			iLanguage.buildQuery(new FilterNode("defaultId"));
 		} catch (Exception e) {
 			error = true;
 		}
@@ -60,43 +60,43 @@ public class CypherTest extends ATest{
 
 	@Test
 	public void shortID() throws Exception {
-		iLanguage.buildQuery(new FilterNode((short) 3), iParser);
+		iLanguage.buildQuery(new FilterNode((short) 3));
 	}
 
 	@Test
 	public void integerID() throws Exception {
-		iLanguage.buildQuery(new FilterNode(45), iParser);
+		iLanguage.buildQuery(new FilterNode(45));
 	}
 
 	@Test
 	public void longID() throws Exception {
-		iLanguage.buildQuery(new FilterNode(54l), iParser);
+		iLanguage.buildQuery(new FilterNode(54l));
 	}
 
 	// MATCHES
 	@Test
 	public void matchSchool() throws Exception {
-		System.out.println("[SCHOOL]\n" + iLanguage.buildQuery(school, iParser) + '\n');
+		System.out.println("[SCHOOL]\n" + iLanguage.buildQuery(school) + '\n');
 	}
 
 	@Test
 	public void matchStudent() throws Exception {
-		System.out.println("[STUDENT]\n" + iLanguage.buildQuery(student, iParser) + '\n');
+		System.out.println("[STUDENT]\n" + iLanguage.buildQuery(student) + '\n');
 	}
 
 	@Test
 	public void matchFriends() throws Exception {
-		System.out.println("[FRIENDS]\n" + iLanguage.buildQuery(friends, iParser) + '\n');
+		System.out.println("[FRIENDS]\n" + iLanguage.buildQuery(friends) + '\n');
 	}
 
 	@Test
 	public void matchAnyRelationToSchool() throws Exception {
-		System.out.println("[ANY REL]\n" + iLanguage.buildQuery(anyRelationToSchool, iParser) + '\n');
+		System.out.println("[ANY REL]\n" + iLanguage.buildQuery(anyRelationToSchool) + '\n');
 	}
 
 	@Test
 	public void matchCity() throws Exception {
-		System.out.println("[CITY]\n" + iLanguage.buildQuery(city, iParser) + '\n');
+		System.out.println("[CITY]\n" + iLanguage.buildQuery(city) + '\n');
 	}
 
 	// CREATE

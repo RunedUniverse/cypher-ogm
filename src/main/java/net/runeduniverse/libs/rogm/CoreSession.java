@@ -14,16 +14,16 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 public final class CoreSession implements Session {
 
 	private DatabaseType dbType;
-	private Language lang;
+	private Language.Instance lang;
 	private Parser.Instance parser;
 	private Module.Instance<?> module;
 	private PatternStorage storage;
 
 	protected CoreSession(Configuration cnf) throws Exception {
 		this.dbType = cnf.getDbType();
-		this.lang = this.dbType.getLang();
 		this.parser = this.dbType.getParser().build(cnf);
 		this.module = this.dbType.getModule().build(cnf);
+		this.lang = this.dbType.getLang().build(this.parser, this.dbType.getModule());
 		this.storage = new PatternStorage(cnf.getPkgs(), this.dbType.getModule(), this.parser);
 
 		this.module.connect(cnf);
@@ -49,7 +49,7 @@ public final class CoreSession implements Session {
 	public void save(Object object) {
 		try {
 			ISaveContainer container = this.storage.createFilter(object);
-			Language.IMapper mapper = this.lang.buildSave(container.getDataFilter(), this.parser);
+			Language.IMapper mapper = this.lang.buildSave(container.getDataFilter());
 			mapper.updateObjectIds(this.storage, this.module.execute(mapper.qry()));
 			container.postSave();
 		} catch (Exception e) {
@@ -96,7 +96,7 @@ public final class CoreSession implements Session {
 	@Override
 	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, IFilter filter) {
 		try {
-			Language.IMapper m = lang.buildQuery(filter, this.parser);
+			Language.IMapper m = lang.buildQuery(filter);
 			IPattern.IDataRecord record = m.parseData(this.module.queryObject(m.qry()));
 
 			return this.storage.parse(type, record);

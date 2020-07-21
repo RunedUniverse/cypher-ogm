@@ -10,10 +10,11 @@ public abstract class ATest {
 	// Builder
 	protected final Parser parser;
 	protected final Module module;
+	protected final Language language;
 	// Instances
 	protected final Parser.Instance iParser;
 	protected final Module.Instance<?> iModule;
-	protected final Language iLanguage;
+	protected final Language.Instance iLanguage;
 
 	public ATest(DatabaseType dbType) {
 		this.dbType = dbType;
@@ -21,21 +22,23 @@ public abstract class ATest {
 		// Builder
 		this.parser = dbType.getParser();
 		this.module = dbType.getModule();
+		this.language = dbType.getLang();
 		// Instances
 		this.iParser = this.parser.build(cnf);
 		this.iModule = this.module.build(cnf);
-		this.iLanguage = dbType.getLang();
+		this.iLanguage = this.language.build(this.iParser, this.module);
 	}
-	
+
 	public ATest(Configuration cnf) {
 		this.dbType = cnf.getDbType();
 		// Builder
-		this.parser = this.dbType.getParser();
-		this.module = this.dbType.getModule();
+		this.parser = dbType.getParser();
+		this.module = dbType.getModule();
+		this.language = dbType.getLang();
 		// Instances
 		this.iParser = this.parser.build(cnf);
 		this.iModule = this.module.build(cnf);
-		this.iLanguage = this.dbType.getLang();
+		this.iLanguage = this.language.build(this.iParser, this.module);
 	}
 
 }

@@ -32,7 +32,7 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class RelationshipTests extends ATest {
 
-	public RelationshipTests () {
+	public RelationshipTests() {
 		super(DatabaseType.Neo4j);
 	}
 
@@ -68,7 +68,7 @@ public class RelationshipTests extends ATest {
 	}
 
 	private String _build(Class<?> clazz) throws Exception {
-		return '[' + clazz.getSimpleName() + "]\n" + iLanguage.buildQuery(giveFilterNodeOrRelation(clazz, false), iParser)
+		return '[' + clazz.getSimpleName() + "]\n" + iLanguage.buildQuery(giveFilterNodeOrRelation(clazz, false))
 				+ '\n';
 	}
 
