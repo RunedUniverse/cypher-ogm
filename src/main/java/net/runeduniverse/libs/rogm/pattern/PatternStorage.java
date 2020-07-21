@@ -34,7 +34,7 @@ public class PatternStorage {
 	@Getter
 	private final FilterFactory factory;
 	@Getter
-	private final Parser parser;
+	private final Parser.Instance parser;
 	private final Map<Class<?>, NodePattern> nodes = new HashMap<>();
 	private final Map<Class<?>, RelationPattern> relations = new HashMap<>();
 	@Getter
@@ -42,7 +42,7 @@ public class PatternStorage {
 	@Getter
 	private final Buffer relationBuffer = new Buffer();
 
-	public PatternStorage(List<String> pkgs, Module module, Parser parser) throws Exception {
+	public PatternStorage(List<String> pkgs, Module module, Parser.Instance parser) throws Exception {
 		this.factory = new FilterFactory(module);
 		this.parser = parser;
 

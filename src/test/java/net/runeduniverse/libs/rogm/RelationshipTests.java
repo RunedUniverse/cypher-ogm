@@ -19,21 +19,22 @@ import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
-import net.runeduniverse.libs.rogm.lang.Cypher;
 import net.runeduniverse.libs.rogm.model.Actor;
 import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Company;
 import net.runeduniverse.libs.rogm.model.Game;
 import net.runeduniverse.libs.rogm.model.relations.ActorPlaysPersonRelation;
-import net.runeduniverse.libs.rogm.parser.json.JSONParser;
-import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
-public class RelationshipTests {
+public class RelationshipTests extends ATest {
+
+	public RelationshipTests () {
+		super(DatabaseType.Neo4j);
+	}
 
 	@Before
 	public void prepare() {
@@ -51,9 +52,6 @@ public class RelationshipTests {
 		assertTrue(res);
 	}
 
-	static Cypher cypher = new Cypher();
-	static Parser parser = new JSONParser();
-
 	@Test
 	public void testUsingActorClass() throws Exception {
 		System.out.println(_build(Actor.class));
@@ -70,7 +68,7 @@ public class RelationshipTests {
 	}
 
 	private String _build(Class<?> clazz) throws Exception {
-		return '[' + clazz.getSimpleName() + "]\n" + cypher.buildQuery(giveFilterNodeOrRelation(clazz, false), parser)
+		return '[' + clazz.getSimpleName() + "]\n" + iLanguage.buildQuery(giveFilterNodeOrRelation(clazz, false), iParser)
 				+ '\n';
 	}
 

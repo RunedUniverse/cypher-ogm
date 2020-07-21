@@ -12,9 +12,9 @@ import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface Language {
-	IMapper buildQuery(IFilter filter, Parser parser) throws Exception;
+	IMapper buildQuery(IFilter filter, Parser.Instance parser) throws Exception;
 
-	IMapper buildSave(IDataFilter node, Parser parser) throws Exception;
+	IMapper buildSave(IDataFilter node, Parser.Instance parser) throws Exception;
 
 	public interface IDataFilter extends IFilter, IDataContainer {
 	}

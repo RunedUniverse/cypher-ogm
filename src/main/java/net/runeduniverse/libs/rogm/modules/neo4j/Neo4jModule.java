@@ -23,6 +23,8 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 
 public class Neo4jModule implements Module {
 
+	private static final String ID_ALIAS = "_id";
+	
 	@Override
 	public void prepare(Configuration cnf) {
 		cnf.setProtocol("bolt");
@@ -31,7 +33,7 @@ public class Neo4jModule implements Module {
 
 	@Override
 	public Instance<Long> build(Configuration cnf) {
-		return new Neo4jModuleInstance(cnf.getDbType().getParser());
+		return new Neo4jModuleInstance(cnf.getDbType().getParser().build(cnf));
 	}
 
 	protected String _buildUri(Configuration cnf) {
@@ -43,11 +45,15 @@ public class Neo4jModule implements Module {
 		return Number.class.isAssignableFrom(type);
 	}
 
+	public String getIdAlias() {
+		return ID_ALIAS;
+	}
+	
 	public class Neo4jModuleInstance implements Module.Instance<Long> {
 		private Driver driver = null;
-		private Parser parser = null;
+		private Parser.Instance parser = null;
 
-		protected Neo4jModuleInstance(Parser parser) {
+		protected Neo4jModuleInstance(Parser.Instance parser) {
 			this.parser = parser;
 		}
 
@@ -152,7 +158,7 @@ public class Neo4jModule implements Module {
 		private String data;
 		private String alias;
 
-		protected Data(Parser parser, Record record, String key) throws Exception {
+		protected Data(Parser.Instance parser, Record record, String key) throws Exception {
 			this.alias = key;
 			Value idProperty = record.get("id_" + key);
 			if (idProperty.isNull())

@@ -15,14 +15,14 @@ public final class CoreSession implements Session {
 
 	private DatabaseType dbType;
 	private Language lang;
-	private Parser parser;
+	private Parser.Instance parser;
 	private Module.Instance<?> module;
 	private PatternStorage storage;
 
 	protected CoreSession(Configuration cnf) throws Exception {
 		this.dbType = cnf.getDbType();
 		this.lang = this.dbType.getLang();
-		this.parser = this.dbType.getParser();
+		this.parser = this.dbType.getParser().build(cnf);
 		this.module = this.dbType.getModule().build(cnf);
 		this.storage = new PatternStorage(cnf.getPkgs(), this.dbType.getModule(), this.parser);
 

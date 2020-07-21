@@ -8,22 +8,22 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.ATest;
+import net.runeduniverse.libs.rogm.DatabaseType;
 import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.lang.Cypher;
-import net.runeduniverse.libs.rogm.parser.json.JSONParser;
-import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
 
-public class CypherTest {
+public class CypherTest extends ATest{
 
 	/*
 	 * ASSERTS NOT VIABLE BECAUSE IT SOMEWHAT CHANGES THE DIRECTIONS INSIDE THE
 	 * QUERIES !! THE QUERIES MUST BE CHECKED MANUALLY!!
 	 */
-
-	static Cypher cypher = new Cypher();
-	static Parser parser = new JSONParser();
+	
+	public CypherTest() {
+		super(DatabaseType.Neo4j);
+	}
 
 	static FilterNode school;
 	static FilterNode student;
@@ -51,7 +51,7 @@ public class CypherTest {
 	public void wrongID() {
 		boolean error = false;
 		try {
-			cypher.buildQuery(new FilterNode("defaultId"), parser);
+			iLanguage.buildQuery(new FilterNode("defaultId"), iParser);
 		} catch (Exception e) {
 			error = true;
 		}
@@ -60,43 +60,43 @@ public class CypherTest {
 
 	@Test
 	public void shortID() throws Exception {
-		cypher.buildQuery(new FilterNode((short) 3), parser);
+		iLanguage.buildQuery(new FilterNode((short) 3), iParser);
 	}
 
 	@Test
 	public void integerID() throws Exception {
-		cypher.buildQuery(new FilterNode(45), parser);
+		iLanguage.buildQuery(new FilterNode(45), iParser);
 	}
 
 	@Test
 	public void longID() throws Exception {
-		cypher.buildQuery(new FilterNode(54l), parser);
+		iLanguage.buildQuery(new FilterNode(54l), iParser);
 	}
 
 	// MATCHES
 	@Test
 	public void matchSchool() throws Exception {
-		System.out.println("[SCHOOL]\n" + cypher.buildQuery(school, parser) + '\n');
+		System.out.println("[SCHOOL]\n" + iLanguage.buildQuery(school, iParser) + '\n');
 	}
 
 	@Test
 	public void matchStudent() throws Exception {
-		System.out.println("[STUDENT]\n" + cypher.buildQuery(student, parser) + '\n');
+		System.out.println("[STUDENT]\n" + iLanguage.buildQuery(student, iParser) + '\n');
 	}
 
 	@Test
 	public void matchFriends() throws Exception {
-		System.out.println("[FRIENDS]\n" + cypher.buildQuery(friends, parser) + '\n');
+		System.out.println("[FRIENDS]\n" + iLanguage.buildQuery(friends, iParser) + '\n');
 	}
 
 	@Test
 	public void matchAnyRelationToSchool() throws Exception {
-		System.out.println("[ANY REL]\n" + cypher.buildQuery(anyRelationToSchool, parser) + '\n');
+		System.out.println("[ANY REL]\n" + iLanguage.buildQuery(anyRelationToSchool, iParser) + '\n');
 	}
 
 	@Test
 	public void matchCity() throws Exception {
-		System.out.println("[CITY]\n" + cypher.buildQuery(city, parser) + '\n');
+		System.out.println("[CITY]\n" + iLanguage.buildQuery(city, iParser) + '\n');
 	}
 
 	// CREATE
@@ -104,7 +104,7 @@ public class CypherTest {
 	// id defined => create/merge
 	@Test
 	public void createArtist() throws Exception {
-		// cypher.buildInsert();
+		// iLanguage.buildInsert();
 	}
 
 	// UPDATE

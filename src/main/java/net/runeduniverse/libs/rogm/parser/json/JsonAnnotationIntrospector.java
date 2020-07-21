@@ -3,18 +3,23 @@ package net.runeduniverse.libs.rogm.parser.json;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonInclude.Value;
+import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.NopAnnotationIntrospector;
 
+import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.Property;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.Transient;
+import net.runeduniverse.libs.rogm.modules.Module;
 
+@RequiredArgsConstructor
 public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 	private static final long serialVersionUID = 1L;
+	private final Module module;
 
 	@Override
 	public Value findPropertyInclusion(Annotated a) {
@@ -24,6 +29,20 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 	@Override
 	public boolean hasIgnoreMarker(AnnotatedMember m) {
 		return _isTransient(m) ||  _isId(m) ||  _isRelationship(m) || _isRelationshipEntity(m);
+	}
+	
+	@Override
+	public PropertyName findNameForSerialization(Annotated a) {
+		if(_isId(a))
+			return PropertyName.construct(module.getIdAlias());
+		return PropertyName.USE_DEFAULT;
+	}
+	
+	@Override
+	public PropertyName findNameForDeserialization(Annotated a) {
+		if(_isId(a))
+			return PropertyName.construct(module.getIdAlias());
+		return PropertyName.USE_DEFAULT;
 	}
 
 	private JsonInclude.Value _isProperty(Annotated a) {
@@ -44,7 +63,7 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 
 	private boolean _isId(Annotated a) {
 		Id anno = _findAnnotation(a, Id.class);
-		if (anno == null)
+		if (anno == null || !module.checkIdType(a.getRawType()))
 			return false;
 		return true;
 	}

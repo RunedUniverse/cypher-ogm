@@ -22,7 +22,7 @@ import net.runeduniverse.libs.rogm.util.*;
 public class Cypher implements Language {
 
 	@Override
-	public Mapper buildQuery(IFilter filter, Parser parser) throws Exception {
+	public Mapper buildQuery(IFilter filter, Parser.Instance parser) throws Exception {
 		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		_parse(map, filter, gen, false);
@@ -45,7 +45,7 @@ public class Cypher implements Language {
 	}
 
 	@Override
-	public Mapper buildSave(IDataFilter node, Parser parser) throws Exception {
+	public Mapper buildSave(IDataFilter node, Parser.Instance parser) throws Exception {
 		DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 		StringVariableGenerator gen = new StringVariableGenerator();
 		_parse(map, node, gen, false);
@@ -106,7 +106,7 @@ public class Cypher implements Language {
 			throw new Exception("IFilter<" + filter.toString() + "> not supported");
 	}
 
-	private StringBuilder _select(DataMap<IFilter, String, FilterStatus> map, Parser parser) throws Exception {
+	private StringBuilder _select(DataMap<IFilter, String, FilterStatus> map, Parser.Instance parser) throws Exception {
 		StringBuilder matchBuilder = new StringBuilder();
 		StringBuilder mergeBuilder = new StringBuilder();
 		StringBuilder optionalMatchBuilder = new StringBuilder();
@@ -191,7 +191,7 @@ public class Cypher implements Language {
 		map.setData(f, FilterStatus.EXTENSION_PRINTED);
 	}
 
-	private StringBuilder _translateRelation(DataMap<IFilter, String, FilterStatus> map, Parser parser, IFRelation rel,
+	private StringBuilder _translateRelation(DataMap<IFilter, String, FilterStatus> map, Parser.Instance parser, IFRelation rel,
 			boolean optional, boolean isMerge) {
 		StringBuilder matchLine = new StringBuilder(
 				_filterToString(map, rel.getStart(), true, parser, optional, isMerge));
@@ -220,7 +220,7 @@ public class Cypher implements Language {
 	}
 
 	private String _filterToString(DataMap<IFilter, String, FilterStatus> map, IFilter filter, boolean isNode,
-			Parser parser, boolean optional, boolean skipData) {
+			Parser.Instance parser, boolean optional, boolean skipData) {
 		StringBuilder builder = new StringBuilder(map.get(filter));
 
 		if (!skipData && !map.getData(filter).equals(FilterStatus.PRINTED)) {
