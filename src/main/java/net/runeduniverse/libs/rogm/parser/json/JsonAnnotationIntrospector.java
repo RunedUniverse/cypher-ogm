@@ -28,13 +28,14 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 
 	@Override
 	public boolean hasIgnoreMarker(AnnotatedMember m) {
-		return _isTransient(m) || (0 < _isId(m)) || _isRelationship(m) || _isRelationshipEntity(m);
+		return _isTransient(m) || (1 < _isId(m)) || _isRelationship(m) || _isRelationshipEntity(m);
 	}
 
 	@Override
 	public PropertyName findNameForSerialization(Annotated a) {
-		if (2 == _isId(a))
+		if (1 == _isId(a)) {
 			return PropertyName.construct(module.getIdAlias());
+		}
 		return null;
 	}
 
@@ -49,7 +50,6 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 		Property anno = _findAnnotation(a, Property.class);
 		if (anno == null)
 			return JsonInclude.Value.empty();
-
 		return JsonInclude.Value.empty().withValueInclusion(Include.ALWAYS).withContentInclusion(Include.ALWAYS)
 				.withValueFilter(Void.class).withContentFilter(Void.class);
 	}
@@ -66,8 +66,9 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 		if (anno == null)
 			return 0;
 		if (module.checkIdType(a.getRawType()))
-			return 1;
-		return 2;
+			return 2;
+		System.out.println(1);
+		return 1;
 	}
 
 	private boolean _isRelationship(Annotated a) {

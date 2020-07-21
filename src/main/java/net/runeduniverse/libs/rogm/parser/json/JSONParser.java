@@ -24,7 +24,7 @@ public class JSONParser implements Parser {
 		MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
-	
+
 	@Override
 	public Instance build(Configuration cnf) {
 		JsonAnnotationIntrospector introspector = new JsonAnnotationIntrospector(cnf.getDbType().getModule());
@@ -35,11 +35,11 @@ public class JSONParser implements Parser {
 				MAPPER.getDeserializationConfig().getAnnotationIntrospector());
 		return new JSONParserInstance(MAPPER.copy().setAnnotationIntrospectors(serial, deserial));
 	}
-	
+
 	@RequiredArgsConstructor
-	private class JSONParserInstance implements Instance{
+	private class JSONParserInstance implements Instance {
 		private final ObjectMapper mapper;
-		
+
 		@Override
 		public String serialize(Object object) throws JsonProcessingException {
 			return mapper.writeValueAsString(object);

@@ -18,7 +18,7 @@ import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 public class Player {
 	
 	@Id
-	private UUID id;
+	private UUID uuid;
 	
 	@Setter
 	private String name;

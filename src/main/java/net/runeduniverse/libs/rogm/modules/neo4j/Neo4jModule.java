@@ -105,6 +105,7 @@ public class Neo4jModule implements Module {
 
 		@Override
 		public List<Map<String, Module.Data>> queryObject(String qry) {
+			System.out.println(qry);
 			List<Map<String, Module.Data>> qryResults = new ArrayList<>();
 
 			try {
@@ -128,6 +129,7 @@ public class Neo4jModule implements Module {
 
 		@Override
 		public Map<String, Long> execute(String qry) {
+			System.out.println(qry);
 			// -1 -> not found
 
 			try (Session session = driver.session()) {
