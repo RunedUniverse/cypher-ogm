@@ -1,8 +1,5 @@
 package net.runeduniverse.libs.rogm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.*;
 
 import net.runeduniverse.libs.rogm.model.*;
@@ -10,6 +7,12 @@ import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 
 public class PatternStorageTest extends ATest {
 
+	static Configuration config = new Configuration(DatabaseType.Neo4j, "runeduniverse.net");
+	static {
+		config.addPackage("net.runeduniverse.libs.rogm.model");
+		config.addPackage("net.runeduniverse.libs.rogm.model.relations");
+	}
+	
 	public PatternStorageTest() {
 		super(DatabaseType.Neo4j);
 	}
@@ -32,10 +35,7 @@ public class PatternStorageTest extends ATest {
 
 	@Before
 	public void before() throws Exception {
-		List<String> pkgs = new ArrayList<>();
-		pkgs.add("net.runeduniverse.libs.rogm.model");
-		pkgs.add("net.runeduniverse.libs.rogm.model.relations");
-		storage = new PatternStorage(pkgs, module, iParser);
+		storage = new PatternStorage(config, iParser);
 	}
 
 	@Test

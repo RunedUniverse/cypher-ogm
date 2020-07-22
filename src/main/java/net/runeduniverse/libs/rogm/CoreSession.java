@@ -24,7 +24,7 @@ public final class CoreSession implements Session {
 		this.parser = this.dbType.getParser().build(cnf);
 		this.module = this.dbType.getModule().build(cnf);
 		this.lang = this.dbType.getLang().build(this.parser, this.dbType.getModule());
-		this.storage = new PatternStorage(cnf.getPkgs(), this.dbType.getModule(), this.parser);
+		this.storage = new PatternStorage(cnf, this.parser);
 
 		this.module.connect(cnf);
 	}

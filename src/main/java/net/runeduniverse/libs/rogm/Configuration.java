@@ -5,6 +5,8 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.runeduniverse.libs.rogm.buffer.BasicBuffer;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 
 @Getter
 public class Configuration {
@@ -21,6 +23,8 @@ public class Configuration {
 	private String user;
 	@Setter
 	private String password;
+	@Setter
+	private IBuffer buffer = new BasicBuffer();
 
 	public Configuration(DatabaseType type, String uri) {
 		this.dbType = type;

@@ -13,10 +13,11 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 
 import lombok.Getter;
+import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
@@ -29,7 +30,7 @@ import net.runeduniverse.libs.rogm.util.Buffer;
 import net.runeduniverse.libs.rogm.util.DataHashMap;
 import net.runeduniverse.libs.rogm.util.DataMap;
 
-public class PatternStorage {
+public class PatternStorage implements IStorage {
 
 	@Getter
 	private final FilterFactory factory;
@@ -38,15 +39,18 @@ public class PatternStorage {
 	private final Map<Class<?>, NodePattern> nodes = new HashMap<>();
 	private final Map<Class<?>, RelationPattern> relations = new HashMap<>();
 	@Getter
+	private final IBuffer buffer;
+	@Getter
 	private final Buffer nodeBuffer = new Buffer();
 	@Getter
 	private final Buffer relationBuffer = new Buffer();
 
-	public PatternStorage(List<String> pkgs, Module module, Parser.Instance parser) throws Exception {
-		this.factory = new FilterFactory(module);
+	public PatternStorage(Configuration cnf, Parser.Instance parser) throws Exception {
+		this.factory = new FilterFactory(cnf.getDbType().getModule());
 		this.parser = parser;
+		this.buffer = cnf.getBuffer().initialize(this);
 
-		Reflections reflections = new Reflections(pkgs.toArray(), new TypeAnnotationsScanner(),
+		Reflections reflections = new Reflections(cnf.getPkgs().toArray(), new TypeAnnotationsScanner(),
 				new SubTypesScanner(true));
 
 		for (Class<?> c : reflections.getTypesAnnotatedWith(RelationshipEntity.class))
