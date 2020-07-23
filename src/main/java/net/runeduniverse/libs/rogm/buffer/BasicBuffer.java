@@ -41,7 +41,7 @@ public class BasicBuffer implements IBuffer {
 	@Override
 	public <T> T getById(Serializable id, Class<T> type) {
 		TypeEntry te = this.typeMap.get(type);
-		if (te == null)
+		if (te == null || te.idMap.get(id) == null)
 			return null;
 
 		return (T) te.idMap.get(id).getEntity();
@@ -51,7 +51,7 @@ public class BasicBuffer implements IBuffer {
 	@Override
 	public <T> T getByEntityId(Serializable entityId, Class<T> type) {
 		TypeEntry te = this.typeMap.get(type);
-		if (te == null)
+		if (te == null || te.entityIdMap.get(entityId) == null)
 			return null;
 
 		return (T) te.entityIdMap.get(entityId).getEntity();
@@ -85,18 +85,18 @@ public class BasicBuffer implements IBuffer {
 			}
 
 		Class<?> type = entity.getClass();
-		System.out.println("TYPE: "+type);
+		System.out.println("TYPE: " + type);
 		IPattern pattern = this.storage.getPattern(type);
-		System.out.println("PATTERN: "+pattern);
+		System.out.println("PATTERN: " + pattern);
 		entityId = pattern.prepareEntityId(id, entityId);
-		System.out.println("ID: "+id);
-		System.out.println("ENTITY ID: "+entityId);
+		System.out.println("ID: " + id);
+		System.out.println("ENTITY ID: " + entityId);
 
 		if (entry == null)
 			this.addEntry(new Entry(id, entityId, entity, type));
 		else
 			this.updateEntry(entry, id, entityId);
-		System.out.println("Object: "+entity);
+		System.out.println("Object: " + entity);
 		pattern.setId(entity, entityId);
 	}
 

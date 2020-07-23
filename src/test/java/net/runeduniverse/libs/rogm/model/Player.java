@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import net.runeduniverse.libs.rogm.annotations.IConverter.UUIDConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 
@@ -17,7 +18,7 @@ import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 @ToString
 public class Player {
 
-	@Id
+	@Id(converter = UUIDConverter.class)
 	private UUID uuid;
 
 	@Setter
