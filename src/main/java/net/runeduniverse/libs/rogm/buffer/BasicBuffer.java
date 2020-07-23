@@ -77,6 +77,8 @@ public class BasicBuffer implements IBuffer {
 
 	@Override
 	public void updateEntry(Serializable id, Serializable entityId, Object entity) throws Exception {
+		if (entity == null)
+			return;
 		Entry entry = null;
 		for (Entry e : entries)
 			if (e.getEntity() == entity) {
@@ -85,18 +87,13 @@ public class BasicBuffer implements IBuffer {
 			}
 
 		Class<?> type = entity.getClass();
-		System.out.println("TYPE: " + type);
 		IPattern pattern = this.storage.getPattern(type);
-		System.out.println("PATTERN: " + pattern);
 		entityId = pattern.prepareEntityId(id, entityId);
-		System.out.println("ID: " + id);
-		System.out.println("ENTITY ID: " + entityId);
 
 		if (entry == null)
 			this.addEntry(new Entry(id, entityId, entity, type));
 		else
 			this.updateEntry(entry, id, entityId);
-		System.out.println("Object: " + entity);
 		pattern.setId(entity, entityId);
 	}
 

@@ -70,7 +70,7 @@ public class PatternStorage implements IStorage {
 			return this.nodes.get(clazz);
 		if (this.relations.containsKey(clazz))
 			return this.relations.get(clazz);
-		throw new Exception("Unsupported Class<" + clazz.getName() + "> as @Relation found!");
+		throw new Exception("Unsupported Class<" + clazz + "> as @Relation found!");
 	}
 
 	public boolean isIdSet(Object entity) {
@@ -103,7 +103,7 @@ public class PatternStorage implements IStorage {
 
 	public <T> Collection<T> parse(Class<T> type, IDataRecord record) throws Exception {
 		// type || vv
-		IPattern primaryPattern = record.getPrimaryFilter().getPattern();
+		// IPattern primaryPattern = record.getPrimaryFilter().getPattern();
 
 		List<DataMap<IFilter, IData, DataType>> dataRecords = new ArrayList<>();
 		Set<Object> loadedObjects = new HashSet<>();

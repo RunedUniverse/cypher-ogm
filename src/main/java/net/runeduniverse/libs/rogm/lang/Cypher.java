@@ -17,7 +17,7 @@ import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
-import net.runeduniverse.libs.rogm.pattern.PatternStorage;
+import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.*;
 import net.runeduniverse.libs.rogm.util.*;
 
@@ -315,14 +315,14 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public <ID extends Serializable> void updateObjectIds(PatternStorage storage, Map<String, ID> ids) {
+		public <ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids) {
 			this.map.forEach((filter, code) -> {
 				if (filter instanceof IDataFilter) {
 					Object data = ((IDataFilter) filter).getData();
-					Serializable id = ids.get("id_" + code);
-					Serializable eid = ids.get("eid_" + code);
+					if (data == null)
+						return;
 					try {
-						storage.getBuffer().updateEntry(id, eid, data);
+						storage.getBuffer().updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

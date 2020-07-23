@@ -9,6 +9,7 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
+import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public final class CoreSession implements Session {
@@ -17,7 +18,7 @@ public final class CoreSession implements Session {
 	private Language.Instance lang;
 	private Parser.Instance parser;
 	private Module.Instance<?> module;
-	private PatternStorage storage;
+	private IStorage storage;
 
 	protected CoreSession(Configuration cnf) throws Exception {
 		this.dbType = cnf.getDbType();
