@@ -33,11 +33,13 @@ public interface Module {
 		List<Map<String, Data>> queryObject(String qry);
 
 		// returns a Map with the ALIAS and the ID
-		Map<String, ID> execute(String qry);
+		Map<String, Serializable> execute(String qry);
 	}
 
 	public interface Data {
 		Serializable getId();
+
+		String getEntityId();
 
 		Set<String> getLabels();
 

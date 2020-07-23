@@ -5,6 +5,7 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IStorage;;
 
@@ -12,7 +13,7 @@ public interface IBuffer {
 
 	IBuffer initialize(IStorage storage);
 
-	<T> T acquire(IData data, Class<T> type) throws Exception;
+	<T> T acquire(IPattern pattern, IData data, Class<T> type) throws Exception;
 
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
@@ -37,6 +38,8 @@ public interface IBuffer {
 
 	void addEntry(Serializable id, Serializable entityId, Object entity);
 
+	void updateEntry(Serializable id, Serializable entityId, Object entity) throws Exception;
+
 	void removeEntry(Entry entry);
 
 	void removeEntry(Object entity);
@@ -53,7 +56,7 @@ public interface IBuffer {
 
 		public Entry(IData data, Object entity) {
 			this.id = data.getId();
-			this.entityId = null;
+			this.entityId = data.getEntityId();
 			this.entity = entity;
 			this.type = entity.getClass();
 		}

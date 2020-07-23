@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 public @interface Id {
 
+	Class<?> converter() default IConverter.UnSet.class;
 }

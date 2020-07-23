@@ -65,7 +65,7 @@ public final class CoreSession implements Session {
 
 	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
-		T o = this.storage.getNodeBuffer().load(id, type);
+		T o = this.storage.getBuffer().getByEntityId(id, type);
 		if (o != null)
 			return o;
 

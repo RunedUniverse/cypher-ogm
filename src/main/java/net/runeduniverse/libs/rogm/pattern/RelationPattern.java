@@ -9,7 +9,6 @@ import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.EndNode;
-import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
@@ -20,7 +19,6 @@ import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.util.Buffer;
 
 public class RelationPattern extends APattern {
 
@@ -33,7 +31,7 @@ public class RelationPattern extends APattern {
 	@Getter
 	private boolean stEqTr = false;
 
-	public RelationPattern(PatternStorage storage, Class<?> type) {
+	public RelationPattern(PatternStorage storage, Class<?> type) throws Exception {
 		super(storage, type);
 		RelationshipEntity typeAnno = this.type.getAnnotation(RelationshipEntity.class);
 		this.direction = typeAnno.direction();
@@ -41,18 +39,11 @@ public class RelationPattern extends APattern {
 		_parse(this.type);
 	}
 
-	@Override
-	public Buffer getBuffer() {
-		return this.storage.getRelationBuffer();
-	}
-
-	private void _parse(Class<?> type) {
+	private void _parse(Class<?> type) throws Exception {
 		for (Field field : type.getDeclaredFields()) {
 			field.setAccessible(true);
-			if (field.isAnnotationPresent(Id.class) && this.idField == null) {
-				this.idField = field;
+			if (this.parseId(field))
 				continue;
-			}
 
 			if (field.isAnnotationPresent(StartNode.class)) {
 				if (field.isAnnotationPresent(EndNode.class)) {

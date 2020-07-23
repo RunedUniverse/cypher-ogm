@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.runeduniverse.libs.rogm.annotations.IConverter;
+import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
 import net.runeduniverse.libs.rogm.annotations.PostLoad;
 import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
@@ -20,6 +22,8 @@ public abstract class APattern implements IPattern {
 	@Getter
 	protected final Class<?> type;
 	protected Field idField = null;
+	@Getter
+	protected IConverter<?> idConverter = null;
 
 	// Events
 	protected Method preSave = null;
@@ -27,6 +31,15 @@ public abstract class APattern implements IPattern {
 	protected Method postLoad = null;
 	protected Method postSave = null;
 	protected Method postDelete = null;
+
+	protected boolean parseId(Field id) throws Exception {
+		if (!id.isAnnotationPresent(Id.class) || this.idField != null)
+			return false;
+
+		this.idField = id;
+		this.idConverter = IConverter.createConverter(id.getAnnotation(Id.class), id.getType());
+		return true;
+	}
 
 	protected void parseMethods(Class<?> type) {
 		for (Method method : type.getDeclaredMethods()) {
@@ -71,7 +84,7 @@ public abstract class APattern implements IPattern {
 	}
 
 	@Override
-	public Object setId(Object object, Serializable id) /* throws IllegalArgumentException */ {
+	public Object setId(Object object, Serializable id) {
 		if (this.idField == null)
 			return object;
 		try {
@@ -81,19 +94,20 @@ public abstract class APattern implements IPattern {
 		return object;
 	}
 
-	@Override
-	public Object parse(Serializable id, String data) throws Exception {
-		return this.setId(this.storage.getParser().deserialize(this.type, data), id);
+	public Serializable prepareEntityId(Serializable id, Serializable entityId) {
+		if (entityId == null)
+			return id;
+		else if (entityId instanceof String)
+			return this.idConverter.convert((String) entityId);
+		return entityId;
 	}
 
 	@Override
 	public Object parse(IData data) throws Exception {
-		Object node = this.getBuffer().load(data.getId(), this.type);
-		if (node != null)
-			return node;
-		node = this.parse(data.getId(), data.getData());
-		this.getBuffer().save(data.getId(), node);
-		return node;
+		if (this.idField != null)
+			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
+
+		return this.storage.getBuffer().acquire(this, data, this.type);
 	}
 
 	@Override

@@ -26,12 +26,13 @@ import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.util.Buffer;
 import net.runeduniverse.libs.rogm.util.DataHashMap;
 import net.runeduniverse.libs.rogm.util.DataMap;
 
 public class PatternStorage implements IStorage {
 
+	@Getter
+	private final Configuration config;
 	@Getter
 	private final FilterFactory factory;
 	@Getter
@@ -40,12 +41,9 @@ public class PatternStorage implements IStorage {
 	private final Map<Class<?>, RelationPattern> relations = new HashMap<>();
 	@Getter
 	private final IBuffer buffer;
-	@Getter
-	private final Buffer nodeBuffer = new Buffer();
-	@Getter
-	private final Buffer relationBuffer = new Buffer();
 
 	public PatternStorage(Configuration cnf, Parser.Instance parser) throws Exception {
+		this.config = cnf;
 		this.factory = new FilterFactory(cnf.getDbType().getModule());
 		this.parser = parser;
 		this.buffer = cnf.getBuffer().initialize(this);
@@ -103,10 +101,6 @@ public class PatternStorage implements IStorage {
 		return entity;
 	}
 
-	public Object parse(Class<?> clazz, Serializable id, String data) throws Exception {
-		return this.getPattern(clazz).parse(id, data);
-	}
-
 	public <T> Collection<T> parse(Class<T> type, IDataRecord record) throws Exception {
 		// type || vv
 		IPattern primaryPattern = record.getPrimaryFilter().getPattern();
@@ -132,11 +126,10 @@ public class PatternStorage implements IStorage {
 				String label = fRelation.getPrimaryLabel();
 				IFNode fStartNode = fRelation.getStart();
 				NodePattern pStartNode = (NodePattern) ((IPatternContainer) fStartNode).getPattern();
-				Object eStartNode = pStartNode.getBuffer().load(dataMap.get(fStartNode).getId(), pStartNode.getType());
+				Object eStartNode = this.buffer.getById(dataMap.get(fStartNode).getId(), pStartNode.getType());
 				IFNode fTargetNode = fRelation.getTarget();
 				NodePattern pTargetNode = (NodePattern) ((IPatternContainer) fTargetNode).getPattern();
-				Object eTargetNode = pTargetNode.getBuffer().load(dataMap.get(fTargetNode).getId(),
-						pTargetNode.getType());
+				Object eTargetNode = this.buffer.getById(dataMap.get(fTargetNode).getId(), pTargetNode.getType());
 
 				if (!IPatternContainer.identify(fRelation)) {
 					pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, eTargetNode);
@@ -147,7 +140,7 @@ public class PatternStorage implements IStorage {
 
 				// RelationshipEntity
 				RelationPattern rel = (RelationPattern) ((IPatternContainer) fRelation).getPattern();
-				Object relEntity = rel.getBuffer().load(data.getId(), rel.getType());
+				Object relEntity = this.buffer.getById(data.getId(), rel.getType());
 
 				rel.setStart(relEntity, eStartNode);
 				rel.setTarget(relEntity, eTargetNode);
@@ -159,7 +152,7 @@ public class PatternStorage implements IStorage {
 
 		Set<T> nodes = new HashSet<>();
 		for (Serializable primId : record.getIds())
-			nodes.add(primaryPattern.getBuffer().load(primId, type));
+			nodes.add(this.buffer.getById(primId, type));
 
 		for (Object object : loadedObjects)
 			this.getPattern(object.getClass()).postLoad(object);

@@ -1,5 +1,6 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -113,9 +114,7 @@ public class Neo4jModule implements Module {
 				for (Record record : _query(qry)) {
 					Map<String, Module.Data> data = new HashMap<>();
 					for (String key : record.keys()) {
-						if (key.startsWith("id_"))
-							continue;
-						if (key.startsWith("labels_"))
+						if (key.startsWith("id_") || key.startsWith("eid_") || key.startsWith("labels_"))
 							continue;
 						data.put(key, new Data(this.parser, record, key));
 					}
@@ -129,21 +128,29 @@ public class Neo4jModule implements Module {
 		}
 
 		@Override
-		public Map<String, Long> execute(String qry) {
+		public Map<String, Serializable> execute(String qry) {
 			// -1 -> not found
 
 			try (Session session = driver.session()) {
-				return session.writeTransaction(new TransactionWork<Map<String, Long>>() {
+				return session.writeTransaction(new TransactionWork<Map<String, Serializable>>() {
 
 					@Override
-					public Map<String, Long> execute(Transaction tx) {
+					public Map<String, Serializable> execute(Transaction tx) {
 						Result result = tx.run(qry);
 						if (!result.hasNext())
 							return new HashMap<>();
-						Map<String, Long> results = new HashMap<>();
+						Map<String, Serializable> results = new HashMap<>();
 						Record record = result.next();
 						record.keys().forEach(key -> {
-							results.put(key, record.get(key, -1L));
+							if (key.charAt(0) == 'e') {
+								Value value = record.get(key);
+								if (value.isNull())
+									results.put(key, null);
+								else
+									results.put(key, record.get(key).asString());
+
+							} else
+								results.put(key, record.get(key, -1L));
 						});
 						return results;
 					}
@@ -156,6 +163,7 @@ public class Neo4jModule implements Module {
 	public class Data implements Module.Data {
 
 		private Long id;
+		private String entityId;
 		private Set<String> labels = new HashSet<>();
 		private String data;
 		private String alias;
@@ -166,6 +174,13 @@ public class Neo4jModule implements Module {
 			if (idProperty.isNull())
 				return;
 			this.id = record.get("id_" + key).asLong();
+
+			Value eidProperty = record.get("eid_" + key);
+			if (eidProperty.isNull())
+				this.entityId = null;
+			else
+				this.entityId = eidProperty.asString();
+
 			if (record.get(key).isNull())
 				this.data = parser.serialize(null);
 			else

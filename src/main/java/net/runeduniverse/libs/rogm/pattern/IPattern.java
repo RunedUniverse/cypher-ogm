@@ -4,18 +4,18 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.util.Buffer;
 
 public interface IPattern {
 	boolean isIdSet(Object entity);
 
 	Serializable getId(Object entity);
 
-	Buffer getBuffer();
-
 	Class<?> getType();
+
+	IConverter<?> getIdConverter();
 
 	// querry
 	IFilter createFilter() throws Exception;
@@ -28,7 +28,7 @@ public interface IPattern {
 
 	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
 
-	Object parse(Serializable id, String data) throws Exception;
+	Serializable prepareEntityId(Serializable id, Serializable entityId);
 
 	Object parse(IData data) throws Exception;
 
@@ -52,6 +52,10 @@ public interface IPattern {
 
 	public interface IData {
 		Serializable getId();
+
+		Serializable getEntityId();
+
+		void setEntityId(Serializable entityId);
 
 		Set<String> getLabels();
 
