@@ -13,7 +13,6 @@ import java.util.Set;
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
 import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
@@ -23,7 +22,6 @@ import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.util.Buffer;
 
 public class NodePattern extends APattern {
 
@@ -33,11 +31,6 @@ public class NodePattern extends APattern {
 	public NodePattern(PatternStorage storage, Class<?> type) throws Exception {
 		super(storage, type);
 		this._parse(this.type);
-	}
-
-	@Override
-	public Buffer getBuffer() {
-		return this.storage.getNodeBuffer();
 	}
 
 	private void _parse(Class<?> type) throws Exception {
@@ -50,10 +43,8 @@ public class NodePattern extends APattern {
 
 		for (Field field : type.getDeclaredFields()) {
 			field.setAccessible(true);
-			if (field.isAnnotationPresent(Id.class) && this.idField == null) {
-				this.idField = field;
+			if (this.parseId(field))
 				continue;
-			}
 
 			if (field.isAnnotationPresent(Relationship.class))
 				this.relFields.add(new FieldPattern(this.storage, field));

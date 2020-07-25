@@ -11,12 +11,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
-import net.runeduniverse.libs.rogm.pattern.PatternStorage;
+import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.*;
 import net.runeduniverse.libs.rogm.util.*;
 
@@ -83,7 +84,7 @@ public class Cypher implements Language {
 		}
 
 		private String _returnId(String code) {
-			return "id(" + code + ") as id_" + code;
+			return "id(" + code + ") as id_" + code + ',' + code + ".`" + this.module.getIdAlias() + "` as eid_" + code;
 		}
 
 		private String _returnLabel(String code, boolean isNode) {
@@ -314,13 +315,17 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public <ID extends Serializable> void updateObjectIds(PatternStorage storage, Map<String, ID> ids) {
+		public <ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids) {
 			this.map.forEach((filter, code) -> {
 				if (filter instanceof IDataFilter) {
 					Object data = ((IDataFilter) filter).getData();
-					Serializable id = ids.get("id_" + code);
-					storage.getNodeBuffer().save(id, data);
-					storage.setId(data, id);
+					if (data == null)
+						return;
+					try {
+						storage.getBuffer().updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			});
 		}
@@ -373,12 +378,15 @@ public class Cypher implements Language {
 	@Getter
 	protected static class PData implements IPattern.IData {
 		private Serializable id;
+		@Setter
+		private Serializable entityId;
 		private Set<String> labels;
 		private String data;
 		private IFilter filter;
 
 		protected PData(Module.Data data, IFilter filter) {
 			this.id = data.getId();
+			this.entityId = data.getEntityId();
 			this.labels = data.getLabels();
 			this.data = data.getData();
 			this.filter = filter;
@@ -386,8 +394,8 @@ public class Cypher implements Language {
 
 		@Override
 		public String toString() {
-			return "PDATA filter:<" + filter.getClass().getSimpleName() + "> id<" + id + "> labels<" + labels
-					+ "> data<" + data + ">";
+			return "PDATA filter:<" + filter.getClass().getSimpleName() + "> id<" + id + "> eid<" + entityId
+					+ "> labels<" + labels + "> data<" + data + ">";
 		}
 	}
 }

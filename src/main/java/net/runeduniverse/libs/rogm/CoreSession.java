@@ -9,6 +9,7 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
+import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public final class CoreSession implements Session {
@@ -17,14 +18,14 @@ public final class CoreSession implements Session {
 	private Language.Instance lang;
 	private Parser.Instance parser;
 	private Module.Instance<?> module;
-	private PatternStorage storage;
+	private IStorage storage;
 
 	protected CoreSession(Configuration cnf) throws Exception {
 		this.dbType = cnf.getDbType();
 		this.parser = this.dbType.getParser().build(cnf);
 		this.module = this.dbType.getModule().build(cnf);
 		this.lang = this.dbType.getLang().build(this.parser, this.dbType.getModule());
-		this.storage = new PatternStorage(cnf.getPkgs(), this.dbType.getModule(), this.parser);
+		this.storage = new PatternStorage(cnf, this.parser);
 
 		this.module.connect(cnf);
 	}
@@ -65,7 +66,7 @@ public final class CoreSession implements Session {
 
 	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
-		T o = this.storage.getNodeBuffer().load(id, type);
+		T o = this.storage.getBuffer().getByEntityId(id, type);
 		if (o != null)
 			return o;
 

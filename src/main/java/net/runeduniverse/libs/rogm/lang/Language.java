@@ -8,7 +8,7 @@ import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.PatternStorage;
+import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
@@ -28,7 +28,7 @@ public interface Language {
 	public interface IMapper {
 		String qry();
 
-		<ID extends Serializable> void updateObjectIds(PatternStorage storage, Map<String, ID> ids);
+		<ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids);
 
 		IPattern.IDataRecord parseData(List<Map<String, Data>> records);
 	}
