@@ -17,12 +17,9 @@ public interface Language {
 	Instance build(Parser.Instance parser, Module module);
 
 	public interface Instance {
-		IMapper buildQuery(IFilter filter) throws Exception;
+		IMapper query(IFilter filter) throws Exception;
 
-		IMapper buildSave(IDataFilter node) throws Exception;
-	}
-
-	public interface IDataFilter extends IFilter, IDataContainer {
+		IMapper save(IDataContainer container) throws Exception;
 	}
 
 	public interface IMapper {
@@ -30,6 +27,6 @@ public interface Language {
 
 		<ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids);
 
-		IPattern.IDataRecord parseData(List<Map<String, Data>> records);
+		IPattern.IDataRecord parseDataRecord(List<Map<String, Data>> records);
 	}
 }

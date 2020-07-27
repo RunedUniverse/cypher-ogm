@@ -1,5 +1,5 @@
 package net.runeduniverse.libs.rogm.querying;
 
-public interface IDataContainer {
+public interface IDataContainer extends IFilter {
 	Object getData();
 }

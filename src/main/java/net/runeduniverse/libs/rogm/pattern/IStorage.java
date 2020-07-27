@@ -20,11 +20,12 @@ public interface IStorage {
 
 	IPattern getPattern(Class<?> clazz) throws Exception;
 
-	IFilter createFilter(Class<?> clazz) throws Exception;
+	IFilter search(Class<?> clazz) throws Exception;
 
-	ISaveContainer createFilter(Object entity) throws Exception;
+	IFilter search(Class<?> clazz, Serializable id) throws Exception;
 
-	IFilter createIdFilter(Class<?> clazz, Serializable id) throws Exception;
+	ISaveContainer save(Object entity) throws Exception;
+
 
 	<T> Collection<T> parse(Class<T> type, IDataRecord record) throws Exception;
 }

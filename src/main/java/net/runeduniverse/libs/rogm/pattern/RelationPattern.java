@@ -11,11 +11,11 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.EndNode;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
-import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
 import net.runeduniverse.libs.rogm.querying.FilterType;
+import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -63,11 +63,11 @@ public class RelationPattern extends APattern {
 		_parse(type.getSuperclass());
 	}
 
-	public IFilter createFilter() {
+	public IFilter search() {
 		return _complete(this.storage.getFactory().createRelation(this.direction));
 	}
 
-	public IFilter createIdFilter(Serializable id) throws Exception {
+	public IFilter search(Serializable id) throws Exception {
 		return _complete(this.storage.getFactory().createIdRelation(this.direction, id));
 	}
 
@@ -113,12 +113,12 @@ public class RelationPattern extends APattern {
 	}
 
 	@Override
-	public ISaveContainer createFilter(Object entity) throws Exception {
-		Map<Object, IDataFilter> includedData = new HashMap<>();
+	public ISaveContainer save(Object entity) throws Exception {
+		Map<Object, IDataContainer> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
 			@Override
-			public IDataFilter getDataFilter() throws Exception {
+			public IDataContainer getDataContainer() throws Exception {
 				return createFilter(entity, null, direction, includedData);
 			}
 
@@ -135,7 +135,7 @@ public class RelationPattern extends APattern {
 	}
 
 	public IDataRelation createFilter(Object entity, IDataNode caller, Direction direction,
-			Map<Object, IDataFilter> includedData) throws Exception {
+			Map<Object, IDataContainer> includedData) throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataRelation) includedData.get(entity);
 
@@ -210,7 +210,7 @@ public class RelationPattern extends APattern {
 		return node.createFilter(relation);
 	}
 
-	private IDataNode _getDataNode(Field field, Object entity, Map<Object, IDataFilter> includedData,
+	private IDataNode _getDataNode(Field field, Object entity, Map<Object, IDataContainer> includedData,
 			IDataRelation relation) throws Exception {
 		NodePattern node = this.storage.getNode(field.getType());
 		if (node == null)

@@ -34,7 +34,7 @@ public class Cypher implements Language {
 		private final Module module;
 
 		@Override
-		public Mapper buildQuery(IFilter filter) throws Exception {
+		public Mapper query(IFilter filter) throws Exception {
 			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 			StringVariableGenerator gen = new StringVariableGenerator();
 			_parse(map, filter, gen, false);
@@ -57,7 +57,7 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public Mapper buildSave(IDataFilter node) throws Exception {
+		public Mapper save(IDataContainer node) throws Exception {
 			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 			StringVariableGenerator gen = new StringVariableGenerator();
 			_parse(map, node, gen, false);
@@ -69,7 +69,7 @@ public class Cypher implements Language {
 
 			map.forEach((f, c) -> {
 				try {
-					IDataFilter d = (IDataFilter) f;
+					IDataContainer d = (IDataContainer) f;
 					if (d.getData() != null)
 						st.add(c + '=' + parser.serialize(d.getData()));
 					rt.add(_returnId(c));
@@ -317,8 +317,8 @@ public class Cypher implements Language {
 		@Override
 		public <ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids) {
 			this.map.forEach((filter, code) -> {
-				if (filter instanceof IDataFilter) {
-					Object data = ((IDataFilter) filter).getData();
+				if (filter instanceof IDataContainer) {
+					Object data = ((IDataContainer) filter).getData();
 					if (data == null)
 						return;
 					try {
@@ -331,7 +331,7 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public IPattern.IDataRecord parseData(List<Map<String, Data>> records) {
+		public IPattern.IDataRecord parseDataRecord(List<Map<String, Data>> records) {
 			/*
 			 * List => 1 Map per Record-line Map => key = a - value = all data from a
 			 */

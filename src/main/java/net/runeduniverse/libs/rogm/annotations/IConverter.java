@@ -1,13 +1,27 @@
 package net.runeduniverse.libs.rogm.annotations;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public interface IConverter<T extends Serializable> {
 
+	static final Map<Class<?>, IConverter<?>> converter = new HashMap<>();
+
 	T convert(String serial);
 
 	String convert(T id);
+
+	static IConverter<?> createConverter(Class<?> clazz) throws InstantiationException, IllegalAccessException {
+		IConverter<?> conv = converter.get(clazz);
+		if (conv != null)
+			return conv;
+
+		conv = (IConverter<?>) clazz.newInstance();
+		converter.put(clazz, conv);
+		return conv;
+	}
 
 	public static IConverter<?> createConverter(Id anno, Class<?> type) throws Exception {
 		if (anno.converter() != UnSet.class)
@@ -15,13 +29,15 @@ public interface IConverter<T extends Serializable> {
 
 		switch (type.getName()) {
 		case "java.lang.Short":
-			return new ShortConverter();
+			return createConverter(ShortConverter.class);
 		case "java.lang.Integer":
-			return new IntegerConverter();
+			return createConverter(IntegerConverter.class);
 		case "java.lang.Long":
-			return new LongConverter();
+			return createConverter(LongConverter.class);
 		case "java.util.UUID":
-			return new UUIDConverter();
+			return createConverter(UUIDConverter.class);
+		case "java.lang.String":
+			return createConverter(StringConverter.class);
 		default:
 			throw new Exception("No idConverter for Class<" + type + "> defined!");
 		}
@@ -38,6 +54,15 @@ public interface IConverter<T extends Serializable> {
 		@Override
 		public String convert(Serializable id) {
 			return null;
+		}
+
+	}
+
+	public class StringConverter implements IConverter<String> {
+
+		@Override
+		public String convert(String serial) {
+			return serial;
 		}
 
 	}

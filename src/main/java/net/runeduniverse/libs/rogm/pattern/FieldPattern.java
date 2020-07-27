@@ -12,11 +12,11 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
 import net.runeduniverse.libs.rogm.querying.FilterType;
+import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 
@@ -81,7 +81,7 @@ public class FieldPattern {
 		return node.createFilter(relation);
 	}
 
-	public void saveRelation(Object entity, IDataNode node, Map<Object, IDataFilter> includedData) throws Exception {
+	public void saveRelation(Object entity, IDataNode node, Map<Object, IDataContainer> includedData) throws Exception {
 		if (this.collection)
 			// Collection
 			for (Object relNode : (Collection<?>) this.field.get(entity))
@@ -94,7 +94,7 @@ public class FieldPattern {
 		}
 	}
 
-	private IDataRelation _getRelation(IDataNode node, Object relEntity, Map<Object, IDataFilter> includedData)
+	private IDataRelation _getRelation(IDataNode node, Object relEntity, Map<Object, IDataContainer> includedData)
 			throws Exception {
 
 		IDataRelation relation = null;

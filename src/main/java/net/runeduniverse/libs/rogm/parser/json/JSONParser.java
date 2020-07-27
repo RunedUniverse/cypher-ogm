@@ -1,7 +1,5 @@
 package net.runeduniverse.libs.rogm.parser.json;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,11 +41,6 @@ public class JSONParser implements Parser {
 		@Override
 		public String serialize(Object object) throws JsonProcessingException {
 			return mapper.writeValueAsString(object);
-		}
-
-		@Override
-		public String serialize(Map<String, Object> map) throws Exception {
-			return mapper.writeValueAsString(map);
 		}
 
 		@Override

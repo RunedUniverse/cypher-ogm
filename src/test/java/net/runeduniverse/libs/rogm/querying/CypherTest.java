@@ -51,7 +51,7 @@ public class CypherTest extends ATest {
 	public void wrongID() {
 		boolean error = false;
 		try {
-			iLanguage.buildQuery(new FilterNode("defaultId"));
+			iLanguage.query(new FilterNode("defaultId"));
 		} catch (Exception e) {
 			error = true;
 		}
@@ -60,43 +60,43 @@ public class CypherTest extends ATest {
 
 	@Test
 	public void shortID() throws Exception {
-		iLanguage.buildQuery(new FilterNode((short) 3));
+		iLanguage.query(new FilterNode((short) 3));
 	}
 
 	@Test
 	public void integerID() throws Exception {
-		iLanguage.buildQuery(new FilterNode(45));
+		iLanguage.query(new FilterNode(45));
 	}
 
 	@Test
 	public void longID() throws Exception {
-		iLanguage.buildQuery(new FilterNode(54l));
+		iLanguage.query(new FilterNode(54l));
 	}
 
 	// MATCHES
 	@Test
 	public void matchSchool() throws Exception {
-		System.out.println("[SCHOOL]\n" + iLanguage.buildQuery(school) + '\n');
+		System.out.println("[SCHOOL]\n" + iLanguage.query(school) + '\n');
 	}
 
 	@Test
 	public void matchStudent() throws Exception {
-		System.out.println("[STUDENT]\n" + iLanguage.buildQuery(student) + '\n');
+		System.out.println("[STUDENT]\n" + iLanguage.query(student) + '\n');
 	}
 
 	@Test
 	public void matchFriends() throws Exception {
-		System.out.println("[FRIENDS]\n" + iLanguage.buildQuery(friends) + '\n');
+		System.out.println("[FRIENDS]\n" + iLanguage.query(friends) + '\n');
 	}
 
 	@Test
 	public void matchAnyRelationToSchool() throws Exception {
-		System.out.println("[ANY REL]\n" + iLanguage.buildQuery(anyRelationToSchool) + '\n');
+		System.out.println("[ANY REL]\n" + iLanguage.query(anyRelationToSchool) + '\n');
 	}
 
 	@Test
 	public void matchCity() throws Exception {
-		System.out.println("[CITY]\n" + iLanguage.buildQuery(city) + '\n');
+		System.out.println("[CITY]\n" + iLanguage.query(city) + '\n');
 	}
 
 	// CREATE

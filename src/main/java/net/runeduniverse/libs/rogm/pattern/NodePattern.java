@@ -15,10 +15,10 @@ import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
-import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
 import net.runeduniverse.libs.rogm.querying.FilterType;
+import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -56,7 +56,7 @@ public class NodePattern extends APattern {
 		_parse(type.getSuperclass());
 	}
 
-	public IFilter createFilter() throws Exception {
+	public IFilter search() throws Exception {
 		Node node = this.storage.getFactory().createNode(this.labels, new ArrayList<>());
 		node.setPattern(this);
 		node.setReturned(true);
@@ -66,7 +66,7 @@ public class NodePattern extends APattern {
 		return node;// includes ALL relation filters
 	}
 
-	public IFilter createIdFilter(Serializable id) throws Exception {
+	public IFilter search(Serializable id) throws Exception {
 		Node node = this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id);
 		node.setPattern(this);
 		node.setReturned(true);
@@ -84,12 +84,12 @@ public class NodePattern extends APattern {
 	}
 
 	@Override
-	public ISaveContainer createFilter(Object entity) throws Exception {
-		Map<Object, IDataFilter> includedData = new HashMap<>();
+	public ISaveContainer save(Object entity) throws Exception {
+		Map<Object, IDataContainer> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
 			@Override
-			public IDataFilter getDataFilter() throws Exception {
+			public IDataContainer getDataContainer() throws Exception {
 				return createFilter(entity, includedData, true);
 			}
 
@@ -105,7 +105,7 @@ public class NodePattern extends APattern {
 		};
 	}
 
-	public IDataNode createFilter(Object entity, Map<Object, IDataFilter> includedData, boolean includeRelations)
+	public IDataNode createFilter(Object entity, Map<Object, IDataContainer> includedData, boolean includeRelations)
 			throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataNode) includedData.get(entity);

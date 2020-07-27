@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.annotations.IConverter;
-import net.runeduniverse.libs.rogm.lang.Language.IDataFilter;
+import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface IPattern {
@@ -18,13 +18,13 @@ public interface IPattern {
 	IConverter<?> getIdConverter();
 
 	// querry
-	IFilter createFilter() throws Exception;
+	IFilter search() throws Exception;
 
 	// querry exactly 1 node / querry deeper layers for node
-	IFilter createIdFilter(Serializable id) throws Exception;
+	IFilter search(Serializable id) throws Exception;
 
 	// for saving
-	ISaveContainer createFilter(Object entity) throws Exception;
+	ISaveContainer save(Object entity) throws Exception;
 
 	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
 
@@ -73,7 +73,7 @@ public interface IPattern {
 	}
 
 	public interface ISaveContainer {
-		IDataFilter getDataFilter() throws Exception;
+		IDataContainer getDataContainer() throws Exception;
 
 		void postSave();
 	}
