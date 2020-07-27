@@ -105,6 +105,23 @@ public class NodePattern extends APattern {
 		};
 	}
 
+	@Override
+	public IDeleteContainer delete(Object entity) throws Exception {
+		return new IDeleteContainer() {// TODO delete
+			// TODO delete
+			@Override
+			public void postDelete() {
+				// TODO delete
+				
+			}
+			
+			@Override
+			public IFilter getFilter() {
+				return null;
+			}
+		};
+	}
+
 	public IDataNode createFilter(Object entity, Map<Object, IDataContainer> includedData, boolean includeRelations)
 			throws Exception {
 		if (includedData.containsKey(entity))

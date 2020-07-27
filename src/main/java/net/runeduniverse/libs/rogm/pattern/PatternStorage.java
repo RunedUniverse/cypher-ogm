@@ -21,6 +21,7 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
@@ -85,12 +86,16 @@ public class PatternStorage implements IStorage {
 		return this.getPattern(clazz).search();
 	}
 
+	public IFilter search(Class<?> clazz, Serializable id) throws Exception {
+		return this.getPattern(clazz).search(id);
+	}
+
 	public ISaveContainer save(Object entity) throws Exception {
 		return this.getPattern(entity.getClass()).save(entity);
 	}
 
-	public IFilter search(Class<?> clazz, Serializable id) throws Exception {
-		return this.getPattern(clazz).search(id);
+	public IDeleteContainer delete(Object entity) throws Exception {
+		return this.getPattern(entity.getClass()).delete(entity);
 	}
 
 	public Object setId(Object entity, Serializable id) {

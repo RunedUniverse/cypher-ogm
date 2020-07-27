@@ -83,6 +83,12 @@ public class Cypher implements Language {
 					.append(String.join(", ", rt)).append(';').toString(), map);
 		}
 
+		@Override
+		public IMapper delete(IFilter filter) throws Exception {
+			// TODO delete
+			return null;
+		}
+
 		private String _returnId(String code) {
 			return "id(" + code + ") as id_" + code + ',' + code + ".`" + this.module.getIdAlias() + "` as eid_" + code;
 		}

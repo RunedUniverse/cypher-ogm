@@ -47,24 +47,6 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public void save(Object object) {
-		try {
-			ISaveContainer container = this.storage.save(object);
-			Language.IMapper mapper = this.lang.save(container.getDataContainer());
-			mapper.updateObjectIds(this.storage, this.module.execute(mapper.qry()));
-			container.postSave();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void saveAll(Collection<Object> objects) {
-		for (Object o : objects)
-			this.save(o);
-	}
-
-	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
 		T o = this.storage.getBuffer().getByEntityId(id, type);
 		if (o != null)
@@ -105,5 +87,35 @@ public final class CoreSession implements Session {
 			e.printStackTrace();
 			return new ArrayList<T>();
 		}
+	}
+
+	@Override
+	public void save(Object object) {
+		try {
+			ISaveContainer container = this.storage.save(object);
+			Language.IMapper mapper = this.lang.save(container.getDataContainer());
+			mapper.updateObjectIds(this.storage, this.module.execute(mapper.qry()));
+			container.postSave();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void saveAll(Collection<Object> objects) {
+		for (Object o : objects)
+			this.save(o);
+	}
+
+	@Override
+	public void delete(Object entity) {
+		// TODO delete
+		
+	}
+
+	@Override
+	public void deleteAll(Collection<Object> entities) {
+		// TODO delete
+		
 	}
 }

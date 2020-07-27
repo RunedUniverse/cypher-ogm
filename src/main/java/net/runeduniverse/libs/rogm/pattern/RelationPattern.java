@@ -134,6 +134,22 @@ public class RelationPattern extends APattern {
 		};
 	}
 
+	@Override
+	public IDeleteContainer delete(Object entity) throws Exception {
+		return new IDeleteContainer() {// TODO delete
+
+			@Override
+			public void postDelete() {
+
+			}
+
+			@Override
+			public IFilter getFilter() {
+				return null;
+			}
+		};
+	}
+
 	public IDataRelation createFilter(Object entity, IDataNode caller, Direction direction,
 			Map<Object, IDataContainer> includedData) throws Exception {
 		if (includedData.containsKey(entity))

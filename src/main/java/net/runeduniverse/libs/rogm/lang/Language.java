@@ -20,6 +20,8 @@ public interface Language {
 		IMapper query(IFilter filter) throws Exception;
 
 		IMapper save(IDataContainer container) throws Exception;
+		
+		IMapper delete(IFilter filter) throws Exception;
 	}
 
 	public interface IMapper {

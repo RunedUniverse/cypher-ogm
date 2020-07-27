@@ -17,14 +17,14 @@ public interface IPattern {
 
 	IConverter<?> getIdConverter();
 
-	// querry
 	IFilter search() throws Exception;
 
-	// querry exactly 1 node / querry deeper layers for node
+	// search exactly 1 node / querry deeper layers for node
 	IFilter search(Serializable id) throws Exception;
 
-	// for saving
 	ISaveContainer save(Object entity) throws Exception;
+
+	IDeleteContainer delete(Object entity) throws Exception;
 
 	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
 
@@ -76,5 +76,11 @@ public interface IPattern {
 		IDataContainer getDataContainer() throws Exception;
 
 		void postSave();
+	}
+
+	public interface IDeleteContainer {
+		IFilter getFilter();
+
+		void postDelete();
 	}
 }
