@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,6 +16,8 @@ import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
 import net.runeduniverse.libs.rogm.querying.FilterType;
@@ -67,7 +70,7 @@ public class NodePattern extends APattern {
 	}
 
 	public IFilter search(Serializable id) throws Exception {
-		Node node = this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id);
+		Node node = this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter);
 		node.setPattern(this);
 		node.setReturned(true);
 		for (FieldPattern field : this.relFields)
@@ -102,7 +105,29 @@ public class NodePattern extends APattern {
 						e.printStackTrace();
 					}
 			}
+
+			@Override
+			public IFilter getRelatedFilter() throws Exception {
+				Entry entry = storage.getBuffer().getEntry(entity);
+				if (entry == null)
+					return null;
+				return search(entry.getId());
+			}
 		};
+	}
+
+	@Override
+	public IDeleteContainer delete(Object entity) throws Exception {
+		IBuffer.Entry entry = this.storage.getBuffer().getEntry(entity);
+		if (entry == null)
+			throw new Exception("Node-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
+
+		preDelete(entity);
+
+		Node node = this.storage.getFactory().createIdNode(null, null, entry.getId(), null);
+		node.setReturned(true);
+		return new DeleteContainer(this, entity, entry.getId(),
+				this.storage.getFactory().createEffectedFilter(entry.getId()), node);
 	}
 
 	public IDataNode createFilter(Object entity, Map<Object, IDataContainer> includedData, boolean includeRelations)
@@ -116,7 +141,7 @@ public class NodePattern extends APattern {
 		if (this.isIdSet(entity)) {
 			// update (id)
 			node = this.storage.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity),
-					entity);
+					this.idConverter, entity);
 			node.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
@@ -140,5 +165,11 @@ public class NodePattern extends APattern {
 				field.putValue(entity, value);
 				return;
 			}
+	}
+
+	@Override
+	public void deleteRelations(Object entity, Collection<Object> delEntries) {
+		for (FieldPattern field : this.relFields)
+			field.removeValues(entity, delEntries);
 	}
 }

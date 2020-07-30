@@ -15,6 +15,8 @@ public interface Module {
 	// but is provided if needed
 	Instance<?> build(Configuration cnf);
 
+	Class<?> idType();
+
 	boolean checkIdType(Class<?> type);
 
 	String getIdAlias();
@@ -32,7 +34,7 @@ public interface Module {
 		// returns a Map with the ALIAS as Key and DATA as Value
 		List<Map<String, Data>> queryObject(String qry);
 
-		// returns a Map with the ALIAS and the ID
+		// returns a Map with the ALIAS and the IDs
 		Map<String, Serializable> execute(String qry);
 	}
 

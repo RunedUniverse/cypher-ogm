@@ -1,11 +1,13 @@
 package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
+import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface IPattern {
@@ -17,14 +19,16 @@ public interface IPattern {
 
 	IConverter<?> getIdConverter();
 
-	// querry
 	IFilter search() throws Exception;
 
-	// querry exactly 1 node / querry deeper layers for node
+	// search exactly 1 node / querry deeper layers for node
 	IFilter search(Serializable id) throws Exception;
 
-	// for saving
 	ISaveContainer save(Object entity) throws Exception;
+
+	IDeleteContainer delete(Object entity) throws Exception;
+
+	void deleteRelations(Object entity, Collection<Object> deletedEntities);
 
 	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
 
@@ -75,6 +79,16 @@ public interface IPattern {
 	public interface ISaveContainer {
 		IDataContainer getDataContainer() throws Exception;
 
+		IFilter getRelatedFilter() throws Exception;
+
 		void postSave();
+	}
+
+	public interface IDeleteContainer {
+		IFRelation getEffectedFilter();
+
+		IFilter getDeleteFilter();
+
+		Serializable getDeletedId();
 	}
 }

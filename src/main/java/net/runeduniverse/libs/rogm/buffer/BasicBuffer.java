@@ -1,18 +1,19 @@
 package net.runeduniverse.libs.rogm.buffer;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
 
 public class BasicBuffer implements IBuffer {
 
 	protected IStorage storage = null;
-	private List<Entry> entries = new ArrayList<>();
+	private Map<Object, Entry> entries = new HashMap<>();
 	private Map<Class<?>, TypeEntry> typeMap = new HashMap<>();
 
 	@Override
@@ -23,7 +24,7 @@ public class BasicBuffer implements IBuffer {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T acquire(IPattern pattern, IData data, Class<T> type) throws Exception {
+	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type) throws Exception {
 		TypeEntry te = this.typeMap.get(type);
 		if (te != null) {
 			Entry entry = te.idMap.get(data.getId());
@@ -33,7 +34,7 @@ public class BasicBuffer implements IBuffer {
 
 		T entity = this.storage.getParser().deserialize(type, data.getData());
 		pattern.setId(entity, data.getEntityId());
-		this.addEntry(new Entry(data, entity));
+		addEntry(new Entry(data, entity, pattern));
 		return entity;
 	}
 
@@ -65,35 +66,30 @@ public class BasicBuffer implements IBuffer {
 			this.typeMap.put(entry.getType(), te);
 		}
 
-		this.entries.add(entry);
+		this.entries.put(entry.getEntity(), entry);
 		te.idMap.put(entry.getId(), entry);
 		te.entityIdMap.put(entry.getEntityId(), entry);
 	}
 
 	@Override
-	public void addEntry(Serializable id, Serializable entityId, Object entity) {
-		this.addEntry(new Entry(id, entityId, entity, entity.getClass()));
+	public void addEntry(Serializable id, Serializable entityId, Object entity, IPattern pattern) {
+		addEntry(new Entry(id, entityId, entity, entity.getClass(), pattern));
 	}
 
 	@Override
 	public void updateEntry(Serializable id, Serializable entityId, Object entity) throws Exception {
 		if (entity == null)
 			return;
-		Entry entry = null;
-		for (Entry e : entries)
-			if (e.getEntity() == entity) {
-				entry = e;
-				break;
-			}
+		Entry entry = entries.get(entity);
 
 		Class<?> type = entity.getClass();
 		IPattern pattern = this.storage.getPattern(type);
 		entityId = pattern.prepareEntityId(id, entityId);
 
 		if (entry == null)
-			this.addEntry(new Entry(id, entityId, entity, type));
+			addEntry(new Entry(id, entityId, entity, type, pattern));
 		else
-			this.updateEntry(entry, id, entityId);
+			updateEntry(entry, id, entityId);
 		pattern.setId(entity, entityId);
 	}
 
@@ -114,30 +110,55 @@ public class BasicBuffer implements IBuffer {
 
 	@Override
 	public void removeEntry(Entry entry) {
+		if (entry == null)
+			return;
 		TypeEntry te = this.typeMap.get(entry.getType());
 		if (te == null)
 			return;
 		te.idMap.remove(entry.getId());
 		te.entityIdMap.remove(entry.getEntityId());
-		this.entries.remove(entry);
+		this.entries.remove(entry.getEntity());
 	}
 
 	@Override
 	public void removeEntry(Object entity) {
-		for (Entry entry : entries)
-			if (entry.getEntity() == entity) {
-				this.removeEntry(entry);
-				return;
-			}
+		removeEntry(this.entries.get(entity));
 	}
 
 	@Override
-	public List<Entry> getAllEntries() {
-		return this.entries;
+	public Collection<Entry> getAllEntries() {
+		return this.entries.values();
 	}
 
 	protected class TypeEntry {
 		protected Map<Serializable, Entry> idMap = new HashMap<>();
 		protected Map<Serializable, Entry> entityIdMap = new HashMap<>();
+	}
+
+	@Override
+	public Entry getEntry(Object entity) {
+		return this.entries.get(entity);
+	}
+
+	@Override
+	public void eraseRelations(Serializable deletedId, Serializable relationId, Serializable nodeId) {
+		Set<Entry> deletedEntries = new HashSet<>();
+		Set<Object> deletedEntities = new HashSet<>();
+		Set<Entry> nodes = new HashSet<>();
+
+		for (Entry entry : this.entries.values())
+			if (entry.getId().equals(deletedId) || entry.getId().equals(relationId)) {
+				deletedEntries.add(entry);
+				deletedEntities.add(entry.getEntity());
+			} else if (entry.getId().equals(nodeId))
+				nodes.add(entry);
+
+		for (Entry entry : nodes)
+			entry.getPattern().deleteRelations(entry.getEntity(), deletedEntities);
+
+		for (Entry entry : deletedEntries) {
+			removeEntry(entry);
+			entry.getPattern().postDelete(entry.getEntity());
+		}
 	}
 }

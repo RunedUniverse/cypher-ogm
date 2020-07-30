@@ -12,7 +12,7 @@ public class PatternStorageTest extends ATest {
 		config.addPackage("net.runeduniverse.libs.rogm.model");
 		config.addPackage("net.runeduniverse.libs.rogm.model.relations");
 	}
-	
+
 	public PatternStorageTest() {
 		super(DatabaseType.Neo4j);
 	}
@@ -69,12 +69,11 @@ public class PatternStorageTest extends ATest {
 	}
 
 	private String _query(Class<?> clazz) throws Exception {
-		return "[QUERY][" + clazz.getSimpleName() + "]\n"
-				+ iLanguage.query(this.storage.getNode(clazz).search()) + '\n';
+		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.storage.getNode(clazz).search()) + '\n';
 	}
 
 	private String _save(Object entity) throws Exception {
 		return "[SAVE][" + entity.getClass().getSimpleName() + "]\n"
-				+ iLanguage.save(this.storage.save(entity).getDataContainer()).qry() + '\n';
+				+ iLanguage.save(this.storage.save(entity).getDataContainer(), null).qry() + '\n';
 	}
 }

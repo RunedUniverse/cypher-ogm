@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import net.runeduniverse.libs.rogm.model.Artist;
+import net.runeduniverse.libs.rogm.model.Company;
+import net.runeduniverse.libs.rogm.model.Game;
 import net.runeduniverse.libs.rogm.model.Person;
 import net.runeduniverse.libs.rogm.model.Player;
 import net.runeduniverse.libs.rogm.model.Song;
@@ -115,6 +117,37 @@ public class SessionTest extends ATest {
 		Player player = session.load(Player.class, UUID.fromString("12553411-d527-448d-b82b-33261e4f1618"));
 		assertNotNull("NO Entries in DB found", player);
 		System.out.println(player.toString());
+	}
+
+	@Test
+	public void createAndDeletePlayer() {
+		Player player = new Player(UUID.randomUUID(), "DUMMY PLAYER");
+		session.save(player);
+		session.delete(player);
+	}
+
+	@Test
+	public void createAndDeleteEnnio() {
+		Artist ennio = new Artist();
+		ennio.setFirstName("Ennio");
+		ennio.setLastName("Morricone");
+		Song s = new Song("C’era una volta il West");
+		ennio.getCreated().add(s);
+		ennio.getPlayed().add(s);
+		session.save(ennio);
+		session.delete(ennio);
+	}
+
+	@Test
+	public void loadCompany() {
+		Game game = new Game();
+		game.setName("just another USELESS title");
+		Company company = session.load(Company.class, 8L);
+		company.getGames().add(game);
+		session.save(company);
+		company.getGames().remove(game);
+		session.save(company);
+		session.delete(game);
 	}
 
 	/*

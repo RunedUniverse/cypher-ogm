@@ -13,6 +13,11 @@ public interface IConverter<T extends Serializable> {
 
 	String convert(T id);
 
+	@SuppressWarnings("unchecked")
+	default String toProperty(Serializable id) {
+		return convert((T) id);
+	}
+
 	static IConverter<?> createConverter(Class<?> clazz) throws InstantiationException, IllegalAccessException {
 		IConverter<?> conv = converter.get(clazz);
 		if (conv != null)

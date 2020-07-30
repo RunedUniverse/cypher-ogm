@@ -2,6 +2,7 @@ package net.runeduniverse.libs.rogm.lang;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -9,15 +10,14 @@ import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.*;
 import net.runeduniverse.libs.rogm.util.*;
 
@@ -34,8 +34,15 @@ public class Cypher implements Language {
 		private final Module module;
 
 		@Override
-		public Mapper query(IFilter filter) throws Exception {
+		public ILoadMapper load(IFilter filter) throws Exception {
 			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
+			return new Mapper(filter, _load(map, filter, true), map);
+		}
+
+		private String _load(DataMap<IFilter, String, FilterStatus> map, IFilter filter, boolean all) throws Exception {
+			if (filter == null)
+				return null;
+
 			StringVariableGenerator gen = new StringVariableGenerator();
 			_parse(map, filter, gen, false);
 
@@ -43,21 +50,25 @@ public class Cypher implements Language {
 			List<String> rt = new ArrayList<>();
 
 			map.forEach((f, c) -> {
-				if (f instanceof IReturned && ((IReturned) f).isReturned())
-					rt.add(_returnId(c) + ", " + _returnLabel(c, f instanceof IFNode) + ", " + c);
+				if (f instanceof IReturned && ((IReturned) f).isReturned()) {
+					rt.add(_returnId(c));
+					if (all)
+						rt.add(_returnLabel(c, f instanceof IFNode) + ',' + c);
+				}
 			});
 
 			if (rt.isEmpty()) {
 				String c = map.get(filter);
-				qry.append(_returnId(c) + ", " + _returnLabel(c, filter instanceof IFNode) + ", " + c);
+				qry.append(_returnId(c));
+				if (all)
+					qry.append(',' + _returnLabel(c, filter instanceof IFNode) + ',' + c);
 			} else
-				qry.append(String.join(", ", rt));
-
-			return new Mapper(filter, qry.append(';').toString(), map);
+				qry.append(String.join(",", rt));
+			return qry.append(';').toString();
 		}
 
 		@Override
-		public Mapper save(IDataContainer node) throws Exception {
+		public ISaveMapper save(IDataContainer node, IFilter filter) throws Exception {
 			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 			StringVariableGenerator gen = new StringVariableGenerator();
 			_parse(map, node, gen, false);
@@ -68,29 +79,61 @@ public class Cypher implements Language {
 			List<String> rt = new ArrayList<>();
 
 			map.forEach((f, c) -> {
+				rt.add(_returnId(c));
 				try {
 					IDataContainer d = (IDataContainer) f;
 					if (d.getData() != null)
 						st.add(c + '=' + parser.serialize(d.getData()));
-					rt.add(_returnId(c));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			});
 
 			// SET + RETURN
-			return new Mapper(node, qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ")
-					.append(String.join(", ", rt)).append(';').toString(), map);
+			DataMap<IFilter, String, FilterStatus> effectedMap = new DataHashMap<>();
+			return new Mapper(
+					node, qry.append("SET ").append(String.join(",", st)).append("\nRETURN ")
+							.append(String.join(",", rt)).append(';').toString(),
+					this._load(effectedMap, filter, false), map, effectedMap);
+		}
+
+		@Override
+		public IDeleteMapper delete(IFilter filter, IFRelation relation) throws Exception {
+			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
+			StringVariableGenerator gen = new StringVariableGenerator();
+			_parse(map, filter, gen, false);
+
+			StringBuilder qryBuilder = _select(map);
+			List<String> dl = new ArrayList<>();
+
+			map.forEach((f, c) -> {
+				if (f instanceof IReturned && ((IReturned) f).isReturned())
+					if (f instanceof IFNode)
+						dl.add("DETACH DELETE " + c);
+					else
+						dl.add("DELETE " + c);
+			});
+
+			if (!dl.isEmpty())
+				qryBuilder.append(String.join("\n", dl));
+
+			DataMap<IFilter, String, FilterStatus> effectedMap = new DataHashMap<>();
+			return new Mapper(qryBuilder.append(';').toString(), this._load(effectedMap, relation, false), effectedMap);
+		}
+
+		@Override
+		public String deleteRelations(Collection<String> ids) {
+			return "UNWIND [" + String.join(",", ids) + "] AS id MATCH ()-[a]-() WHERE id(a) = id DELETE a;";
 		}
 
 		private String _returnId(String code) {
-			return "id(" + code + ") as id_" + code + ',' + code + ".`" + this.module.getIdAlias() + "` as eid_" + code;
+			return "id(" + code + ") AS id_" + code + ',' + code + ".`" + this.module.getIdAlias() + "` AS eid_" + code;
 		}
 
 		private String _returnLabel(String code, boolean isNode) {
 			if (isNode)
-				return "labels(" + code + ") as labels_" + code;
-			return "type(" + code + ") as labels_" + code;
+				return "labels(" + code + ") AS labels_" + code;
+			return "type(" + code + ") AS labels_" + code;
 		}
 
 		private void _parse(DataMap<IFilter, String, FilterStatus> map, IFilter filter, StringVariableGenerator gen,
@@ -108,8 +151,10 @@ public class Cypher implements Language {
 
 			if (filter instanceof IFNode) {
 				_checkIdType(filter);
-				for (IFilter f : ((IFNode) filter).getRelations())
-					_parse(map, f, gen, false);
+				IFNode node = (IFNode) filter;
+				if (node.getRelations() != null)
+					for (IFilter f : node.getRelations())
+						_parse(map, f, gen, false);
 			} else if (filter instanceof IFRelation) {
 				_checkIdType(filter);
 				_parse(map, ((IFRelation) filter).getStart(), gen, true);
@@ -120,9 +165,10 @@ public class Cypher implements Language {
 
 		private StringBuilder _select(DataMap<IFilter, String, FilterStatus> map) throws Exception {
 			StringBuilder matchBuilder = new StringBuilder();
+			StringBuilder createBuilder = new StringBuilder();
 			StringBuilder mergeBuilder = new StringBuilder();
 			StringBuilder optionalMatchBuilder = new StringBuilder();
-			StringBuilder whereBuilder = new StringBuilder();
+			List<String> where = new ArrayList<>();
 
 			map.forEach((f, code, modifier) -> {
 				StringBuilder activeBuilder = null;
@@ -133,6 +179,8 @@ public class Cypher implements Language {
 						&& ((IOptional) f).isOptional())
 					optional = true;
 
+				_where(map, where, f, code, modifier);
+
 				if (f == null || modifier.equals(FilterStatus.PRINTED)
 						|| optional && modifier.equals(FilterStatus.PRE_PRINTED))
 					return;
@@ -141,27 +189,27 @@ public class Cypher implements Language {
 					activeBuilder = optionalMatchBuilder.append("OPTIONAL ");
 				else if (isMerge)
 					activeBuilder = mergeBuilder;
+				else if (f.getFilterType() == FilterType.CREATE)
+					activeBuilder = createBuilder;
 				else
 					activeBuilder = matchBuilder;
 
 				activeBuilder.append(_prefix(f, isMerge));
 				if (f instanceof IFNode) {
-					_where(map, whereBuilder, f, code, modifier);
-
 					if (!(modifier.equals(FilterStatus.PRE_PRINTED) && optional)) {
 						activeBuilder.append(_filterToString(map, f, true, false, false));
 						map.setData(f, FilterStatus.PRINTED);
 					}
 
 				} else if (f instanceof IFRelation) {
-					_where(map, whereBuilder, f, code, modifier);
-
 					activeBuilder.append(_translateRelation(map, (IFRelation) f, optional, isMerge).toString());
 				} else
 					activeBuilder.append("()");
 				activeBuilder.append('\n');
 			});
-			return matchBuilder.append(mergeBuilder).append(whereBuilder).append(optionalMatchBuilder);
+			if (!where.isEmpty())
+				matchBuilder.append("WHERE " + String.join(" AND ", where) + '\n');
+			return matchBuilder.append(createBuilder).append(mergeBuilder).append(optionalMatchBuilder);
 		}
 
 		private boolean _isMerge(IFilter filter) {
@@ -187,6 +235,7 @@ public class Cypher implements Language {
 				return "CREATE ";
 			case UPDATE:
 			case MATCH:
+			case DELETE:
 			default:
 				return "MATCH ";
 			}
@@ -198,13 +247,13 @@ public class Cypher implements Language {
 				throw new Exception("IFilter ID <" + clazz + "> not supported");
 		}
 
-		private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code,
+		private void _where(DataMap<IFilter, String, FilterStatus> map, List<String> where, IFilter f, String code,
 				FilterStatus modifier) {
-			if (!(f.getFilterType() != FilterType.CREATE && IIdentified.identify(f)
+			if (f == null || !(f.getFilterType() != FilterType.CREATE && IIdentified.identify(f)
 					&& !modifier.equals(FilterStatus.EXTENSION_PRINTED)))
 				return;
 			IIdentified<?> i = (IIdentified<?>) f;
-			builder.append("WHERE id(" + code + ")=" + ((Number) i.getId()).longValue() + "\n");
+			where.add("id(" + code + ")=" + ((Number) i.getId()).longValue());
 			map.setData(f, FilterStatus.EXTENSION_PRINTED);
 		}
 
@@ -243,8 +292,9 @@ public class Cypher implements Language {
 				// PRINT LABELS
 				if (filter instanceof ILabeled) {
 					ILabeled holder = (ILabeled) filter;
-					for (String label : holder.getLabels())
-						builder.append(':' + label.replace(' ', '_'));
+					if (holder.getLabels() != null)
+						for (String label : holder.getLabels())
+							builder.append(':' + label.replace(' ', '_'));
 				}
 				// PRINT DATA
 				if (filter instanceof IParameterized) {
@@ -278,7 +328,6 @@ public class Cypher implements Language {
 		}
 	}
 
-	@NoArgsConstructor
 	@AllArgsConstructor
 	protected static class FilterStatus {
 		public static final FilterStatus INITIALIZED = new FilterStatus(1);
@@ -297,11 +346,15 @@ public class Cypher implements Language {
 		}
 	}
 
-	protected static class Mapper implements Language.IMapper {
+	protected static class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper {
 
-		private final IFilter primary;
+		private IFilter primary;
 		private String qry;
+		private String effectedQry;
 		private DataMap<IFilter, String, FilterStatus> map;
+		private DataMap<IFilter, String, FilterStatus> effectedMap;
+		// working data
+		private Collection<String> persistIds = new HashSet<>();
 
 		protected Mapper(IFilter primaryFilter, String qry, DataMap<IFilter, String, FilterStatus> map) {
 			this.primary = primaryFilter;
@@ -309,25 +362,71 @@ public class Cypher implements Language {
 			this.map = map;
 		}
 
-		@Override
-		public String qry() {
-			return qry;
+		protected Mapper(IFilter primaryFilter, String qry, String effectedQry,
+				DataMap<IFilter, String, FilterStatus> map, DataMap<IFilter, String, FilterStatus> effectedMap) {
+			this.primary = primaryFilter;
+			this.qry = qry;
+			this.effectedQry = effectedQry;
+			this.map = map;
+			this.effectedMap = effectedMap;
+		}
+
+		protected Mapper(String qry, String effectedQry, DataMap<IFilter, String, FilterStatus> map) {
+			this.qry = qry;
+			this.effectedQry = effectedQry;
+			this.map = map;
 		}
 
 		@Override
-		public <ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids) {
+		public String qry() {
+			return this.qry;
+		}
+
+		@Override
+		public String effectedQry() {
+			return this.effectedQry;
+		}
+
+		@Override
+		public <ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids) {
 			this.map.forEach((filter, code) -> {
+				if (filter instanceof IFRelation) {
+					Object s = ids.get("id_" + code);
+					if (s != null)
+						this.persistIds.add(s.toString());
+				}
 				if (filter instanceof IDataContainer) {
 					Object data = ((IDataContainer) filter).getData();
 					if (data == null)
 						return;
 					try {
-						storage.getBuffer().updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data);
+						buffer.updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			});
+		}
+
+		@Override
+		public Collection<String> reduceIds(IBuffer buffer, List<Map<String, Object>> effectedIds) {
+			Collection<String> delIds = new HashSet<>();
+
+			for (Map<String, Object> ids : effectedIds) {
+				this.effectedMap.forEach((filter, code) -> {
+					if (!(filter instanceof IFNode))
+						return;
+
+					for (IFRelation rel : ((IFNode) filter).getRelations()) {
+						Object s = ids.get("id_" + this.effectedMap.get(rel));
+						if (s == null)
+							continue;
+						delIds.add(s.toString());
+					}
+				});
+			}
+			delIds.removeAll(persistIds);
+			return delIds;
 		}
 
 		@Override
@@ -370,8 +469,25 @@ public class Cypher implements Language {
 		}
 
 		@Override
+		public void updateBuffer(IBuffer buffer, Serializable deletedId, List<Map<String, Object>> effectedIds) {
+			for (Map<String, Object> ids : effectedIds)
+				this.map.forEach((f, c) -> {
+					if (!(f instanceof IFRelation))
+						return;
+					IFRelation rel = (IFRelation) f;
+					String code = "id_" + this.map.get(rel.getStart());
+					if (!ids.containsKey(code))
+						code = "id_" + this.map.get(rel.getTarget());
+					buffer.eraseRelations(deletedId, (Serializable) ids.get("id_" + this.map.get(f)),
+							(Serializable) ids.get(code));
+				});
+		}
+
+		@Override
 		public String toString() {
-			return this.qry;
+			if (this.effectedQry == null)
+				return "QRY: " + this.qry;
+			return "QRY: " + this.qry + "\nEFFECTED QRY: " + this.effectedQry;
 		}
 	}
 

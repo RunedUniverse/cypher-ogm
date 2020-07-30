@@ -14,6 +14,8 @@ import net.runeduniverse.libs.rogm.annotations.PostLoad;
 import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
+import net.runeduniverse.libs.rogm.querying.IFRelation;
+import net.runeduniverse.libs.rogm.querying.IFilter;
 
 @RequiredArgsConstructor
 public abstract class APattern implements IPattern {
@@ -50,7 +52,7 @@ public abstract class APattern implements IPattern {
 				this.preSave = method;
 				continue;
 			}
-			if (this.preDelete == null && method.isAnnotationPresent(PreDelete.class)) { // TODO implement
+			if (this.preDelete == null && method.isAnnotationPresent(PreDelete.class)) {
 				this.preDelete = method;
 				continue;
 			}
@@ -62,7 +64,7 @@ public abstract class APattern implements IPattern {
 				this.postSave = method;
 				continue;
 			}
-			if (this.postDelete == null && method.isAnnotationPresent(PostDelete.class)) // TODO implement
+			if (this.postDelete == null && method.isAnnotationPresent(PostDelete.class))
 				this.postDelete = method;
 		}
 	}
@@ -158,5 +160,15 @@ public abstract class APattern implements IPattern {
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
+	}
+
+	@RequiredArgsConstructor
+	@Getter
+	protected class DeleteContainer implements IDeleteContainer {
+		private final IPattern pattern;
+		private final Object entity;
+		private final Serializable deletedId;
+		private final IFRelation effectedFilter;
+		private final IFilter deleteFilter;
 	}
 }

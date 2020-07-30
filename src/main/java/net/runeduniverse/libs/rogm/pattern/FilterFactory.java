@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
+import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.querying.*;
 
@@ -26,22 +27,21 @@ public class FilterFactory {
 		return new Node(labels, relations);
 	}
 
-	public Node createIdNode(Set<String> labels, List<IFRelation> relations, Serializable id) {
+	public Node createIdNode(Set<String> labels, List<IFRelation> relations, Serializable id, IConverter<?> converter) {
 		if (this.module.checkIdType(id.getClass()))
 			return new Node(id, labels, relations);
 		Node node = new Node(labels, relations);
-		node.getParams().put(this.module.getIdAlias(), id);
+		node.getParams().put(this.module.getIdAlias(), converter.toProperty(id));
 		return node;
-		// TODO properly convert id to String
 	}
 
-	public IDataNode createIdDataNode(Set<String> labels, List<IFRelation> relations, Serializable id, Object data) {
+	public IDataNode createIdDataNode(Set<String> labels, List<IFRelation> relations, Serializable id,
+			IConverter<?> converter, Object data) {
 		if (this.module.checkIdType(id.getClass()))
 			return new DataNode(data, id, labels, relations);
 		DataNode node = new DataNode(data, labels, relations);
-		node.getParams().put(this.module.getIdAlias(), id);
+		node.getParams().put(this.module.getIdAlias(), converter.toProperty(id));
 		return node;
-		// TODO properly convert id to String
 	}
 
 	public IDataNode createDataNode(Set<String> labels, List<IFRelation> relations, Object data) {
@@ -52,26 +52,36 @@ public class FilterFactory {
 		return new Relation(direction);
 	}
 
-	public Relation createIdRelation(Direction direction, Serializable id) {
+	public Relation createIdRelation(Direction direction, Serializable id, IConverter<?> converter) {
 		if (this.module.checkIdType(id.getClass()))
 			return new Relation(id, direction);
 		Relation node = new Relation(direction);
-		node.getParams().put("id", id);
+		node.getParams().put(this.module.getIdAlias(), converter.toProperty(id));
 		return node;
-		// TODO properly convert id to String
 	}
 
-	public IDataRelation createIdDataRelation(Direction direction, Serializable id, Object data) {
+	public IDataRelation createIdDataRelation(Direction direction, Serializable id, IConverter<?> converter,
+			Object data) {
 		if (this.module.checkIdType(id.getClass()))
 			return new DataRelation(data, id, direction);
 		DataRelation node = new DataRelation(data, direction);
-		node.getParams().put("id", id);
+		node.getParams().put(this.module.getIdAlias(), converter.toProperty(id));
 		return node;
-		// TODO properly convert id to String
 	}
 
 	public IDataRelation createDataRelation(Direction direction, Object data) {
 		return new DataRelation(data, direction);
+	}
+
+	// from node deletion process effected relations
+	public IFRelation createEffectedFilter(Serializable id) {
+		Relation relation = new Relation(Direction.BIDIRECTIONAL);
+		relation.setStart(new Node(id, null, null));
+		Node target = new Node(null, null);
+		target.setReturned(true);
+		relation.setTarget(target);
+		relation.setReturned(true);
+		return relation;
 	}
 
 	protected interface IDataNode extends IFNode, IDataContainer, ILabeled, IReturned {
