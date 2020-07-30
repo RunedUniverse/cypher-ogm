@@ -132,17 +132,16 @@ public final class CoreSession implements Session {
 	@Override
 	public void delete(Object entity) {
 		// deletion sequence
+		// erase relation
 		/*
-		 * MATCH (a)-[b:PLAYS]->(c) MATCH (a)-[d:CREATED]->(c) WHERE id(a)=25 RETURN
-		 * id(b) as id_b,b.`_id` as eid_b, id(d) as id_d,d.`_id` as eid_d
+		 * match ()-[a]-() where id(a) = 57 delete a
 		 */
-		// erase relations
+		// erase node
 		/*
-		 * unwind [57, 122] as v_ match ()-[a]-() where id(a) = v_ delete a
+		 * MATCH (a)-[b]-() WHERE id(a)=25 RETURN id(b) as id_b,b.`_id` as eid_b
 		 */
-		// erase nodes
 		/*
-		 * unwind [26, 29, 92] as v_ match (a) where id(a) = v_ detach delete a
+		 * match (a) where id(a) = 25 detach delete a
 		 */
 
 		// TODO delete
