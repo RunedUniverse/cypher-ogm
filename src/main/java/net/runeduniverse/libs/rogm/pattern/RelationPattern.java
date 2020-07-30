@@ -2,6 +2,7 @@ package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
@@ -11,6 +12,7 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.EndNode;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
@@ -136,7 +138,12 @@ public class RelationPattern extends APattern {
 
 	@Override
 	public IDeleteContainer delete(Object entity) throws Exception {
-		return new DeleteContainer(this, entity, null, null);// TODO delete
+		IBuffer.Entry entry = this.storage.getBuffer().getEntry(entity);
+		if (entry == null)
+			throw new Exception("Relation-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
+		Relation relation = this.storage.getFactory().createIdRelation(Direction.BIDIRECTIONAL, entry.getId(), null);
+		relation.setReturned(true);
+		return new DeleteContainer(this, entity, entry.getId(), null, relation);// TODO delete
 	}
 
 	public IDataRelation createFilter(Object entity, IDataNode caller, Direction direction,
@@ -224,6 +231,11 @@ public class RelationPattern extends APattern {
 		IDataNode dataNode = node.createFilter(field.get(entity), includedData, false);
 		dataNode.getRelations().add(relation);
 		return dataNode;
+	}
+
+	@Override
+	// Irrelevant as the relation will also get deleted
+	public void deleteRelations(Object entity, Collection<Object> delEntries) {
 	}
 
 }

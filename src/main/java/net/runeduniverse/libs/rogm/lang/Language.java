@@ -1,9 +1,11 @@
 package net.runeduniverse.libs.rogm.lang;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -23,6 +25,8 @@ public interface Language {
 		ISaveMapper save(IDataContainer container) throws Exception;
 
 		IDeleteMapper delete(IFilter filter, IFRelation relation) throws Exception;
+
+		String deleteRelations(Collection<Serializable> ids);
 	}
 
 	public interface IMapper {
@@ -39,5 +43,7 @@ public interface Language {
 
 	public interface IDeleteMapper extends IMapper {
 		String effectedQry();
+
+		void updateBuffer(IBuffer buffer, Serializable deletedId, List<Map<String, Object>> effectedIds);
 	}
 }

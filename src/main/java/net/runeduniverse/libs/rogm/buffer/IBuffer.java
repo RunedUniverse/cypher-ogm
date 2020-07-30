@@ -1,8 +1,7 @@
 package net.runeduniverse.libs.rogm.buffer;
 
 import java.io.Serializable;
-import java.util.List;
-
+import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
@@ -36,7 +35,7 @@ public interface IBuffer {
 
 	void addEntry(Entry entry);
 
-	void addEntry(Serializable id, Serializable entityId, Object entity);
+	void addEntry(Serializable id, Serializable entityId, Object entity, IPattern pattern);
 
 	void updateEntry(Serializable id, Serializable entityId, Object entity) throws Exception;
 
@@ -44,7 +43,11 @@ public interface IBuffer {
 
 	void removeEntry(Object entity);
 
-	List<Entry> getAllEntries();
+	void eraseRelations(Serializable deletedId, Serializable relationId, Serializable nodeId);
+
+	Entry getEntry(Object entity);
+
+	Collection<Entry> getAllEntries();
 
 	@Data
 	@AllArgsConstructor
@@ -53,12 +56,14 @@ public interface IBuffer {
 		private Serializable entityId;
 		private Object entity;
 		private Class<?> type;
+		private IPattern pattern;
 
-		public Entry(IData data, Object entity) {
+		public Entry(IData data, Object entity, IPattern pattern) {
 			this.id = data.getId();
 			this.entityId = data.getEntityId();
 			this.entity = entity;
 			this.type = entity.getClass();
+			this.pattern = pattern;
 		}
 	}
 }

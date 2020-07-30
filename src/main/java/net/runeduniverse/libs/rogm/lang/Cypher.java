@@ -2,6 +2,7 @@ package net.runeduniverse.libs.rogm.lang;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -36,6 +38,13 @@ public class Cypher implements Language {
 		@Override
 		public ILoadMapper load(IFilter filter) throws Exception {
 			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
+			return new Mapper(filter, _load(map, filter, true), map);
+		}
+
+		private String _load(DataMap<IFilter, String, FilterStatus> map, IFilter filter, boolean all) throws Exception {
+			if (filter == null)
+				return null;
+
 			StringVariableGenerator gen = new StringVariableGenerator();
 			_parse(map, filter, gen, false);
 
@@ -43,17 +52,21 @@ public class Cypher implements Language {
 			List<String> rt = new ArrayList<>();
 
 			map.forEach((f, c) -> {
-				if (f instanceof IReturned && ((IReturned) f).isReturned())
-					rt.add(_returnId(c) + ", " + _returnLabel(c, f instanceof IFNode) + ", " + c);
+				if (f instanceof IReturned && ((IReturned) f).isReturned()) {
+					rt.add(_returnId(c));
+					if (all)
+						rt.add(_returnLabel(c, f instanceof IFNode) + ',' + c);
+				}
 			});
 
 			if (rt.isEmpty()) {
 				String c = map.get(filter);
-				qry.append(_returnId(c) + ", " + _returnLabel(c, filter instanceof IFNode) + ", " + c);
+				qry.append(_returnId(c));
+				if (all)
+					qry.append(',' + _returnLabel(c, filter instanceof IFNode) + ',' + c);
 			} else
-				qry.append(String.join(", ", rt));
-
-			return new Mapper(filter, qry.append(';').toString(), map);
+				qry.append(String.join(",", rt));
+			return qry.append(';').toString();
 		}
 
 		@Override
@@ -79,24 +92,51 @@ public class Cypher implements Language {
 			});
 
 			// SET + RETURN
-			return new Mapper(node, qry.append("SET ").append(String.join(", ", st)).append("\nRETURN ")
-					.append(String.join(", ", rt)).append(';').toString(), map);
+			return new Mapper(node, qry.append("SET ").append(String.join(",", st)).append("\nRETURN ")
+					.append(String.join(",", rt)).append(';').toString(), map);
 		}
 
 		@Override
-		public IDeleteMapper delete(IFilter filter) throws Exception {
-			// TODO delete
-			return null;
+		public IDeleteMapper delete(IFilter filter, IFRelation relation) throws Exception {
+			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
+			StringVariableGenerator gen = new StringVariableGenerator();
+			_parse(map, filter, gen, false);
+
+			StringBuilder qryBuilder = _select(map);
+			List<String> dl = new ArrayList<>();
+
+			map.forEach((f, c) -> {
+				if (f instanceof IReturned && ((IReturned) f).isReturned())
+					if (f instanceof IFNode)
+						dl.add("DETACH DELETE " + c);
+					else
+						dl.add("DELETE " + c);
+			});
+
+			if (!dl.isEmpty())
+				qryBuilder.append(String.join("\n", dl));
+
+			DataMap<IFilter, String, FilterStatus> effectedMap = new DataHashMap<>();
+			return new Mapper(qryBuilder.append(';').toString(), this._load(effectedMap, relation, false), effectedMap);
+		}
+
+		@Override
+		public String deleteRelations(Collection<Serializable> ids) {
+			Set<String> arr = new HashSet<String>();
+			for (Serializable s : ids)
+				arr.add(s.toString());
+
+			return "UNWIND [" + String.join(",", arr) + "] AS v_ MATCH ()-[a]-() WHERE id(a) = v_ DELETE a";
 		}
 
 		private String _returnId(String code) {
-			return "id(" + code + ") as id_" + code + ',' + code + ".`" + this.module.getIdAlias() + "` as eid_" + code;
+			return "id(" + code + ") AS id_" + code + ',' + code + ".`" + this.module.getIdAlias() + "` AS eid_" + code;
 		}
 
 		private String _returnLabel(String code, boolean isNode) {
 			if (isNode)
-				return "labels(" + code + ") as labels_" + code;
-			return "type(" + code + ") as labels_" + code;
+				return "labels(" + code + ") AS labels_" + code;
+			return "type(" + code + ") AS labels_" + code;
 		}
 
 		private void _parse(DataMap<IFilter, String, FilterStatus> map, IFilter filter, StringVariableGenerator gen,
@@ -114,8 +154,10 @@ public class Cypher implements Language {
 
 			if (filter instanceof IFNode) {
 				_checkIdType(filter);
-				for (IFilter f : ((IFNode) filter).getRelations())
-					_parse(map, f, gen, false);
+				IFNode node = (IFNode) filter;
+				if (node.getRelations() != null)
+					for (IFilter f : node.getRelations())
+						_parse(map, f, gen, false);
 			} else if (filter instanceof IFRelation) {
 				_checkIdType(filter);
 				_parse(map, ((IFRelation) filter).getStart(), gen, true);
@@ -191,6 +233,7 @@ public class Cypher implements Language {
 				return "CREATE ";
 			case UPDATE:
 			case MATCH:
+			case DELETE:
 			default:
 				return "MATCH ";
 			}
@@ -247,8 +290,9 @@ public class Cypher implements Language {
 				// PRINT LABELS
 				if (filter instanceof ILabeled) {
 					ILabeled holder = (ILabeled) filter;
-					for (String label : holder.getLabels())
-						builder.append(':' + label.replace(' ', '_'));
+					if (holder.getLabels() != null)
+						for (String label : holder.getLabels())
+							builder.append(':' + label.replace(' ', '_'));
 				}
 				// PRINT DATA
 				if (filter instanceof IParameterized) {
@@ -303,8 +347,9 @@ public class Cypher implements Language {
 
 	protected static class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper {
 
-		private final IFilter primary;
+		private IFilter primary;
 		private String qry;
+		private String effectedQry;
 		private DataMap<IFilter, String, FilterStatus> map;
 
 		protected Mapper(IFilter primaryFilter, String qry, DataMap<IFilter, String, FilterStatus> map) {
@@ -313,9 +358,20 @@ public class Cypher implements Language {
 			this.map = map;
 		}
 
+		protected Mapper(String qry, String effectedQry, DataMap<IFilter, String, FilterStatus> map) {
+			this.qry = qry;
+			this.effectedQry = effectedQry;
+			this.map = map;
+		}
+
 		@Override
 		public String qry() {
-			return qry;
+			return this.qry;
+		}
+
+		@Override
+		public String effectedQry() {
+			return this.effectedQry;
 		}
 
 		@Override
@@ -374,8 +430,25 @@ public class Cypher implements Language {
 		}
 
 		@Override
+		public void updateBuffer(IBuffer buffer, Serializable deletedId, List<Map<String, Object>> effectedIds) {
+			for (Map<String, Object> ids : effectedIds)
+				this.map.forEach((f, c) -> {
+					if (!(f instanceof IFRelation))
+						return;
+					IFRelation rel = (IFRelation) f;
+					String code = "id_" + this.map.get(rel.getStart());
+					if (!ids.containsKey(code))
+						code = "id_" + this.map.get(rel.getTarget());
+					buffer.eraseRelations(deletedId, (Serializable) ids.get("id_" + this.map.get(f)),
+							(Serializable) ids.get(code));
+				});
+		}
+
+		@Override
 		public String toString() {
-			return this.qry;
+			if (this.effectedQry == null)
+				return "QRY: " + this.qry;
+			return "QRY: " + this.qry + " EFFECTED QRY: " + this.effectedQry;
 		}
 	}
 

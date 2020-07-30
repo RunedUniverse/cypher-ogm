@@ -73,6 +73,17 @@ public class FilterFactory {
 		return new DataRelation(data, direction);
 	}
 
+	// from node deletion process effected relations
+	public IFRelation createEffectedFilter(Serializable id) {
+		Relation relation = new Relation(Direction.BIDIRECTIONAL);
+		relation.setStart(new Node(id, null, null));
+		Node target = new Node(null, null);
+		target.setReturned(true);
+		relation.setTarget(target);
+		relation.setReturned(true);
+		return relation;
+	}
+
 	protected interface IDataNode extends IFNode, IDataContainer, ILabeled, IReturned {
 		void setFilterType(FilterType type);
 

@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,6 +16,7 @@ import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
 import net.runeduniverse.libs.rogm.querying.FilterType;
@@ -107,7 +109,14 @@ public class NodePattern extends APattern {
 
 	@Override
 	public IDeleteContainer delete(Object entity) throws Exception {
-		return new DeleteContainer(this, entity, null, null);// TODO delete
+		IBuffer.Entry entry = this.storage.getBuffer().getEntry(entity);
+		if (entry == null)
+			throw new Exception("Node-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
+
+		Node node = this.storage.getFactory().createIdNode(null, null, entry.getId(), null);
+		node.setReturned(true);
+		return new DeleteContainer(this, entity, entry.getId(),
+				this.storage.getFactory().createEffectedFilter(entry.getId()), node);
 	}
 
 	public IDataNode createFilter(Object entity, Map<Object, IDataContainer> includedData, boolean includeRelations)
@@ -145,5 +154,11 @@ public class NodePattern extends APattern {
 				field.putValue(entity, value);
 				return;
 			}
+	}
+
+	@Override
+	public void deleteRelations(Object entity, Collection<Object> delEntries) {
+		for (FieldPattern field : this.relFields)
+			field.removeValues(entity, delEntries);
 	}
 }

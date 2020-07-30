@@ -146,4 +146,16 @@ public class FieldPattern {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public void removeValues(Object entity, Collection<Object> deletedEntities) {
+		try {
+			if (this.collection) {
+				((Collection<Object>) this.field.get(entity)).removeAll(deletedEntities);
+				return;
+			}
+			this.field.set(entity, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

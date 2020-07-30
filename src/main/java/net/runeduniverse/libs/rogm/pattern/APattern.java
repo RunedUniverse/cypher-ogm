@@ -161,19 +161,14 @@ public abstract class APattern implements IPattern {
 				e.printStackTrace();
 			}
 	}
-	
+
 	@RequiredArgsConstructor
 	@Getter
-	protected class DeleteContainer implements IDeleteContainer{
+	protected class DeleteContainer implements IDeleteContainer {
 		private final IPattern pattern;
 		private final Object entity;
+		private final Serializable deletedId;
 		private final IFRelation effectedFilter;
 		private final IFilter deleteFilter;
-
-		@Override
-		public void postDelete() {
-			this.pattern.postDelete(entity);
-		}
-		
 	}
 }

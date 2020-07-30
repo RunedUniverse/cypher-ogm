@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +27,8 @@ public interface IPattern {
 	ISaveContainer save(Object entity) throws Exception;
 
 	IDeleteContainer delete(Object entity) throws Exception;
+
+	void deleteRelations(Object entity, Collection<Object> deletedEntities);
 
 	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
 
@@ -84,6 +87,6 @@ public interface IPattern {
 
 		IFilter getDeleteFilter();
 
-		void postDelete();
+		Serializable getDeletedId();
 	}
 }

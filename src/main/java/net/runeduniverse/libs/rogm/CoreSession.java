@@ -116,6 +116,7 @@ public final class CoreSession implements Session {
 		try {
 			ISaveContainer container = this.storage.save(object);
 			Language.ISaveMapper mapper = this.lang.save(container.getDataContainer());
+			System.out.println("[SAVE] " + mapper.qry());
 			mapper.updateObjectIds(this.storage, this.module.execute(mapper.qry()));
 			container.postSave();
 		} catch (Exception e) {
@@ -146,10 +147,12 @@ public final class CoreSession implements Session {
 
 		// TODO delete
 		try {
-			
 			IPattern.IDeleteContainer container = this.storage.delete(entity);
-			
-			Language.IDeleteMapper mapper = this.lang.delete(container.getDeleteFilter(), container.getEffectedFilter());
+			Language.IDeleteMapper mapper = this.lang.delete(container.getDeleteFilter(),
+					container.getEffectedFilter());
+			mapper.updateBuffer(this.storage.getBuffer(), container.getDeletedId(),
+					this.module.query(mapper.effectedQry()));
+			this.module.execute(mapper.qry());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
