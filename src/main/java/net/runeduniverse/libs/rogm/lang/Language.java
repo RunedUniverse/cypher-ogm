@@ -10,7 +10,6 @@ import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -22,11 +21,11 @@ public interface Language {
 	public interface Instance {
 		ILoadMapper load(IFilter filter) throws Exception;
 
-		ISaveMapper save(IDataContainer container) throws Exception;
+		ISaveMapper save(IDataContainer container, IFilter filter) throws Exception;
 
 		IDeleteMapper delete(IFilter filter, IFRelation relation) throws Exception;
 
-		String deleteRelations(Collection<Serializable> ids);
+		String deleteRelations(Collection<String> ids);
 	}
 
 	public interface IMapper {
@@ -38,7 +37,11 @@ public interface Language {
 	}
 
 	public interface ISaveMapper extends IMapper {
-		<ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids);
+		String effectedQry();
+
+		<ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids);
+
+		Collection<String> reduceIds(IBuffer buffer, List<Map<String, Object>> effectedIds);
 	}
 
 	public interface IDeleteMapper extends IMapper {

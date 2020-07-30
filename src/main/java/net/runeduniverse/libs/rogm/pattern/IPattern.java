@@ -79,6 +79,8 @@ public interface IPattern {
 	public interface ISaveContainer {
 		IDataContainer getDataContainer() throws Exception;
 
+		IFilter getRelatedFilter() throws Exception;
+
 		void postSave();
 	}
 

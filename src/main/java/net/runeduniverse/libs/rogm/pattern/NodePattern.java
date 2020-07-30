@@ -17,6 +17,7 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
 import net.runeduniverse.libs.rogm.querying.FilterType;
@@ -103,6 +104,14 @@ public class NodePattern extends APattern {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+			}
+
+			@Override
+			public IFilter getRelatedFilter() throws Exception {
+				Entry entry = storage.getBuffer().getEntry(entity);
+				if (entry == null)
+					return null;
+				return search(entry.getId());
 			}
 		};
 	}

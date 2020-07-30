@@ -18,7 +18,6 @@ import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.*;
 import net.runeduniverse.libs.rogm.util.*;
 
@@ -69,7 +68,7 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public ISaveMapper save(IDataContainer node) throws Exception {
+		public ISaveMapper save(IDataContainer node, IFilter filter) throws Exception {
 			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 			StringVariableGenerator gen = new StringVariableGenerator();
 			_parse(map, node, gen, false);
@@ -80,19 +79,22 @@ public class Cypher implements Language {
 			List<String> rt = new ArrayList<>();
 
 			map.forEach((f, c) -> {
+				rt.add(_returnId(c));
 				try {
 					IDataContainer d = (IDataContainer) f;
 					if (d.getData() != null)
 						st.add(c + '=' + parser.serialize(d.getData()));
-					rt.add(_returnId(c));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			});
 
 			// SET + RETURN
-			return new Mapper(node, qry.append("SET ").append(String.join(",", st)).append("\nRETURN ")
-					.append(String.join(",", rt)).append(';').toString(), map);
+			DataMap<IFilter, String, FilterStatus> effectedMap = new DataHashMap<>();
+			return new Mapper(
+					node, qry.append("SET ").append(String.join(",", st)).append("\nRETURN ")
+							.append(String.join(",", rt)).append(';').toString(),
+					this._load(effectedMap, filter, false), map, effectedMap);
 		}
 
 		@Override
@@ -120,12 +122,8 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public String deleteRelations(Collection<Serializable> ids) {
-			Set<String> arr = new HashSet<String>();
-			for (Serializable s : ids)
-				arr.add(s.toString());
-
-			return "UNWIND [" + String.join(",", arr) + "] AS id MATCH ()-[a]-() WHERE id(a) = id DELETE a";
+		public String deleteRelations(Collection<String> ids) {
+			return "UNWIND [" + String.join(",", ids) + "] AS id MATCH ()-[a]-() WHERE id(a) = id DELETE a;";
 		}
 
 		private String _returnId(String code) {
@@ -167,9 +165,10 @@ public class Cypher implements Language {
 
 		private StringBuilder _select(DataMap<IFilter, String, FilterStatus> map) throws Exception {
 			StringBuilder matchBuilder = new StringBuilder();
+			StringBuilder createBuilder = new StringBuilder();
 			StringBuilder mergeBuilder = new StringBuilder();
 			StringBuilder optionalMatchBuilder = new StringBuilder();
-			StringBuilder whereBuilder = new StringBuilder();
+			List<String> where = new ArrayList<>();
 
 			map.forEach((f, code, modifier) -> {
 				StringBuilder activeBuilder = null;
@@ -180,7 +179,7 @@ public class Cypher implements Language {
 						&& ((IOptional) f).isOptional())
 					optional = true;
 
-				_where(map, whereBuilder, f, code, modifier);
+				_where(map, where, f, code, modifier);
 
 				if (f == null || modifier.equals(FilterStatus.PRINTED)
 						|| optional && modifier.equals(FilterStatus.PRE_PRINTED))
@@ -190,6 +189,8 @@ public class Cypher implements Language {
 					activeBuilder = optionalMatchBuilder.append("OPTIONAL ");
 				else if (isMerge)
 					activeBuilder = mergeBuilder;
+				else if (f.getFilterType() == FilterType.CREATE)
+					activeBuilder = createBuilder;
 				else
 					activeBuilder = matchBuilder;
 
@@ -206,7 +207,9 @@ public class Cypher implements Language {
 					activeBuilder.append("()");
 				activeBuilder.append('\n');
 			});
-			return matchBuilder.append(whereBuilder).append(mergeBuilder).append(optionalMatchBuilder);
+			if (!where.isEmpty())
+				matchBuilder.append("WHERE " + String.join(" AND ", where) + '\n');
+			return matchBuilder.append(createBuilder).append(mergeBuilder).append(optionalMatchBuilder);
 		}
 
 		private boolean _isMerge(IFilter filter) {
@@ -244,13 +247,13 @@ public class Cypher implements Language {
 				throw new Exception("IFilter ID <" + clazz + "> not supported");
 		}
 
-		private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code,
+		private void _where(DataMap<IFilter, String, FilterStatus> map, List<String> where, IFilter f, String code,
 				FilterStatus modifier) {
 			if (f == null || !(f.getFilterType() != FilterType.CREATE && IIdentified.identify(f)
 					&& !modifier.equals(FilterStatus.EXTENSION_PRINTED)))
 				return;
 			IIdentified<?> i = (IIdentified<?>) f;
-			builder.append("WHERE id(" + code + ")=" + ((Number) i.getId()).longValue() + "\n");
+			where.add("id(" + code + ")=" + ((Number) i.getId()).longValue());
 			map.setData(f, FilterStatus.EXTENSION_PRINTED);
 		}
 
@@ -349,11 +352,23 @@ public class Cypher implements Language {
 		private String qry;
 		private String effectedQry;
 		private DataMap<IFilter, String, FilterStatus> map;
+		private DataMap<IFilter, String, FilterStatus> effectedMap;
+		// working data
+		private Collection<String> persistIds = new HashSet<>();
 
 		protected Mapper(IFilter primaryFilter, String qry, DataMap<IFilter, String, FilterStatus> map) {
 			this.primary = primaryFilter;
 			this.qry = qry;
 			this.map = map;
+		}
+
+		protected Mapper(IFilter primaryFilter, String qry, String effectedQry,
+				DataMap<IFilter, String, FilterStatus> map, DataMap<IFilter, String, FilterStatus> effectedMap) {
+			this.primary = primaryFilter;
+			this.qry = qry;
+			this.effectedQry = effectedQry;
+			this.map = map;
+			this.effectedMap = effectedMap;
 		}
 
 		protected Mapper(String qry, String effectedQry, DataMap<IFilter, String, FilterStatus> map) {
@@ -373,19 +388,45 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public <ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids) {
+		public <ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids) {
 			this.map.forEach((filter, code) -> {
+				if (filter instanceof IFRelation) {
+					Object s = ids.get("id_" + code);
+					if (s != null)
+						this.persistIds.add(s.toString());
+				}
 				if (filter instanceof IDataContainer) {
 					Object data = ((IDataContainer) filter).getData();
 					if (data == null)
 						return;
 					try {
-						storage.getBuffer().updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data);
+						buffer.updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			});
+		}
+
+		@Override
+		public Collection<String> reduceIds(IBuffer buffer, List<Map<String, Object>> effectedIds) {
+			Collection<String> delIds = new HashSet<>();
+
+			for (Map<String, Object> ids : effectedIds) {
+				this.effectedMap.forEach((filter, code) -> {
+					if (!(filter instanceof IFNode))
+						return;
+
+					for (IFRelation rel : ((IFNode) filter).getRelations()) {
+						Object s = ids.get("id_" + this.effectedMap.get(rel));
+						if (s == null)
+							continue;
+						delIds.add(s.toString());
+					}
+				});
+			}
+			delIds.removeAll(persistIds);
+			return delIds;
 		}
 
 		@Override

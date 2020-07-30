@@ -133,6 +133,11 @@ public class RelationPattern extends APattern {
 						e.printStackTrace();
 					}
 			}
+
+			@Override
+			public IFilter getRelatedFilter() {
+				return null;
+			}
 		};
 	}
 

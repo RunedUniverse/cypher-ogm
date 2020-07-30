@@ -103,20 +103,15 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void save(Object object) {
-		// deletion sequence (unmapped/removed relations)
-		/*
-		 * MATCH (a)-[b:PLAYS]->(c) MATCH (a)-[d:CREATED]->(c) WHERE id(a)=25 RETURN
-		 * id(b) as id_b,b.`_id` as eid_b, id(d) as id_d,d.`_id` as eid_d
-		 */
-		// compare ids with buffer => identify erasable ids
-		// erase relations
-		/*
-		 * unwind [57, 122] as v_ match ()-[a]-() where id(a) = v_ delete a
-		 */
 		try {
 			ISaveContainer container = this.storage.save(object);
-			Language.ISaveMapper mapper = this.lang.save(container.getDataContainer());
-			mapper.updateObjectIds(this.storage, this.module.execute(mapper.qry()));
+			Language.ISaveMapper mapper = this.lang.save(container.getDataContainer(), container.getRelatedFilter());
+			mapper.updateObjectIds(this.storage.getBuffer(), this.module.execute(mapper.qry()));
+			if (mapper.effectedQry() != null) {
+				Collection<String> ids = mapper.reduceIds(this.storage.getBuffer(),
+						this.module.query(mapper.effectedQry()));
+				this.module.execute(this.lang.deleteRelations(ids));
+			}
 			container.postSave();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -131,20 +126,6 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void delete(Object entity) {
-		// deletion sequence
-		// erase relation
-		/*
-		 * match ()-[a]-() where id(a) = 57 delete a
-		 */
-		// erase node
-		/*
-		 * MATCH (a)-[b]-() WHERE id(a)=25 RETURN id(b) as id_b,b.`_id` as eid_b
-		 */
-		/*
-		 * match (a) where id(a) = 25 detach delete a
-		 */
-
-		// TODO delete
 		try {
 			IPattern.IDeleteContainer container = this.storage.delete(entity);
 			Language.IDeleteMapper mapper = this.lang.delete(container.getDeleteFilter(),

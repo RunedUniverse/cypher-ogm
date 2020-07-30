@@ -15,6 +15,8 @@ public interface Module {
 	// but is provided if needed
 	Instance<?> build(Configuration cnf);
 
+	Class<?> idType();
+
 	boolean checkIdType(Class<?> type);
 
 	String getIdAlias();

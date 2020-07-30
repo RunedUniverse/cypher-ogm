@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import net.runeduniverse.libs.rogm.model.Artist;
+import net.runeduniverse.libs.rogm.model.Company;
+import net.runeduniverse.libs.rogm.model.Game;
 import net.runeduniverse.libs.rogm.model.Person;
 import net.runeduniverse.libs.rogm.model.Player;
 import net.runeduniverse.libs.rogm.model.Song;
@@ -123,7 +125,7 @@ public class SessionTest extends ATest {
 		session.save(player);
 		session.delete(player);
 	}
-	
+
 	@Test
 	public void createAndDeleteEnnio() {
 		Artist ennio = new Artist();
@@ -134,6 +136,18 @@ public class SessionTest extends ATest {
 		ennio.getPlayed().add(s);
 		session.save(ennio);
 		session.delete(ennio);
+	}
+
+	@Test
+	public void loadCompany() {
+		Game game = new Game();
+		game.setName("just another USELESS title");
+		Company company = session.load(Company.class, 8L);
+		company.getGames().add(game);
+		session.save(company);
+		company.getGames().remove(game);
+		session.save(company);
+		session.delete(game);
 	}
 
 	/*
