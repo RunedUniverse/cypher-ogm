@@ -123,6 +123,18 @@ public class SessionTest extends ATest {
 		session.save(player);
 		session.delete(player);
 	}
+	
+	@Test
+	public void createAndDeleteEnnio() {
+		Artist ennio = new Artist();
+		ennio.setFirstName("Ennio");
+		ennio.setLastName("Morricone");
+		Song s = new Song("C’era una volta il West");
+		ennio.getCreated().add(s);
+		ennio.getPlayed().add(s);
+		session.save(ennio);
+		session.delete(ennio);
+	}
 
 	/*
 	 * Outdated until Advanced Filter full implementation

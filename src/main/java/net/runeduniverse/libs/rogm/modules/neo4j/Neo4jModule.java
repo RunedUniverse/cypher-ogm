@@ -100,6 +100,7 @@ public class Neo4jModule implements Module {
 
 		@Override
 		public List<Map<String, Object>> query(String qry) {
+			System.out.println("[[QUERY]]\n" + qry);
 			List<Map<String, Object>> lst = new ArrayList<Map<String, Object>>();
 			for (Record record : _query(qry))
 				lst.add(record.asMap());
@@ -130,7 +131,7 @@ public class Neo4jModule implements Module {
 		@Override
 		public Map<String, Serializable> execute(String qry) {
 			// -1 -> not found
-
+			System.out.println("[[EXECUTE]]\n" + qry);
 			try (Session session = driver.session()) {
 				return session.writeTransaction(new TransactionWork<Map<String, Serializable>>() {
 

@@ -116,7 +116,6 @@ public final class CoreSession implements Session {
 		try {
 			ISaveContainer container = this.storage.save(object);
 			Language.ISaveMapper mapper = this.lang.save(container.getDataContainer());
-			System.out.println("[SAVE] " + mapper.qry());
 			mapper.updateObjectIds(this.storage, this.module.execute(mapper.qry()));
 			container.postSave();
 		} catch (Exception e) {

@@ -52,7 +52,7 @@ public abstract class APattern implements IPattern {
 				this.preSave = method;
 				continue;
 			}
-			if (this.preDelete == null && method.isAnnotationPresent(PreDelete.class)) { // TODO implement
+			if (this.preDelete == null && method.isAnnotationPresent(PreDelete.class)) {
 				this.preDelete = method;
 				continue;
 			}
@@ -64,7 +64,7 @@ public abstract class APattern implements IPattern {
 				this.postSave = method;
 				continue;
 			}
-			if (this.postDelete == null && method.isAnnotationPresent(PostDelete.class)) // TODO implement
+			if (this.postDelete == null && method.isAnnotationPresent(PostDelete.class))
 				this.postDelete = method;
 		}
 	}

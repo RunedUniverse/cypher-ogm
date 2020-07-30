@@ -10,7 +10,6 @@ import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
@@ -126,7 +125,7 @@ public class Cypher implements Language {
 			for (Serializable s : ids)
 				arr.add(s.toString());
 
-			return "UNWIND [" + String.join(",", arr) + "] AS v_ MATCH ()-[a]-() WHERE id(a) = v_ DELETE a";
+			return "UNWIND [" + String.join(",", arr) + "] AS id MATCH ()-[a]-() WHERE id(a) = id DELETE a";
 		}
 
 		private String _returnId(String code) {
@@ -326,7 +325,6 @@ public class Cypher implements Language {
 		}
 	}
 
-	@NoArgsConstructor
 	@AllArgsConstructor
 	protected static class FilterStatus {
 		public static final FilterStatus INITIALIZED = new FilterStatus(1);

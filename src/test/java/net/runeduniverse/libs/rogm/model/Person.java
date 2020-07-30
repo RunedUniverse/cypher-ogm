@@ -4,8 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import net.runeduniverse.libs.rogm.annotations.PostDelete;
 import net.runeduniverse.libs.rogm.annotations.PostLoad;
 import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
+import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 
 @NoArgsConstructor
@@ -42,5 +44,15 @@ public class Person extends AEntity {
 	@PostLoad
 	private void postLoad() {
 		System.out.println("[POST-LOAD] " + toString());
+	}
+
+	@PreDelete
+	public void preDelete() {
+		System.out.println("[PRE-DELETE] " + toString());
+	}
+
+	@PostDelete
+	public void postDelete() {
+		System.out.println("[POST-DELETE] " + toString());
 	}
 }

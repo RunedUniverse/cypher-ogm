@@ -11,7 +11,10 @@ import net.runeduniverse.libs.rogm.annotations.IConverter.UUIDConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
+import net.runeduniverse.libs.rogm.annotations.PostLoad;
+import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
+import net.runeduniverse.libs.rogm.annotations.PreSave;
 
 @Getter
 @NodeEntity
@@ -25,6 +28,21 @@ public class Player {
 
 	@Setter
 	private String name;
+
+	@PreSave
+	private void preSave() {
+		System.out.println("[PRE-SAVE] " + toString());
+	}
+
+	@Post⁮Save
+	private void postSave() {
+		System.out.println("[POST-SAVE] " + toString());
+	}
+
+	@PostLoad
+	private void postLoad() {
+		System.out.println("[POST-LOAD] " + toString());
+	}
 
 	@PreDelete
 	public void preDelete() {

@@ -113,6 +113,8 @@ public class NodePattern extends APattern {
 		if (entry == null)
 			throw new Exception("Node-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
 
+		preDelete(entity);
+
 		Node node = this.storage.getFactory().createIdNode(null, null, entry.getId(), null);
 		node.setReturned(true);
 		return new DeleteContainer(this, entity, entry.getId(),
