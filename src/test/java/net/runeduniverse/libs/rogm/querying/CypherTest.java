@@ -99,22 +99,15 @@ public class CypherTest extends ATest {
 		System.out.println("[CITY]\n" + iLanguage.load(city) + '\n');
 	}
 
-	// CREATE
-	// no id defined => merge
-	// id defined => create/merge
 	@Test
-	public void createArtist() throws Exception {
-		// iLanguage.buildInsert();
-	}
-
-	@Test
-	public void deleteEnnio() throws Exception{
-		FilterNode ennio = new FilterNode(25L);
-		FilterNode song = new FilterNode();
-		ennio.addRelationTo(new FilterRelation().addLabel("PLAYS").setTarget(song).setReturned(true));
-		ennio.addRelationTo(new FilterRelation().addLabel("CREATED").setTarget(song).setReturned(true));
-		
-		
-		System.out.println("[ENNIO]\n" + iLanguage.load(ennio) + '\n');
+	public void deleteEnnio() throws Exception {
+		FilterNode ennio = new FilterNode(25L).setReturned(true);
+		System.out
+				.println(
+						"[ENNIO]\n"
+								+ iLanguage.delete(ennio,
+										new FilterRelation().setDirection(Direction.BIDIRECTIONAL).setStart(ennio)
+												.setTarget(new FilterNode().setReturned(true)).setReturned(true))
+								+ '\n');
 	}
 }

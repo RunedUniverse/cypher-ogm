@@ -448,7 +448,7 @@ public class Cypher implements Language {
 		public String toString() {
 			if (this.effectedQry == null)
 				return "QRY: " + this.qry;
-			return "QRY: " + this.qry + " EFFECTED QRY: " + this.effectedQry;
+			return "QRY: " + this.qry + "\nEFFECTED QRY: " + this.effectedQry;
 		}
 	}
 

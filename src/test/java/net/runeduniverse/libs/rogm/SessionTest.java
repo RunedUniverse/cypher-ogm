@@ -117,6 +117,13 @@ public class SessionTest extends ATest {
 		System.out.println(player.toString());
 	}
 
+	@Test
+	public void createAndDeletePlayer() {
+		Player player = new Player(UUID.randomUUID(), "DUMMY PLAYER");
+		session.save(player);
+		session.delete(player);
+	}
+
 	/*
 	 * Outdated until Advanced Filter full implementation
 	 * 
