@@ -109,10 +109,10 @@ public class CypherTest extends ATest {
 
 	@Test
 	public void deleteEnnio() throws Exception{
-		FilterNode ennio = new FilterNode(25L).setReturned(true);
-		FilterNode song = new FilterNode().setReturned(true);
-		ennio.addRelationTo(new FilterRelation().addLabel("PLAYS").setTarget(song));
-		ennio.addRelationTo(new FilterRelation().addLabel("CREATED").setTarget(song));
+		FilterNode ennio = new FilterNode(25L);
+		FilterNode song = new FilterNode();
+		ennio.addRelationTo(new FilterRelation().addLabel("PLAYS").setTarget(song).setReturned(true));
+		ennio.addRelationTo(new FilterRelation().addLabel("CREATED").setTarget(song).setReturned(true));
 		
 		
 		System.out.println("[ENNIO]\n" + iLanguage.load(ennio) + '\n');

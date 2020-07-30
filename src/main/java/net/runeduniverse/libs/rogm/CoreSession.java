@@ -3,6 +3,8 @@ package net.runeduniverse.libs.rogm;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -53,7 +55,7 @@ public final class CoreSession implements Session {
 			return o;
 
 		try {
-			Collection<T> all = this.loadAll(type, this.storage.search(type, id));
+			Collection<T> all = this.loadAll(type, id);
 			if (all.isEmpty())
 				return null;
 			else
@@ -67,7 +69,17 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type) {
+	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id) {
+		try {
+			return this.loadAll(type, this.storage.search(type, id));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Collections.emptyList();
+	}
+
+	@Override
+	public <T> Collection<T> loadAll(Class<T> type) {
 		try {
 			return loadAll(type, this.storage.search(type));
 		} catch (Exception e) {
@@ -77,7 +89,7 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, IFilter filter) {
+	public <T> Collection<T> loadAll(Class<T> type, IFilter filter) {
 		try {
 			Language.ILoadMapper m = lang.load(filter);
 			IPattern.IDataRecord record = m.parseDataRecord(this.module.queryObject(m.qry()));
@@ -91,6 +103,16 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void save(Object object) {
+		// deletion sequence (unmapped/removed relations)
+		/*
+		 * MATCH (a)-[b:PLAYS]->(c) MATCH (a)-[d:CREATED]->(c) WHERE id(a)=25 RETURN
+		 * id(b) as id_b,b.`_id` as eid_b, id(d) as id_d,d.`_id` as eid_d
+		 */
+		// compare ids with buffer => identify erasable ids
+		// erase relations
+		/*
+		 * unwind [57, 122] as v_ match ()-[a]-() where id(a) = v_ delete a
+		 */
 		try {
 			ISaveContainer container = this.storage.save(object);
 			Language.ISaveMapper mapper = this.lang.save(container.getDataContainer());
@@ -109,6 +131,20 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void delete(Object entity) {
+		// deletion sequence
+		/*
+		 * MATCH (a)-[b:PLAYS]->(c) MATCH (a)-[d:CREATED]->(c) WHERE id(a)=25 RETURN
+		 * id(b) as id_b,b.`_id` as eid_b, id(d) as id_d,d.`_id` as eid_d
+		 */
+		// erase relations
+		/*
+		 * unwind [57, 122] as v_ match ()-[a]-() where id(a) = v_ delete a
+		 */
+		// erase nodes
+		/*
+		 * unwind [26, 29, 92] as v_ match (a) where id(a) = v_ detach delete a
+		 */
+
 		// TODO delete
 		try {
 			Language.IDeleteMapper mapper = this.lang.delete(null);
@@ -120,6 +156,6 @@ public final class CoreSession implements Session {
 	@Override
 	public void deleteAll(Collection<Object> entities) {
 		for (Object e : entities)
-			this.delete(e);		
+			this.delete(e);
 	}
 }
