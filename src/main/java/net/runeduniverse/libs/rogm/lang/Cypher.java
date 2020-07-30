@@ -165,7 +165,7 @@ public class Cypher implements Language {
 					activeBuilder.append("()");
 				activeBuilder.append('\n');
 			});
-			return matchBuilder.append(mergeBuilder).append(whereBuilder).append(optionalMatchBuilder);
+			return matchBuilder.append(whereBuilder).append(mergeBuilder).append(optionalMatchBuilder);
 		}
 
 		private boolean _isMerge(IFilter filter) {
