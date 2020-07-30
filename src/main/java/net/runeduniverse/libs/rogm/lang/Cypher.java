@@ -34,7 +34,7 @@ public class Cypher implements Language {
 		private final Module module;
 
 		@Override
-		public Mapper query(IFilter filter) throws Exception {
+		public ILoadMapper load(IFilter filter) throws Exception {
 			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 			StringVariableGenerator gen = new StringVariableGenerator();
 			_parse(map, filter, gen, false);
@@ -57,7 +57,7 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public Mapper save(IDataContainer node) throws Exception {
+		public ISaveMapper save(IDataContainer node) throws Exception {
 			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 			StringVariableGenerator gen = new StringVariableGenerator();
 			_parse(map, node, gen, false);
@@ -84,7 +84,7 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public IMapper delete(IFilter filter) throws Exception {
+		public IDeleteMapper delete(IFilter filter) throws Exception {
 			// TODO delete
 			return null;
 		}
@@ -139,6 +139,8 @@ public class Cypher implements Language {
 						&& ((IOptional) f).isOptional())
 					optional = true;
 
+				_where(map, whereBuilder, f, code, modifier);
+
 				if (f == null || modifier.equals(FilterStatus.PRINTED)
 						|| optional && modifier.equals(FilterStatus.PRE_PRINTED))
 					return;
@@ -152,16 +154,12 @@ public class Cypher implements Language {
 
 				activeBuilder.append(_prefix(f, isMerge));
 				if (f instanceof IFNode) {
-					_where(map, whereBuilder, f, code, modifier);
-
 					if (!(modifier.equals(FilterStatus.PRE_PRINTED) && optional)) {
 						activeBuilder.append(_filterToString(map, f, true, false, false));
 						map.setData(f, FilterStatus.PRINTED);
 					}
 
 				} else if (f instanceof IFRelation) {
-					_where(map, whereBuilder, f, code, modifier);
-
 					activeBuilder.append(_translateRelation(map, (IFRelation) f, optional, isMerge).toString());
 				} else
 					activeBuilder.append("()");
@@ -206,7 +204,7 @@ public class Cypher implements Language {
 
 		private void _where(DataMap<IFilter, String, FilterStatus> map, StringBuilder builder, IFilter f, String code,
 				FilterStatus modifier) {
-			if (!(f.getFilterType() != FilterType.CREATE && IIdentified.identify(f)
+			if (f == null || !(f.getFilterType() != FilterType.CREATE && IIdentified.identify(f)
 					&& !modifier.equals(FilterStatus.EXTENSION_PRINTED)))
 				return;
 			IIdentified<?> i = (IIdentified<?>) f;
@@ -303,7 +301,7 @@ public class Cypher implements Language {
 		}
 	}
 
-	protected static class Mapper implements Language.IMapper {
+	protected static class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper {
 
 		private final IFilter primary;
 		private String qry;

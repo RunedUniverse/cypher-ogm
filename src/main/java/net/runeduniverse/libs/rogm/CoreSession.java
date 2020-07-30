@@ -14,11 +14,11 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public final class CoreSession implements Session {
 
-	private DatabaseType dbType;
-	private Language.Instance lang;
-	private Parser.Instance parser;
-	private Module.Instance<?> module;
-	private IStorage storage;
+	private final DatabaseType dbType;
+	private final Language.Instance lang;
+	private final Parser.Instance parser;
+	private final Module.Instance<?> module;
+	private final IStorage storage;
 
 	protected CoreSession(Configuration cnf) throws Exception {
 		this.dbType = cnf.getDbType();
@@ -79,7 +79,7 @@ public final class CoreSession implements Session {
 	@Override
 	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, IFilter filter) {
 		try {
-			Language.IMapper m = lang.query(filter);
+			Language.ILoadMapper m = lang.load(filter);
 			IPattern.IDataRecord record = m.parseDataRecord(this.module.queryObject(m.qry()));
 
 			return this.storage.parse(type, record);
@@ -93,7 +93,7 @@ public final class CoreSession implements Session {
 	public void save(Object object) {
 		try {
 			ISaveContainer container = this.storage.save(object);
-			Language.IMapper mapper = this.lang.save(container.getDataContainer());
+			Language.ISaveMapper mapper = this.lang.save(container.getDataContainer());
 			mapper.updateObjectIds(this.storage, this.module.execute(mapper.qry()));
 			container.postSave();
 		} catch (Exception e) {
@@ -102,20 +102,24 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public void saveAll(Collection<Object> objects) {
-		for (Object o : objects)
-			this.save(o);
+	public void saveAll(Collection<Object> entities) {
+		for (Object e : entities)
+			this.save(e);
 	}
 
 	@Override
 	public void delete(Object entity) {
 		// TODO delete
-		
+		try {
+			Language.IDeleteMapper mapper = this.lang.delete(null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void deleteAll(Collection<Object> entities) {
-		// TODO delete
-		
+		for (Object e : entities)
+			this.delete(e);		
 	}
 }

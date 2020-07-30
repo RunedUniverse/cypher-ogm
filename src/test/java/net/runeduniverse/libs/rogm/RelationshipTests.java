@@ -68,7 +68,7 @@ public class RelationshipTests extends ATest {
 	}
 
 	private String _build(Class<?> clazz) throws Exception {
-		return '[' + clazz.getSimpleName() + "]\n" + iLanguage.query(giveFilterNodeOrRelation(clazz, false))
+		return '[' + clazz.getSimpleName() + "]\n" + iLanguage.load(giveFilterNodeOrRelation(clazz, false))
 				+ '\n';
 	}
 

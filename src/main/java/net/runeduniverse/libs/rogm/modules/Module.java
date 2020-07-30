@@ -32,7 +32,7 @@ public interface Module {
 		// returns a Map with the ALIAS as Key and DATA as Value
 		List<Map<String, Data>> queryObject(String qry);
 
-		// returns a Map with the ALIAS and the ID
+		// returns a Map with the ALIAS and the IDs
 		Map<String, Serializable> execute(String qry);
 	}
 

@@ -17,18 +17,26 @@ public interface Language {
 	Instance build(Parser.Instance parser, Module module);
 
 	public interface Instance {
-		IMapper query(IFilter filter) throws Exception;
+		ILoadMapper load(IFilter filter) throws Exception;
 
-		IMapper save(IDataContainer container) throws Exception;
-		
-		IMapper delete(IFilter filter) throws Exception;
+		ISaveMapper save(IDataContainer container) throws Exception;
+
+		IDeleteMapper delete(IFilter filter) throws Exception;
 	}
 
 	public interface IMapper {
 		String qry();
+	}
 
-		<ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids);
-
+	public interface ILoadMapper extends IMapper {
 		IPattern.IDataRecord parseDataRecord(List<Map<String, Data>> records);
+	}
+
+	public interface ISaveMapper extends IMapper {
+		<ID extends Serializable> void updateObjectIds(IStorage storage, Map<String, ID> ids);
+	}
+
+	public interface IDeleteMapper extends IMapper {
+
 	}
 }
