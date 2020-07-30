@@ -68,7 +68,7 @@ public class RelationPattern extends APattern {
 	}
 
 	public IFilter search(Serializable id) throws Exception {
-		return _complete(this.storage.getFactory().createIdRelation(this.direction, id));
+		return _complete(this.storage.getFactory().createIdRelation(this.direction, id, this.idConverter));
 	}
 
 	private Relation _complete(Relation relation) {
@@ -136,18 +136,7 @@ public class RelationPattern extends APattern {
 
 	@Override
 	public IDeleteContainer delete(Object entity) throws Exception {
-		return new IDeleteContainer() {// TODO delete
-
-			@Override
-			public void postDelete() {
-
-			}
-
-			@Override
-			public IFilter getFilter() {
-				return null;
-			}
-		};
+		return new DeleteContainer(this, entity, null, null);// TODO delete
 	}
 
 	public IDataRelation createFilter(Object entity, IDataNode caller, Direction direction,
@@ -160,7 +149,8 @@ public class RelationPattern extends APattern {
 		IDataRelation relation = null;
 		if (this.isIdSet(entity)) {
 			// update (id)
-			relation = this.storage.getFactory().createIdDataRelation(this.direction, this.getId(entity), entity);
+			relation = this.storage.getFactory().createIdDataRelation(this.direction, this.getId(entity),
+					this.idConverter, entity);
 			relation.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)

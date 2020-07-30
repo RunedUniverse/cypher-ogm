@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
+import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface IPattern {
@@ -79,7 +80,9 @@ public interface IPattern {
 	}
 
 	public interface IDeleteContainer {
-		IFilter getFilter();
+		IFRelation getEffectedFilter();
+
+		IFilter getDeleteFilter();
 
 		void postDelete();
 	}

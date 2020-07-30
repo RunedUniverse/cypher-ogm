@@ -10,6 +10,7 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
+import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface Language {
@@ -21,7 +22,7 @@ public interface Language {
 
 		ISaveMapper save(IDataContainer container) throws Exception;
 
-		IDeleteMapper delete(IFilter filter) throws Exception;
+		IDeleteMapper delete(IFilter filter, IFRelation relation) throws Exception;
 	}
 
 	public interface IMapper {
@@ -37,6 +38,6 @@ public interface Language {
 	}
 
 	public interface IDeleteMapper extends IMapper {
-
+		String effectedQry();
 	}
 }

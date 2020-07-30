@@ -14,6 +14,8 @@ import net.runeduniverse.libs.rogm.annotations.PostLoad;
 import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
+import net.runeduniverse.libs.rogm.querying.IFRelation;
+import net.runeduniverse.libs.rogm.querying.IFilter;
 
 @RequiredArgsConstructor
 public abstract class APattern implements IPattern {
@@ -158,5 +160,20 @@ public abstract class APattern implements IPattern {
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
+	}
+	
+	@RequiredArgsConstructor
+	@Getter
+	protected class DeleteContainer implements IDeleteContainer{
+		private final IPattern pattern;
+		private final Object entity;
+		private final IFRelation effectedFilter;
+		private final IFilter deleteFilter;
+
+		@Override
+		public void postDelete() {
+			this.pattern.postDelete(entity);
+		}
+		
 	}
 }

@@ -146,7 +146,10 @@ public final class CoreSession implements Session {
 
 		// TODO delete
 		try {
-			Language.IDeleteMapper mapper = this.lang.delete(null);
+			
+			IPattern.IDeleteContainer container = this.storage.delete(entity);
+			
+			Language.IDeleteMapper mapper = this.lang.delete(container.getDeleteFilter(), container.getEffectedFilter());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

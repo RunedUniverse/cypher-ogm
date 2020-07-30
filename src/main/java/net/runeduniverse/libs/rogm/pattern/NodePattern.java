@@ -67,7 +67,7 @@ public class NodePattern extends APattern {
 	}
 
 	public IFilter search(Serializable id) throws Exception {
-		Node node = this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id);
+		Node node = this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter);
 		node.setPattern(this);
 		node.setReturned(true);
 		for (FieldPattern field : this.relFields)
@@ -107,19 +107,7 @@ public class NodePattern extends APattern {
 
 	@Override
 	public IDeleteContainer delete(Object entity) throws Exception {
-		return new IDeleteContainer() {// TODO delete
-			// TODO delete
-			@Override
-			public void postDelete() {
-				// TODO delete
-				
-			}
-			
-			@Override
-			public IFilter getFilter() {
-				return null;
-			}
-		};
+		return new DeleteContainer(this, entity, null, null);// TODO delete
 	}
 
 	public IDataNode createFilter(Object entity, Map<Object, IDataContainer> includedData, boolean includeRelations)
@@ -133,7 +121,7 @@ public class NodePattern extends APattern {
 		if (this.isIdSet(entity)) {
 			// update (id)
 			node = this.storage.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity),
-					entity);
+					this.idConverter, entity);
 			node.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
