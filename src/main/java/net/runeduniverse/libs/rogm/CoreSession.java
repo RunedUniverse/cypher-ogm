@@ -279,4 +279,15 @@ public final class CoreSession implements Session {
 		for (Object e : entities)
 			this.delete(e);
 	}
+
+	@Override
+	public void unload(Object entity) {
+		this.buffer.removeEntry(entity);
+	}
+
+	@Override
+	public void unloadAll(Collection<Object> entities) {
+		for (Object object : entities)
+			this.unload(object);
+	}
 }

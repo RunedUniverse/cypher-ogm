@@ -49,6 +49,10 @@ public interface Session extends AutoCloseable {
 
 	void deleteAll(Collection<Object> entities);
 
+	void unload(Object entity);
+
+	void unloadAll(Collection<Object> entities);
+
 	public static Session create(Configuration cnf) throws Exception {
 		return new CoreSession(cnf);
 	}
