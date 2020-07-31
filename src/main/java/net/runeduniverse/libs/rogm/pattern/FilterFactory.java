@@ -118,9 +118,11 @@ public class FilterFactory {
 	}
 
 	@Getter
-	protected class Node extends Filter implements IFNode {
+	protected class Node extends Filter implements IFNode, ILazyLoading {
 		protected Set<String> labels = new HashSet<>();
 		protected List<IFRelation> relations = new ArrayList<>();
+		@Setter
+		protected boolean lazy = false;
 
 		private Node(Set<String> labels, List<IFRelation> relations) {
 			this.labels = labels;

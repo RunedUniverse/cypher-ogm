@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -39,7 +40,7 @@ public interface Language {
 	public interface ISaveMapper extends IMapper {
 		String effectedQry();
 
-		<ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids);
+		<ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids, LoadState loadState);
 
 		Collection<String> reduceIds(IBuffer buffer, List<Map<String, Object>> effectedIds);
 	}

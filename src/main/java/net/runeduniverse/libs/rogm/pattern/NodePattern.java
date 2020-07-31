@@ -60,29 +60,37 @@ public class NodePattern extends APattern {
 	}
 
 	public IFilter search(boolean lazy) throws Exception {
-		return this._search(this.storage.getFactory().createNode(this.labels, new ArrayList<>()), lazy);
+		return this._search(this.storage.getFactory().createNode(this.labels, new ArrayList<>()), lazy, false);
 	}
 
 	public IFilter search(Serializable id, boolean lazy) throws Exception {
 		return this._search(
-				this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter), lazy);
+				this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter), lazy,
+				false);
 	}
 
-	private IFNode _search(Node node, boolean lazy) throws Exception {
-		node.setPattern(this);
-		node.setReturned(true);
-		if (!lazy)
-			for (FieldPattern field : this.relFields)
-				node.getRelations().add(field.queryRelation(node));
+	public IFNode search(IFRelation caller, boolean lazy) {
+		// includes ONLY the caller-relation filter
+		Node node = this.storage.getFactory().createNode(this.labels, Arrays.asList(caller));
+		try {
+			return this._search(node, lazy, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return node;
 	}
 
-	public IFNode createFilter(IFRelation caller) {
-		Node node = this.storage.getFactory().createNode(this.labels, Arrays.asList(caller));
+	private IFNode _search(Node node, boolean lazy, boolean optional) throws Exception {
 		node.setPattern(this);
 		node.setReturned(true);
-		node.setOptional(true);
-		return node;// includes ONLY 1 relation filters
+		if (optional)
+			node.setOptional(true);
+		if (lazy)
+			node.setLazy(true);
+		else
+			for (FieldPattern field : this.relFields)
+				node.getRelations().add(field.queryRelation(node));
+		return node;
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -388,7 +389,7 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public <ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids) {
+		public <ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids, LoadState loadState) {
 			this.map.forEach((filter, code) -> {
 				if (filter instanceof IFRelation) {
 					Object s = ids.get("id_" + code);
@@ -399,8 +400,11 @@ public class Cypher implements Language {
 					Object data = ((IDataContainer) filter).getData();
 					if (data == null)
 						return;
+					LoadState fLoadState = loadState;
+					if(filter instanceof IFRelation)
+						fLoadState = LoadState.COMPLETE;
 					try {
-						buffer.updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data);
+						buffer.updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data, fLoadState);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

@@ -66,28 +66,26 @@ public class RelationPattern extends APattern {
 	}
 
 	public IFilter search(boolean lazy) {
-		// lazy flag gets ignored because a Relation can not exist without both Nodes
-		return _complete(this.storage.getFactory().createRelation(this.direction));
+		return _complete(this.storage.getFactory().createRelation(this.direction), lazy);
 	}
 
 	public IFilter search(Serializable id, boolean lazy) throws Exception {
-		// lazy flag gets ignored because a Relation can not exist without both Nodes
-		return _complete(this.storage.getFactory().createIdRelation(this.direction, id, this.idConverter));
+		return _complete(this.storage.getFactory().createIdRelation(this.direction, id, this.idConverter), lazy);
 	}
 
-	private Relation _complete(Relation relation) {
+	private Relation _complete(Relation relation, boolean lazy) {
 		if (!isBlank(this.label))
 			relation.getLabels().add(label);
 
 		if (this.stEqTr) {
-			IFNode node = this._getNode(this.startField.getType(), relation);
+			IFNode node = this._getNode(this.startField.getType(), relation, lazy);
 			relation.setStart(node);
 			relation.setTarget(node);
 			return relation;
 		}
 
-		relation.setStart(this._getNode(this.startField.getType(), relation));
-		relation.setTarget(this._getNode(this.targetField.getType(), relation));
+		relation.setStart(this._getNode(this.startField.getType(), relation, lazy));
+		relation.setTarget(this._getNode(this.targetField.getType(), relation, lazy));
 		relation.setPattern(this);
 		relation.setReturned(true);
 		return relation;
@@ -108,10 +106,10 @@ public class RelationPattern extends APattern {
 		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
 				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING)) {
 			relation.setTarget(caller);
-			relation.setStart(this._getNode(this.startField.getType(), relation));
+			relation.setStart(this._getNode(this.startField.getType(), relation, true));
 		} else {
 			relation.setStart(caller);
-			relation.setTarget(this._getNode(this.targetField.getType(), relation));
+			relation.setTarget(this._getNode(this.targetField.getType(), relation, true));
 		}
 		return relation;
 	}
@@ -124,7 +122,7 @@ public class RelationPattern extends APattern {
 
 			@Override
 			public IDataContainer getDataContainer() throws Exception {
-				return createFilter(entity, null, direction, includedData);
+				return search(entity, null, direction, includedData);
 			}
 
 			@Override
@@ -154,7 +152,7 @@ public class RelationPattern extends APattern {
 		return new DeleteContainer(this, entity, entry.getId(), null, relation);
 	}
 
-	public IDataRelation createFilter(Object entity, IDataNode caller, Direction direction,
+	public IDataRelation search(Object entity, IDataNode caller, Direction direction,
 			Map<Object, IDataContainer> includedData) throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataRelation) includedData.get(entity);
@@ -224,11 +222,11 @@ public class RelationPattern extends APattern {
 		}
 	}
 
-	private IFNode _getNode(Class<?> type, IFRelation relation) {
+	private IFNode _getNode(Class<?> type, IFRelation relation, boolean lazy) {
 		NodePattern node = this.storage.getNode(type);
 		if (node == null)
 			return null;
-		return node.createFilter(relation);
+		return node.search(relation, lazy);
 	}
 
 	private IDataNode _getDataNode(Field field, Object entity, Map<Object, IDataContainer> includedData,

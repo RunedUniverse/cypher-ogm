@@ -78,7 +78,7 @@ public class FieldPattern {
 		NodePattern node = this.storage.getNode(type);
 		if (node == null)
 			throw new Exception("Unsupported Class<" + type.getName() + "> as @Relation found!");
-		return node.createFilter(relation);
+		return node.search(relation, true);
 	}
 
 	public void saveRelation(Object entity, IDataNode node, Map<Object, IDataContainer> includedData) throws Exception {
@@ -102,7 +102,7 @@ public class FieldPattern {
 		// is a child of this.type
 		Class<?> clazz = relEntity.getClass();
 		if (clazz.isAnnotationPresent(RelationshipEntity.class))
-			relation = this.storage.getRelation(clazz).createFilter(relEntity, node, this.direction, includedData);
+			relation = this.storage.getRelation(clazz).search(relEntity, node, this.direction, includedData);
 		else {
 			relation = this.storage.getFactory().createDataRelation(this.direction, null);
 			relation.setFilterType(FilterType.UPDATE);

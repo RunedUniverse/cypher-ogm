@@ -14,6 +14,7 @@ import net.runeduniverse.libs.rogm.annotations.PostLoad;
 import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
@@ -105,11 +106,11 @@ public abstract class APattern implements IPattern {
 	}
 
 	@Override
-	public Object parse(IData data) throws Exception {
+	public Object parse(IData data, LoadState loadState) throws Exception {
 		if (this.idField != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
-		return this.storage.getBuffer().acquire(this, data, this.type);
+		return this.storage.getBuffer().acquire(this, data, this.type, loadState);
 	}
 
 	@Override

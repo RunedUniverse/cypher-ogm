@@ -18,6 +18,7 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
@@ -120,7 +121,7 @@ public class PatternStorage implements IStorage {
 			for (IData data : dataList) {
 				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
 				if (IPatternContainer.identify(data.getFilter()))
-					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern().parse(data));
+					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern().parse(data, LoadState.get(data.getFilter())));
 			}
 		}
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.annotations.IConverter;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -34,7 +35,7 @@ public interface IPattern {
 
 	Serializable prepareEntityId(Serializable id, Serializable entityId);
 
-	Object parse(IData data) throws Exception;
+	Object parse(IData data, LoadState loadState) throws Exception;
 
 	void preSave(Object entity);
 

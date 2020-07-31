@@ -24,17 +24,19 @@ public class BasicBuffer implements IBuffer {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type) throws Exception {
+	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type, LoadState loadState) throws Exception {
 		TypeEntry te = this.typeMap.get(type);
 		if (te != null) {
 			Entry entry = te.idMap.get(data.getId());
-			if (entry != null)
+			if (entry != null) {
+				LoadState.merge(entry, loadState);
 				return (T) entry.getEntity();
+			}
 		}
 
 		T entity = this.storage.getParser().deserialize(type, data.getData());
 		pattern.setId(entity, data.getEntityId());
-		addEntry(new Entry(data, entity, pattern));
+		addEntry(new Entry(data, entity, loadState, pattern));
 		return entity;
 	}
 
@@ -72,12 +74,13 @@ public class BasicBuffer implements IBuffer {
 	}
 
 	@Override
-	public void addEntry(Serializable id, Serializable entityId, Object entity, IPattern pattern) {
-		addEntry(new Entry(id, entityId, entity, entity.getClass(), pattern));
+	public void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState, IPattern pattern) {
+		addEntry(new Entry(id, entityId, entity, loadState, entity.getClass(), pattern));
 	}
 
 	@Override
-	public void updateEntry(Serializable id, Serializable entityId, Object entity) throws Exception {
+	public void updateEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState)
+			throws Exception {
 		if (entity == null)
 			return;
 		Entry entry = entries.get(entity);
@@ -87,7 +90,7 @@ public class BasicBuffer implements IBuffer {
 		entityId = pattern.prepareEntityId(id, entityId);
 
 		if (entry == null)
-			addEntry(new Entry(id, entityId, entity, type, pattern));
+			addEntry(new Entry(id, entityId, entity, loadState, type, pattern));
 		else
 			updateEntry(entry, id, entityId);
 		pattern.setId(entity, entityId);

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -137,13 +138,13 @@ public final class CoreSession implements Session {
 	public void saveLazy(Object entity) {
 		this._save(entity, false);
 	}
-	
+
 	private void _save(Object entity, boolean lazy) {
 		try {
 			ISaveContainer container = this.storage.save(entity, lazy);
 			Language.ISaveMapper mapper = this.lang.save(container.getDataContainer(), container.getRelatedFilter());
-			mapper.updateObjectIds(this.storage.getBuffer(), this.module.execute(mapper.qry()));
-			if (mapper.effectedQry() != null) {
+			mapper.updateObjectIds(this.storage.getBuffer(), this.module.execute(mapper.qry()), LoadState.get(lazy));
+			if (!lazy && mapper.effectedQry() != null) {
 				Collection<String> ids = mapper.reduceIds(this.storage.getBuffer(),
 						this.module.query(mapper.effectedQry()));
 				this.module.execute(this.lang.deleteRelations(ids));
