@@ -81,33 +81,34 @@ public class FieldPattern {
 		return node.search(relation, true);
 	}
 
-	public void saveRelation(Object entity, IDataNode node, Map<Object, IDataContainer> includedData) throws Exception {
+	public void saveRelation(Object entity, IDataNode node, Map<Object, IDataContainer> includedData, Integer depth)
+			throws Exception {
 		if (this.collection)
 			// Collection
 			for (Object relNode : (Collection<?>) this.field.get(entity))
-				node.getRelations().add(_getRelation(node, relNode, includedData));
+				node.getRelations().add(_getRelation(node, relNode, includedData, depth));
 		else {
 			// Variable
 			Object relNode = this.field.get(entity);
 			if (relNode != null)
-				node.getRelations().add(_getRelation(node, relNode, includedData));
+				node.getRelations().add(_getRelation(node, relNode, includedData, depth));
 		}
 	}
 
-	private IDataRelation _getRelation(IDataNode node, Object relEntity, Map<Object, IDataContainer> includedData)
-			throws Exception {
+	private IDataRelation _getRelation(IDataNode node, Object relEntity, Map<Object, IDataContainer> includedData,
+			Integer depth) throws Exception {
 
 		IDataRelation relation = null;
 		// clazz could be substituted with this.type but isn't in case the entities type
 		// is a child of this.type
 		Class<?> clazz = relEntity.getClass();
 		if (clazz.isAnnotationPresent(RelationshipEntity.class))
-			relation = this.storage.getRelation(clazz).search(relEntity, node, this.direction, includedData);
+			relation = this.storage.getRelation(clazz).save(relEntity, node, this.direction, includedData, depth);
 		else {
 			relation = this.storage.getFactory().createDataRelation(this.direction, null);
 			relation.setFilterType(FilterType.UPDATE);
 			relation.setStart(node);
-			relation.setTarget(this.storage.getNode(clazz).createFilter(relEntity, includedData, false));
+			relation.setTarget(this.storage.getNode(clazz).save(relEntity, includedData, depth));
 		}
 
 		if (relation.getLabels().isEmpty())

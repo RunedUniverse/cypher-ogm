@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.annotations.IConverter;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface IPattern {
+	PatternType getPatternType();
+
 	boolean isIdSet(Object entity);
 
 	Serializable getId(Object entity);
@@ -25,7 +28,7 @@ public interface IPattern {
 	// search exactly 1 node / querry deeper layers for node
 	IFilter search(Serializable id, boolean lazy) throws Exception;
 
-	ISaveContainer save(Object entity, boolean lazy) throws Exception;
+	ISaveContainer save(Object entity, Integer depth) throws Exception;
 
 	IDeleteContainer delete(Object entity) throws Exception;
 
@@ -35,7 +38,7 @@ public interface IPattern {
 
 	Serializable prepareEntityId(Serializable id, Serializable entityId);
 
-	Object parse(IData data, LoadState loadState) throws Exception;
+	Object parse(IData data, LoadState loadState, Set<Entry> lazyEntries) throws Exception;
 
 	void preSave(Object entity);
 
@@ -80,7 +83,7 @@ public interface IPattern {
 	public interface ISaveContainer {
 		IDataContainer getDataContainer() throws Exception;
 
-		IFilter getRelatedFilter() throws Exception;
+		Set<IFilter> getRelatedFilter() throws Exception;
 
 		void postSave();
 	}
@@ -91,5 +94,9 @@ public interface IPattern {
 		IFilter getDeleteFilter();
 
 		Serializable getDeletedId();
+	}
+
+	public enum PatternType {
+		NODE, RELATION
 	}
 }

@@ -24,19 +24,21 @@ public class BasicBuffer implements IBuffer {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type, LoadState loadState) throws Exception {
+	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type, LoadState loadState,
+			Set<Entry> lazyEntries) throws Exception {
 		TypeEntry te = this.typeMap.get(type);
 		if (te != null) {
 			Entry entry = te.idMap.get(data.getId());
-			if (entry != null) {
-				LoadState.merge(entry, loadState);
-				return (T) entry.getEntity();
-			}
+			if (entry != null)
+				return (T) LoadState.merge(entry, loadState, lazyEntries);
 		}
 
 		T entity = this.storage.getParser().deserialize(type, data.getData());
 		pattern.setId(entity, data.getEntityId());
-		addEntry(new Entry(data, entity, loadState, pattern));
+		Entry entry = new Entry(data, entity, loadState, pattern);
+		if (lazyEntries != null && loadState == LoadState.LAZY)
+			lazyEntries.add(entry);
+		addEntry(entry);
 		return entity;
 	}
 
@@ -58,6 +60,19 @@ public class BasicBuffer implements IBuffer {
 			return null;
 
 		return (T) te.entityIdMap.get(entityId).getEntity();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCompleteByEntityId(Serializable entityId, Class<T> type) {
+		TypeEntry te = this.typeMap.get(type);
+		if (te == null)
+			return null;
+		Entry entry = te.entityIdMap.get(entityId);
+		if (entry == null || entry.getLoadState() == LoadState.LAZY)
+			return null;
+
+		return (T) entry.getEntity();
 	}
 
 	@Override

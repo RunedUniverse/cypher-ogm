@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
@@ -22,7 +23,7 @@ public interface Language {
 	public interface Instance {
 		ILoadMapper load(IFilter filter) throws Exception;
 
-		ISaveMapper save(IDataContainer container, IFilter filter) throws Exception;
+		ISaveMapper save(IDataContainer container, Set<IFilter> filter) throws Exception;
 
 		IDeleteMapper delete(IFilter filter, IFRelation relation) throws Exception;
 
@@ -38,11 +39,9 @@ public interface Language {
 	}
 
 	public interface ISaveMapper extends IMapper {
-		String effectedQry();
-
 		<ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids, LoadState loadState);
 
-		Collection<String> reduceIds(IBuffer buffer, List<Map<String, Object>> effectedIds);
+		Collection<String> reduceIds(IBuffer buffer, Module.Instance<?> module) throws Exception;
 	}
 
 	public interface IDeleteMapper extends IMapper {

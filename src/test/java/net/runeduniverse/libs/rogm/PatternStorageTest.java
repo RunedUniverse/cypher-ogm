@@ -75,6 +75,6 @@ public class PatternStorageTest extends ATest {
 
 	private String _save(Object entity) throws Exception {
 		return "[SAVE][" + entity.getClass().getSimpleName() + "]\n"
-				+ iLanguage.save(this.storage.save(entity, false).getDataContainer(), null).qry() + '\n';
+				+ iLanguage.save(this.storage.save(entity, 1).getDataContainer(), null).qry() + '\n';
 	}
 }

@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
 import lombok.Getter;
@@ -65,6 +67,10 @@ public class RelationPattern extends APattern {
 		_parse(type.getSuperclass());
 	}
 
+	public PatternType getPatternType() {
+		return PatternType.RELATION;
+	}
+
 	public IFilter search(boolean lazy) {
 		return _complete(this.storage.getFactory().createRelation(this.direction), lazy);
 	}
@@ -115,14 +121,13 @@ public class RelationPattern extends APattern {
 	}
 
 	@Override
-	public ISaveContainer save(Object entity, boolean lazy) throws Exception {
-		// lazy flag gets ignored because a Relation can not exist without both Nodes
+	public ISaveContainer save(Object entity, Integer depth) throws Exception {
 		Map<Object, IDataContainer> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
 			@Override
 			public IDataContainer getDataContainer() throws Exception {
-				return search(entity, null, direction, includedData);
+				return save(entity, null, direction, includedData, depth);
 			}
 
 			@Override
@@ -136,7 +141,7 @@ public class RelationPattern extends APattern {
 			}
 
 			@Override
-			public IFilter getRelatedFilter() {
+			public Set<IFilter> getRelatedFilter() {
 				return null;
 			}
 		};
@@ -152,8 +157,8 @@ public class RelationPattern extends APattern {
 		return new DeleteContainer(this, entity, entry.getId(), null, relation);
 	}
 
-	public IDataRelation search(Object entity, IDataNode caller, Direction direction,
-			Map<Object, IDataContainer> includedData) throws Exception {
+	public IDataRelation save(Object entity, IDataNode caller, Direction direction,
+			Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataRelation) includedData.get(entity);
 
@@ -178,13 +183,13 @@ public class RelationPattern extends APattern {
 
 		if (caller == null) {
 			// Relation gets called first
-			caller = _getDataNode(this.startField, entity, includedData, relation);
+			caller = _getDataNode(this.startField, entity, includedData, relation, depth);
 			relation.setStart(caller);
 
 			if (this.stEqTr)
 				relation.setTarget(caller);
 			else
-				relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation));
+				relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation, depth));
 
 			return relation;
 		}
@@ -198,10 +203,10 @@ public class RelationPattern extends APattern {
 		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
 				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING)) {
 			relation.setTarget(caller);
-			relation.setStart(_getDataNode(this.startField, entity, includedData, relation));
+			relation.setStart(_getDataNode(this.startField, entity, includedData, relation, depth));
 		} else {
 			relation.setStart(caller);
-			relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation));
+			relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation, depth));
 		}
 		return relation;
 	}
@@ -230,11 +235,11 @@ public class RelationPattern extends APattern {
 	}
 
 	private IDataNode _getDataNode(Field field, Object entity, Map<Object, IDataContainer> includedData,
-			IDataRelation relation) throws Exception {
+			IDataRelation relation, Integer depth) throws Exception {
 		NodePattern node = this.storage.getNode(field.getType());
 		if (node == null)
 			return null;
-		IDataNode dataNode = node.createFilter(field.get(entity), includedData, false);
+		IDataNode dataNode = node.save(field.get(entity), includedData, depth);
 		dataNode.getRelations().add(relation);
 		return dataNode;
 	}
