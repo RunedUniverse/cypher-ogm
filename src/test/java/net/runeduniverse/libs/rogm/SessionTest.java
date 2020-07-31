@@ -117,6 +117,10 @@ public class SessionTest extends ATest {
 		Player player = session.load(Player.class, UUID.fromString("12553411-d527-448d-b82b-33261e4f1618"));
 		assertNotNull("NO Entries in DB found", player);
 		System.out.println(player.toString());
+		session.save(player);
+		session.unload(player);
+		Player player2 = session.load(Player.class, UUID.fromString("12553411-d527-448d-b82b-33261e4f1618"));
+		assertFalse("Player did not get unloaded", player == player2);
 	}
 
 	@Test
