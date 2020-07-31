@@ -74,7 +74,7 @@ public class SessionTest extends ATest {
 	@Test
 	public void updatePerson() {
 		assertTrue("Session is NOT connected", session.isConnected());
-		Person shawn = session.load(Person.class, 10L);
+		Person shawn = session.load(Person.class, 75L);
 		System.out.println(shawn.toString());
 		shawn.setFirstName("Shawn");
 		shawn.setLastName("James");
@@ -142,11 +142,11 @@ public class SessionTest extends ATest {
 	public void loadCompany() {
 		Game game = new Game();
 		game.setName("just another USELESS title");
-		Company company = session.load(Company.class, 8L);
+		Company company = session.load(Company.class, 51L);
 		company.getGames().add(game);
 		session.save(company);
 		company.getGames().remove(game);
-		session.save(company);
+		session.save(company, 4);
 		session.delete(game);
 	}
 

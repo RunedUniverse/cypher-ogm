@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -39,11 +40,11 @@ public class Cypher implements Language {
 			return new Mapper(filter, _load(map, filter, true), map);
 		}
 
-		private String _load(DataMap<IFilter, String, FilterStatus> map, IFilter filter, boolean all) throws Exception {
+		public String _load(DataMap<IFilter, String, FilterStatus> map, IFilter filter, boolean all) throws Exception {
 			if (filter == null)
 				return null;
-
 			StringVariableGenerator gen = new StringVariableGenerator();
+
 			_parse(map, filter, gen, false);
 
 			StringBuilder qry = _select(map).append("RETURN ");
@@ -68,7 +69,7 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public ISaveMapper save(IDataContainer node, IFilter filter) throws Exception {
+		public ISaveMapper save(IDataContainer node, Set<IFilter> filter) throws Exception {
 			DataMap<IFilter, String, FilterStatus> map = new DataHashMap<>();
 			StringVariableGenerator gen = new StringVariableGenerator();
 			_parse(map, node, gen, false);
@@ -90,11 +91,8 @@ public class Cypher implements Language {
 			});
 
 			// SET + RETURN
-			DataMap<IFilter, String, FilterStatus> effectedMap = new DataHashMap<>();
-			return new Mapper(
-					node, qry.append("SET ").append(String.join(",", st)).append("\nRETURN ")
-							.append(String.join(",", rt)).append(';').toString(),
-					this._load(effectedMap, filter, false), map, effectedMap);
+			return new Mapper(this, node, qry.append("SET ").append(String.join(",", st)).append("\nRETURN ")
+					.append(String.join(",", rt)).append(';').toString(), filter, map);
 		}
 
 		@Override
@@ -348,11 +346,12 @@ public class Cypher implements Language {
 
 	protected static class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper {
 
+		private CypherInstance cypher;
 		private IFilter primary;
 		private String qry;
 		private String effectedQry;
+		private Collection<IFilter> effectedQrys;
 		private DataMap<IFilter, String, FilterStatus> map;
-		private DataMap<IFilter, String, FilterStatus> effectedMap;
 		// working data
 		private Collection<String> persistIds = new HashSet<>();
 
@@ -362,13 +361,13 @@ public class Cypher implements Language {
 			this.map = map;
 		}
 
-		protected Mapper(IFilter primaryFilter, String qry, String effectedQry,
-				DataMap<IFilter, String, FilterStatus> map, DataMap<IFilter, String, FilterStatus> effectedMap) {
+		protected Mapper(CypherInstance cypher, IFilter primaryFilter, String qry, Collection<IFilter> effectedQrys,
+				DataMap<IFilter, String, FilterStatus> map) {
+			this.cypher = cypher;
 			this.primary = primaryFilter;
 			this.qry = qry;
-			this.effectedQry = effectedQry;
+			this.effectedQrys = effectedQrys;
 			this.map = map;
-			this.effectedMap = effectedMap;
 		}
 
 		protected Mapper(String qry, String effectedQry, DataMap<IFilter, String, FilterStatus> map) {
@@ -388,7 +387,8 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public <ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids) {
+		public <ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids,
+				LoadState loadState) {
 			this.map.forEach((filter, code) -> {
 				if (filter instanceof IFRelation) {
 					Object s = ids.get("id_" + code);
@@ -399,8 +399,11 @@ public class Cypher implements Language {
 					Object data = ((IDataContainer) filter).getData();
 					if (data == null)
 						return;
+					LoadState fLoadState = loadState;
+					if (filter instanceof IFRelation)
+						fLoadState = LoadState.COMPLETE;
 					try {
-						buffer.updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data);
+						buffer.updateEntry(ids.get("id_" + code), ids.get("eid_" + code), data, fLoadState);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -409,22 +412,27 @@ public class Cypher implements Language {
 		}
 
 		@Override
-		public Collection<String> reduceIds(IBuffer buffer, List<Map<String, Object>> effectedIds) {
+		public Collection<String> reduceIds(IBuffer buffer, Module.Instance<?> module) throws Exception {
 			Collection<String> delIds = new HashSet<>();
 
-			for (Map<String, Object> ids : effectedIds) {
-				this.effectedMap.forEach((filter, code) -> {
-					if (!(filter instanceof IFNode))
-						return;
+			for (IFilter qryFilter : effectedQrys) {
+				DataMap<IFilter, String, FilterStatus> effectedMap = new DataHashMap<>();
 
-					for (IFRelation rel : ((IFNode) filter).getRelations()) {
-						Object s = ids.get("id_" + this.effectedMap.get(rel));
-						if (s == null)
-							continue;
-						delIds.add(s.toString());
-					}
-				});
+				for (Map<String, Object> ids : module.query(cypher._load(effectedMap, qryFilter, false))) {
+					effectedMap.forEach((filter, code) -> {
+						if (!(filter instanceof IFNode))
+							return;
+
+						for (IFRelation rel : ((IFNode) filter).getRelations()) {
+							Object s = ids.get("id_" + effectedMap.get(rel));
+							if (s == null)
+								continue;
+							delIds.add(s.toString());
+						}
+					});
+				}
 			}
+
 			delIds.removeAll(persistIds);
 			return delIds;
 		}
@@ -485,9 +493,7 @@ public class Cypher implements Language {
 
 		@Override
 		public String toString() {
-			if (this.effectedQry == null)
-				return "QRY: " + this.qry;
-			return "QRY: " + this.qry + "\nEFFECTED QRY: " + this.effectedQry;
+			return this.qry;
 		}
 	}
 

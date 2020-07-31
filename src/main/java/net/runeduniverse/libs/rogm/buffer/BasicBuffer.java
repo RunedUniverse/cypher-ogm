@@ -24,17 +24,21 @@ public class BasicBuffer implements IBuffer {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type) throws Exception {
+	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type, LoadState loadState,
+			Set<Entry> lazyEntries) throws Exception {
 		TypeEntry te = this.typeMap.get(type);
 		if (te != null) {
 			Entry entry = te.idMap.get(data.getId());
 			if (entry != null)
-				return (T) entry.getEntity();
+				return (T) LoadState.merge(entry, loadState, lazyEntries);
 		}
 
 		T entity = this.storage.getParser().deserialize(type, data.getData());
 		pattern.setId(entity, data.getEntityId());
-		addEntry(new Entry(data, entity, pattern));
+		Entry entry = new Entry(data, entity, loadState, pattern);
+		if (lazyEntries != null && loadState == LoadState.LAZY)
+			lazyEntries.add(entry);
+		addEntry(entry);
 		return entity;
 	}
 
@@ -58,6 +62,19 @@ public class BasicBuffer implements IBuffer {
 		return (T) te.entityIdMap.get(entityId).getEntity();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCompleteByEntityId(Serializable entityId, Class<T> type) {
+		TypeEntry te = this.typeMap.get(type);
+		if (te == null)
+			return null;
+		Entry entry = te.entityIdMap.get(entityId);
+		if (entry == null || entry.getLoadState() == LoadState.LAZY)
+			return null;
+
+		return (T) entry.getEntity();
+	}
+
 	@Override
 	public void addEntry(Entry entry) {
 		TypeEntry te = this.typeMap.get(entry.getType());
@@ -72,12 +89,13 @@ public class BasicBuffer implements IBuffer {
 	}
 
 	@Override
-	public void addEntry(Serializable id, Serializable entityId, Object entity, IPattern pattern) {
-		addEntry(new Entry(id, entityId, entity, entity.getClass(), pattern));
+	public void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState, IPattern pattern) {
+		addEntry(new Entry(id, entityId, entity, loadState, entity.getClass(), pattern));
 	}
 
 	@Override
-	public void updateEntry(Serializable id, Serializable entityId, Object entity) throws Exception {
+	public void updateEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState)
+			throws Exception {
 		if (entity == null)
 			return;
 		Entry entry = entries.get(entity);
@@ -87,7 +105,7 @@ public class BasicBuffer implements IBuffer {
 		entityId = pattern.prepareEntityId(id, entityId);
 
 		if (entry == null)
-			addEntry(new Entry(id, entityId, entity, type, pattern));
+			addEntry(new Entry(id, entityId, entity, loadState, type, pattern));
 		else
 			updateEntry(entry, id, entityId);
 		pattern.setId(entity, entityId);

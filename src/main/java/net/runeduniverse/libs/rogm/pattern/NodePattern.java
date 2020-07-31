@@ -18,6 +18,7 @@ import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
 import net.runeduniverse.libs.rogm.querying.FilterType;
@@ -59,41 +60,52 @@ public class NodePattern extends APattern {
 		_parse(type.getSuperclass());
 	}
 
-	public IFilter search() throws Exception {
-		Node node = this.storage.getFactory().createNode(this.labels, new ArrayList<>());
-		node.setPattern(this);
-		node.setReturned(true);
-		for (FieldPattern field : this.relFields)
-			node.getRelations().add(field.queryRelation(node));
-
-		return node;// includes ALL relation filters
+	public PatternType getPatternType() {
+		return PatternType.NODE;
 	}
 
-	public IFilter search(Serializable id) throws Exception {
-		Node node = this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter);
-		node.setPattern(this);
-		node.setReturned(true);
-		for (FieldPattern field : this.relFields)
-			node.getRelations().add(field.queryRelation(node));
+	public IFilter search(boolean lazy) throws Exception {
+		return this._search(this.storage.getFactory().createNode(this.labels, new ArrayList<>()), lazy, false);
+	}
+
+	public IFilter search(Serializable id, boolean lazy) throws Exception {
+		return this._search(
+				this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter), lazy,
+				false);
+	}
+
+	public IFNode search(IFRelation caller, boolean lazy) {
+		// includes ONLY the caller-relation filter
+		Node node = this.storage.getFactory().createNode(this.labels, Arrays.asList(caller));
+		try {
+			return this._search(node, lazy, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return node;
 	}
 
-	public IFNode createFilter(IFRelation caller) {
-		Node node = this.storage.getFactory().createNode(this.labels, Arrays.asList(caller));
+	private IFNode _search(Node node, boolean lazy, boolean optional) throws Exception {
 		node.setPattern(this);
 		node.setReturned(true);
-		node.setOptional(true);
-		return node;// includes ONLY 1 relation filters
+		if (optional)
+			node.setOptional(true);
+		if (lazy)
+			node.setLazy(true);
+		else
+			for (FieldPattern field : this.relFields)
+				node.getRelations().add(field.queryRelation(node));
+		return node;
 	}
 
 	@Override
-	public ISaveContainer save(Object entity) throws Exception {
+	public ISaveContainer save(Object entity, Integer depth) throws Exception {
 		Map<Object, IDataContainer> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
 			@Override
 			public IDataContainer getDataContainer() throws Exception {
-				return createFilter(entity, includedData, true);
+				return save(entity, includedData, depth);
 			}
 
 			@Override
@@ -107,11 +119,17 @@ public class NodePattern extends APattern {
 			}
 
 			@Override
-			public IFilter getRelatedFilter() throws Exception {
-				Entry entry = storage.getBuffer().getEntry(entity);
-				if (entry == null)
-					return null;
-				return search(entry.getId());
+			public Set<IFilter> getRelatedFilter() throws Exception {
+				Set<IFilter> set = new HashSet<>();
+				for (Object object : includedData.keySet()) {
+					if (!includedData.get(object).persist())
+						continue;
+					Entry entry = storage.getBuffer().getEntry(object);
+					if (entry == null || entry.getLoadState() == LoadState.LAZY)
+						continue;
+					set.add(entry.getPattern().search(entry.getId(), false));
+				}
+				return set;
 			}
 		};
 	}
@@ -130,30 +148,32 @@ public class NodePattern extends APattern {
 				this.storage.getFactory().createEffectedFilter(entry.getId()), node);
 	}
 
-	public IDataNode createFilter(Object entity, Map<Object, IDataContainer> includedData, boolean includeRelations)
-			throws Exception {
+	public IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataNode) includedData.get(entity);
 
 		this.preSave(entity);
 
 		IDataNode node = null;
+		boolean persist = 0 < depth;
 		if (this.isIdSet(entity)) {
 			// update (id)
 			node = this.storage.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity),
-					this.idConverter, entity);
+					this.idConverter, entity, persist);
 			node.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
-			node = this.storage.getFactory().createDataNode(this.labels, new ArrayList<>(), entity);
+			node = this.storage.getFactory().createDataNode(this.labels, new ArrayList<>(), entity, persist);
 			node.setFilterType(FilterType.CREATE);
 		}
 		node.setReturned(true);
 		includedData.put(entity, node);
 
-		if (includeRelations)
+		if (persist) {
+			depth = depth - 1;
 			for (FieldPattern field : this.relFields)
-				field.saveRelation(entity, node, includedData);
+				field.saveRelation(entity, node, includedData, depth);
+		}
 
 		return node;
 	}

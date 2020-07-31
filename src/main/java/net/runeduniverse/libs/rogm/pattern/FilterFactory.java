@@ -36,16 +36,16 @@ public class FilterFactory {
 	}
 
 	public IDataNode createIdDataNode(Set<String> labels, List<IFRelation> relations, Serializable id,
-			IConverter<?> converter, Object data) {
+			IConverter<?> converter, Object data, boolean persist) {
 		if (this.module.checkIdType(id.getClass()))
-			return new DataNode(data, id, labels, relations);
-		DataNode node = new DataNode(data, labels, relations);
+			return new DataNode(data, id, labels, relations, persist);
+		DataNode node = new DataNode(data, labels, relations, persist);
 		node.getParams().put(this.module.getIdAlias(), converter.toProperty(id));
 		return node;
 	}
 
-	public IDataNode createDataNode(Set<String> labels, List<IFRelation> relations, Object data) {
-		return new DataNode(data, labels, relations);
+	public IDataNode createDataNode(Set<String> labels, List<IFRelation> relations, Object data, boolean persist) {
+		return new DataNode(data, labels, relations, persist);
 	}
 
 	public Relation createRelation(Direction direction) {
@@ -118,9 +118,11 @@ public class FilterFactory {
 	}
 
 	@Getter
-	protected class Node extends Filter implements IFNode {
+	protected class Node extends Filter implements IFNode, ILazyLoading {
 		protected Set<String> labels = new HashSet<>();
 		protected List<IFRelation> relations = new ArrayList<>();
+		@Setter
+		protected boolean lazy = false;
 
 		private Node(Set<String> labels, List<IFRelation> relations) {
 			this.labels = labels;
@@ -137,15 +139,24 @@ public class FilterFactory {
 	@Getter
 	private class DataNode extends Node implements IDataNode {
 		private Object data;
+		private boolean persist;
 
-		private DataNode(Object data, Serializable id, Set<String> labels, List<IFRelation> relations) {
+		private DataNode(Object data, Serializable id, Set<String> labels, List<IFRelation> relations,
+				boolean persist) {
 			super(id, labels, relations);
 			this.data = data;
+			this.persist = persist;
 		}
 
-		private DataNode(Object data, Set<String> labels, List<IFRelation> relations) {
+		private DataNode(Object data, Set<String> labels, List<IFRelation> relations, boolean persist) {
 			super(labels, relations);
 			this.data = data;
+			this.persist = persist;
+		}
+
+		@Override
+		public boolean persist() {
+			return persist;
 		}
 	}
 
@@ -179,6 +190,11 @@ public class FilterFactory {
 		private DataRelation(Object data, Serializable id, Direction direction) {
 			super(id, direction);
 			this.data = data;
+		}
+
+		@Override
+		public boolean persist() {
+			return false;
 		}
 	}
 }

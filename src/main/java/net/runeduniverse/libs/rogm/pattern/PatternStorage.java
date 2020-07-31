@@ -18,6 +18,8 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
@@ -82,16 +84,16 @@ public class PatternStorage implements IStorage {
 		}
 	}
 
-	public IFilter search(Class<?> clazz) throws Exception {
-		return this.getPattern(clazz).search();
+	public IFilter search(Class<?> clazz, boolean lazy) throws Exception {
+		return this.getPattern(clazz).search(lazy);
 	}
 
-	public IFilter search(Class<?> clazz, Serializable id) throws Exception {
-		return this.getPattern(clazz).search(id);
+	public IFilter search(Class<?> clazz, Serializable id, boolean lazy) throws Exception {
+		return this.getPattern(clazz).search(id, lazy);
 	}
 
-	public ISaveContainer save(Object entity) throws Exception {
-		return this.getPattern(entity.getClass()).save(entity);
+	public ISaveContainer save(Object entity, Integer depth) throws Exception {
+		return this.getPattern(entity.getClass()).save(entity, depth);
 	}
 
 	public IDeleteContainer delete(Object entity) throws Exception {
@@ -106,7 +108,7 @@ public class PatternStorage implements IStorage {
 		return entity;
 	}
 
-	public <T> Collection<T> parse(Class<T> type, IDataRecord record) throws Exception {
+	public <T> Collection<T> parse(Class<T> type, IDataRecord record, Set<Entry> lazyEntries) throws Exception {
 		// type || vv
 		// IPattern primaryPattern = record.getPrimaryFilter().getPattern();
 
@@ -120,7 +122,8 @@ public class PatternStorage implements IStorage {
 			for (IData data : dataList) {
 				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
 				if (IPatternContainer.identify(data.getFilter()))
-					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern().parse(data));
+					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern().parse(data,
+							LoadState.get(data.getFilter()), lazyEntries));
 			}
 		}
 

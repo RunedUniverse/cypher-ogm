@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
 import lombok.Getter;
@@ -65,27 +67,31 @@ public class RelationPattern extends APattern {
 		_parse(type.getSuperclass());
 	}
 
-	public IFilter search() {
-		return _complete(this.storage.getFactory().createRelation(this.direction));
+	public PatternType getPatternType() {
+		return PatternType.RELATION;
 	}
 
-	public IFilter search(Serializable id) throws Exception {
-		return _complete(this.storage.getFactory().createIdRelation(this.direction, id, this.idConverter));
+	public IFilter search(boolean lazy) {
+		return _complete(this.storage.getFactory().createRelation(this.direction), lazy);
 	}
 
-	private Relation _complete(Relation relation) {
+	public IFilter search(Serializable id, boolean lazy) throws Exception {
+		return _complete(this.storage.getFactory().createIdRelation(this.direction, id, this.idConverter), lazy);
+	}
+
+	private Relation _complete(Relation relation, boolean lazy) {
 		if (!isBlank(this.label))
 			relation.getLabels().add(label);
 
 		if (this.stEqTr) {
-			IFNode node = this._getNode(this.startField.getType(), relation);
+			IFNode node = this._getNode(this.startField.getType(), relation, lazy);
 			relation.setStart(node);
 			relation.setTarget(node);
 			return relation;
 		}
 
-		relation.setStart(this._getNode(this.startField.getType(), relation));
-		relation.setTarget(this._getNode(this.targetField.getType(), relation));
+		relation.setStart(this._getNode(this.startField.getType(), relation, lazy));
+		relation.setTarget(this._getNode(this.targetField.getType(), relation, lazy));
 		relation.setPattern(this);
 		relation.setReturned(true);
 		return relation;
@@ -106,22 +112,22 @@ public class RelationPattern extends APattern {
 		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
 				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING)) {
 			relation.setTarget(caller);
-			relation.setStart(this._getNode(this.startField.getType(), relation));
+			relation.setStart(this._getNode(this.startField.getType(), relation, true));
 		} else {
 			relation.setStart(caller);
-			relation.setTarget(this._getNode(this.targetField.getType(), relation));
+			relation.setTarget(this._getNode(this.targetField.getType(), relation, true));
 		}
 		return relation;
 	}
 
 	@Override
-	public ISaveContainer save(Object entity) throws Exception {
+	public ISaveContainer save(Object entity, Integer depth) throws Exception {
 		Map<Object, IDataContainer> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
 			@Override
 			public IDataContainer getDataContainer() throws Exception {
-				return createFilter(entity, null, direction, includedData);
+				return save(entity, null, direction, includedData, depth);
 			}
 
 			@Override
@@ -135,7 +141,7 @@ public class RelationPattern extends APattern {
 			}
 
 			@Override
-			public IFilter getRelatedFilter() {
+			public Set<IFilter> getRelatedFilter() {
 				return null;
 			}
 		};
@@ -148,11 +154,11 @@ public class RelationPattern extends APattern {
 			throw new Exception("Relation-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
 		Relation relation = this.storage.getFactory().createIdRelation(Direction.BIDIRECTIONAL, entry.getId(), null);
 		relation.setReturned(true);
-		return new DeleteContainer(this, entity, entry.getId(), null, relation);// TODO delete
+		return new DeleteContainer(this, entity, entry.getId(), null, relation);
 	}
 
-	public IDataRelation createFilter(Object entity, IDataNode caller, Direction direction,
-			Map<Object, IDataContainer> includedData) throws Exception {
+	public IDataRelation save(Object entity, IDataNode caller, Direction direction,
+			Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataRelation) includedData.get(entity);
 
@@ -177,13 +183,13 @@ public class RelationPattern extends APattern {
 
 		if (caller == null) {
 			// Relation gets called first
-			caller = _getDataNode(this.startField, entity, includedData, relation);
+			caller = _getDataNode(this.startField, entity, includedData, relation, depth);
 			relation.setStart(caller);
 
 			if (this.stEqTr)
 				relation.setTarget(caller);
 			else
-				relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation));
+				relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation, depth));
 
 			return relation;
 		}
@@ -197,10 +203,10 @@ public class RelationPattern extends APattern {
 		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
 				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING)) {
 			relation.setTarget(caller);
-			relation.setStart(_getDataNode(this.startField, entity, includedData, relation));
+			relation.setStart(_getDataNode(this.startField, entity, includedData, relation, depth));
 		} else {
 			relation.setStart(caller);
-			relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation));
+			relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation, depth));
 		}
 		return relation;
 	}
@@ -221,19 +227,19 @@ public class RelationPattern extends APattern {
 		}
 	}
 
-	private IFNode _getNode(Class<?> type, IFRelation relation) {
+	private IFNode _getNode(Class<?> type, IFRelation relation, boolean lazy) {
 		NodePattern node = this.storage.getNode(type);
 		if (node == null)
 			return null;
-		return node.createFilter(relation);
+		return node.search(relation, lazy);
 	}
 
 	private IDataNode _getDataNode(Field field, Object entity, Map<Object, IDataContainer> includedData,
-			IDataRelation relation) throws Exception {
+			IDataRelation relation, Integer depth) throws Exception {
 		NodePattern node = this.storage.getNode(field.getType());
 		if (node == null)
 			return null;
-		IDataNode dataNode = node.createFilter(field.get(entity), includedData, false);
+		IDataNode dataNode = node.save(field.get(entity), includedData, depth);
 		dataNode.getRelations().add(relation);
 		return dataNode;
 	}

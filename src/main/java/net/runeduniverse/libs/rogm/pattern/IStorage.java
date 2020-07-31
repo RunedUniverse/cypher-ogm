@@ -2,9 +2,11 @@ package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
@@ -21,13 +23,13 @@ public interface IStorage {
 
 	IPattern getPattern(Class<?> clazz) throws Exception;
 
-	IFilter search(Class<?> clazz) throws Exception;
+	IFilter search(Class<?> clazz, boolean lazy) throws Exception;
 
-	IFilter search(Class<?> clazz, Serializable id) throws Exception;
+	IFilter search(Class<?> clazz, Serializable id, boolean lazy) throws Exception;
 
-	ISaveContainer save(Object entity) throws Exception;
+	ISaveContainer save(Object entity, Integer depth) throws Exception;
 
 	IDeleteContainer delete(Object entity) throws Exception;
 
-	<T> Collection<T> parse(Class<T> type, IDataRecord record) throws Exception;
+	<T> Collection<T> parse(Class<T> type, IDataRecord record, Set<Entry> lazyEntries) throws Exception;
 }
