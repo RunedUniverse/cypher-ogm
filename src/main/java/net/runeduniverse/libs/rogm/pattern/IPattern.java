@@ -19,12 +19,12 @@ public interface IPattern {
 
 	IConverter<?> getIdConverter();
 
-	IFilter search() throws Exception;
+	IFilter search(boolean lazy) throws Exception;
 
 	// search exactly 1 node / querry deeper layers for node
-	IFilter search(Serializable id) throws Exception;
+	IFilter search(Serializable id, boolean lazy) throws Exception;
 
-	ISaveContainer save(Object entity) throws Exception;
+	ISaveContainer save(Object entity, boolean lazy) throws Exception;
 
 	IDeleteContainer delete(Object entity) throws Exception;
 

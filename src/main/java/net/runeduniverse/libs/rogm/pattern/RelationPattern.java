@@ -65,11 +65,13 @@ public class RelationPattern extends APattern {
 		_parse(type.getSuperclass());
 	}
 
-	public IFilter search() {
+	public IFilter search(boolean lazy) {
+		// lazy flag gets ignored because a Relation can not exist without both Nodes
 		return _complete(this.storage.getFactory().createRelation(this.direction));
 	}
 
-	public IFilter search(Serializable id) throws Exception {
+	public IFilter search(Serializable id, boolean lazy) throws Exception {
+		// lazy flag gets ignored because a Relation can not exist without both Nodes
 		return _complete(this.storage.getFactory().createIdRelation(this.direction, id, this.idConverter));
 	}
 
@@ -115,7 +117,8 @@ public class RelationPattern extends APattern {
 	}
 
 	@Override
-	public ISaveContainer save(Object entity) throws Exception {
+	public ISaveContainer save(Object entity, boolean lazy) throws Exception {
+		// lazy flag gets ignored because a Relation can not exist without both Nodes
 		Map<Object, IDataContainer> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
@@ -148,7 +151,7 @@ public class RelationPattern extends APattern {
 			throw new Exception("Relation-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
 		Relation relation = this.storage.getFactory().createIdRelation(Direction.BIDIRECTIONAL, entry.getId(), null);
 		relation.setReturned(true);
-		return new DeleteContainer(this, entity, entry.getId(), null, relation);// TODO delete
+		return new DeleteContainer(this, entity, entry.getId(), null, relation);
 	}
 
 	public IDataRelation createFilter(Object entity, IDataNode caller, Direction direction,

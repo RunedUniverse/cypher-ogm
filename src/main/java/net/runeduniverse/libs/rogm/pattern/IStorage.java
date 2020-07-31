@@ -21,11 +21,11 @@ public interface IStorage {
 
 	IPattern getPattern(Class<?> clazz) throws Exception;
 
-	IFilter search(Class<?> clazz) throws Exception;
+	IFilter search(Class<?> clazz, boolean lazy) throws Exception;
 
-	IFilter search(Class<?> clazz, Serializable id) throws Exception;
+	IFilter search(Class<?> clazz, Serializable id, boolean lazy) throws Exception;
 
-	ISaveContainer save(Object entity) throws Exception;
+	ISaveContainer save(Object entity, boolean lazy) throws Exception;
 
 	IDeleteContainer delete(Object entity) throws Exception;
 

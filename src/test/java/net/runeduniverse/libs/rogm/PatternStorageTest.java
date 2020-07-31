@@ -69,11 +69,12 @@ public class PatternStorageTest extends ATest {
 	}
 
 	private String _query(Class<?> clazz) throws Exception {
-		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.storage.getNode(clazz).search()) + '\n';
+		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.storage.getNode(clazz).search(false))
+				+ '\n';
 	}
 
 	private String _save(Object entity) throws Exception {
 		return "[SAVE][" + entity.getClass().getSimpleName() + "]\n"
-				+ iLanguage.save(this.storage.save(entity).getDataContainer(), null).qry() + '\n';
+				+ iLanguage.save(this.storage.save(entity, false).getDataContainer(), null).qry() + '\n';
 	}
 }

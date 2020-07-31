@@ -50,12 +50,21 @@ public final class CoreSession implements Session {
 
 	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
+		return this._load(type, id, false);
+	}
+
+	@Override
+	public <T, ID extends Serializable> T loadLazy(Class<T> type, ID id) {
+		return this._load(type, id, true);
+	}
+
+	private <T, ID extends Serializable> T _load(Class<T> type, ID id, boolean lazy) {
 		T o = this.storage.getBuffer().getByEntityId(id, type);
 		if (o != null)
 			return o;
 
 		try {
-			Collection<T> all = this.loadAll(type, id);
+			Collection<T> all = this._loadAll(type, id, lazy);
 			if (all.isEmpty())
 				return null;
 			else
@@ -70,8 +79,17 @@ public final class CoreSession implements Session {
 
 	@Override
 	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id) {
+		return this._loadAll(type, id, false);
+	}
+
+	@Override
+	public <T, ID extends Serializable> Collection<T> loadAllLazy(Class<T> type, ID id) {
+		return this._loadAll(type, id, true);
+	}
+
+	private <T, ID extends Serializable> Collection<T> _loadAll(Class<T> type, ID id, boolean lazy) {
 		try {
-			return this.loadAll(type, this.storage.search(type, id));
+			return this.loadAll(type, this.storage.search(type, id, lazy));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -80,8 +98,17 @@ public final class CoreSession implements Session {
 
 	@Override
 	public <T> Collection<T> loadAll(Class<T> type) {
+		return this._loadAll(type, false);
+	}
+
+	@Override
+	public <T> Collection<T> loadAllLazy(Class<T> type) {
+		return this._loadAll(type, true);
+	}
+
+	private <T, ID extends Serializable> Collection<T> _loadAll(Class<T> type, boolean lazy) {
 		try {
-			return loadAll(type, this.storage.search(type));
+			return loadAll(type, this.storage.search(type, lazy));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -102,9 +129,18 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public void save(Object object) {
+	public void save(Object entity) {
+		this._save(entity, false);
+	}
+
+	@Override
+	public void saveLazy(Object entity) {
+		this._save(entity, false);
+	}
+	
+	private void _save(Object entity, boolean lazy) {
 		try {
-			ISaveContainer container = this.storage.save(object);
+			ISaveContainer container = this.storage.save(entity, lazy);
 			Language.ISaveMapper mapper = this.lang.save(container.getDataContainer(), container.getRelatedFilter());
 			mapper.updateObjectIds(this.storage.getBuffer(), this.module.execute(mapper.qry()));
 			if (mapper.effectedQry() != null) {
@@ -122,6 +158,12 @@ public final class CoreSession implements Session {
 	public void saveAll(Collection<Object> entities) {
 		for (Object e : entities)
 			this.save(e);
+	}
+
+	@Override
+	public void saveAllLazy(Collection<Object> entities) {
+		// TODO lazy loading
+
 	}
 
 	@Override

@@ -82,16 +82,16 @@ public class PatternStorage implements IStorage {
 		}
 	}
 
-	public IFilter search(Class<?> clazz) throws Exception {
-		return this.getPattern(clazz).search();
+	public IFilter search(Class<?> clazz, boolean lazy) throws Exception {
+		return this.getPattern(clazz).search(lazy);
 	}
 
-	public IFilter search(Class<?> clazz, Serializable id) throws Exception {
-		return this.getPattern(clazz).search(id);
+	public IFilter search(Class<?> clazz, Serializable id, boolean lazy) throws Exception {
+		return this.getPattern(clazz).search(id, lazy);
 	}
 
-	public ISaveContainer save(Object entity) throws Exception {
-		return this.getPattern(entity.getClass()).save(entity);
+	public ISaveContainer save(Object entity, boolean lazy) throws Exception {
+		return this.getPattern(entity.getClass()).save(entity, lazy);
 	}
 
 	public IDeleteContainer delete(Object entity) throws Exception {

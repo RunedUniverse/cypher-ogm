@@ -59,22 +59,21 @@ public class NodePattern extends APattern {
 		_parse(type.getSuperclass());
 	}
 
-	public IFilter search() throws Exception {
-		Node node = this.storage.getFactory().createNode(this.labels, new ArrayList<>());
-		node.setPattern(this);
-		node.setReturned(true);
-		for (FieldPattern field : this.relFields)
-			node.getRelations().add(field.queryRelation(node));
-
-		return node;// includes ALL relation filters
+	public IFilter search(boolean lazy) throws Exception {
+		return this._search(this.storage.getFactory().createNode(this.labels, new ArrayList<>()), lazy);
 	}
 
-	public IFilter search(Serializable id) throws Exception {
-		Node node = this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter);
+	public IFilter search(Serializable id, boolean lazy) throws Exception {
+		return this._search(
+				this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter), lazy);
+	}
+
+	private IFNode _search(Node node, boolean lazy) throws Exception {
 		node.setPattern(this);
 		node.setReturned(true);
-		for (FieldPattern field : this.relFields)
-			node.getRelations().add(field.queryRelation(node));
+		if (!lazy)
+			for (FieldPattern field : this.relFields)
+				node.getRelations().add(field.queryRelation(node));
 		return node;
 	}
 
@@ -87,13 +86,13 @@ public class NodePattern extends APattern {
 	}
 
 	@Override
-	public ISaveContainer save(Object entity) throws Exception {
+	public ISaveContainer save(Object entity, boolean lazy) throws Exception {
 		Map<Object, IDataContainer> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
 			@Override
 			public IDataContainer getDataContainer() throws Exception {
-				return createFilter(entity, includedData, true);
+				return createFilter(entity, includedData, !lazy);
 			}
 
 			@Override
@@ -111,7 +110,7 @@ public class NodePattern extends APattern {
 				Entry entry = storage.getBuffer().getEntry(entity);
 				if (entry == null)
 					return null;
-				return search(entry.getId());
+				return search(entry.getId(), false);
 			}
 		};
 	}
