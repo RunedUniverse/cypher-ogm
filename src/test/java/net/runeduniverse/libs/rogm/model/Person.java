@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
 import net.runeduniverse.libs.rogm.annotations.PostLoad;
-import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
+import net.runeduniverse.libs.rogm.annotations.PostSave;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 
@@ -36,7 +36,7 @@ public class Person extends AEntity {
 		System.out.println("[PRE-SAVE] " + toString());
 	}
 
-	@Post⁮Save
+	@PostSave
 	private void postSave() {
 		System.out.println("[POST-SAVE] " + toString());
 	}

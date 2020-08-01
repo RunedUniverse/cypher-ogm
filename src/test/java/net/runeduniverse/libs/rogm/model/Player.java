@@ -12,7 +12,7 @@ import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
 import net.runeduniverse.libs.rogm.annotations.PostLoad;
-import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
+import net.runeduniverse.libs.rogm.annotations.PostSave;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 
@@ -34,7 +34,7 @@ public class Player {
 		System.out.println("[PRE-SAVE] " + toString());
 	}
 
-	@Post⁮Save
+	@PostSave
 	private void postSave() {
 		System.out.println("[POST-SAVE] " + toString());
 	}

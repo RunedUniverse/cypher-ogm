@@ -12,7 +12,7 @@ import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
 import net.runeduniverse.libs.rogm.annotations.PostLoad;
-import net.runeduniverse.libs.rogm.annotations.Post⁮Save;
+import net.runeduniverse.libs.rogm.annotations.PostSave;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
@@ -63,7 +63,7 @@ public abstract class APattern implements IPattern {
 				this.postLoad = method;
 				continue;
 			}
-			if (this.postSave == null && method.isAnnotationPresent(Post⁮Save.class)) {
+			if (this.postSave == null && method.isAnnotationPresent(PostSave.class)) {
 				this.postSave = method;
 				continue;
 			}
