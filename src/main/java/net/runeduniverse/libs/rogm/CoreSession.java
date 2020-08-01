@@ -103,23 +103,15 @@ public final class CoreSession implements Session {
 		Set<Entry> stage = new HashSet<>();
 		Collection<T> coll = _loadAllObjects(type, filter, stage);
 
-		for (int i = 1; i < depth; i++) {
-			if (stage.isEmpty())
-				return coll;
-			_resolveAllLazyLoaded(stage);
-		}
+		this._resolveAllLazyLoaded(stage, depth - 1);
 		return coll;
 	}
 
-	private <T> Collection<T> _loadAllObjects(Class<T> type, IFilter filter, Set<Entry> lazyEntities) {
-		try {
-			Language.ILoadMapper m = lang.load(filter);
-			IPattern.IDataRecord record = m.parseDataRecord(this.module.queryObject(m.qry()));
-
-			return this.storage.parse(type, record, lazyEntities);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ArrayList<T>();
+	private void _resolveAllLazyLoaded(Set<Entry> stage, Integer depth) {
+		for (int i = 0; i < depth; i++) {
+			if (stage.isEmpty())
+				return;
+			this._resolveAllLazyLoaded(stage);
 		}
 	}
 
@@ -132,6 +124,18 @@ public final class CoreSession implements Session {
 				e.printStackTrace();
 			}
 		stage = next;
+	}
+
+	private <T> Collection<T> _loadAllObjects(Class<T> type, IFilter filter, Set<Entry> lazyEntities) {
+		try {
+			Language.ILoadMapper m = lang.load(filter);
+			IPattern.IDataRecord record = m.parseDataRecord(this.module.queryObject(m.qry()));
+
+			return this.storage.parse(type, record, lazyEntities);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<T>();
+		}
 	}
 
 	private void _save(Object entity, Integer depth) {
@@ -224,20 +228,30 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void resolveLazyLoaded(Object entity) {
-		this.resolveAllLazyLoaded(Arrays.asList(entity));
+		this.resolveAllLazyLoaded(Arrays.asList(entity), 1);
+	}
+
+	@Override
+	public void resolveLazyLoaded(Object entity, Integer depth) {
+		this.resolveAllLazyLoaded(Arrays.asList(entity), depth);
 	}
 
 	@Override
 	public void resolveAllLazyLoaded(Collection<Object> entities) {
+		this.resolveAllLazyLoaded(entities, 1);
+	}
+
+	@Override
+	public void resolveAllLazyLoaded(Collection<Object> entities, Integer depth) {
 		Set<Entry> stage = new HashSet<>();
 		for (Object entity : entities) {
 			Entry entry = this.buffer.getEntry(entity);
-			if (entry == null)
+			if (entry == null || entry.getLoadState() == LoadState.COMPLETE)
 				continue;
 			stage.add(entry);
 		}
 
-		this._resolveAllLazyLoaded(stage);
+		this._resolveAllLazyLoaded(stage, depth);
 	}
 
 	@Override
