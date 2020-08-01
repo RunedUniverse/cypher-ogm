@@ -168,6 +168,22 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
+	public <T, ID extends Serializable> T load(Class<T> type, IFilter filter) {
+		try {
+			Collection<T> all = this._loadAllObjects(type, filter, null);
+			if (all.isEmpty())
+				return null;
+			else
+				for (T t : all)
+					return t;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
 	public <T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id) {
 		return this._loadAll(type, id, 1);
 	}
