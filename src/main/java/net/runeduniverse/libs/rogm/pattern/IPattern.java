@@ -21,6 +21,8 @@ public interface IPattern {
 
 	Class<?> getType();
 
+	Collection<String> getLabels();
+
 	IConverter<?> getIdConverter();
 
 	IFilter search(boolean lazy) throws Exception;

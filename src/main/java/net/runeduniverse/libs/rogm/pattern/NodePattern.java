@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Getter;
+
 import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
 import net.runeduniverse.libs.rogm.annotations.Direction;
@@ -30,6 +32,7 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class NodePattern extends APattern {
 
+	@Getter
 	private Set<String> labels = new HashSet<>();
 	private Set<FieldPattern> relFields = new HashSet<>();
 
@@ -172,7 +175,7 @@ public class NodePattern extends APattern {
 		}
 
 		this.preSave(entity);
-		
+
 		node.setReturned(true);
 		node.setReadonly(readonly);
 		includedData.put(entity, node);

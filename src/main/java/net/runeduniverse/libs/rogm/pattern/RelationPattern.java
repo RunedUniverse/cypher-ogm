@@ -2,6 +2,7 @@ package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,6 +78,11 @@ public class RelationPattern extends APattern {
 
 	public PatternType getPatternType() {
 		return PatternType.RELATION;
+	}
+
+	@Override
+	public Collection<String> getLabels() {
+		return Arrays.asList(this.label);
 	}
 
 	public IFilter search(boolean lazy) {

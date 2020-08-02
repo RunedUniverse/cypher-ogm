@@ -3,6 +3,7 @@ package net.runeduniverse.libs.rogm;
 import java.io.Serializable;
 import java.util.Collection;
 
+import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface Session extends AutoCloseable {
@@ -58,6 +59,9 @@ public interface Session extends AutoCloseable {
 	void unload(Object entity);
 
 	void unloadAll(Collection<Object> entities);
+
+	@Deprecated
+	IPattern getPattern(Class<?> type) throws Exception;
 
 	public static Session create(Configuration cnf) throws Exception {
 		return new CoreSession(cnf);

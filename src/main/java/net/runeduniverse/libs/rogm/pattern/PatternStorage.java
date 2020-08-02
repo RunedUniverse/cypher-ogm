@@ -73,7 +73,7 @@ public class PatternStorage implements IStorage {
 			return this.nodes.get(clazz);
 		if (this.relations.containsKey(clazz))
 			return this.relations.get(clazz);
-		throw new Exception("Unsupported Class<" + clazz + "> as @Relation found!");
+		throw new Exception("Unsupported Entity-Class <" + clazz + "> found!");
 	}
 
 	public boolean isIdSet(Object entity) {

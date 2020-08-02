@@ -320,4 +320,9 @@ public final class CoreSession implements Session {
 		for (Object object : entities)
 			this.unload(object);
 	}
+
+	@Override
+	public IPattern getPattern(Class<?> type) throws Exception {
+		return this.storage.getPattern(type);
+	}
 }
