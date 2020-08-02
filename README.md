@@ -15,6 +15,6 @@ We recommend using it in non-Spring projects but it should also work in Spring p
 <dependency>
   <groupId>net.runeduniverse.libs</groupId>
   <artifactId>rogm</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 </dependency>
 ```
