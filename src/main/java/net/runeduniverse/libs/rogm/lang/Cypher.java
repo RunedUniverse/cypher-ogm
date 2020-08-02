@@ -83,7 +83,7 @@ public class Cypher implements Language {
 				rt.add(_returnId(c));
 				try {
 					IDataContainer d = (IDataContainer) f;
-					if(d.isReadonly())
+					if (d.isReadonly())
 						return;
 					if (d.getData() != null)
 						st.add(c + '=' + parser.serialize(d.getData()));
@@ -167,13 +167,14 @@ public class Cypher implements Language {
 			StringBuilder matchBuilder = new StringBuilder();
 			StringBuilder createBuilder = new StringBuilder();
 			StringBuilder mergeBuilder = new StringBuilder();
+			StringBuilder relMergeBuilder = new StringBuilder();
 			StringBuilder optionalMatchBuilder = new StringBuilder();
 			List<String> where = new ArrayList<>();
 
 			map.forEach((f, code, modifier) -> {
 				StringBuilder activeBuilder = null;
 				boolean optional = false;
-				boolean isMerge = _isMerge(f);
+				short isMerge = _isMerge(f);
 
 				if (f != null && f.getFilterType() == FilterType.MATCH && f instanceof IOptional
 						&& ((IOptional) f).isOptional())
@@ -187,14 +188,16 @@ public class Cypher implements Language {
 
 				if (optional)
 					activeBuilder = optionalMatchBuilder.append("OPTIONAL ");
-				else if (isMerge)
+				else if (isMerge == 0)
+					activeBuilder = relMergeBuilder;
+				else if (isMerge == 1)
 					activeBuilder = mergeBuilder;
 				else if (f.getFilterType() == FilterType.CREATE)
 					activeBuilder = createBuilder;
 				else
 					activeBuilder = matchBuilder;
 
-				activeBuilder.append(_prefix(f, isMerge));
+				activeBuilder.append(_prefix(f, -1 < isMerge));
 				if (f instanceof IFNode) {
 					if (!(modifier.equals(FilterStatus.PRE_PRINTED) && optional)) {
 						activeBuilder.append(_filterToString(map, f, true, false, false));
@@ -202,27 +205,30 @@ public class Cypher implements Language {
 					}
 
 				} else if (f instanceof IFRelation) {
-					activeBuilder.append(_translateRelation(map, (IFRelation) f, optional, isMerge).toString());
+					activeBuilder.append(_translateRelation(map, (IFRelation) f, optional, -1 < isMerge).toString());
 				} else
 					activeBuilder.append("()");
 				activeBuilder.append('\n');
 			});
 			if (!where.isEmpty())
 				matchBuilder.append("WHERE " + String.join(" AND ", where) + '\n');
-			return matchBuilder.append(createBuilder).append(mergeBuilder).append(optionalMatchBuilder);
+			return matchBuilder.append(createBuilder).append(mergeBuilder).append(relMergeBuilder)
+					.append(optionalMatchBuilder);
 		}
 
-		private boolean _isMerge(IFilter filter) {
+		private short _isMerge(IFilter filter) {
 			if (filter == null)
-				return false;
+				return -1;
 			switch (filter.getFilterType()) {
 			case CREATE:
 			case UPDATE:
-				if (filter instanceof IFRelation || filter instanceof IParameterized
+				if (filter instanceof IFRelation)
+					return 0;
+				if (filter instanceof IParameterized
 						&& ((IParameterized) filter).getParams().containsKey(this.module.getIdAlias()))
-					return true;
+					return 1;
 			default:
-				return false;
+				return -1;
 			}
 		}
 

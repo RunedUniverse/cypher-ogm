@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.IConverter.UUIDConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
@@ -15,6 +16,7 @@ import net.runeduniverse.libs.rogm.annotations.PostLoad;
 import net.runeduniverse.libs.rogm.annotations.PostSave;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
+import net.runeduniverse.libs.rogm.annotations.Relationship;
 
 @Getter
 @NodeEntity
@@ -28,6 +30,10 @@ public class Player {
 
 	@Setter
 	private String name;
+	
+	@Setter
+	@Relationship(label = "PLAYER_INV", direction = Direction.OUTGOING)
+	private Inventory inventory;
 
 	@PreSave
 	private void preSave() {

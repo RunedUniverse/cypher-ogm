@@ -12,6 +12,7 @@ import org.junit.Test;
 import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Company;
 import net.runeduniverse.libs.rogm.model.Game;
+import net.runeduniverse.libs.rogm.model.Inventory;
 import net.runeduniverse.libs.rogm.model.Person;
 import net.runeduniverse.libs.rogm.model.Player;
 import net.runeduniverse.libs.rogm.model.Song;
@@ -74,7 +75,7 @@ public class SessionTest extends ATest {
 	@Test
 	public void updatePerson() {
 		assertTrue("Session is NOT connected", session.isConnected());
-		Person shawn = session.load(Person.class, 75L);
+		Person shawn = session.load(Person.class, 1L);
 		System.out.println(shawn.toString());
 		shawn.setFirstName("Shawn");
 		shawn.setLastName("James");
@@ -106,7 +107,7 @@ public class SessionTest extends ATest {
 
 	@Test
 	public void createPlayer_UUID_Id() {
-		Player player = new Player(UUID.randomUUID(), "Testi");
+		Player player = new Player(UUID.randomUUID(), "Testi", new Inventory());
 		System.out.println(player.toString());
 		session.save(player);
 		System.out.println(player.toString());
@@ -125,7 +126,7 @@ public class SessionTest extends ATest {
 
 	@Test
 	public void createAndDeletePlayer() {
-		Player player = new Player(UUID.randomUUID(), "DUMMY PLAYER");
+		Player player = new Player(UUID.randomUUID(), "DUMMY PLAYER", new Inventory());
 		session.save(player);
 		session.delete(player);
 	}
@@ -146,7 +147,7 @@ public class SessionTest extends ATest {
 	public void loadCompany() {
 		Game game = new Game();
 		game.setName("just another USELESS title");
-		Company company = session.load(Company.class, 51L);
+		Company company = session.load(Company.class, 199L);
 		company.getGames().add(game);
 		session.save(company);
 		company.getGames().remove(game);
