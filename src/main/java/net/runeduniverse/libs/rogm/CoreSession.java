@@ -139,6 +139,8 @@ public final class CoreSession implements Session {
 	}
 
 	private void _save(Object entity, Integer depth) {
+		if (entity == null)
+			return;
 		try {
 			ISaveContainer container = this.storage.save(entity, depth);
 			Language.ISaveMapper mapper = this.lang.save(container.getDataContainer(), container.getRelatedFilter());

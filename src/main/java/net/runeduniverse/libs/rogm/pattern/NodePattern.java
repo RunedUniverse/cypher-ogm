@@ -115,11 +115,12 @@ public class NodePattern extends APattern {
 			@Override
 			public void postSave() {
 				for (Object object : includedData.keySet())
-					try {
-						storage.getPattern(object.getClass()).postSave(object);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					if (object != null)
+						try {
+							storage.getPattern(object.getClass()).postSave(object);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 			}
 
 			@Override

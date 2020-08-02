@@ -79,7 +79,7 @@ public abstract class APattern implements IPattern {
 
 	@Override
 	public Serializable getId(Object entity) {
-		if (this.idField == null)
+		if (this.idField == null || entity == null)
 			return null;
 		try {
 			return (Serializable) this.idField.get(entity);
@@ -117,7 +117,7 @@ public abstract class APattern implements IPattern {
 
 	@Override
 	public void preSave(Object entity) {
-		if (this.preSave != null)
+		if (entity != null && this.preSave != null)
 			try {
 				this.preSave.invoke(entity);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -127,7 +127,7 @@ public abstract class APattern implements IPattern {
 
 	@Override
 	public void preDelete(Object entity) {
-		if (this.preDelete != null)
+		if (entity != null && this.preDelete != null)
 			try {
 				this.preDelete.invoke(entity);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -137,7 +137,7 @@ public abstract class APattern implements IPattern {
 
 	@Override
 	public void postLoad(Object entity) {
-		if (this.postLoad != null)
+		if (entity != null && this.postLoad != null)
 			try {
 				this.postLoad.invoke(entity);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -147,7 +147,7 @@ public abstract class APattern implements IPattern {
 
 	@Override
 	public void postSave(Object entity) {
-		if (this.postSave != null)
+		if (entity != null && this.postSave != null)
 			try {
 				this.postSave.invoke(entity);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -157,7 +157,7 @@ public abstract class APattern implements IPattern {
 
 	@Override
 	public void postDelete(Object entity) {
-		if (this.postDelete != null)
+		if (entity != null && this.postDelete != null)
 			try {
 				this.postDelete.invoke(entity);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

@@ -83,6 +83,8 @@ public class FieldPattern {
 
 	public void saveRelation(Object entity, IDataNode node, Map<Object, IDataContainer> includedData, Integer depth)
 			throws Exception {
+		if (entity == null)
+			return;
 		if (this.collection)
 			// Collection
 			for (Object relNode : (Collection<?>) this.field.get(entity))
