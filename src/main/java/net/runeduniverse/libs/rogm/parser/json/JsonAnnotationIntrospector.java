@@ -12,7 +12,8 @@ import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.Property;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
-import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
+import net.runeduniverse.libs.rogm.annotations.StartNode;
+import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.Transient;
 import net.runeduniverse.libs.rogm.modules.Module;
 
@@ -28,7 +29,7 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 
 	@Override
 	public boolean hasIgnoreMarker(AnnotatedMember m) {
-		return _isTransient(m) || 2 == _isId(m) || _isRelationship(m) || _isRelationshipEntity(m);
+		return _isTransient(m) || 2 == _isId(m) || _isRelationship(m) || _isStartNode(m) || _isTargetNode(m);
 	}
 
 	@Override
@@ -77,8 +78,15 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 		return true;
 	}
 
-	private boolean _isRelationshipEntity(Annotated a) {
-		RelationshipEntity anno = _findAnnotation(a, RelationshipEntity.class);
+	private boolean _isStartNode(Annotated a) {
+		StartNode anno = _findAnnotation(a, StartNode.class);
+		if (anno == null)
+			return false;
+		return true;
+	}
+
+	private boolean _isTargetNode(Annotated a) {
+		TargetNode anno = _findAnnotation(a, TargetNode.class);
 		if (anno == null)
 			return false;
 		return true;
