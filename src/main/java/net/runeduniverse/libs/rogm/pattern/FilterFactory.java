@@ -35,7 +35,7 @@ public class FilterFactory {
 		return node;
 	}
 
-	public IDataNode createIdDataNode(Set<String> labels, List<IFRelation> relations, Serializable id,
+	public DataNode createIdDataNode(Set<String> labels, List<IFRelation> relations, Serializable id,
 			IConverter<?> converter, Object data, boolean persist) {
 		if (this.module.checkIdType(id.getClass()))
 			return new DataNode(data, id, labels, relations, persist);
@@ -44,7 +44,7 @@ public class FilterFactory {
 		return node;
 	}
 
-	public IDataNode createDataNode(Set<String> labels, List<IFRelation> relations, Object data, boolean persist) {
+	public DataNode createDataNode(Set<String> labels, List<IFRelation> relations, Object data, boolean persist) {
 		return new DataNode(data, labels, relations, persist);
 	}
 
@@ -137,9 +137,11 @@ public class FilterFactory {
 	}
 
 	@Getter
-	private class DataNode extends Node implements IDataNode {
+	protected class DataNode extends Node implements IDataNode {
 		private Object data;
 		private boolean persist;
+		@Setter
+		protected boolean readonly = false;
 
 		private DataNode(Object data, Serializable id, Set<String> labels, List<IFRelation> relations,
 				boolean persist) {
@@ -181,6 +183,7 @@ public class FilterFactory {
 	@Getter
 	private class DataRelation extends Relation implements IDataRelation {
 		private Object data;
+		protected boolean readonly = false;
 
 		private DataRelation(Object data, Direction direction) {
 			super(direction);

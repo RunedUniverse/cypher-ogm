@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(FIELD)
-public @interface EndNode {
-
+public @interface TargetNode {
+	boolean readonly() default false;
 }

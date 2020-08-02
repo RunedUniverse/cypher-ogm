@@ -19,6 +19,7 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
+import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
 import net.runeduniverse.libs.rogm.querying.FilterType;
@@ -148,15 +149,18 @@ public class NodePattern extends APattern {
 				this.storage.getFactory().createEffectedFilter(entry.getId()), node);
 	}
 
-	public IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
-		if (includedData.containsKey(entity))
-			return (IDataNode) includedData.get(entity);
-
-		this.preSave(entity);
-
-		IDataNode node = null;
+	protected IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
+		boolean readonly = depth == -1;
 		boolean persist = 0 < depth;
-		if (this.isIdSet(entity)) {
+		IDataContainer container = includedData.get(entity);
+		DataNode node = null;
+
+		if (container != null) {
+			if (!(!readonly && container.isReadonly()))
+				return (IDataNode) container;
+			else
+				node = (DataNode) container;
+		} else if (this.isIdSet(entity)) {
 			// update (id)
 			node = this.storage.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity),
 					this.idConverter, entity, persist);
@@ -166,7 +170,11 @@ public class NodePattern extends APattern {
 			node = this.storage.getFactory().createDataNode(this.labels, new ArrayList<>(), entity, persist);
 			node.setFilterType(FilterType.CREATE);
 		}
+
+		this.preSave(entity);
+		
 		node.setReturned(true);
+		node.setReadonly(readonly);
 		includedData.put(entity, node);
 
 		if (persist) {

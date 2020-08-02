@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.junit.*;
 
-import net.runeduniverse.libs.rogm.annotations.EndNode;
+import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
@@ -143,21 +143,21 @@ public class RelationshipTests extends ATest {
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
 			Class<?> fieldClass = field.getType();
-			if (!(field.isAnnotationPresent(StartNode.class) || field.isAnnotationPresent(EndNode.class)))
+			if (!(field.isAnnotationPresent(StartNode.class) || field.isAnnotationPresent(TargetNode.class)))
 				continue;
 			if (isOfTypeCollection(fieldClass))
 				throw new Exception("A Collection inside RelationshipEntity is not allowed!!!");
 			if (field.isAnnotationPresent(StartNode.class)) {
 				startNode = true;
 				fr.setStart((IFNode) giveFilterNodeOrRelation(fieldClass, true));
-			} else if (field.isAnnotationPresent(EndNode.class)) {
+			} else if (field.isAnnotationPresent(TargetNode.class)) {
 				endNode = true;
 				fr.setTarget((IFNode) giveFilterNodeOrRelation(fieldClass, true));
 			}
 		}
 		if (!(startNode && endNode))
 			throw new Exception(
-					"A RelationshipEntity needs a Field with the StartNode Annotation and a Field with the EndNode Annotation!!!");
+					"A RelationshipEntity needs a Field with the StartNode Annotation and a Field with the TargetNode Annotation!!!");
 		return fr;
 	}
 

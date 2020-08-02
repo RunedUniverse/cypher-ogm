@@ -11,7 +11,7 @@ import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.annotations.EndNode;
+import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
@@ -34,6 +34,8 @@ public class RelationPattern extends APattern {
 	// start eq target
 	@Getter
 	private boolean stEqTr = false;
+	private boolean readonlyStart = false;
+	private boolean readonlyTarget = false;
 
 	public RelationPattern(PatternStorage storage, Class<?> type) throws Exception {
 		super(storage, type);
@@ -49,16 +51,22 @@ public class RelationPattern extends APattern {
 			if (this.parseId(field))
 				continue;
 
-			if (field.isAnnotationPresent(StartNode.class)) {
-				if (field.isAnnotationPresent(EndNode.class)) {
+			StartNode startAnno = field.getAnnotation(StartNode.class);
+			TargetNode targetAnno = field.getAnnotation(TargetNode.class);
+
+			if (startAnno != null) {
+				if (targetAnno != null) {
 					this.stEqTr = true;
 					this.targetField = field;
-				}
+				} else
+					this.readonlyStart = startAnno.readonly();
 				this.startField = field;
 				continue;
 			}
-			if (field.isAnnotationPresent(EndNode.class))
+			if (targetAnno != null) {
+				this.readonlyTarget = targetAnno.readonly();
 				this.targetField = field;
+			}
 		}
 		this.parseMethods(type);
 
@@ -157,7 +165,7 @@ public class RelationPattern extends APattern {
 		return new DeleteContainer(this, entity, entry.getId(), null, relation);
 	}
 
-	public IDataRelation save(Object entity, IDataNode caller, Direction direction,
+	protected IDataRelation save(Object entity, IDataNode caller, Direction direction,
 			Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
 		if (includedData.containsKey(entity))
 			return (IDataRelation) includedData.get(entity);
@@ -203,10 +211,12 @@ public class RelationPattern extends APattern {
 		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
 				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING)) {
 			relation.setTarget(caller);
-			relation.setStart(_getDataNode(this.startField, entity, includedData, relation, depth));
+			relation.setStart(
+					_getDataNode(this.startField, entity, includedData, relation, this.readonlyStart ? -1 : depth));
 		} else {
 			relation.setStart(caller);
-			relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation, depth));
+			relation.setTarget(
+					_getDataNode(this.targetField, entity, includedData, relation, this.readonlyTarget ? -1 : depth));
 		}
 		return relation;
 	}

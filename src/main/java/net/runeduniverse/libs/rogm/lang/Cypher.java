@@ -83,6 +83,8 @@ public class Cypher implements Language {
 				rt.add(_returnId(c));
 				try {
 					IDataContainer d = (IDataContainer) f;
+					if(d.isReadonly())
+						return;
 					if (d.getData() != null)
 						st.add(c + '=' + parser.serialize(d.getData()));
 				} catch (Exception e) {
