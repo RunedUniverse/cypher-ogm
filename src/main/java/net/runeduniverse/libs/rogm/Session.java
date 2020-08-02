@@ -16,6 +16,7 @@ public interface Session extends AutoCloseable {
 
 	<T, ID extends Serializable> T loadLazy(Class<T> type, ID id);
 
+	@Deprecated
 	<T, ID extends Serializable> T load(Class<T> type, IFilter filter);
 
 	<T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id);
@@ -30,6 +31,7 @@ public interface Session extends AutoCloseable {
 
 	<T> Collection<T> loadAllLazy(Class<T> type);
 
+	@Deprecated
 	<T> Collection<T> loadAll(Class<T> type, IFilter filter);
 
 	void resolveLazyLoaded(Object entity);
