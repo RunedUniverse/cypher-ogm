@@ -38,9 +38,9 @@ public interface Session extends AutoCloseable {
 
 	void resolveLazyLoaded(Object entity, Integer depth);
 
-	void resolveAllLazyLoaded(Collection<Object> entities);
+	void resolveAllLazyLoaded(Collection<? extends Object> entities);
 
-	void resolveAllLazyLoaded(Collection<Object> entities, Integer depth);
+	void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth);
 
 	void save(Object entity);
 
@@ -48,19 +48,19 @@ public interface Session extends AutoCloseable {
 
 	void saveLazy(Object entity);
 
-	void saveAll(Collection<Object> entities);
+	void saveAll(Collection<? extends Object> entities);
 
-	void saveAll(Collection<Object> entities, Integer depth);
+	void saveAll(Collection<? extends Object> entities, Integer depth);
 
-	void saveAllLazy(Collection<Object> entities);
+	void saveAllLazy(Collection<? extends Object> entities);
 
 	void delete(Object entity);
 
-	void deleteAll(Collection<Object> entities);
+	void deleteAll(Collection<? extends Object> entities);
 
 	void unload(Object entity);
 
-	void unloadAll(Collection<Object> entities);
+	void unloadAll(Collection<? extends Object> entities);
 
 	@Deprecated
 	IPattern getPattern(Class<?> type) throws Exception;

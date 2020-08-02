@@ -237,12 +237,12 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public void resolveAllLazyLoaded(Collection<Object> entities) {
+	public void resolveAllLazyLoaded(Collection<? extends Object> entities) {
 		this.resolveAllLazyLoaded(entities, 1);
 	}
 
 	@Override
-	public void resolveAllLazyLoaded(Collection<Object> entities, Integer depth) {
+	public void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth) {
 		Set<Entry> stage = new HashSet<>();
 		for (Object entity : entities) {
 			Entry entry = this.buffer.getEntry(entity);
@@ -272,13 +272,13 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public void saveAll(Collection<Object> entities) {
+	public void saveAll(Collection<? extends Object> entities) {
 		for (Object e : entities)
 			this._save(e, 1);
 	}
 
 	@Override
-	public void saveAll(Collection<Object> entities, Integer depth) {
+	public void saveAll(Collection<? extends Object> entities, Integer depth) {
 		if (depth < 0)
 			depth = 0;
 		for (Object e : entities)
@@ -286,7 +286,7 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public void saveAllLazy(Collection<Object> entities) {
+	public void saveAllLazy(Collection<? extends Object> entities) {
 		for (Object e : entities)
 			this._save(e, 0);
 	}
@@ -305,7 +305,7 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public void deleteAll(Collection<Object> entities) {
+	public void deleteAll(Collection<? extends Object> entities) {
 		for (Object e : entities)
 			this.delete(e);
 	}
@@ -316,7 +316,7 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public void unloadAll(Collection<Object> entities) {
+	public void unloadAll(Collection<? extends Object> entities) {
 		for (Object object : entities)
 			this.unload(object);
 	}
