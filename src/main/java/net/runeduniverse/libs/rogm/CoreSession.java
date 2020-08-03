@@ -123,7 +123,8 @@ public final class CoreSession implements Session {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		stage = next;
+		stage.clear();
+		stage.addAll(next);
 	}
 
 	private <T> Collection<T> _loadAllObjects(Class<T> type, IFilter filter, Set<Entry> lazyEntities) {
@@ -248,7 +249,7 @@ public final class CoreSession implements Session {
 		Set<Entry> stage = new HashSet<>();
 		for (Object entity : entities) {
 			Entry entry = this.buffer.getEntry(entity);
-			if (entry == null)
+			if (entry == null || entry.getLoadState() == LoadState.COMPLETE)
 				continue;
 			stage.add(entry);
 		}
