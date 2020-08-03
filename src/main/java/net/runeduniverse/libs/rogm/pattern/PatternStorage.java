@@ -127,8 +127,7 @@ public class PatternStorage implements IStorage {
 			}
 		}
 
-		for (DataMap<IFilter, IData, DataType> dataMap : dataRecords) {
-
+		for (DataMap<IFilter, IData, DataType> dataMap : dataRecords)
 			dataMap.forEach(DataType.RELATION, (filter, data) -> {
 				IFRelation fRelation = (IFRelation) filter;
 				String label = fRelation.getPrimaryLabel();
@@ -156,7 +155,6 @@ public class PatternStorage implements IStorage {
 				pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, relEntity);
 				pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode, relEntity);
 			});
-		}
 
 		Set<T> nodes = new HashSet<>();
 		for (Serializable primId : record.getIds())

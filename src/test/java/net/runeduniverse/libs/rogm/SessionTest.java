@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.model.Actor;
 import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Company;
 import net.runeduniverse.libs.rogm.model.Game;
@@ -16,6 +17,8 @@ import net.runeduniverse.libs.rogm.model.Inventory;
 import net.runeduniverse.libs.rogm.model.Person;
 import net.runeduniverse.libs.rogm.model.Player;
 import net.runeduniverse.libs.rogm.model.Song;
+import net.runeduniverse.libs.rogm.model.relations.ActorPlaysPersonRelation;
+import net.runeduniverse.libs.rogm.querying.IParameterized;
 
 public class SessionTest extends ATest {
 
@@ -44,11 +47,11 @@ public class SessionTest extends ATest {
 		assertEquals("runeduniverse.net", config.getUri());
 
 		this.session = Session.create(config);
+		assertTrue("Session is NOT connected", session.isConnected());
 	}
 
 	@Test
 	public void loadAllPeople() {
-		assertTrue("Session is NOT connected", session.isConnected());
 		Collection<Person> people = session.loadAll(Person.class);
 		if (people.isEmpty()) {
 			System.out.println("NO PEOPLE FOUND");
@@ -61,7 +64,6 @@ public class SessionTest extends ATest {
 
 	@Test
 	public void loadAllArtists() {
-		assertTrue("Session is NOT connected", session.isConnected());
 		Collection<Artist> people = session.loadAll(Artist.class);
 		if (people.isEmpty()) {
 			System.out.println("NO ARTIST FOUND");
@@ -72,10 +74,14 @@ public class SessionTest extends ATest {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
-	public void updatePerson() {
-		assertTrue("Session is NOT connected", session.isConnected());
-		Person shawn = session.load(Person.class, 49L);
+	public void updatePerson() throws Exception {
+		IParameterized personFilter = (IParameterized) session.getPattern(Person.class).search(false);
+		personFilter.getParams().put("firstName", "Shawn");
+		personFilter.getParams().put("lastName", "James");
+
+		Person shawn = session.load(Person.class, personFilter);
 		System.out.println(shawn.toString());
 		shawn.setFirstName("Shawn");
 		shawn.setLastName("James");
@@ -143,16 +149,30 @@ public class SessionTest extends ATest {
 		session.delete(ennio);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
-	public void loadCompany() {
+	public void loadCompany() throws Exception {
+		IParameterized gameFilter = (IParameterized) session.getPattern(Company.class).search(false);
+		gameFilter.getParams().put("name", "Naughty Dog");
+
+		Company company = session.load(Company.class, gameFilter);
 		Game game = new Game();
 		game.setName("just another USELESS title");
-		Company company = session.load(Company.class, 35L);
 		company.getGames().add(game);
 		session.save(company);
 		company.getGames().remove(game);
 		session.save(company, 4);
 		session.delete(game);
+	}
+
+	@Test
+	public void loadActors() {
+		Collection<Actor> actors = session.loadAllLazy(Actor.class);
+		session.resolveAllLazyLoaded(actors, 3);
+		for (Actor actor : actors)
+			for (ActorPlaysPersonRelation rel : actor.getPlays())
+				System.out.println(
+						"Actor: " + rel.getActor().getFirstName() + " plays " + rel.getPerson().getFirstName());
 	}
 
 	/*

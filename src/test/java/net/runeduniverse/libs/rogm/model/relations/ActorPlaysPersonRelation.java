@@ -1,5 +1,6 @@
 package net.runeduniverse.libs.rogm.model.relations;
 
+import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
@@ -8,6 +9,7 @@ import net.runeduniverse.libs.rogm.model.Actor;
 import net.runeduniverse.libs.rogm.model.Person;
 
 @RelationshipEntity(direction = Direction.OUTGOING, label = "PLAYS")
+@Getter
 public class ActorPlaysPersonRelation {
 
 	@StartNode

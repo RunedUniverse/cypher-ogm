@@ -248,7 +248,7 @@ public final class CoreSession implements Session {
 		Set<Entry> stage = new HashSet<>();
 		for (Object entity : entities) {
 			Entry entry = this.buffer.getEntry(entity);
-			if (entry == null || entry.getLoadState() == LoadState.COMPLETE)
+			if (entry == null)
 				continue;
 			stage.add(entry);
 		}
