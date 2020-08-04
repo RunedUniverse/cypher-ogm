@@ -44,6 +44,16 @@ public class RelationPattern extends APattern {
 		this.direction = typeAnno.direction();
 		this.label = typeAnno.label();
 		_parse(this.type);
+
+		if (this.startField == null)
+			throw new Exception("Relation<" + type + "> is missing the @StartNode");
+		if (Collection.class.isAssignableFrom(this.startField.getType()))
+			throw new Exception("@StartNode of Relation<" + type + "> must not be a Collection");
+
+		if (this.targetField == null)
+			throw new Exception("Relation<" + type + "> is missing the @TargetNode");
+		if (Collection.class.isAssignableFrom(this.targetField.getType()))
+			throw new Exception("@TargetNode of Relation<" + type + "> must not be a Collection");
 	}
 
 	private void _parse(Class<?> type) throws Exception {
@@ -173,6 +183,10 @@ public class RelationPattern extends APattern {
 
 	protected IDataRelation save(Object entity, IDataNode caller, Direction direction,
 			Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
+
+		if (entity == null || this.startField.get(entity) == null || this.targetField.get(entity) == null)
+			return null;
+
 		if (includedData.containsKey(entity))
 			return (IDataRelation) includedData.get(entity);
 
@@ -181,8 +195,7 @@ public class RelationPattern extends APattern {
 		IDataRelation relation = null;
 		if (this.isIdSet(entity)) {
 			// update (id)
-			relation = this.storage.getFactory().createIdDataRelation(this.direction, this.getId(entity),
-					this.idConverter, entity);
+			relation = this.storage.getFactory().createDataRelation(this.direction, entity);
 			relation.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
@@ -205,13 +218,13 @@ public class RelationPattern extends APattern {
 			else
 				relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation, depth));
 
-			return relation;
+			return _savecheck(relation);
 		}
 
 		if (this.stEqTr) {
 			relation.setStart(caller);
 			relation.setTarget(caller);
-			return relation;
+			return _savecheck(relation);
 		}
 
 		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
@@ -224,6 +237,12 @@ public class RelationPattern extends APattern {
 			relation.setTarget(
 					_getDataNode(this.targetField, entity, includedData, relation, this.readonlyTarget ? -1 : depth));
 		}
+		return _savecheck(relation);
+	}
+
+	private IDataRelation _savecheck(IDataRelation relation) {
+		if (relation.getStart() == null || relation.getTarget() == null)
+			return null;
 		return relation;
 	}
 
@@ -254,7 +273,7 @@ public class RelationPattern extends APattern {
 			IDataRelation relation, Integer depth) throws Exception {
 		NodePattern node = this.storage.getNode(field.getType());
 		if (node == null)
-			return null;
+			throw new Exception("NodePattern for Field<" + field.toString() + "> undefined!");
 		IDataNode dataNode = node.save(field.get(entity), includedData, depth);
 		dataNode.getRelations().add(relation);
 		return dataNode;

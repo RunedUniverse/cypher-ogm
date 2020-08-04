@@ -60,15 +60,6 @@ public class FilterFactory {
 		return node;
 	}
 
-	public IDataRelation createIdDataRelation(Direction direction, Serializable id, IConverter<?> converter,
-			Object data) {
-		if (this.module.checkIdType(id.getClass()))
-			return new DataRelation(data, id, direction);
-		DataRelation node = new DataRelation(data, direction);
-		node.getParams().put(this.module.getIdAlias(), converter.toProperty(id));
-		return node;
-	}
-
 	public IDataRelation createDataRelation(Direction direction, Object data) {
 		return new DataRelation(data, direction);
 	}
@@ -190,6 +181,7 @@ public class FilterFactory {
 			this.data = data;
 		}
 
+		@Deprecated
 		private DataRelation(Object data, Serializable id, Direction direction) {
 			super(id, direction);
 			this.data = data;

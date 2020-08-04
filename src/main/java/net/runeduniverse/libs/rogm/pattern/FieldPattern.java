@@ -88,25 +88,26 @@ public class FieldPattern {
 		if (this.collection)
 			// Collection
 			for (Object relNode : (Collection<?>) this.field.get(entity))
-				node.getRelations().add(_getRelation(node, relNode, includedData, depth));
-		else {
+				_addRelation(node, relNode, includedData, depth);
+		else
 			// Variable
-			Object relNode = this.field.get(entity);
-			if (relNode != null)
-				node.getRelations().add(_getRelation(node, relNode, includedData, depth));
-		}
+			_addRelation(node, this.field.get(entity), includedData, depth);
 	}
 
-	private IDataRelation _getRelation(IDataNode node, Object relEntity, Map<Object, IDataContainer> includedData,
-			Integer depth) throws Exception {
+	private void _addRelation(IDataNode node, Object relEntity, Map<Object, IDataContainer> includedData, Integer depth)
+			throws Exception {
+		if (relEntity == null)
+			return;
 
 		IDataRelation relation = null;
 		// clazz could be substituted with this.type but isn't in case the entities type
 		// is a child of this.type
 		Class<?> clazz = relEntity.getClass();
-		if (clazz.isAnnotationPresent(RelationshipEntity.class))
+		if (clazz.isAnnotationPresent(RelationshipEntity.class)) {
 			relation = this.storage.getRelation(clazz).save(relEntity, node, this.direction, includedData, depth);
-		else {
+			if (relation == null)
+				return;
+		} else {
 			relation = this.storage.getFactory().createDataRelation(this.direction, null);
 			relation.setFilterType(FilterType.UPDATE);
 			relation.setStart(node);
@@ -116,7 +117,7 @@ public class FieldPattern {
 		if (relation.getLabels().isEmpty())
 			relation.getLabels().add(this.label);
 
-		return relation;
+		node.getRelations().add(relation);
 	}
 
 	public void setValue(Object holder, Object value) throws IllegalArgumentException {

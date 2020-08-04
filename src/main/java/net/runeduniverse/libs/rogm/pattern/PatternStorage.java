@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -55,9 +56,11 @@ public class PatternStorage implements IStorage {
 				new SubTypesScanner(true));
 
 		for (Class<?> c : reflections.getTypesAnnotatedWith(RelationshipEntity.class))
-			this.relations.put(c, new RelationPattern(this, c));
+			if (!Modifier.isAbstract(c.getModifiers()))
+				this.relations.put(c, new RelationPattern(this, c));
 		for (Class<?> c : reflections.getTypesAnnotatedWith(NodeEntity.class))
-			this.nodes.put(c, new NodePattern(this, c));
+			if (!Modifier.isAbstract(c.getModifiers()))
+				this.nodes.put(c, new NodePattern(this, c));
 	}
 
 	public NodePattern getNode(Class<?> clazz) {

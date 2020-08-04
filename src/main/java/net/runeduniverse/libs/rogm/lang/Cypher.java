@@ -222,7 +222,7 @@ public class Cypher implements Language {
 			switch (filter.getFilterType()) {
 			case CREATE:
 			case UPDATE:
-				if (filter instanceof IFRelation && !IIdentified.identify(filter))
+				if (filter instanceof IFRelation)
 					return 0;
 				if (filter instanceof IParameterized
 						&& ((IParameterized) filter).getParams().containsKey(this.module.getIdAlias()))

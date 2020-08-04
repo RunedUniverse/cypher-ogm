@@ -154,6 +154,12 @@ public class NodePattern extends APattern {
 	}
 
 	protected IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
+		if (entity == null)
+			return null;
+
+		if (includedData.containsKey(entity))
+			return (IDataNode) includedData.get(entity);
+
 		boolean readonly = depth == -1;
 		boolean persist = 0 < depth;
 		IDataContainer container = includedData.get(entity);

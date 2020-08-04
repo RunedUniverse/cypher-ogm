@@ -10,7 +10,7 @@ import net.runeduniverse.libs.rogm.model.Person;
 
 @RelationshipEntity(direction = Direction.OUTGOING, label = "PLAYS")
 @Getter
-public class ActorPlaysPersonRelation {
+public class ActorPlaysPersonRelation extends ARelationEntity{
 
 	@StartNode
 	private Actor actor;

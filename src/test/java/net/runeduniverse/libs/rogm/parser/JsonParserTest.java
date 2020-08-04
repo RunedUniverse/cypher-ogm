@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.parser;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import org.junit.Before;
@@ -74,6 +75,13 @@ public class JsonParserTest extends ATest {
 		String s = "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\",fictional:true},{firstName:\"Luna\",lastName:\"Moon\",fictional:true}], \"empty\":false}}";
 		// Direct equals fails -> probably due to Sets
 		assertEquals(h1.toString(), iParser.deserialize(House.class, s).toString());
+	}
+
+	@Test
+	public void parseEmpty() throws Exception {
+		Person person = iParser.deserialize(Person.class, "{}");
+		System.out.println("Person is " + person);
+		assertNotNull("Person {} is null", person);
 	}
 
 }
