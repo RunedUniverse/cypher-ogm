@@ -157,9 +157,6 @@ public class NodePattern extends APattern {
 		if (entity == null)
 			return null;
 
-		if (includedData.containsKey(entity))
-			return (IDataNode) includedData.get(entity);
-
 		boolean readonly = depth == -1;
 		boolean persist = 0 < depth;
 		IDataContainer container = includedData.get(entity);

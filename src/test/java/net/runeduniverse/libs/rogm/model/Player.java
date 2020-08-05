@@ -26,6 +26,7 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 public class Player {
 
 	@Id(converter = UUIDConverter.class)
+	@Setter
 	private UUID uuid;
 
 	@Setter

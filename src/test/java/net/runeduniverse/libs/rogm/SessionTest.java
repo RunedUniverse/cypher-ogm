@@ -14,10 +14,12 @@ import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Company;
 import net.runeduniverse.libs.rogm.model.Game;
 import net.runeduniverse.libs.rogm.model.Inventory;
+import net.runeduniverse.libs.rogm.model.Item;
 import net.runeduniverse.libs.rogm.model.Person;
 import net.runeduniverse.libs.rogm.model.Player;
 import net.runeduniverse.libs.rogm.model.Song;
 import net.runeduniverse.libs.rogm.model.relations.ActorPlaysPersonRelation;
+import net.runeduniverse.libs.rogm.model.relations.Slot;
 import net.runeduniverse.libs.rogm.querying.IParameterized;
 
 public class SessionTest extends ATest {
@@ -175,6 +177,23 @@ public class SessionTest extends ATest {
 						"Actor: " + rel.getActor().getFirstName() + " plays " + rel.getPerson().getFirstName());
 	}
 
+	@Test
+	public void savePlayer() {
+		Player player = new Player();
+		player.setName("INV TEST PLAYER");
+		player.setUuid(UUID.randomUUID());
+		
+		Inventory inv = new Inventory();
+		inv.setSize(27);
+		player.setInventory(inv);
+		
+		Item item = new Item();
+		item.setItemStack("SAND");
+		inv.getSlots().add(new Slot(22, inv, item));
+		
+		session.save(player, 3);
+	}
+	
 	/*
 	 * Outdated until Advanced Filter full implementation
 	 * 
