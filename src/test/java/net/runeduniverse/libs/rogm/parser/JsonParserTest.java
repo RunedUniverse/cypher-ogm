@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
-import org.junit.Before;
 import org.junit.Test;
 
 import net.runeduniverse.libs.rogm.ATest;
@@ -20,18 +19,19 @@ public class JsonParserTest extends ATest {
 		super(DatabaseType.Neo4j);
 	}
 
-	private House h0;
-	private House h1;
-	private House h2;
-	private City c;
+	private static House h0;
+	private static House h1;
+	private static House h2;
+	private static City c;
+	private static Person gray;
 
-	@Before
-	public void prepare() {
+	static {
 		Person marry = new Person("Marry", "Log", true);
 		Person frank = new Person("Frank", "Log", true);
 		Person georg = new Person("Georg", "Baker", true);
 		Person elma = new Person("Elma", "Light", true);
 		Person luna = new Person("Luna", "Moon", true);
+		gray = new Person("Gray", "Baker", true);
 
 		h0 = new House();
 		h0.setAddress(new Address("Bakersstreet", 12));
@@ -82,6 +82,12 @@ public class JsonParserTest extends ATest {
 		Person person = iParser.deserialize(Person.class, "{}");
 		System.out.println("Person is " + person);
 		assertNotNull("Person {} is null", person);
+	}
+
+	@Test
+	public void serialNoGetter() throws Exception {
+		String s = "{firstName:\"Gray\",lastName:\"Baker\",fictional:true}";
+		assertEquals(s, iParser.serialize(gray));
 	}
 
 }

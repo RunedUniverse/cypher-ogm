@@ -31,6 +31,11 @@ public class Person extends AEntity {
 		this.fictional = fictional;
 	}
 
+	// this Getter must not be serialized
+	public Person getFriend() {
+		return new Person("Frank", "Nameless", true);
+	}
+
 	@PreSave
 	private void preSave() {
 		System.out.println("[PRE-SAVE] " + toString());
