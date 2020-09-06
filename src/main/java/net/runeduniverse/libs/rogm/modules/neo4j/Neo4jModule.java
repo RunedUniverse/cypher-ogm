@@ -18,6 +18,7 @@ import org.neo4j.driver.Transaction;
 import org.neo4j.driver.TransactionWork;
 import org.neo4j.driver.Value;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -89,7 +90,7 @@ public class Neo4jModule implements Module {
 		}
 
 		private List<Record> _query(String qry) {
-			 System.out.println("[[QUERY]]\n" + qry);
+			System.out.println("[[QUERY]]\n" + qry);
 			try (Session session = driver.session()) {
 				return session.readTransaction(new TransactionWork<List<Record>>() {
 
@@ -136,32 +137,72 @@ public class Neo4jModule implements Module {
 		@Override
 		public Map<String, Serializable> execute(String qry) {
 			// -1 -> not found
-			 System.out.println("[[EXECUTE]]\n" + qry);
+			System.out.println("[[EXECUTE]]\n" + qry);
 			try (Session session = driver.session()) {
 				return session.writeTransaction(new TransactionWork<Map<String, Serializable>>() {
 
 					@Override
 					public Map<String, Serializable> execute(Transaction tx) {
 						Result result = tx.run(qry);
+						System.out.println("[[EXECUTE FINISHED]]");
 						if (!result.hasNext())
 							return new HashMap<>();
 						Map<String, Serializable> results = new HashMap<>();
 						Record record = result.next();
-						record.keys().forEach(key -> {
-							if (key.charAt(0) == 'e') {
-								Value value = record.get(key);
-								if (value.isNull())
-									results.put(key, null);
-								else
-									results.put(key, record.get(key).asString());
+						List<String> keys = record.keys();
+						List<Thread> threads = new ArrayList<>();
 
-							} else
-								results.put(key, record.get(key, -1L));
-						});
+						for (int i = 0; i <= (int) keys.size() / Processor.BATCH_SIZE; i++)
+							threads.add(new Processor(record, i, keys, results).runAsThread());
+						for (Thread t : threads)
+							try {
+								t.join();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+
+						System.out.println("[[EXECUTE IDs RETURNED]]");
 						return results;
 					}
 				});
 			}
+		}
+	}
+
+	@RequiredArgsConstructor
+	private class Processor implements Runnable {
+		final static int BATCH_SIZE = 100;
+
+		private final Record record;
+		private final Integer batch;
+		private final List<String> keys;
+		private final Map<String, Serializable> results;
+
+		@Override
+		public void run() {
+			System.out.println("[[PROCESSOR]] " + batch);
+			int j;
+			for (int i = 0; i < BATCH_SIZE; i++) {
+				j = batch * BATCH_SIZE + i;
+				if (j >= keys.size())
+					return;
+				String key = keys.get(j);
+				if (key.charAt(0) == 'e') {
+					Value value = record.get(key);
+					if (value.isNull())
+						results.put(key, null);
+					else
+						results.put(key, record.get(key).asString());
+
+				} else
+					results.put(key, record.get(key, -1L));
+			}
+		}
+
+		public Thread runAsThread() {
+			Thread t = new Thread(this);
+			t.start();
+			return t;
 		}
 	}
 
