@@ -144,7 +144,6 @@ public class Neo4jModule implements Module {
 					@Override
 					public Map<String, Serializable> execute(Transaction tx) {
 						Result result = tx.run(qry);
-						System.out.println("[[EXECUTE FINISHED]]");
 						if (!result.hasNext())
 							return new HashMap<>();
 						Map<String, Serializable> results = new HashMap<>();
@@ -160,8 +159,6 @@ public class Neo4jModule implements Module {
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
-
-						System.out.println("[[EXECUTE IDs RETURNED]]");
 						return results;
 					}
 				});
@@ -171,7 +168,7 @@ public class Neo4jModule implements Module {
 
 	@RequiredArgsConstructor
 	private class Processor implements Runnable {
-		final static int BATCH_SIZE = 100;
+		final static int BATCH_SIZE = 1000;
 
 		private final Record record;
 		private final Integer batch;
@@ -180,7 +177,6 @@ public class Neo4jModule implements Module {
 
 		@Override
 		public void run() {
-			System.out.println("[[PROCESSOR]] " + batch);
 			int j;
 			for (int i = 0; i < BATCH_SIZE; i++) {
 				j = batch * BATCH_SIZE + i;
