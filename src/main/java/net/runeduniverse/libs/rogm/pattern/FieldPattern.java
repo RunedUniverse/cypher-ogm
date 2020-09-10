@@ -1,6 +1,6 @@
 package net.runeduniverse.libs.rogm.pattern;
 
-import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
+import static net.runeduniverse.libs.util.StringUtils.isBlank;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

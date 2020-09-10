@@ -1,5 +1,7 @@
 package net.runeduniverse.libs.rogm.pattern;
 
+import static net.runeduniverse.libs.util.StringUtils.isBlank;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -12,9 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import lombok.Getter;
-
-import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
-
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;

@@ -1,5 +1,7 @@
 package net.runeduniverse.libs.rogm.pattern;
 
+import static net.runeduniverse.libs.util.StringUtils.isBlank;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -7,8 +9,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static net.runeduniverse.libs.rogm.util.Utils.isBlank;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;

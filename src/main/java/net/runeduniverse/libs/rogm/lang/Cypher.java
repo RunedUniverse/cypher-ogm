@@ -20,7 +20,7 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.querying.*;
-import net.runeduniverse.libs.rogm.util.*;
+import net.runeduniverse.libs.util.*;
 
 public class Cypher implements Language {
 

@@ -30,8 +30,8 @@ import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.util.DataHashMap;
-import net.runeduniverse.libs.rogm.util.DataMap;
+import net.runeduniverse.libs.util.DataHashMap;
+import net.runeduniverse.libs.util.DataMap;
 
 public class PatternStorage implements IStorage {
 
