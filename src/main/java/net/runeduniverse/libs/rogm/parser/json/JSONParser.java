@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.parser.json;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -27,6 +28,7 @@ public class JSONParser implements Parser {
 		MAPPER.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
 		MAPPER.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
 		MAPPER.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+		MAPPER.setSerializationInclusion(Include.NON_NULL);
 	}
 
 	@Override

@@ -90,7 +90,7 @@ public class Neo4jModule implements Module {
 		}
 
 		private List<Record> _query(String qry) {
-			System.out.println("[[QUERY]]\n" + qry);
+			// System.out.println("[[QUERY]]\n" + qry);
 			try (Session session = driver.session()) {
 				return session.readTransaction(new TransactionWork<List<Record>>() {
 
@@ -137,7 +137,7 @@ public class Neo4jModule implements Module {
 		@Override
 		public Map<String, Serializable> execute(String qry) {
 			// -1 -> not found
-			System.out.println("[[EXECUTE]]\n" + qry);
+			// System.out.println("[[EXECUTE]]\n" + qry);
 			try (Session session = driver.session()) {
 				return session.writeTransaction(new TransactionWork<Map<String, Serializable>>() {
 

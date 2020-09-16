@@ -11,6 +11,7 @@ import net.runeduniverse.libs.rogm.DatabaseType;
 import net.runeduniverse.libs.rogm.model.Address;
 import net.runeduniverse.libs.rogm.model.City;
 import net.runeduniverse.libs.rogm.model.House;
+import net.runeduniverse.libs.rogm.model.Item;
 import net.runeduniverse.libs.rogm.model.Person;
 
 public class JsonParserTest extends ATest {
@@ -88,6 +89,13 @@ public class JsonParserTest extends ATest {
 	public void serialNoGetter() throws Exception {
 		String s = "{firstName:\"Gray\",lastName:\"Baker\",fictional:true}";
 		assertEquals(s, iParser.serialize(gray));
+	}
+
+	@Test
+	public void ignoreNull() throws Exception {
+		Item item = new Item();
+		item.setStr(null);
+		assertEquals("{bool:false}", iParser.serialize(item));
 	}
 
 }
