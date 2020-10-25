@@ -42,7 +42,9 @@ public class NodePattern extends APattern {
 
 	private void _parse(Class<?> type) throws Exception {
 		NodeEntity typeAnno = type.getAnnotation(NodeEntity.class);
-		String label = typeAnno.label();
+		String label = null;
+		if (typeAnno != null)
+			label = typeAnno.label();
 		if (isBlank(label) && !Modifier.isAbstract(type.getModifiers()))
 			label = type.getSimpleName();
 		if (!isBlank(label))

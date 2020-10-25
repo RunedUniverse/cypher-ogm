@@ -2,6 +2,7 @@ package net.runeduniverse.libs.rogm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,10 @@ public class Configuration {
 
 	private DatabaseType dbType;
 	private List<String> pkgs = new ArrayList<>();
+	@Setter
+	private boolean debug = false;
+	@Setter
+	private Logger parentLogger = null;
 	@Setter
 	private String uri;
 	@Setter
