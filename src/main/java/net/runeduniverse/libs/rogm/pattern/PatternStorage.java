@@ -64,6 +64,9 @@ public class PatternStorage implements IStorage {
 		for (Class<?> c : reflections.getTypesAnnotatedWith(NodeEntity.class))
 			if (!Modifier.isAbstract(c.getModifiers()))
 				this.nodes.put(c, new NodePattern(this, c));
+
+		this.logPatterns("Relations", this.relations);
+		this.logPatterns("Nodes", this.nodes);
 	}
 
 	public NodePattern getNode(Class<?> clazz) {
@@ -184,5 +187,13 @@ public class PatternStorage implements IStorage {
 				return RELATION;
 			return UNKNOWN;
 		}
+	}
+
+	private void logPatterns(String name, Map<Class<?>, ?> patterns) {
+		List<String> msg = new ArrayList<>();
+		msg.add(name + ':');
+		for (Class<?> calzz : patterns.keySet())
+			msg.add(calzz.getCanonicalName());
+		this.logger.finer(String.join("\n - ", msg));
 	}
 }

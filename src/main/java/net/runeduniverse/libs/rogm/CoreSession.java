@@ -33,14 +33,14 @@ public final class CoreSession implements Session {
 
 	protected CoreSession(Configuration cnf) throws Exception {
 		this.logger = new SessionLogger(CoreSession.class, cnf.getLogger(), cnf.getLoggingLevel());
+		this.logger.config(cnf);
+
 		this.dbType = cnf.getDbType();
 		this.parser = this.dbType.getParser().build(cnf);
 		this.module = this.dbType.getModule().build(cnf);
 		this.lang = this.dbType.getLang().build(this.parser, this.dbType.getModule());
 		this.storage = new PatternStorage(cnf, this.parser);
 		this.buffer = this.storage.getBuffer();
-
-		this.logger.config(cnf);
 
 		if (!this.module.connect(cnf))
 			this.logger.warning("initial connection to database failed!");
