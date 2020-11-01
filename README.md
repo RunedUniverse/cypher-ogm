@@ -15,6 +15,6 @@ We recommend using it in non-Spring projects!
 <dependency>
   <groupId>net.runeduniverse.libs</groupId>
   <artifactId>rogm</artifactId>
-  <version>1.1.11</version>
+  <version>1.1.10</version>
 </dependency>
 ```

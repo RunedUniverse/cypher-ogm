@@ -9,10 +9,10 @@ import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.model.Actor;
 import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Company;
@@ -28,9 +28,12 @@ import net.runeduniverse.libs.rogm.querying.IParameterized;
 
 public class SessionTest extends ATest {
 
+	@ClassRule
+	public static final LogLevelRule LOG_LEVEL_RULE = new LogLevelRule(SessionTest.class, Level.ALL);
+
 	static Configuration config = new Configuration(DatabaseType.Neo4j, "runeduniverse.net");
 	static {
-		config.setLogger(Logger.getLogger(SessionTest.class.getName()));
+		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
 
 		config.addPackage("net.runeduniverse.libs.rogm.model");
 		config.addPackage("net.runeduniverse.libs.rogm.model.relations");
@@ -46,21 +49,6 @@ public class SessionTest extends ATest {
 	}
 
 	private Session session = null;
-
-	@ClassRule
-	public static LogLevelRule logLevelRule = new LogLevelRule(SessionTest.class, Level.ALL);
-
-	@Test
-	public void x() {
-		System.out.println("sys: J.U.L. test");
-		Logger.getLogger(SessionTest.class.getName()).log(Level.SEVERE, "J.U.L. SEVERE");
-		Logger.getLogger(SessionTest.class.getName()).log(Level.WARNING, "J.U.L. WARNING");
-		Logger.getLogger(SessionTest.class.getName()).log(Level.INFO, "J.U.L. INFO");
-		Logger.getLogger(SessionTest.class.getName()).log(Level.CONFIG, "J.U.L. CONFIG");
-		Logger.getLogger(SessionTest.class.getName()).log(Level.FINE, "J.U.L. FINE");
-		Logger.getLogger(SessionTest.class.getName()).log(Level.FINER, "J.U.L. FINER");
-		Logger.getLogger(SessionTest.class.getName()).log(Level.FINEST, "J.U.L. FINEST");
-	}
 
 	@Before
 	public void prepare() throws Exception {

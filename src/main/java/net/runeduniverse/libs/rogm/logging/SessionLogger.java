@@ -4,28 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.DatabaseType;
 
-public final class SessionLogger extends Logger {
+public final class SessionLogger extends ALogger {
 
 	private static final AtomicLong id = new AtomicLong(0);
 
 	private final String prefix;
 
 	public SessionLogger(Class<?> clazz, Logger parent, Level level) {
-		super("ROGM", null);
+		super("ROGM", null, parent);
 		prefix = "[" + clazz.getSimpleName() + '|' + id.getAndIncrement() + "] ";
-
-		if (parent == null) {
-			parent = LogManager.getLogManager().getLogger(Logger.GLOBAL_LOGGER_NAME);
-			parent.setLevel(Level.ALL);
-		}
-		super.setParent(parent);
 
 		if (level == null)
 			super.setLevel(Level.CONFIG);
@@ -43,17 +36,16 @@ public final class SessionLogger extends Logger {
 		DatabaseType dbt = cnf.getDbType();
 		List<String> msg = new ArrayList<String>();
 		msg.add("Initializing Session");
-		msg.add("\tDatabase: " + dbt.toString());
-		msg.add("\tUri: " + cnf.getUri());
-		msg.add("\tProtocol: " + cnf.getProtocol());
-		msg.add("\tPort: " + cnf.getPort());
-		msg.add("\tUser: " + cnf.getUser());
-		msg.add("\tBuffer: " + cnf.getBuffer().getClass().getSimpleName());
-		msg.add("\tModule Packages:");
+		msg.add("Database: " + dbt.toString());
+		msg.add("Uri: " + cnf.getUri());
+		msg.add("Protocol: " + cnf.getProtocol());
+		msg.add("Port: " + cnf.getPort());
+		msg.add("User: " + cnf.getUser());
+		msg.add("Buffer: " + cnf.getBuffer().getClass().getSimpleName());
+		msg.add("Module Packages:");
 		for (String pkg : cnf.getPkgs())
-			msg.add("\t - " + pkg);
+			msg.add(" - " + pkg);
 
-		this.log(Level.CONFIG, String.join("\n", msg));
+		this.log(Level.CONFIG, String.join("\n\t", msg));
 	}
-
 }
