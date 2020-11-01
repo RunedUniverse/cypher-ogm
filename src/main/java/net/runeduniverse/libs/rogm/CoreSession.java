@@ -12,6 +12,7 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.lang.Language;
+import net.runeduniverse.libs.rogm.logging.SessionLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
@@ -31,7 +32,7 @@ public final class CoreSession implements Session {
 	private final IBuffer buffer;
 
 	protected CoreSession(Configuration cnf) throws Exception {
-		this.logger = new SessionLogger(CoreSession.class, cnf.isDebug(), cnf.getParentLogger());
+		this.logger = new SessionLogger(CoreSession.class, cnf.getLogger(), cnf.getLoggingLevel());
 		this.dbType = cnf.getDbType();
 		this.parser = this.dbType.getParser().build(cnf);
 		this.module = this.dbType.getModule().build(cnf);
