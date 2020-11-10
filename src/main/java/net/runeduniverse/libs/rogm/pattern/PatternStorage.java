@@ -55,7 +55,7 @@ public class PatternStorage implements IStorage {
 		this.parser = parser;
 		this.buffer = cnf.getBuffer().initialize(this);
 
-		Reflections reflections = new Reflections(cnf.getPkgs().toArray(), new TypeAnnotationsScanner(),
+		Reflections reflections = new Reflections(cnf.getPkgs().toArray(), cnf.getLoader().toArray(), new TypeAnnotationsScanner(),
 				new SubTypesScanner(true));
 
 		for (Class<?> c : reflections.getTypesAnnotatedWith(RelationshipEntity.class))

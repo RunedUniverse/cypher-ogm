@@ -15,6 +15,7 @@ public class Configuration {
 
 	private DatabaseType dbType;
 	private List<String> pkgs = new ArrayList<>();
+	private List<ClassLoader> loader = new ArrayList<>();
 	@Setter
 	private Logger logger = null;
 	@Setter
@@ -45,6 +46,16 @@ public class Configuration {
 
 	public Configuration addPackage(List<String> pkgs) {
 		this.pkgs.addAll(pkgs);
+		return this;
+	}
+
+	public Configuration addClassLoader(ClassLoader loader) {
+		this.loader.add(loader);
+		return this;
+	}
+
+	public Configuration addClassLoader(List<ClassLoader> loader) {
+		this.loader.addAll(loader);
 		return this;
 	}
 }
