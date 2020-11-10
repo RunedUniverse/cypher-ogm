@@ -6,11 +6,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.lang.Language;
+import net.runeduniverse.libs.rogm.logging.SessionLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
@@ -22,6 +24,7 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 public final class CoreSession implements Session {
 
 	private final DatabaseType dbType;
+	private final SessionLogger logger;
 	private final Language.Instance lang;
 	private final Parser.Instance parser;
 	private final Module.Instance<?> module;
@@ -29,6 +32,9 @@ public final class CoreSession implements Session {
 	private final IBuffer buffer;
 
 	protected CoreSession(Configuration cnf) throws Exception {
+		this.logger = new SessionLogger(CoreSession.class, cnf.getLogger(), cnf.getLoggingLevel());
+		this.logger.config(cnf);
+
 		this.dbType = cnf.getDbType();
 		this.parser = this.dbType.getParser().build(cnf);
 		this.module = this.dbType.getModule().build(cnf);
@@ -36,7 +42,8 @@ public final class CoreSession implements Session {
 		this.storage = new PatternStorage(cnf, this.parser);
 		this.buffer = this.storage.getBuffer();
 
-		this.module.connect(cnf);
+		if (!this.module.connect(cnf))
+			this.logger.warning("initial connection to database failed!");
 	}
 
 	@Override
@@ -73,7 +80,8 @@ public final class CoreSession implements Session {
 					return t;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.log(Level.WARNING, "Loading of Class<" + type.getCanonicalName() + "> Entity with id=" + id
+					+ " (depth=" + depth + ") failed!", e);
 		}
 		return null;
 	}
@@ -82,7 +90,8 @@ public final class CoreSession implements Session {
 		try {
 			return this._loadAll(type, this.storage.search(type, id, depth == 0), depth);
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.log(Level.WARNING, "Loading of Class<" + type.getCanonicalName() + "> Entities with id=" + id
+					+ " (depth=" + depth + ") failed!", e);
 		}
 		return new ArrayList<T>();
 	}
@@ -91,7 +100,8 @@ public final class CoreSession implements Session {
 		try {
 			return this._loadAll(type, this.storage.search(type, depth == 0), depth);
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.log(Level.WARNING,
+					"Loading of Class<" + type.getCanonicalName() + "> Entities" + " (depth=" + depth + ") failed!", e);
 		}
 		return new ArrayList<T>();
 	}
@@ -121,7 +131,7 @@ public final class CoreSession implements Session {
 			try {
 				_loadAllObjects(entry.getType(), this.storage.search(entry.getType(), entry.getId(), false), next);
 			} catch (Exception e) {
-				e.printStackTrace();
+				this.logger.log(Level.WARNING, "Resolving of lazy loaded Buffer-Entry failed!", e);
 			}
 		stage.clear();
 		stage.addAll(next);
@@ -134,7 +144,7 @@ public final class CoreSession implements Session {
 
 			return this.storage.parse(type, record, lazyEntities);
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.log(Level.WARNING, "Loading of Class<" + type.getCanonicalName() + "> Entities failed!", e);
 			return new ArrayList<T>();
 		}
 	}
@@ -153,7 +163,8 @@ public final class CoreSession implements Session {
 			}
 			container.postSave();
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.log(Level.WARNING, "Saving of Class<" + entity.getClass().getCanonicalName()
+					+ "> Entity failed! (depth=" + depth + ')', e);
 		}
 	}
 
@@ -185,7 +196,8 @@ public final class CoreSession implements Session {
 					return t;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.log(Level.WARNING,
+					"Loading of Class<" + type.getCanonicalName() + "> Entity with custom Filter failed!", e);
 		}
 		return null;
 	}
@@ -303,7 +315,8 @@ public final class CoreSession implements Session {
 			mapper.updateBuffer(this.buffer, container.getDeletedId(), this.module.query(mapper.effectedQry()));
 			this.module.execute(mapper.qry());
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.log(Level.WARNING,
+					"Deletion of Class<" + entity.getClass().getCanonicalName() + "> Entity failed!", e);
 		}
 	}
 

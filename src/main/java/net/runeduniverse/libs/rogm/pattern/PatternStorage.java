@@ -21,6 +21,7 @@ import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
+import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
@@ -45,14 +46,16 @@ public class PatternStorage implements IStorage {
 	private final Map<Class<?>, RelationPattern> relations = new HashMap<>();
 	@Getter
 	private final IBuffer buffer;
+	private final UniversalLogger logger;
 
 	public PatternStorage(Configuration cnf, Parser.Instance parser) throws Exception {
 		this.config = cnf;
+		this.logger = new UniversalLogger(PatternStorage.class, cnf.getLogger());
 		this.factory = new FilterFactory(cnf.getDbType().getModule());
 		this.parser = parser;
 		this.buffer = cnf.getBuffer().initialize(this);
 
-		Reflections reflections = new Reflections(cnf.getPkgs().toArray(), new TypeAnnotationsScanner(),
+		Reflections reflections = new Reflections(cnf.getPkgs().toArray(), cnf.getLoader().toArray(), new TypeAnnotationsScanner(),
 				new SubTypesScanner(true));
 
 		for (Class<?> c : reflections.getTypesAnnotatedWith(RelationshipEntity.class))
@@ -61,6 +64,9 @@ public class PatternStorage implements IStorage {
 		for (Class<?> c : reflections.getTypesAnnotatedWith(NodeEntity.class))
 			if (!Modifier.isAbstract(c.getModifiers()))
 				this.nodes.put(c, new NodePattern(this, c));
+
+		this.logPatterns("Relations", this.relations);
+		this.logPatterns("Nodes", this.nodes);
 	}
 
 	public NodePattern getNode(Class<?> clazz) {
@@ -76,13 +82,14 @@ public class PatternStorage implements IStorage {
 			return this.nodes.get(clazz);
 		if (this.relations.containsKey(clazz))
 			return this.relations.get(clazz);
-		throw new Exception("Unsupported Entity-Class <" + clazz + "> found!");
+		throw logger.throwing("getPattern(Class<?>)", new Exception("Unsupported Entity-Class <" + clazz + "> found!"));
 	}
 
 	public boolean isIdSet(Object entity) {
 		try {
 			return this.getPattern(entity.getClass()).isIdSet(entity);
 		} catch (Exception e) {
+			this.logger.burying("isIdSet(Object)", e);
 			return false;
 		}
 	}
@@ -107,6 +114,7 @@ public class PatternStorage implements IStorage {
 		try {
 			return this.getPattern(entity.getClass()).setId(entity, id);
 		} catch (Exception e) {
+			this.logger.burying("setId(Object, Serializable)", e);
 		}
 		return entity;
 	}
@@ -179,5 +187,13 @@ public class PatternStorage implements IStorage {
 				return RELATION;
 			return UNKNOWN;
 		}
+	}
+
+	private void logPatterns(String name, Map<Class<?>, ?> patterns) {
+		List<String> msg = new ArrayList<>();
+		msg.add(name + ':');
+		for (Class<?> calzz : patterns.keySet())
+			msg.add(calzz.getCanonicalName());
+		this.logger.finer(String.join("\n - ", msg));
 	}
 }

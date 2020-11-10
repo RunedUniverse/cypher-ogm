@@ -4,11 +4,15 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.model.Actor;
 import net.runeduniverse.libs.rogm.model.Artist;
 import net.runeduniverse.libs.rogm.model.Company;
@@ -24,8 +28,13 @@ import net.runeduniverse.libs.rogm.querying.IParameterized;
 
 public class SessionTest extends ATest {
 
+	@ClassRule
+	public static final LogLevelRule LOG_LEVEL_RULE = new LogLevelRule(SessionTest.class, Level.ALL);
+
 	static Configuration config = new Configuration(DatabaseType.Neo4j, "runeduniverse.net");
 	static {
+		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
+
 		config.addPackage("net.runeduniverse.libs.rogm.model");
 		config.addPackage("net.runeduniverse.libs.rogm.model.relations");
 
@@ -33,7 +42,6 @@ public class SessionTest extends ATest {
 		config.setPassword("Qwerty!");
 		config.setPassword(
 				"t3fGGkgUbd7y8cJ8s5sUKBBDqkqDRLBw6Re8XbA2xaxpVe7Y7nQdZVj4mEsSHQnPXBWnsn7nFxtxKYTyge77HzMPtm3Jj7L45DYBK9Xy7fntrECnx5QMZWwFnUqCZ3JyN8d6LnZXnJbRxEkYD5rCpQhSpEtYz7DwQNA9Yd8T8RUuTduqrTCgvpCRZfHYhGbuKcHyR7QALXvQ9feSdX2ZhsvP8LmBzSh6s2TWLy37KatsYbrzQkCDpCE3zjyX9dzUd");
-
 	}
 
 	public SessionTest() {
@@ -182,18 +190,18 @@ public class SessionTest extends ATest {
 		Player player = new Player();
 		player.setName("INV TEST PLAYER");
 		player.setUuid(UUID.randomUUID());
-		
+
 		Inventory inv = new Inventory();
 		inv.setSize(27);
 		player.setInventory(inv);
-		
+
 		Item item = new Item();
 		item.setItemStack("SAND");
 		inv.getSlots().add(new Slot(22, inv, item));
-		
+
 		session.save(player, 3);
 	}
-	
+
 	/*
 	 * Outdated until Advanced Filter full implementation
 	 * 

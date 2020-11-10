@@ -2,6 +2,8 @@ package net.runeduniverse.libs.rogm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +15,11 @@ public class Configuration {
 
 	private DatabaseType dbType;
 	private List<String> pkgs = new ArrayList<>();
+	private List<ClassLoader> loader = new ArrayList<>();
+	@Setter
+	private Logger logger = null;
+	@Setter
+	private Level loggingLevel = null;
 	@Setter
 	private String uri;
 	@Setter
@@ -39,6 +46,16 @@ public class Configuration {
 
 	public Configuration addPackage(List<String> pkgs) {
 		this.pkgs.addAll(pkgs);
+		return this;
+	}
+
+	public Configuration addClassLoader(ClassLoader loader) {
+		this.loader.add(loader);
+		return this;
+	}
+
+	public Configuration addClassLoader(List<ClassLoader> loader) {
+		this.loader.addAll(loader);
 		return this;
 	}
 }
