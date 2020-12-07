@@ -2,13 +2,11 @@ package net.runeduniverse.libs.rogm.logging;
 
 import java.util.logging.Logger;
 
-import net.runeduniverse.libs.rogm.pattern.PatternStorage;
-
 public class UniversalLogger extends ALogger {
 
-	private final Class clazz;
+	private final Class<?> clazz;
 
-	public UniversalLogger(Class<PatternStorage> clazz, Logger parent) {
+	public UniversalLogger(Class<?> clazz, Logger parent) {
 		super(clazz.getSimpleName(), null, parent);
 		this.clazz = clazz;
 	}

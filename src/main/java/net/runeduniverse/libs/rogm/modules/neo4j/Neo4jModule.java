@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
@@ -20,6 +21,7 @@ import org.neo4j.driver.Value;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.Configuration;
+import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 
@@ -35,7 +37,7 @@ public class Neo4jModule implements Module {
 
 	@Override
 	public Instance<Long> build(Configuration cnf) {
-		return new Neo4jModuleInstance(cnf.getDbType().getParser().build(cnf));
+		return new Neo4jModuleInstance(cnf.getDbType().getParser().build(cnf), cnf.getLogger());
 	}
 
 	protected String _buildUri(Configuration cnf) {
@@ -61,9 +63,11 @@ public class Neo4jModule implements Module {
 	public class Neo4jModuleInstance implements Module.Instance<Long> {
 		private Driver driver = null;
 		private Parser.Instance parser = null;
+		private UniversalLogger logger = null;
 
-		protected Neo4jModuleInstance(Parser.Instance parser) {
+		protected Neo4jModuleInstance(Parser.Instance parser, Logger logger) {
 			this.parser = parser;
+			this.logger = new UniversalLogger(Neo4jModuleInstance.class, logger);
 		}
 
 		@Override
@@ -90,7 +94,7 @@ public class Neo4jModule implements Module {
 		}
 
 		private List<Record> _query(String qry) {
-			// System.out.println("[[QUERY]]\n" + qry);
+			this.logger.finest("[[QUERY]]\n" + qry);
 			try (Session session = driver.session()) {
 				return session.readTransaction(new TransactionWork<List<Record>>() {
 
@@ -137,7 +141,7 @@ public class Neo4jModule implements Module {
 		@Override
 		public Map<String, Serializable> execute(String qry) {
 			// -1 -> not found
-			// System.out.println("[[EXECUTE]]\n" + qry);
+			this.logger.finest("[[EXECUTE]]\n" + qry);
 			try (Session session = driver.session()) {
 				return session.writeTransaction(new TransactionWork<Map<String, Serializable>>() {
 
