@@ -463,7 +463,7 @@ public class Cypher implements Language {
 
 				for (IFilter filter : this.map.keySet()) {
 					Module.Data data = record.get(this.map.get(filter));
-					if (data.getId() == null)
+					if (data == null || data.getId() == null)
 						continue;
 					set.add(new PData(data, filter));
 				}
