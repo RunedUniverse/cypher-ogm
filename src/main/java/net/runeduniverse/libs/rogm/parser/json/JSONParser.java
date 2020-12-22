@@ -58,5 +58,12 @@ public class JSONParser implements Parser {
 				return clazz.newInstance();
 			return mapper.readValue(value, clazz);
 		}
+
+		@Override
+		public <T> T deserialize(T obj, String value) throws JsonMappingException, JsonProcessingException {
+			if (value == null)
+				return obj;
+			return this.mapper.readerForUpdating(obj).readValue(value);
+		}
 	}
 }
