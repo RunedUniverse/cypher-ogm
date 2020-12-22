@@ -33,7 +33,7 @@ public class JSONParser implements Parser {
 
 	@Override
 	public Instance build(Configuration cnf) {
-		JsonAnnotationIntrospector introspector = new JsonAnnotationIntrospector(cnf.getDbType().getModule());
+		JsonAnnotationIntrospector introspector = new JsonAnnotationIntrospector(cnf.getModule());
 
 		AnnotationIntrospector serial = new AnnotationIntrospectorPair(introspector,
 				MAPPER.getSerializationConfig().getAnnotationIntrospector());

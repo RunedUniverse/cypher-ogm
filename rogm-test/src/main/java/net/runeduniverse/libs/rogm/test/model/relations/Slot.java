@@ -9,8 +9,8 @@ import net.runeduniverse.libs.rogm.annotations.Property;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.annotations.TargetNode;
-import net.runeduniverse.libs.rogm.model.Inventory;
-import net.runeduniverse.libs.rogm.model.Item;
+import net.runeduniverse.libs.rogm.test.model.Inventory;
+import net.runeduniverse.libs.rogm.test.model.Item;
 
 @Getter
 @Setter

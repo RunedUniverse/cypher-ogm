@@ -8,12 +8,21 @@
 		<version>1.1.11</version>
 	</parent>
 	<artifactId>rogm-test</artifactId>
-		<version>1</version>
+	<version>1</version>
 	<dependencies>
 		<dependency>
-			<groupId>net.runeduniverse.libs.rogm.test</groupId>
+			<groupId>net.runeduniverse.libs.rogm</groupId>
 			<artifactId>core</artifactId>
 			<version>1.1.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>

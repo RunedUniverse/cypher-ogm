@@ -9,8 +9,6 @@ import net.runeduniverse.libs.rogm.Configuration;
 
 public interface Module {
 
-	void prepare(Configuration cnf);
-
 	// cnf might not get used from every module
 	// but is provided if needed
 	Instance<?> build(Configuration cnf);

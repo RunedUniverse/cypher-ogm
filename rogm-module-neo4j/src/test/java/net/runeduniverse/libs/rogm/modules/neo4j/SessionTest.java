@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm;
+package net.runeduniverse.libs.rogm.modules.neo4j;
 
 import static org.junit.Assert.*;
 
@@ -13,41 +13,30 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.DatabaseType;
 import net.runeduniverse.libs.rogm.Session;
-import net.runeduniverse.libs.rogm.SessionTest;
 import net.runeduniverse.libs.rogm.logging.DebugLogger;
+import net.runeduniverse.libs.rogm.modules.neo4j.Neo4jConfiguration;
+import net.runeduniverse.libs.rogm.modules.neo4j.SessionTest;
 import net.runeduniverse.libs.rogm.querying.IParameterized;
 import net.runeduniverse.libs.rogm.test.ATest;
 import net.runeduniverse.libs.rogm.test.LogLevelRule;
-import net.runeduniverse.libs.rogm.test.model.Actor;
-import net.runeduniverse.libs.rogm.test.model.Artist;
-import net.runeduniverse.libs.rogm.test.model.Company;
-import net.runeduniverse.libs.rogm.test.model.Game;
-import net.runeduniverse.libs.rogm.test.model.Inventory;
-import net.runeduniverse.libs.rogm.test.model.Item;
-import net.runeduniverse.libs.rogm.test.model.Person;
-import net.runeduniverse.libs.rogm.test.model.Player;
-import net.runeduniverse.libs.rogm.test.model.Song;
-import net.runeduniverse.libs.rogm.test.model.relations.ActorPlaysPersonRelation;
-import net.runeduniverse.libs.rogm.test.model.relations.Slot;
+import net.runeduniverse.libs.rogm.test.model.*;
+import net.runeduniverse.libs.rogm.test.model.relations.*;
 
 public class SessionTest extends ATest {
 
 	@ClassRule
 	public static final LogLevelRule LOG_LEVEL_RULE = new LogLevelRule(SessionTest.class, Level.ALL);
 
-	static Configuration config = new Configuration(DatabaseType.Neo4j, "runeduniverse.net");
+	static Configuration config = new Neo4jConfiguration("127.0.0.1");
 	static {
 		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
 
-		config.addPackage("net.runeduniverse.libs.rogm.model");
-		config.addPackage("net.runeduniverse.libs.rogm.model.relations");
+		config.addPackage("net.runeduniverse.libs.rogm.lang.cypher.modules.neo4j.model");
+		config.addPackage("net.runeduniverse.libs.rogm.lang.cypher.modules.neo4j.model.relations");
 
 		config.setUser("neo4j");
 		config.setPassword("Qwerty!");
-		config.setPassword(
-				"t3fGGkgUbd7y8cJ8s5sUKBBDqkqDRLBw6Re8XbA2xaxpVe7Y7nQdZVj4mEsSHQnPXBWnsn7nFxtxKYTyge77HzMPtm3Jj7L45DYBK9Xy7fntrECnx5QMZWwFnUqCZ3JyN8d6LnZXnJbRxEkYD5rCpQhSpEtYz7DwQNA9Yd8T8RUuTduqrTCgvpCRZfHYhGbuKcHyR7QALXvQ9feSdX2ZhsvP8LmBzSh6s2TWLy37KatsYbrzQkCDpCE3zjyX9dzUd");
 	}
 
 	public SessionTest() {
@@ -60,7 +49,7 @@ public class SessionTest extends ATest {
 	public void prepare() throws Exception {
 		assertEquals("bolt", config.getProtocol());
 		assertEquals(7687, config.getPort());
-		assertEquals("runeduniverse.net", config.getUri());
+		assertEquals("127.0.0.1", config.getUri());
 
 		this.session = Session.create(config);
 		assertTrue("Session is NOT connected", session.isConnected());
@@ -218,6 +207,7 @@ public class SessionTest extends ATest {
 
 	@After
 	public void close() throws Exception {
-		session.close();
+		if (session != null)
+			session.close();
 	}
 }

@@ -51,12 +51,12 @@ public class PatternStorage implements IStorage {
 	public PatternStorage(Configuration cnf, Parser.Instance parser) throws Exception {
 		this.config = cnf;
 		this.logger = new UniversalLogger(PatternStorage.class, cnf.getLogger());
-		this.factory = new FilterFactory(cnf.getDbType().getModule());
+		this.factory = new FilterFactory(cnf.getModule());
 		this.parser = parser;
 		this.buffer = cnf.getBuffer().initialize(this);
 
-		Reflections reflections = new Reflections(cnf.getPkgs().toArray(), cnf.getLoader().toArray(), new TypeAnnotationsScanner(),
-				new SubTypesScanner(true));
+		Reflections reflections = new Reflections(cnf.getPkgs().toArray(), cnf.getLoader().toArray(),
+				new TypeAnnotationsScanner(), new SubTypesScanner(true));
 
 		for (Class<?> c : reflections.getTypesAnnotatedWith(RelationshipEntity.class))
 			if (!Modifier.isAbstract(c.getModifiers()))

@@ -23,7 +23,6 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public final class CoreSession implements Session {
 
-	private final DatabaseType dbType;
 	private final SessionLogger logger;
 	private final Language.Instance lang;
 	private final Parser.Instance parser;
@@ -35,10 +34,9 @@ public final class CoreSession implements Session {
 		this.logger = new SessionLogger(CoreSession.class, cnf.getLogger(), cnf.getLoggingLevel());
 		this.logger.config(cnf);
 
-		this.dbType = cnf.getDbType();
-		this.parser = this.dbType.getParser().build(cnf);
-		this.module = this.dbType.getModule().build(cnf);
-		this.lang = this.dbType.getLang().build(this.parser, this.dbType.getModule());
+		this.parser = cnf.buildParserInstance();
+		this.module = cnf.buildModuleInstance();
+		this.lang = cnf.buildLanguageInstance(this.parser);
 		this.storage = new PatternStorage(cnf, this.parser);
 		this.buffer = this.storage.getBuffer();
 

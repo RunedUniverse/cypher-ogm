@@ -1,14 +1,13 @@
 package net.runeduniverse.libs.rogm.test;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.DatabaseType;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 
 public abstract class ATest {
 
-	protected final DatabaseType dbType;
+	protected final Configuration cnf;
 	// Builder
 	protected final Parser parser;
 	protected final Module module;
@@ -18,29 +17,16 @@ public abstract class ATest {
 	protected final Module.Instance<?> iModule;
 	protected final Language.Instance iLanguage;
 
-	public ATest(DatabaseType dbType) {
-		this.dbType = dbType;
-		Configuration cnf = new Configuration(dbType, "");
-		// Builder
-		this.parser = dbType.getParser();
-		this.module = dbType.getModule();
-		this.language = dbType.getLang();
-		// Instances
-		this.iParser = this.parser.build(cnf);
-		this.iModule = this.module.build(cnf);
-		this.iLanguage = this.language.build(this.iParser, this.module);
-	}
-
 	public ATest(Configuration cnf) {
-		this.dbType = cnf.getDbType();
+		this.cnf = cnf;
 		// Builder
-		this.parser = dbType.getParser();
-		this.module = dbType.getModule();
-		this.language = dbType.getLang();
+		this.parser = this.cnf.getParser();
+		this.module = this.cnf.getModule();
+		this.language = this.cnf.getLang();
 		// Instances
-		this.iParser = this.parser.build(cnf);
-		this.iModule = this.module.build(cnf);
-		this.iLanguage = this.language.build(this.iParser, this.module);
+		this.iParser = this.parser == null ? null : this.parser.build(this.cnf);
+		this.iModule = this.module == null ? null : this.module.build(this.cnf);
+		this.iLanguage = this.language == null ? null : this.language.build(this.iParser, this.module);
 	}
 
 }

@@ -30,14 +30,8 @@ public class Neo4jModule implements Module {
 	private static final String ID_ALIAS = "_id";
 
 	@Override
-	public void prepare(Configuration cnf) {
-		cnf.setProtocol("bolt");
-		cnf.setPort(7687);
-	}
-
-	@Override
 	public Instance<Long> build(Configuration cnf) {
-		return new Neo4jModuleInstance(cnf.getDbType().getParser().build(cnf), cnf.getLogger());
+		return new Neo4jModuleInstance(cnf.buildParserInstance(), cnf.getLogger());
 	}
 
 	protected String _buildUri(Configuration cnf) {

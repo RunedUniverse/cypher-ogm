@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm;
+package net.runeduniverse.libs.rogm.modules.neo4j;
 
 import static org.junit.Assert.assertTrue;
 
@@ -12,30 +12,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
-import net.runeduniverse.libs.rogm.annotations.TargetNode;
-import net.runeduniverse.libs.rogm.DatabaseType;
+import org.junit.After;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
+import net.runeduniverse.libs.rogm.annotations.TargetNode;
+import net.runeduniverse.libs.rogm.modules.neo4j.Neo4jConfiguration;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.test.ATest;
-import net.runeduniverse.libs.rogm.test.model.Actor;
-import net.runeduniverse.libs.rogm.test.model.Artist;
-import net.runeduniverse.libs.rogm.test.model.Company;
-import net.runeduniverse.libs.rogm.test.model.Game;
-import net.runeduniverse.libs.rogm.test.model.relations.ActorPlaysPersonRelation;
+import net.runeduniverse.libs.rogm.test.model.*;
+import net.runeduniverse.libs.rogm.test.model.relations.*;
 
 public class RelationshipTests extends ATest {
 
 	public RelationshipTests() {
-		super(DatabaseType.Neo4j);
+		super(new Neo4jConfiguration(""));
 	}
 
 	@Before
@@ -70,8 +69,7 @@ public class RelationshipTests extends ATest {
 	}
 
 	private String _build(Class<?> clazz) throws Exception {
-		return '[' + clazz.getSimpleName() + "]\n" + iLanguage.load(giveFilterNodeOrRelation(clazz, false))
-				+ '\n';
+		return '[' + clazz.getSimpleName() + "]\n" + iLanguage.load(giveFilterNodeOrRelation(clazz, false)) + '\n';
 	}
 
 	Map<Class<?>, IFilter> classMap = new HashMap<Class<?>, IFilter>();

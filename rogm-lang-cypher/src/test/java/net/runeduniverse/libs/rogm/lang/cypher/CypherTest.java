@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm;
+package net.runeduniverse.libs.rogm.lang.cypher;
 
 import static org.junit.Assert.assertTrue;
 
@@ -9,11 +9,13 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import net.runeduniverse.libs.rogm.DatabaseType;
+import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.Direction;
+import net.runeduniverse.libs.rogm.parser.json.JSONParser;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
 import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 
 public class CypherTest extends ATest {
 
@@ -23,7 +25,7 @@ public class CypherTest extends ATest {
 	 */
 
 	public CypherTest() {
-		super(DatabaseType.Neo4j);
+		super(new Configuration(new JSONParser(), new CypherLanguage(), new DummyModule(), null));
 	}
 
 	static FilterNode school;

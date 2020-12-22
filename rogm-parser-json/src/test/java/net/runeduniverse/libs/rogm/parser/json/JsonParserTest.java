@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.parser;
+package net.runeduniverse.libs.rogm.parser.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,13 +6,16 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Arrays;
 import org.junit.Test;
 
+import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
+import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 import net.runeduniverse.libs.rogm.test.model.*;
 
 public class JsonParserTest extends ATest {
 
 	public JsonParserTest() {
-		super(DatabaseType.Neo4j);
+		super(new Configuration(new JSONParser(), new DummyLanguage(), new DummyModule(), ""));
 	}
 
 	private static House h0;

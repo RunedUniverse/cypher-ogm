@@ -8,7 +8,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.DatabaseType;
 
 public final class SessionLogger extends ALogger {
 
@@ -33,16 +32,15 @@ public final class SessionLogger extends ALogger {
 	}
 
 	public void config(Configuration cnf) {
-		DatabaseType dbt = cnf.getDbType();
 		List<String> msg = new ArrayList<String>();
 		msg.add("Initializing Session");
-		msg.add("Database: " + dbt.toString());
+		msg.add("Database Module: " + cnf.getModule().getClass().getSimpleName());
 		msg.add("Uri: " + cnf.getUri());
 		msg.add("Protocol: " + cnf.getProtocol());
 		msg.add("Port: " + cnf.getPort());
 		msg.add("User: " + cnf.getUser());
 		msg.add("Buffer: " + cnf.getBuffer().getClass().getSimpleName());
-		msg.add("Module Packages:");
+		msg.add("Model Packages:");
 		for (String pkg : cnf.getPkgs())
 			msg.add(" - " + pkg);
 

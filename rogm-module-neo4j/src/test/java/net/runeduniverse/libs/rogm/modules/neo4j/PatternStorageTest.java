@@ -1,23 +1,23 @@
-package net.runeduniverse.libs.rogm;
+package net.runeduniverse.libs.rogm.modules.neo4j;
 
 import org.junit.*;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.DatabaseType;
+import net.runeduniverse.libs.rogm.modules.neo4j.Neo4jConfiguration;
 import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.test.ATest;
 import net.runeduniverse.libs.rogm.test.model.*;
 
 public class PatternStorageTest extends ATest {
 
-	static Configuration config = new Configuration(DatabaseType.Neo4j, "runeduniverse.net");
+	static Configuration config = new Neo4jConfiguration("runeduniverse.net");
 	static {
-		config.addPackage("net.runeduniverse.libs.rogm.model");
-		config.addPackage("net.runeduniverse.libs.rogm.model.relations");
+		config.addPackage("net.runeduniverse.libs.rogm.lang.cypher.modules.neo4j.model");
+		config.addPackage("net.runeduniverse.libs.rogm.lang.cypher.modules.neo4j.model.relations");
 	}
 
 	public PatternStorageTest() {
-		super(DatabaseType.Neo4j);
+		super(config);
 	}
 
 	private PatternStorage storage = null;
