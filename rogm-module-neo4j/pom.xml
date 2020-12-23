@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.runeduniverse.libs</groupId>
+		<artifactId>rogm</artifactId>
+		<version>1.1.11</version>
+	</parent>
+
+	<groupId>net.runeduniverse.libs.rogm.modules</groupId>
+	<artifactId>neo4j</artifactId>
+
+	<name>ROGM Module Neo4j</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.runeduniverse.libs.rogm</groupId>
+			<artifactId>core</artifactId>
+			<version>1.1.11</version>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs.rogm.lang</groupId>
+			<artifactId>cypher</artifactId>
+			<version>1.1.11</version>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs.rogm.parser</groupId>
+			<artifactId>json</artifactId>
+			<version>1.1.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j.driver</groupId>
+			<artifactId>neo4j-java-driver</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs</groupId>
+			<artifactId>rogm-test</artifactId>
+		</dependency>
+	</dependencies>
+</project>
