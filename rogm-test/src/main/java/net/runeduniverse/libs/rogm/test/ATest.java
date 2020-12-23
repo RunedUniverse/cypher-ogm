@@ -7,6 +7,9 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 
 public abstract class ATest {
 
+	public static final String MODEL_PKG_PATH = "net.runeduniverse.libs.rogm.test.model";
+	public static final String RELATIONS_PKG_PATH = "net.runeduniverse.libs.rogm.test.model.relations";
+
 	protected final Configuration cnf;
 	// Builder
 	protected final Parser parser;

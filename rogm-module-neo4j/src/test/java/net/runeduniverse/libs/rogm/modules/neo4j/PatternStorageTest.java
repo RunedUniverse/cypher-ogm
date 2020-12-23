@@ -12,8 +12,8 @@ public class PatternStorageTest extends ATest {
 
 	static Configuration config = new Neo4jConfiguration("runeduniverse.net");
 	static {
-		config.addPackage("net.runeduniverse.libs.rogm.lang.cypher.modules.neo4j.model");
-		config.addPackage("net.runeduniverse.libs.rogm.lang.cypher.modules.neo4j.model.relations");
+		config.addPackage(MODEL_PKG_PATH);
+		config.addPackage(RELATIONS_PKG_PATH);
 	}
 
 	public PatternStorageTest() {

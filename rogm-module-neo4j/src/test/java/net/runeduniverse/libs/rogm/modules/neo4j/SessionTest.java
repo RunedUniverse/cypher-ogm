@@ -32,8 +32,8 @@ public class SessionTest extends ATest {
 	static {
 		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
 
-		config.addPackage("net.runeduniverse.libs.rogm.lang.cypher.modules.neo4j.model");
-		config.addPackage("net.runeduniverse.libs.rogm.lang.cypher.modules.neo4j.model.relations");
+		config.addPackage(MODEL_PKG_PATH);
+		config.addPackage(RELATIONS_PKG_PATH);
 
 		config.setUser("neo4j");
 		config.setPassword("Qwerty!");
