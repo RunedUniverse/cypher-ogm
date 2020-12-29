@@ -26,6 +26,13 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<defaultGoal>clean compile install</defaultGoal>
+		<plugins>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>
