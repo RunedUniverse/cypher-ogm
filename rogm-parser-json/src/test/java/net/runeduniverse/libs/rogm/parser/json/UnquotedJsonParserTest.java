@@ -12,17 +12,22 @@ import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 import net.runeduniverse.libs.rogm.test.model.*;
 
-public class JsonParserTest extends ATest {
+public class UnquotedJsonParserTest extends ATest {
 
-	public JsonParserTest() {
-		super(new Configuration(new JSONParser(), new DummyLanguage(), new DummyModule(), ""));
+	public UnquotedJsonParserTest() {
+		super(new Configuration(
+				new JSONParser().configure(Feature.SERIALIZER_QUOTE_FIELD_NAMES, false)
+						.configure(Feature.DESERIALIZER_ALLOW_UNQUOTED_FIELD_NAMES, true)
+						.configure(Feature.MAPPER_AUTO_DETECT_GETTERS, false)
+						.configure(Feature.MAPPER_AUTO_DETECT_IS_GETTERS, false),
+				new DummyLanguage(), new DummyModule(), ""));
 	}
 
-	private static House h0;
-	private static House h1;
-	private static House h2;
-	private static City c;
-	private static Person gray;
+	private static final House h0;
+	private static final House h1;
+	private static final House h2;
+	private static final City c;
+	private static final Person gray;
 
 	static {
 		Person marry = new Person("Marry", "Log", true);
