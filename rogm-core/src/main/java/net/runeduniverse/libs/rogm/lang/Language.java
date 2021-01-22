@@ -38,6 +38,10 @@ public interface Language {
 		IPattern.IDataRecord parseDataRecord(List<Map<String, Data>> records);
 	}
 
+	public interface IReloadMapper extends IMapper {
+
+	}
+
 	public interface ISaveMapper extends IMapper {
 		<ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids, LoadState loadState);
 

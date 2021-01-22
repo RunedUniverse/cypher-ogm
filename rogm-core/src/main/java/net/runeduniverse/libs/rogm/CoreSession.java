@@ -147,6 +147,10 @@ public final class CoreSession implements Session {
 		}
 	}
 
+	private void _reloadAllObjects(Collection<? extends Object> entities, Integer depth) {
+		// TODO implement reloading
+	}
+
 	private void _save(Object entity, Integer depth) {
 		if (entity == null)
 			return;
@@ -268,6 +272,32 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
+	public IPattern getPattern(Class<?> type) throws Exception {
+		return this.storage.getPattern(type);
+	}
+
+	@Override
+	public void reload(Object entity) {
+		this._reloadAllObjects(Arrays.asList(entity), 1);
+	}
+
+	@Override
+	public void reload(Object entity, Integer depth) {
+		this._reloadAllObjects(Arrays.asList(entity), depth);
+
+	}
+
+	@Override
+	public void reloadAll(Collection<? extends Object> entities) {
+		this._reloadAllObjects(entities, 1);
+	}
+
+	@Override
+	public void reloadAll(Collection<? extends Object> entities, Integer depth) {
+		this._reloadAllObjects(entities, depth);
+	}
+
+	@Override
 	public void save(Object entity) {
 		this._save(entity, 1);
 	}
@@ -333,10 +363,5 @@ public final class CoreSession implements Session {
 	public void unloadAll(Collection<? extends Object> entities) {
 		for (Object object : entities)
 			this.unload(object);
-	}
-
-	@Override
-	public IPattern getPattern(Class<?> type) throws Exception {
-		return this.storage.getPattern(type);
 	}
 }
