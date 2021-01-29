@@ -147,8 +147,17 @@ public final class CoreSession implements Session {
 		}
 	}
 
-	private void _reloadAllObjects(Collection<? extends Object> entities, Integer depth) {
-		// TODO implement reloading
+	private void _reloadObject(Object entity, Integer depth) {
+		// TODO implement depth for reloading!
+		try {
+			Language.ILoadMapper m = lang.load(this.storage.search(entity, depth == 0));
+			IPattern.IDataRecord record = m.parseDataRecord(this.module.queryObject(m.qry()));
+
+			this.storage.update(record);
+		} catch (Exception e) {
+			this.logger.log(Level.WARNING,
+					"Reloading of Class<" + entity.getClass().getCanonicalName() + "> Entity failed!", e);
+		}
 	}
 
 	private void _save(Object entity, Integer depth) {
@@ -278,23 +287,24 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void reload(Object entity) {
-		this._reloadAllObjects(Arrays.asList(entity), 1);
+		this._reloadObject(entity, 1);
 	}
 
 	@Override
 	public void reload(Object entity, Integer depth) {
-		this._reloadAllObjects(Arrays.asList(entity), depth);
-
+		this._reloadObject(entity, depth);
 	}
 
 	@Override
 	public void reloadAll(Collection<? extends Object> entities) {
-		this._reloadAllObjects(entities, 1);
+		for (Object entity : entities)
+			this._reloadObject(entity, 1);
 	}
 
 	@Override
 	public void reloadAll(Collection<? extends Object> entities, Integer depth) {
-		this._reloadAllObjects(entities, depth);
+		for (Object entity : entities)
+			this._reloadObject(entity, depth);
 	}
 
 	@Override

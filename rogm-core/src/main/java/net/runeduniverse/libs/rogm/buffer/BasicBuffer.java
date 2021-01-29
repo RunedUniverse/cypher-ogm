@@ -42,6 +42,17 @@ public class BasicBuffer implements IBuffer {
 		return entity;
 	}
 
+	@Override
+	public void update(Object entity, IPattern.IData data) throws Exception {
+		if (entity == null)
+			return;
+		Entry entry = entries.get(entity);
+
+		this.storage.getParser().deserialize(entity, data.getData());
+		updateEntry(entry, data.getId(), data.getEntityId());
+		entry.getPattern().setId(entity, data.getEntityId());
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getById(Serializable id, Class<T> type) {

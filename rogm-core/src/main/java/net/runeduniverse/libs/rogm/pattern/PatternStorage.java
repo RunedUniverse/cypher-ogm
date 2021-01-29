@@ -102,6 +102,11 @@ public class PatternStorage implements IStorage {
 		return this.getPattern(clazz).search(id, lazy);
 	}
 
+	public IFilter search(Object entity, boolean lazy) throws Exception {
+		IBuffer.Entry entry = this.buffer.getEntry(entity);
+		return entry.getPattern().search(entry.getId(), lazy);
+	}
+
 	public ISaveContainer save(Object entity, Integer depth) throws Exception {
 		return this.getPattern(entity.getClass()).save(entity, depth);
 	}
@@ -175,6 +180,57 @@ public class PatternStorage implements IStorage {
 			this.getPattern(object.getClass()).postLoad(object);
 
 		return nodes;
+	}
+
+	@Override
+	public void update(IDataRecord record) throws Exception {
+		// TODO Auto-generated method stub
+
+		List<DataMap<IFilter, IData, DataType>> dataRecords = new ArrayList<>();
+		Set<Object> loadedObjects = new HashSet<>();
+
+		// preloads all mentioned nodes
+		for (Set<IData> dataList : record.getData()) {
+			DataMap<IFilter, IData, DataType> map = new DataHashMap<>();
+			dataRecords.add(map);
+			for (IData data : dataList) {
+				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
+				if (IPatternContainer.identify(data.getFilter()))
+					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern().update(data));
+			}
+		}
+
+		for (DataMap<IFilter, IData, DataType> dataMap : dataRecords)
+			dataMap.forEach(DataType.RELATION, (filter, data) -> {
+				IFRelation fRelation = (IFRelation) filter;
+				String label = fRelation.getPrimaryLabel();
+				IFNode fStartNode = fRelation.getStart();
+				NodePattern pStartNode = (NodePattern) ((IPatternContainer) fStartNode).getPattern();
+				Object eStartNode = this.buffer.getById(dataMap.get(fStartNode).getId(), pStartNode.getType());
+				IFNode fTargetNode = fRelation.getTarget();
+				NodePattern pTargetNode = (NodePattern) ((IPatternContainer) fTargetNode).getPattern();
+				Object eTargetNode = this.buffer.getById(dataMap.get(fTargetNode).getId(), pTargetNode.getType());
+
+				if (!IPatternContainer.identify(fRelation)) {
+					pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, eTargetNode);
+					pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode,
+							eStartNode);
+					return;
+				}
+
+				// RelationshipEntity
+				RelationPattern rel = (RelationPattern) ((IPatternContainer) fRelation).getPattern();
+				Object relEntity = this.buffer.getById(data.getId(), rel.getType());
+
+				rel.setStart(relEntity, eStartNode);
+				rel.setTarget(relEntity, eTargetNode);
+
+				pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, relEntity);
+				pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode, relEntity);
+			});
+
+		for (Object entity : loadedObjects)
+			this.getPattern(entity.getClass()).postReload(entity);
 	}
 
 	private enum DataType {

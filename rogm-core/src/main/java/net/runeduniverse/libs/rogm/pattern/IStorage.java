@@ -25,6 +25,8 @@ public interface IStorage {
 
 	IFilter search(Class<?> clazz, boolean lazy) throws Exception;
 
+	IFilter search(Object entity, boolean lazy) throws Exception;
+
 	IFilter search(Class<?> clazz, Serializable id, boolean lazy) throws Exception;
 
 	ISaveContainer save(Object entity, Integer depth) throws Exception;
@@ -32,4 +34,6 @@ public interface IStorage {
 	IDeleteContainer delete(Object entity) throws Exception;
 
 	<T> Collection<T> parse(Class<T> type, IDataRecord record, Set<Entry> lazyEntries) throws Exception;
+
+	void update(IDataRecord record) throws Exception;
 }
