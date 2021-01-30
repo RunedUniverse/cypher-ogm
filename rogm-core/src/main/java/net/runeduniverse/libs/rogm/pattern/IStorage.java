@@ -35,5 +35,5 @@ public interface IStorage {
 
 	<T> Collection<T> parse(Class<T> type, IDataRecord record, Set<Entry> lazyEntries) throws Exception;
 
-	void update(IDataRecord record) throws Exception;
+	void update(IDataRecord record, Set<Entry> relatedEntities) throws Exception;
 }

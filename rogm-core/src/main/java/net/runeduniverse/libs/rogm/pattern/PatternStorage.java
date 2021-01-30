@@ -183,8 +183,8 @@ public class PatternStorage implements IStorage {
 	}
 
 	@Override
-	public void update(IDataRecord record) throws Exception {
-		// TODO Auto-generated method stub
+	public void update(IDataRecord record, Set<Entry> relatedEntities) throws Exception {
+		// TODO add related Entities to relatedEntities Entry-Set
 
 		List<DataMap<IFilter, IData, DataType>> dataRecords = new ArrayList<>();
 		Set<Object> loadedObjects = new HashSet<>();

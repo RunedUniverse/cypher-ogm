@@ -147,13 +147,42 @@ public final class CoreSession implements Session {
 		}
 	}
 
-	private void _reloadObject(Object entity, Integer depth) {
-		// TODO implement depth for reloading!
+	private void _reloadAllObjects(Set<Object> entities, Integer depth) {
+		Set<Entry> stage = new HashSet<>();
+
+		for (Object entity : entities)
+			try {
+				this._reloadObject(entity, this.storage.search(entity, depth == 0), depth < 2 ? null : stage);
+			} catch (Exception e) {
+				this.logger.log(Level.WARNING, "Loading of Class<" + entity.getClass().getCanonicalName() + "> Entity"
+						+ " (depth=" + depth + ") failed!", e);
+			}
+
+		for (int i = 0; i < depth - 1; i++) {
+			if (stage.isEmpty())
+				return;
+			this._reloadRelatedObjects(stage);
+		}
+	}
+
+	private void _reloadRelatedObjects(Set<Entry> stage) {
+		Set<Entry> next = new HashSet<>();
+		for (Entry entry : stage)
+			try {
+				_reloadObject(entry.getEntity(), this.storage.search(entry.getType(), entry.getId(), false), next);
+			} catch (Exception e) {
+				this.logger.log(Level.WARNING, "Resolving of reloaded-related Buffer-Entry failed!", e);
+			}
+		stage.clear();
+		stage.addAll(next);
+	}
+
+	private void _reloadObject(Object entity, IFilter filter, Set<Entry> relatedEntities) {
 		try {
-			Language.ILoadMapper m = lang.load(this.storage.search(entity, depth == 0));
+			Language.ILoadMapper m = lang.load(filter);
 			IPattern.IDataRecord record = m.parseDataRecord(this.module.queryObject(m.qry()));
 
-			this.storage.update(record);
+			this.storage.update(record, relatedEntities);
 		} catch (Exception e) {
 			this.logger.log(Level.WARNING,
 					"Reloading of Class<" + entity.getClass().getCanonicalName() + "> Entity failed!", e);
@@ -287,24 +316,26 @@ public final class CoreSession implements Session {
 
 	@Override
 	public void reload(Object entity) {
-		this._reloadObject(entity, 1);
+		Set<Object> set = new HashSet<Object>();
+		set.add(entity);
+		this._reloadAllObjects(set, 1);
 	}
 
 	@Override
 	public void reload(Object entity, Integer depth) {
-		this._reloadObject(entity, depth);
+		Set<Object> set = new HashSet<Object>();
+		set.add(entity);
+		this._reloadAllObjects(set, depth);
 	}
 
 	@Override
 	public void reloadAll(Collection<? extends Object> entities) {
-		for (Object entity : entities)
-			this._reloadObject(entity, 1);
+		this._reloadAllObjects(new HashSet<Object>(entities), 1);
 	}
 
 	@Override
 	public void reloadAll(Collection<? extends Object> entities, Integer depth) {
-		for (Object entity : entities)
-			this._reloadObject(entity, depth);
+		this._reloadAllObjects(new HashSet<Object>(entities), depth);
 	}
 
 	@Override
