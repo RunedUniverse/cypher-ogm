@@ -183,20 +183,22 @@ public class PatternStorage implements IStorage {
 	}
 
 	@Override
-	public void update(IDataRecord record, Set<Entry> relatedEntities) throws Exception {
-		// TODO add related Entities to relatedEntities Entry-Set
-
+	public void update(Object entity, IDataRecord record, Set<Entry> relatedEntities) throws Exception {
 		List<DataMap<IFilter, IData, DataType>> dataRecords = new ArrayList<>();
-		Set<Object> loadedObjects = new HashSet<>();
 
-		// preloads all mentioned nodes
+		// preloads all mentioned nodes + update @Property and @Id through IBuffer
 		for (Set<IData> dataList : record.getData()) {
 			DataMap<IFilter, IData, DataType> map = new DataHashMap<>();
 			dataRecords.add(map);
 			for (IData data : dataList) {
-				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
-				if (IPatternContainer.identify(data.getFilter()))
-					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern().update(data));
+				DataType dtype = DataType.fromFilter(data.getFilter());
+				map.put(data.getFilter(), data, dtype);
+
+				if (IPatternContainer.identify(data.getFilter()) && LoadState.get(data.getFilter()) == LoadState.LAZY) {
+					Entry entry = ((IPatternContainer) data.getFilter()).getPattern().update(data);
+					if (entry.getEntity() != entity && dtype != DataType.RELATION)
+						relatedEntities.add(entry);
+				}
 			}
 		}
 
@@ -211,6 +213,9 @@ public class PatternStorage implements IStorage {
 				NodePattern pTargetNode = (NodePattern) ((IPatternContainer) fTargetNode).getPattern();
 				Object eTargetNode = this.buffer.getById(dataMap.get(fTargetNode).getId(), pTargetNode.getType());
 
+				pStartNode.deleteRelations(eStartNode);
+				pTargetNode.deleteRelations(eTargetNode);
+
 				if (!IPatternContainer.identify(fRelation)) {
 					pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, eTargetNode);
 					pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode,
@@ -222,6 +227,9 @@ public class PatternStorage implements IStorage {
 				RelationPattern rel = (RelationPattern) ((IPatternContainer) fRelation).getPattern();
 				Object relEntity = this.buffer.getById(data.getId(), rel.getType());
 
+				rel.setStart(relEntity, null);
+				rel.setTarget(relEntity, null);
+
 				rel.setStart(relEntity, eStartNode);
 				rel.setTarget(relEntity, eTargetNode);
 
@@ -229,8 +237,7 @@ public class PatternStorage implements IStorage {
 				pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode, relEntity);
 			});
 
-		for (Object entity : loadedObjects)
-			this.getPattern(entity.getClass()).postReload(entity);
+		this.getPattern(entity.getClass()).postReload(entity);
 	}
 
 	private enum DataType {

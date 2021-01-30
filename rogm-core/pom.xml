@@ -9,7 +9,7 @@
 	</parent>
 
 	<properties>
-		<module.version>11</module.version>
+		<module.version>12</module.version>
 	</properties>
 
 	<groupId>net.runeduniverse.libs.rogm</groupId>

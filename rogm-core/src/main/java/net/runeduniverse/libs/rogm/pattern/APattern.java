@@ -118,15 +118,14 @@ public abstract class APattern implements IPattern {
 	}
 
 	@Override
-	public Object update(IData data) throws Exception {
+	public Entry update(IData data) throws Exception {
 		if (this.idField != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
 		Object entity = this.storage.getBuffer().getById(data.getId(), this.type);
 
 		this.preReload(entity);
-		this.storage.getBuffer().update(entity, data);
-		return entity;
+		return this.storage.getBuffer().update(entity, data);
 	}
 
 	@Override

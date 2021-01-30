@@ -151,12 +151,13 @@ public final class CoreSession implements Session {
 		Set<Entry> stage = new HashSet<>();
 
 		for (Object entity : entities)
-			try {
-				this._reloadObject(entity, this.storage.search(entity, depth == 0), depth < 2 ? null : stage);
-			} catch (Exception e) {
-				this.logger.log(Level.WARNING, "Loading of Class<" + entity.getClass().getCanonicalName() + "> Entity"
-						+ " (depth=" + depth + ") failed!", e);
-			}
+			if (entity != null)
+				try {
+					this._reloadObject(entity, this.storage.search(entity, depth == 0), depth < 2 ? null : stage);
+				} catch (Exception e) {
+					this.logger.log(Level.WARNING, "Loading of Class<" + entity.getClass().getCanonicalName()
+							+ "> Entity" + " (depth=" + depth + ") failed!", e);
+				}
 
 		for (int i = 0; i < depth - 1; i++) {
 			if (stage.isEmpty())
@@ -168,11 +169,12 @@ public final class CoreSession implements Session {
 	private void _reloadRelatedObjects(Set<Entry> stage) {
 		Set<Entry> next = new HashSet<>();
 		for (Entry entry : stage)
-			try {
-				_reloadObject(entry.getEntity(), this.storage.search(entry.getType(), entry.getId(), false), next);
-			} catch (Exception e) {
-				this.logger.log(Level.WARNING, "Resolving of reloaded-related Buffer-Entry failed!", e);
-			}
+			if (entry != null)
+				try {
+					_reloadObject(entry.getEntity(), this.storage.search(entry.getType(), entry.getId(), false), next);
+				} catch (Exception e) {
+					this.logger.log(Level.WARNING, "Resolving of reloaded-related Buffer-Entry failed!", e);
+				}
 		stage.clear();
 		stage.addAll(next);
 	}
@@ -182,7 +184,7 @@ public final class CoreSession implements Session {
 			Language.ILoadMapper m = lang.load(filter);
 			IPattern.IDataRecord record = m.parseDataRecord(this.module.queryObject(m.qry()));
 
-			this.storage.update(record, relatedEntities);
+			this.storage.update(entity, record, relatedEntities);
 		} catch (Exception e) {
 			this.logger.log(Level.WARNING,
 					"Reloading of Class<" + entity.getClass().getCanonicalName() + "> Entity failed!", e);

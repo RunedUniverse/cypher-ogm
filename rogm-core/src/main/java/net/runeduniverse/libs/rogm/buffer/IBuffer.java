@@ -19,7 +19,7 @@ public interface IBuffer {
 	<T> T acquire(IPattern pattern, IData data, Class<T> type, LoadState loadState, Set<Entry> lazyEntries)
 			throws Exception;
 
-	void update(Object entity, IData data) throws Exception;
+	Entry update(Object entity, IData data) throws Exception;
 
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
