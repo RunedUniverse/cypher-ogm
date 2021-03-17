@@ -203,6 +203,11 @@ public class NodePattern extends APattern {
 			}
 	}
 
+	public void deleteRelations(Object entity) {
+		for (FieldPattern field : this.relFields)
+			field.clearValue(entity);
+	}
+
 	@Override
 	public void deleteRelations(Object entity, Collection<Object> delEntries) {
 		for (FieldPattern field : this.relFields)

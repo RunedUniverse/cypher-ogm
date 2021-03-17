@@ -31,9 +31,11 @@ public abstract class APattern implements IPattern {
 	protected IConverter<?> idConverter = null;
 
 	// Events
+	protected Method preReload = null;
 	protected Method preSave = null;
 	protected Method preDelete = null;
 	protected Method postLoad = null;
+	protected Method postReload = null;
 	protected Method postSave = null;
 	protected Method postDelete = null;
 
@@ -116,6 +118,27 @@ public abstract class APattern implements IPattern {
 	}
 
 	@Override
+	public Entry update(IData data) throws Exception {
+		if (this.idField != null)
+			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
+
+		Object entity = this.storage.getBuffer().getById(data.getId(), this.type);
+
+		this.preReload(entity);
+		return this.storage.getBuffer().update(entity, data);
+	}
+
+	@Override
+	public void preReload(Object entity) {
+		if (entity != null && this.preReload != null)
+			try {
+				this.preReload.invoke(entity);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	}
+
+	@Override
 	public void preSave(Object entity) {
 		if (entity != null && this.preSave != null)
 			try {
@@ -140,6 +163,16 @@ public abstract class APattern implements IPattern {
 		if (entity != null && this.postLoad != null)
 			try {
 				this.postLoad.invoke(entity);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	}
+
+	@Override
+	public void postReload(Object entity) {
+		if (entity != null && this.postReload != null)
+			try {
+				this.postReload.invoke(entity);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
 			}

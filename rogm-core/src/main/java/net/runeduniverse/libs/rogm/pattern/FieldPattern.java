@@ -141,9 +141,9 @@ public class FieldPattern {
 		}
 	}
 
-	public Object getValue(Object holder) throws IllegalArgumentException {
+	public Object getValue(Object entity) throws IllegalArgumentException {
 		try {
-			return this.field.get(holder);
+			return this.field.get(entity);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -159,6 +159,19 @@ public class FieldPattern {
 			}
 			this.field.set(entity, null);
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void clearValue(Object entity) {
+		try {
+			if (this.collection) {
+				((Collection<Object>) this.field.get(entity)).clear();
+				return;
+			}
+			this.field.set(entity, Number.class.isAssignableFrom(this.type) ? 0 : null);
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}

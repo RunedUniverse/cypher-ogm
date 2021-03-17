@@ -42,11 +42,17 @@ public interface IPattern {
 
 	Object parse(IData data, LoadState loadState, Set<Entry> lazyEntries) throws Exception;
 
+	Entry update(IData data) throws Exception;
+
+	void preReload(Object entity);
+
 	void preSave(Object entity);
 
 	void preDelete(Object entity);
 
 	void postLoad(Object entity);
+
+	void postReload(Object entity);
 
 	void postSave(Object entity);
 

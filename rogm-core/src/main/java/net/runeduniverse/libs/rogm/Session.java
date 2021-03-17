@@ -42,6 +42,14 @@ public interface Session extends AutoCloseable {
 
 	void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth);
 
+	void reload(Object entity);
+
+	void reload(Object entity, Integer depth);
+
+	void reloadAll(Collection<? extends Object> entities);
+
+	void reloadAll(Collection<? extends Object> entities, Integer depth);
+
 	void save(Object entity);
 
 	void save(Object entity, Integer depth);
