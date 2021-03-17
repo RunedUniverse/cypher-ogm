@@ -14,6 +14,7 @@
 		<module>rogm-lang-cypher</module>
 		<module>rogm-module-neo4j</module>
 		<module>rogm-test</module>
+		<module>rogm-module-decorator</module>
 	</modules>
 
 	<properties>

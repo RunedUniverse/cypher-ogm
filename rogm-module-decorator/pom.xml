@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.runeduniverse.libs</groupId>
+		<artifactId>rogm</artifactId>
+		<version>2.0</version>
+	</parent>
+
+	<properties>
+		<module.version>1</module.version>
+	</properties>
+
+	<groupId>net.runeduniverse.libs.rogm.modules</groupId>
+  <artifactId>decorator</artifactId>
+	<version>${parent.version}.${module.version}</version>
+
+  <name>ROGM Module Decorator</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.runeduniverse.libs.rogm</groupId>
+			<artifactId>core</artifactId>
+			<version>2.0.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs</groupId>
+			<artifactId>rogm-test</artifactId>
+		</dependency>
+	</dependencies>
+</project>
