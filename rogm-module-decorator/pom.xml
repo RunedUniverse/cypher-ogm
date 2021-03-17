@@ -13,16 +13,16 @@
 	</properties>
 
 	<groupId>net.runeduniverse.libs.rogm.modules</groupId>
-  <artifactId>decorator</artifactId>
+	<artifactId>decorator</artifactId>
 	<version>${parent.version}.${module.version}</version>
 
-  <name>ROGM Module Decorator</name>
+	<name>ROGM Module Decorator</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
 			<artifactId>core</artifactId>
-			<version>2.0.11</version>
+			<version>2.0.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
