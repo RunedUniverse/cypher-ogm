@@ -9,8 +9,10 @@ import lombok.Getter;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.BasicBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.entities.PatternScanner;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
 
 @Getter
@@ -18,6 +20,7 @@ public class Configuration {
 
 	protected final List<String> pkgs = new ArrayList<>();
 	protected final List<ClassLoader> loader = new ArrayList<>();
+	protected final List<PatternScanner> scanner = new ArrayList<>();
 	private final Parser parser;
 	protected final Language lang;
 	protected final Module module;
@@ -63,6 +66,12 @@ public class Configuration {
 
 	public Configuration addClassLoader(List<ClassLoader> loader) {
 		this.loader.addAll(loader);
+		return this;
+	}
+
+	public Configuration configure(PassiveModule passivemodule) {
+		if (passivemodule.getPatternScanner() != null)
+			this.scanner.addAll(passivemodule.getPatternScanner());
 		return this;
 	}
 
