@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+
+import lombok.NoArgsConstructor;
 import net.runeduniverse.libs.utils.DataHashMap;
 import net.runeduniverse.libs.utils.DataMap;
 
+@NoArgsConstructor
 public class PackageScanner {
 
 	private final List<ClassLoader> loader = new ArrayList<>();
@@ -17,8 +20,46 @@ public class PackageScanner {
 	private final List<IScanner> scanner = new ArrayList<>();
 	private boolean includeSubPkgs = false;
 
+	public PackageScanner includeClassLoader(List<ClassLoader> loader) {
+		this.loader.addAll(loader);
+		return this;
+	}
+
 	public PackageScanner includeClassLoader(ClassLoader... loader) {
 		this.loader.addAll(Arrays.asList(loader));
+		return this;
+	}
+
+	public PackageScanner includePackages(List<String> pkgs) {
+		this.pkgs.addAll(pkgs);
+		return this;
+	}
+
+	public PackageScanner includePackages(String... pkgs) {
+		this.pkgs.addAll(Arrays.asList(pkgs));
+		return this;
+	}
+
+	public <SCANNER extends IScanner> PackageScanner includeScanner(List<SCANNER> scanner) {
+		this.scanner.addAll(scanner);
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <SCANNER extends IScanner> PackageScanner includeScanner(SCANNER... scanner) {
+		this.scanner.addAll(Arrays.asList(scanner));
+		return this;
+	}
+
+	public PackageScanner includeOptions(Object... options) {
+		for (Object obj : options) {
+			if (obj instanceof ClassLoader)
+				this.loader.add((ClassLoader) obj);
+			if (obj instanceof IScanner)
+				this.scanner.add((IScanner) obj);
+			if (obj instanceof String)
+				this.pkgs.add((String) obj);
+		}
 		return this;
 	}
 

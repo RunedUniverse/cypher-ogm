@@ -1,7 +1,16 @@
 package net.runeduniverse.libs.rogm.entities.base;
 
-import net.runeduniverse.libs.rogm.entities.PatternScanner;
+import java.lang.reflect.Modifier;
 
-public class NodePatternScanner extends PatternScanner{
+import net.runeduniverse.libs.rogm.annotations.NodeEntity;
+import net.runeduniverse.libs.rogm.entities.APatternScanner;
+
+public class NodePatternScanner extends APatternScanner {
+
+	@Override
+	public void scan(Class<?> clazz, ClassLoader loader, String pkg) {
+		if (!clazz.isAnnotationPresent(NodeEntity.class) || Modifier.isAbstract(clazz.getModifiers()))
+			return;
+	}
 
 }
