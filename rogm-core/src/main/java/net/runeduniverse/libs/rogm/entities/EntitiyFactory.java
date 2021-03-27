@@ -2,6 +2,9 @@ package net.runeduniverse.libs.rogm.entities;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.Configuration;
+import net.runeduniverse.libs.rogm.entities.IPattern.PatternType;
+import net.runeduniverse.libs.rogm.entities.base.NodeScanner;
+import net.runeduniverse.libs.rogm.entities.base.RelationScanner;
 import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.scanner.PackageScanner;
@@ -23,7 +26,9 @@ public class EntitiyFactory {
 		this.logger = new UniversalLogger(EntitiyFactory.class, cnf.getLogger());
 		this.parser = parser;
 
-		new PackageScanner().includeOptions(cnf.getLoader(), cnf.getPkgs(), cnf.getScanner()).scan();
+		new PackageScanner().includeOptions(cnf.getLoader(), cnf.getPkgs(), cnf.getScanner(),
+				new NodeScanner(p -> patterns.put(p.getType(), (IPattern) p, PatternType.NODE)),
+				new RelationScanner(p -> patterns.put(p.getType(), (IPattern) p, PatternType.RELATION))).scan();
 	}
 
 }

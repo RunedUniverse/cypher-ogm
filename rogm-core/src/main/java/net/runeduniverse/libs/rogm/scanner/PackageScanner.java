@@ -17,7 +17,7 @@ public class PackageScanner {
 
 	private final List<ClassLoader> loader = new ArrayList<>();
 	private final List<String> pkgs = new ArrayList<>();
-	private final List<IScanner> scanner = new ArrayList<>();
+	private final List<ITypeScanner> scanner = new ArrayList<>();
 	private boolean includeSubPkgs = false;
 
 	public PackageScanner includeClassLoader(List<ClassLoader> loader) {
@@ -40,13 +40,13 @@ public class PackageScanner {
 		return this;
 	}
 
-	public <SCANNER extends IScanner> PackageScanner includeScanner(List<SCANNER> scanner) {
+	public <SCANNER extends ITypeScanner> PackageScanner includeScanner(List<SCANNER> scanner) {
 		this.scanner.addAll(scanner);
 		return this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <SCANNER extends IScanner> PackageScanner includeScanner(SCANNER... scanner) {
+	public <SCANNER extends ITypeScanner> PackageScanner includeScanner(SCANNER... scanner) {
 		this.scanner.addAll(Arrays.asList(scanner));
 		return this;
 	}
@@ -55,8 +55,8 @@ public class PackageScanner {
 		for (Object obj : options) {
 			if (obj instanceof ClassLoader)
 				this.loader.add((ClassLoader) obj);
-			if (obj instanceof IScanner)
-				this.scanner.add((IScanner) obj);
+			if (obj instanceof ITypeScanner)
+				this.scanner.add((ITypeScanner) obj);
 			if (obj instanceof String)
 				this.pkgs.add((String) obj);
 		}
@@ -78,7 +78,7 @@ public class PackageScanner {
 				findClasses(classes, classLoader, pkg);
 
 		classes.forEach((c, l, p) -> {
-			for (IScanner s : PackageScanner.this.scanner)
+			for (ITypeScanner s : PackageScanner.this.scanner)
 				s.scan(c, l, p);
 		});
 	}

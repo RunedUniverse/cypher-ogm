@@ -154,7 +154,7 @@ public class NodePattern extends APattern {
 				this.storage.getFactory().createEffectedFilter(entry.getId()), node);
 	}
 
-	protected IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
+	public IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
 		if (entity == null)
 			return null;
 

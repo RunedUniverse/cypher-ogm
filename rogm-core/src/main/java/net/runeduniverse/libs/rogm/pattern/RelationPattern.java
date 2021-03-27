@@ -181,7 +181,7 @@ public class RelationPattern extends APattern {
 		return new DeleteContainer(this, entity, entry.getId(), null, relation);
 	}
 
-	protected IDataRelation save(Object entity, IDataNode caller, Direction direction,
+	public IDataRelation save(Object entity, IDataNode caller, Direction direction,
 			Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
 
 		if (entity == null || this.startField.get(entity) == null || this.targetField.get(entity) == null)
