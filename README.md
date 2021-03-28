@@ -1,5 +1,5 @@
 # ROGM by RunedUniverse
-ROGM is an OGM (**O**bject oriented **G**raph **M**odel for Graph databases) library for use in Java projects.
+ROGM is an OGM (**O**bject oriented **G**raph **M**odel) library for use in Java projects.
 We recommend using it in non-Spring projects!
 
 ## Distribution through Maven
@@ -7,13 +7,12 @@ We recommend using it in non-Spring projects!
 ```xml
 <repository>
   <id>runeduniverse-releases</id>
-  <url>http://runeduniverse.net:8081/repository/maven-releases/</url>
+  <url>https://nexus.runeduniverse.net/repository/maven-releases/</url>
 </repository>
 ```
 ### Dependencies
-In projects with APIs implementing the CORE in the API
-and adding the Modules only th the actual programm is recommended!
-Otherwise adding the Modules is sufficient!
+In projects with APIs it is recommended to only include the CORE in the API
+and implement the Modules only in the actual programm!
 
 ```xml
 <!-- ROGM CORE -->
