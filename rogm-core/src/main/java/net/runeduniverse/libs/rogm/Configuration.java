@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.BasicBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.entities.ABaseScanner;
+import net.runeduniverse.libs.rogm.entities.scanner.TypeScanner;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
@@ -20,7 +20,7 @@ public class Configuration {
 
 	protected final List<String> pkgs = new ArrayList<>();
 	protected final List<ClassLoader> loader = new ArrayList<>();
-	protected final List<ABaseScanner> scanner = new ArrayList<>();
+	protected final List<TypeScanner> scanner = new ArrayList<>();
 	private final Parser parser;
 	protected final Language lang;
 	protected final Module module;

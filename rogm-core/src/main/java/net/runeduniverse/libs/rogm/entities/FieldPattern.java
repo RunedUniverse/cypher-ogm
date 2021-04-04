@@ -25,7 +25,7 @@ public class FieldPattern extends net.runeduniverse.libs.rogm.scanner.FieldPatte
 	private PatternStorage storage;
 	private final String label;
 	private final Direction direction;
-	private final boolean defined;
+	private final boolean definedRelation;
 
 	public FieldPattern(Field field) throws Exception {
 		super(field);
@@ -34,10 +34,10 @@ public class FieldPattern extends net.runeduniverse.libs.rogm.scanner.FieldPatte
 
 		String label = null;
 		if (this.type.isAnnotationPresent(NodeEntity.class))
-			this.defined = false;
+			this.definedRelation = false;
 		else if (this.type.isAnnotationPresent(RelationshipEntity.class)) {
 			label = this.storage.getRelation(this.type).getLabel();
-			this.defined = true;
+			this.definedRelation = true;
 		} else
 			throw new Exception("Unsupported Class<" + this.type.getName() + "> as @Relation found!");
 		if (isBlank(label))
@@ -47,7 +47,7 @@ public class FieldPattern extends net.runeduniverse.libs.rogm.scanner.FieldPatte
 
 	public IFRelation queryRelation(IFNode origin) throws Exception {
 		Relation relation = null;
-		if (this.defined)
+		if (this.definedRelation)
 			relation = this.storage.getRelation(this.type).createFilter(origin, this.direction);
 		else {
 			relation = this.storage.getFactory().createRelation(this.direction);
