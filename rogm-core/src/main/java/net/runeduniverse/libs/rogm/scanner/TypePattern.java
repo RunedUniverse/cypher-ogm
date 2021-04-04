@@ -6,12 +6,12 @@ import java.util.Map;
 
 import lombok.Getter;
 
-public class TypePattern {
+public class TypePattern <F extends FieldPattern, M extends MethodPattern>{
 
 	@Getter
-	private final Map<Class<? extends Annotation>, FieldPattern> fields = new HashMap<>();
+	private final Map<Class<? extends Annotation>, F> fields = new HashMap<>();
 	@Getter
-	private final Map<Class<? extends Annotation>, MethodPattern> methods = new HashMap<>();
+	private final Map<Class<? extends Annotation>, M> methods = new HashMap<>();
 
 	@Getter
 	protected final String pkg;
@@ -43,5 +43,21 @@ public class TypePattern {
 			if (!this.methods.containsKey(anno))
 				return false;
 		return true;
+	}
+
+	public F getField(Class<? extends Annotation> anno) {
+		return this.fields.get(anno);
+	}
+
+	/**
+	 * Used to call parsed Methods
+	 * 
+	 * @param anno
+	 * @param obj
+	 * @return {@code true} if successfull
+	 */
+	public boolean callMethod(Class<? extends Annotation> anno, Object obj, Object... args) {
+		MethodPattern method = this.methods.get(anno);
+		return (obj == null || method == null) ? false : method.invoke(obj, args);
 	}
 }

@@ -22,9 +22,11 @@ public class FieldPattern {
 		this.type = clazz;
 	}
 
-	public void setValue(Object holder, Object value) throws IllegalArgumentException {
+	public void setValue(Object entity, Object value) throws IllegalArgumentException {
+		if (entity == null)
+			return;
 		try {
-			this.field.set(holder, value);
+			this.field.set(entity, value);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -32,6 +34,8 @@ public class FieldPattern {
 
 	@SuppressWarnings("unchecked")
 	public void putValue(Object entity, Object value) throws IllegalArgumentException {
+		if (entity == null)
+			return;
 		try {
 			if (this.collection) {
 				((Collection<Object>) this.field.get(entity)).add(value);
@@ -44,6 +48,8 @@ public class FieldPattern {
 	}
 
 	public Object getValue(Object entity) throws IllegalArgumentException {
+		if (entity == null)
+			return null;
 		try {
 			return this.field.get(entity);
 		} catch (IllegalAccessException e) {
@@ -54,6 +60,8 @@ public class FieldPattern {
 
 	@SuppressWarnings("unchecked")
 	public void removeValues(Object entity, Collection<Object> deletedEntities) {
+		if (entity == null || deletedEntities == null)
+			return;
 		try {
 			if (this.collection) {
 				((Collection<Object>) this.field.get(entity)).removeAll(deletedEntities);
@@ -67,6 +75,8 @@ public class FieldPattern {
 
 	@SuppressWarnings("unchecked")
 	public void clearValue(Object entity) {
+		if (entity == null)
+			return;
 		try {
 			if (this.collection) {
 				((Collection<Object>) this.field.get(entity)).clear();

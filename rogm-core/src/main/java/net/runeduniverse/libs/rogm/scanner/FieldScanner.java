@@ -2,27 +2,43 @@ package net.runeduniverse.libs.rogm.scanner;
 
 import java.lang.reflect.Field;
 
-public class FieldScanner implements IFieldScanner {
+public class FieldScanner<F extends FieldPattern> implements IFieldScanner<F> {
 
+	protected final PatternCreator<F> creator;
 	protected final ScanOrder order;
 
-	public FieldScanner() {
+	public FieldScanner(PatternCreator<F> creator) {
+		this.creator = creator;
 		this.order = ScanOrder.ALL;
 	}
 
-	public FieldScanner(ScanOrder order) {
+	public FieldScanner(PatternCreator<F> creator, ScanOrder order) {
+		this.creator = creator;
 		this.order = order;
 	}
 
-	protected FieldPattern createPattern(Field field) {
+	protected static FieldPattern createPattern(Field field) {
 		return new FieldPattern(field);
 	}
 
 	@Override
-	public void scan(Field field, Class<?> type, TypePattern pattern) {
-		FieldPattern p = createPattern(field);
+	public void scan(Field field, Class<?> type, TypePattern<F, ?> pattern) {
+		F p = this.creator.createPattern(field);
 		if (p != null)
-			pattern.getFields().put(null, p);
+			pattern.getFields()
+					.put(null, p);
 	}
 
+	@FunctionalInterface
+	public static interface PatternCreator<F extends FieldPattern> {
+		F createPattern(Field field);
+	}
+
+	public static FieldScanner<FieldPattern> DEFAULT() {
+		return new FieldScanner<FieldPattern>(FieldScanner::createPattern);
+	}
+
+	public static FieldScanner<FieldPattern> DEFAULT(ScanOrder order) {
+		return new FieldScanner<FieldPattern>(FieldScanner::createPattern, order);
+	}
 }
