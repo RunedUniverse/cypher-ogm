@@ -16,6 +16,8 @@ import java.util.Set;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
+import net.runeduniverse.libs.rogm.annotations.PreDelete;
+import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
@@ -35,53 +37,28 @@ public class NodePattern extends APattern {
 	private Set<String> labels = new HashSet<>();
 	private Set<FieldPattern> relFields = new HashSet<>();
 
-	public NodePattern(PatternStorage storage, Class<?> type) throws Exception {
-		super(storage, type);
-		this._parse(this.type);
+	public NodePattern(IStorage factory, String pkg, ClassLoader loader, Class<?> type) {
+		super(factory, pkg, loader, type);
 	}
 
-	private void _parse(Class<?> type) throws Exception {
-		NodeEntity typeAnno = type.getAnnotation(NodeEntity.class);
-		String label = null;
-		if (typeAnno != null)
-			label = typeAnno.label();
-		if (isBlank(label) && !Modifier.isAbstract(type.getModifiers()))
-			label = type.getSimpleName();
-		if (!isBlank(label))
-			this.labels.add(label);
-
-		for (Field field : type.getDeclaredFields()) {
-			field.setAccessible(true);
-			if (this.parseId(field))
-				continue;
-
-			if (field.isAnnotationPresent(Relationship.class))
-				this.relFields.add(new FieldPattern(this.storage, field));
-		}
-		this.parseMethods(type);
-
-		if (type.getSuperclass().equals(Object.class))
-			return;
-		_parse(type.getSuperclass());
-	}
 
 	public PatternType getPatternType() {
 		return PatternType.NODE;
 	}
 
 	public IFilter search(boolean lazy) throws Exception {
-		return this._search(this.storage.getFactory().createNode(this.labels, new ArrayList<>()), lazy, false);
+		return this._search(this.factory.getFactory().createNode(this.labels, new ArrayList<>()), lazy, false);
 	}
 
 	public IFilter search(Serializable id, boolean lazy) throws Exception {
 		return this._search(
-				this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter), lazy,
+				this.factory.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter), lazy,
 				false);
 	}
 
 	public IFNode search(IFRelation caller, boolean lazy) {
 		// includes ONLY the caller-relation filter
-		Node node = this.storage.getFactory().createNode(this.labels, Arrays.asList(caller));
+		Node node = this.factory.getFactory().createNode(this.labels, Arrays.asList(caller));
 		try {
 			return this._search(node, lazy, true);
 		} catch (Exception e) {
@@ -110,7 +87,7 @@ public class NodePattern extends APattern {
 
 			@Override
 			public IDataContainer getDataContainer() throws Exception {
-				return save(entity, includedData, depth);
+				return NodePattern.this.save(entity, includedData, depth);
 			}
 
 			@Override
@@ -118,7 +95,7 @@ public class NodePattern extends APattern {
 				for (Object object : includedData.keySet())
 					if (object != null)
 						try {
-							storage.getPattern(object.getClass()).postSave(object);
+							factory.getPattern(object.getClass()).postSave(object);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -130,7 +107,7 @@ public class NodePattern extends APattern {
 				for (Object object : includedData.keySet()) {
 					if (!includedData.get(object).persist())
 						continue;
-					Entry entry = storage.getBuffer().getEntry(object);
+					Entry entry = factory.getBuffer().getEntry(object);
 					if (entry == null || entry.getLoadState() == LoadState.LAZY)
 						continue;
 					set.add(entry.getPattern().search(entry.getId(), false));
@@ -138,20 +115,6 @@ public class NodePattern extends APattern {
 				return set;
 			}
 		};
-	}
-
-	@Override
-	public IDeleteContainer delete(Object entity) throws Exception {
-		IBuffer.Entry entry = this.storage.getBuffer().getEntry(entity);
-		if (entry == null)
-			throw new Exception("Node-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
-
-		preDelete(entity);
-
-		Node node = this.storage.getFactory().createIdNode(null, null, entry.getId(), null);
-		node.setReturned(true);
-		return new DeleteContainer(this, entity, entry.getId(),
-				this.storage.getFactory().createEffectedFilter(entry.getId()), node);
 	}
 
 	public IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
@@ -170,16 +133,16 @@ public class NodePattern extends APattern {
 				node = (DataNode) container;
 		} else if (this.isIdSet(entity)) {
 			// update (id)
-			node = this.storage.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity),
+			node = this.factory.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity),
 					this.idConverter, entity, persist);
 			node.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
-			node = this.storage.getFactory().createDataNode(this.labels, new ArrayList<>(), entity, persist);
+			node = this.factory.getFactory().createDataNode(this.labels, new ArrayList<>(), entity, persist);
 			node.setFilterType(FilterType.CREATE);
 		}
 
-		this.preSave(entity);
+		this.callMethod(PreSave.class, entity);
 
 		node.setReturned(true);
 		node.setReadonly(readonly);
@@ -192,6 +155,20 @@ public class NodePattern extends APattern {
 		}
 
 		return node;
+	}
+
+	@Override
+	public IDeleteContainer delete(Object entity) throws Exception {
+		IBuffer.Entry entry = this.factory.getBuffer().getEntry(entity);
+		if (entry == null)
+			throw new Exception("Node-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
+
+		this.callMethod(PreDelete.class, entity);
+
+		Node node = this.factory.getFactory().createIdNode(null, null, entry.getId(), null);
+		node.setReturned(true);
+		return new DeleteContainer(this, entity, entry.getId(),
+				this.factory.getFactory().createEffectedFilter(entry.getId()), node);
 	}
 
 	public void setRelation(Direction direction, String label, Object entity, Object value) {

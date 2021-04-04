@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.entities;
+package net.runeduniverse.libs.rogm.pattern.old;
 
 import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 
@@ -19,7 +19,6 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
@@ -39,9 +38,8 @@ public class RelationPattern extends APattern {
 	private boolean readonlyStart = false;
 	private boolean readonlyTarget = false;
 
-	public RelationPattern(IStorage factory, String pkg, ClassLoader loader, Class<?> type) {
-		super(factory, pkg, loader, type);
-		
+	public RelationPattern(PatternStorage storage, Class<?> type) throws Exception {
+		super(storage, type);
 		RelationshipEntity typeAnno = this.type.getAnnotation(RelationshipEntity.class);
 		this.direction = typeAnno.direction();
 		this.label = typeAnno.label();

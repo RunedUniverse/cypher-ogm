@@ -1,17 +1,17 @@
-package net.runeduniverse.libs.rogm.entities;
+package net.runeduniverse.libs.rogm.pattern.old;
 
 import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Map;
 
+import lombok.Data;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.libs.rogm.pattern.NodePattern;
-import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
@@ -20,26 +20,37 @@ import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 
-public class FieldPattern extends net.runeduniverse.libs.rogm.scanner.FieldPattern {
-	
-	private PatternStorage storage;
+@Data
+public class FieldPattern {
+
+	private final PatternStorage storage;
+	private final Field field;
+	private final Class<?> type;
 	private final String label;
 	private final Direction direction;
-	private final boolean definedRelation;
+	private final boolean collection;
+	private final boolean defined;
 
-	public FieldPattern(Field field) throws Exception {
-		super(field);
+	public FieldPattern(PatternStorage storage, Field field) throws Exception {
+		this.storage = storage;
+		this.field = field;
+		this.field.setAccessible(true);
 		Relationship fieldAnno = this.field.getAnnotation(Relationship.class);
 		this.direction = fieldAnno.direction();
+		Class<?> clazz = this.field.getType();
+		this.collection = Collection.class.isAssignableFrom(clazz);
+		if (this.collection)
+			clazz = (Class<?>) ((ParameterizedType) this.field.getGenericType()).getActualTypeArguments()[0];
+		this.type = clazz;
 
 		String label = null;
 		if (this.type.isAnnotationPresent(NodeEntity.class))
-			this.definedRelation = false;
-		else if (this.type.isAnnotationPresent(RelationshipEntity.class)) {
-			label = this.storage.getRelation(this.type).getLabel();
-			this.definedRelation = true;
+			this.defined = false;
+		else if (clazz.isAnnotationPresent(RelationshipEntity.class)) {
+			label = this.storage.getRelation(clazz).getLabel();
+			this.defined = true;
 		} else
-			throw new Exception("Unsupported Class<" + this.type.getName() + "> as @Relation found!");
+			throw new Exception("Unsupported Class<" + clazz.getName() + "> as @Relation found!");
 		if (isBlank(label))
 			label = isBlank(fieldAnno.label()) ? this.field.getName() : fieldAnno.label();
 		this.label = label;
@@ -47,7 +58,7 @@ public class FieldPattern extends net.runeduniverse.libs.rogm.scanner.FieldPatte
 
 	public IFRelation queryRelation(IFNode origin) throws Exception {
 		Relation relation = null;
-		if (this.definedRelation)
+		if (this.defined)
 			relation = this.storage.getRelation(this.type).createFilter(origin, this.direction);
 		else {
 			relation = this.storage.getFactory().createRelation(this.direction);
@@ -109,4 +120,59 @@ public class FieldPattern extends net.runeduniverse.libs.rogm.scanner.FieldPatte
 		node.getRelations().add(relation);
 	}
 
+	public void setValue(Object holder, Object value) throws IllegalArgumentException {
+		try {
+			this.field.set(holder, value);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void putValue(Object entity, Object value) throws IllegalArgumentException {
+		try {
+			if (this.collection) {
+				((Collection<Object>) this.field.get(entity)).add(value);
+				return;
+			}
+			this.field.set(entity, value);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public Object getValue(Object entity) throws IllegalArgumentException {
+		try {
+			return this.field.get(entity);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void removeValues(Object entity, Collection<Object> deletedEntities) {
+		try {
+			if (this.collection) {
+				((Collection<Object>) this.field.get(entity)).removeAll(deletedEntities);
+				return;
+			}
+			this.field.set(entity, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void clearValue(Object entity) {
+		try {
+			if (this.collection) {
+				((Collection<Object>) this.field.get(entity)).clear();
+				return;
+			}
+			this.field.set(entity, Number.class.isAssignableFrom(this.type) ? 0 : null);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
 }

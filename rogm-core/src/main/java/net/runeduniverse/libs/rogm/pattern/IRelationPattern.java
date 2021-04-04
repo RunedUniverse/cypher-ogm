@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.entities;
+package net.runeduniverse.libs.rogm.pattern;
 
 public interface IRelationPattern extends IPattern{
 

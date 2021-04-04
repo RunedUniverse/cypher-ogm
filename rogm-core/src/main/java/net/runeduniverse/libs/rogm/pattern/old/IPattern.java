@@ -1,9 +1,10 @@
-package net.runeduniverse.libs.rogm.entities;
+package net.runeduniverse.libs.rogm.pattern.old;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
@@ -35,7 +36,7 @@ public interface IPattern {
 
 	void deleteRelations(Object entity, Collection<Object> deletedEntities);
 
-	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
+	Object setId(Object entity, Serializable id);
 
 	Serializable prepareEntityId(Serializable id, Serializable entityId);
 
@@ -43,9 +44,19 @@ public interface IPattern {
 
 	Entry update(IData data) throws Exception;
 
-	public static enum PatternType {
-		NODE, RELATION, ADAPTER, UNKNOWN
-	}
+	void preReload(Object entity);
+
+	void preSave(Object entity);
+
+	void preDelete(Object entity);
+
+	void postLoad(Object entity);
+
+	void postReload(Object entity);
+
+	void postSave(Object entity);
+
+	void postDelete(Object entity);
 
 	public interface IPatternContainer extends IFilter {
 		IPattern getPattern();
@@ -91,5 +102,9 @@ public interface IPattern {
 		IFilter getDeleteFilter();
 
 		Serializable getDeletedId();
+	}
+
+	public enum PatternType {
+		NODE, RELATION
 	}
 }

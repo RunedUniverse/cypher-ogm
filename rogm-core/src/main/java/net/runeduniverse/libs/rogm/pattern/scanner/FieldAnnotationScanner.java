@@ -1,9 +1,9 @@
-package net.runeduniverse.libs.rogm.entities.scanner;
+package net.runeduniverse.libs.rogm.pattern.scanner;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-import net.runeduniverse.libs.rogm.entities.FieldPattern;
+import net.runeduniverse.libs.rogm.pattern.FieldPattern;
 import net.runeduniverse.libs.rogm.scanner.ScanOrder;
 
 public class FieldAnnotationScanner extends net.runeduniverse.libs.rogm.scanner.FieldAnnotationScanner<FieldPattern> {
@@ -23,5 +23,4 @@ public class FieldAnnotationScanner extends net.runeduniverse.libs.rogm.scanner.
 		}
 		return null;
 	}
-
 }

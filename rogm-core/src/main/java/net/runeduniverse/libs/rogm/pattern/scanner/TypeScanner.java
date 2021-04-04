@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.entities.scanner;
+package net.runeduniverse.libs.rogm.pattern.scanner;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
@@ -12,11 +12,13 @@ import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreReload;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.libs.rogm.entities.APattern;
-import net.runeduniverse.libs.rogm.entities.FieldPattern;
-import net.runeduniverse.libs.rogm.entities.NodePattern;
-import net.runeduniverse.libs.rogm.entities.RelationPattern;
+import net.runeduniverse.libs.rogm.annotations.StartNode;
+import net.runeduniverse.libs.rogm.annotations.TargetNode;
+import net.runeduniverse.libs.rogm.pattern.APattern;
+import net.runeduniverse.libs.rogm.pattern.FieldPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
+import net.runeduniverse.libs.rogm.pattern.NodePattern;
+import net.runeduniverse.libs.rogm.pattern.RelationPattern;
 import net.runeduniverse.libs.rogm.scanner.MethodAnnotationScanner;
 import net.runeduniverse.libs.rogm.scanner.MethodPattern;
 import net.runeduniverse.libs.rogm.scanner.ResultConsumer;
@@ -63,6 +65,9 @@ public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPatte
 		public RelationScanner(IStorage factory, ResultConsumer consumer) {
 			super(factory, (type, loader, pkg) -> new RelationPattern(factory, pkg, loader, type),
 					RelationshipEntity.class, consumer);
+			// Fields
+			this.addFieldScanner(new FieldAnnotationScanner(StartNode.class, ScanOrder.FIRST));
+			this.addFieldScanner(new FieldAnnotationScanner(TargetNode.class, ScanOrder.FIRST));
 		}
 	}
 }

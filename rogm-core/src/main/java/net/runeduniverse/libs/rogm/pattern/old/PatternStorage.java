@@ -1,39 +1,41 @@
-package net.runeduniverse.libs.rogm.entities;
+package net.runeduniverse.libs.rogm.pattern.old;
 
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.Direction;
+import net.runeduniverse.libs.rogm.annotations.NodeEntity;
+import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
-import net.runeduniverse.libs.rogm.entities.IPattern.PatternType;
-import net.runeduniverse.libs.rogm.entities.scanner.TypeScanner;
 import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
-import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
-import net.runeduniverse.libs.rogm.pattern.NodePattern;
-import net.runeduniverse.libs.rogm.pattern.RelationPattern;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.scanner.PackageScanner;
 import net.runeduniverse.libs.utils.DataHashMap;
 import net.runeduniverse.libs.utils.DataMap;
 
-public class EntitiyFactory implements IStorage {
+public class PatternStorage implements IStorage {
 
 	@Getter
 	private final Configuration config;
@@ -41,52 +43,52 @@ public class EntitiyFactory implements IStorage {
 	private final FilterFactory factory;
 	@Getter
 	private final Parser.Instance parser;
+	private final Map<Class<?>, NodePattern> nodes = new HashMap<>();
+	private final Map<Class<?>, RelationPattern> relations = new HashMap<>();
 	@Getter
 	private final IBuffer buffer;
 	private final UniversalLogger logger;
 
-	private final DataMap<Class<?>, IPattern, PatternType> patterns = new DataHashMap<>();
-
-	public EntitiyFactory(Configuration cnf, Parser.Instance parser) throws Exception {
+	public PatternStorage(Configuration cnf, Parser.Instance parser) throws Exception {
 		this.config = cnf;
-		this.logger = new UniversalLogger(EntitiyFactory.class, cnf.getLogger());
+		this.logger = new UniversalLogger(PatternStorage.class, cnf.getLogger());
 		this.factory = new FilterFactory(cnf.getModule());
 		this.parser = parser;
-		this.buffer = cnf.getBuffer()
-				.initialize(this);
+		this.buffer = cnf.getBuffer().initialize(this);
 
-		new PackageScanner()
-				.includeOptions(cnf.getLoader(), cnf.getPkgs(), cnf.getScanner(),
-						new TypeScanner.NodeScanner(this, p -> patterns.put(p.getType(), (IPattern) p, PatternType.NODE)),
-						new TypeScanner.RelationScanner(this, p -> patterns.put(p.getType(), (IPattern) p, PatternType.RELATION)))
-				.scan();
+		Reflections reflections = new Reflections(cnf.getPkgs().toArray(), cnf.getLoader().toArray(),
+				new TypeAnnotationsScanner(), new SubTypesScanner(true));
 
-		this.logPatterns("Relations", patterns, PatternType.RELATION);
-		this.logPatterns("Nodes", patterns, PatternType.NODE);
+		for (Class<?> c : reflections.getTypesAnnotatedWith(RelationshipEntity.class))
+			if (!Modifier.isAbstract(c.getModifiers()))
+				this.relations.put(c, new RelationPattern(this, c));
+		for (Class<?> c : reflections.getTypesAnnotatedWith(NodeEntity.class))
+			if (!Modifier.isAbstract(c.getModifiers()))
+				this.nodes.put(c, new NodePattern(this, c));
+
+		this.logPatterns("Relations", this.relations);
+		this.logPatterns("Nodes", this.nodes);
 	}
 
 	public NodePattern getNode(Class<?> clazz) {
-		if (this.patterns.getData(clazz) == PatternType.NODE)
-			return (NodePattern) this.patterns.get(clazz);
-		return null;
+		return this.nodes.get(clazz);
 	}
 
 	public RelationPattern getRelation(Class<?> clazz) {
-		if (this.patterns.getData(clazz) == PatternType.RELATION)
-			return (RelationPattern) this.patterns.get(clazz);
-		return null;
+		return this.relations.get(clazz);
 	}
 
 	public IPattern getPattern(Class<?> clazz) throws Exception {
-		if (this.patterns.containsKey(clazz))
-			return this.patterns.get(clazz);
+		if (this.nodes.containsKey(clazz))
+			return this.nodes.get(clazz);
+		if (this.relations.containsKey(clazz))
+			return this.relations.get(clazz);
 		throw logger.throwing("getPattern(Class<?>)", new Exception("Unsupported Entity-Class <" + clazz + "> found!"));
 	}
 
 	public boolean isIdSet(Object entity) {
 		try {
-			return this.getPattern(entity.getClass())
-					.isIdSet(entity);
+			return this.getPattern(entity.getClass()).isIdSet(entity);
 		} catch (Exception e) {
 			this.logger.burying("isIdSet(Object)", e);
 			return false;
@@ -94,35 +96,29 @@ public class EntitiyFactory implements IStorage {
 	}
 
 	public IFilter search(Class<?> clazz, boolean lazy) throws Exception {
-		return this.getPattern(clazz)
-				.search(lazy);
+		return this.getPattern(clazz).search(lazy);
 	}
 
 	public IFilter search(Class<?> clazz, Serializable id, boolean lazy) throws Exception {
-		return this.getPattern(clazz)
-				.search(id, lazy);
+		return this.getPattern(clazz).search(id, lazy);
 	}
 
 	public IFilter search(Object entity, boolean lazy) throws Exception {
 		IBuffer.Entry entry = this.buffer.getEntry(entity);
-		return entry.getPattern()
-				.search(entry.getId(), lazy);
+		return entry.getPattern().search(entry.getId(), lazy);
 	}
 
 	public ISaveContainer save(Object entity, Integer depth) throws Exception {
-		return this.getPattern(entity.getClass())
-				.save(entity, depth);
+		return this.getPattern(entity.getClass()).save(entity, depth);
 	}
 
 	public IDeleteContainer delete(Object entity) throws Exception {
-		return this.getPattern(entity.getClass())
-				.delete(entity);
+		return this.getPattern(entity.getClass()).delete(entity);
 	}
 
 	public Object setId(Object entity, Serializable id) {
 		try {
-			return this.getPattern(entity.getClass())
-					.setId(entity, id);
+			return this.getPattern(entity.getClass()).setId(entity, id);
 		} catch (Exception e) {
 			this.logger.burying("setId(Object, Serializable)", e);
 		}
@@ -143,8 +139,8 @@ public class EntitiyFactory implements IStorage {
 			for (IData data : dataList) {
 				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
 				if (IPatternContainer.identify(data.getFilter()))
-					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern()
-							.parse(data, LoadState.get(data.getFilter()), lazyEntries));
+					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern().parse(data,
+							LoadState.get(data.getFilter()), lazyEntries));
 			}
 		}
 
@@ -154,12 +150,10 @@ public class EntitiyFactory implements IStorage {
 				String label = fRelation.getPrimaryLabel();
 				IFNode fStartNode = fRelation.getStart();
 				NodePattern pStartNode = (NodePattern) ((IPatternContainer) fStartNode).getPattern();
-				Object eStartNode = this.buffer.getById(dataMap.get(fStartNode)
-						.getId(), pStartNode.getType());
+				Object eStartNode = this.buffer.getById(dataMap.get(fStartNode).getId(), pStartNode.getType());
 				IFNode fTargetNode = fRelation.getTarget();
 				NodePattern pTargetNode = (NodePattern) ((IPatternContainer) fTargetNode).getPattern();
-				Object eTargetNode = this.buffer.getById(dataMap.get(fTargetNode)
-						.getId(), pTargetNode.getType());
+				Object eTargetNode = this.buffer.getById(dataMap.get(fTargetNode).getId(), pTargetNode.getType());
 
 				if (!IPatternContainer.identify(fRelation)) {
 					pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, eTargetNode);
@@ -184,8 +178,7 @@ public class EntitiyFactory implements IStorage {
 			nodes.add(this.buffer.getById(primId, type));
 
 		for (Object object : loadedObjects)
-			this.getPattern(object.getClass())
-					.postLoad(object);
+			this.getPattern(object.getClass()).postLoad(object);
 
 		return nodes;
 	}
@@ -203,8 +196,7 @@ public class EntitiyFactory implements IStorage {
 				map.put(data.getFilter(), data, dtype);
 
 				if (IPatternContainer.identify(data.getFilter()) && LoadState.get(data.getFilter()) == LoadState.LAZY) {
-					Entry entry = ((IPatternContainer) data.getFilter()).getPattern()
-							.update(data);
+					Entry entry = ((IPatternContainer) data.getFilter()).getPattern().update(data);
 					if (entry.getEntity() != entity && dtype != DataType.RELATION)
 						relatedEntities.add(entry);
 				}
@@ -217,12 +209,10 @@ public class EntitiyFactory implements IStorage {
 				String label = fRelation.getPrimaryLabel();
 				IFNode fStartNode = fRelation.getStart();
 				NodePattern pStartNode = (NodePattern) ((IPatternContainer) fStartNode).getPattern();
-				Object eStartNode = this.buffer.getById(dataMap.get(fStartNode)
-						.getId(), pStartNode.getType());
+				Object eStartNode = this.buffer.getById(dataMap.get(fStartNode).getId(), pStartNode.getType());
 				IFNode fTargetNode = fRelation.getTarget();
 				NodePattern pTargetNode = (NodePattern) ((IPatternContainer) fTargetNode).getPattern();
-				Object eTargetNode = this.buffer.getById(dataMap.get(fTargetNode)
-						.getId(), pTargetNode.getType());
+				Object eTargetNode = this.buffer.getById(dataMap.get(fTargetNode).getId(), pTargetNode.getType());
 
 				pStartNode.deleteRelations(eStartNode);
 				pTargetNode.deleteRelations(eTargetNode);
@@ -248,8 +238,7 @@ public class EntitiyFactory implements IStorage {
 				pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode, relEntity);
 			});
 
-		this.getPattern(entity.getClass())
-				.postReload(entity);
+		this.getPattern(entity.getClass()).postReload(entity);
 	}
 
 	private enum DataType {
@@ -264,11 +253,11 @@ public class EntitiyFactory implements IStorage {
 		}
 	}
 
-	private void logPatterns(String name, DataMap<Class<?>, IPattern, PatternType> patterns, PatternType type) {
-		StringBuilder msg = new StringBuilder(name + ':');
-		patterns.forEach(type, (c, p) -> {
-			msg.append("\n - " + c.getCanonicalName());
-		});
-		this.logger.finer(msg.toString());
+	private void logPatterns(String name, Map<Class<?>, ?> patterns) {
+		List<String> msg = new ArrayList<>();
+		msg.add(name + ':');
+		for (Class<?> calzz : patterns.keySet())
+			msg.add(calzz.getCanonicalName());
+		this.logger.finer(String.join("\n - ", msg));
 	}
 }

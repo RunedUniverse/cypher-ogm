@@ -1,11 +1,11 @@
-package net.runeduniverse.libs.rogm.entities.scanner;
+package net.runeduniverse.libs.rogm.pattern.scanner;
 
 import java.lang.reflect.Field;
 
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
-import net.runeduniverse.libs.rogm.entities.APattern;
-import net.runeduniverse.libs.rogm.entities.FieldPattern;
+import net.runeduniverse.libs.rogm.pattern.APattern;
+import net.runeduniverse.libs.rogm.pattern.FieldPattern;
 import net.runeduniverse.libs.rogm.scanner.ScanOrder;
 import net.runeduniverse.libs.rogm.scanner.TypePattern;
 

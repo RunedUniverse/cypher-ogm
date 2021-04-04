@@ -9,11 +9,11 @@ import lombok.Getter;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.BasicBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.entities.scanner.TypeScanner;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 
 @Getter
 public class Configuration {

@@ -38,8 +38,9 @@ public class RelationPattern extends APattern {
 	private boolean readonlyStart = false;
 	private boolean readonlyTarget = false;
 
-	public RelationPattern(PatternStorage storage, Class<?> type) throws Exception {
-		super(storage, type);
+	public RelationPattern(IStorage factory, String pkg, ClassLoader loader, Class<?> type) {
+		super(factory, pkg, loader, type);
+		
 		RelationshipEntity typeAnno = this.type.getAnnotation(RelationshipEntity.class);
 		this.direction = typeAnno.direction();
 		this.label = typeAnno.label();
