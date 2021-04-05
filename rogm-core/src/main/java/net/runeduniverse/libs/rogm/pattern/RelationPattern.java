@@ -12,6 +12,8 @@ import java.util.Set;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
+import net.runeduniverse.libs.rogm.annotations.PostSave;
+import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
@@ -25,13 +27,13 @@ import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
-public class RelationPattern extends APattern {
+public class RelationPattern extends APattern implements IRelationPattern {
 
 	@Getter
 	private String label = null;
 	private Direction direction = null;
-	private Field startField = null;
-	private Field targetField = null;
+	private FieldPattern startField = null;
+	private FieldPattern targetField = null;
 	// start eq target
 	@Getter
 	private boolean stEqTr = false;
@@ -40,51 +42,36 @@ public class RelationPattern extends APattern {
 
 	public RelationPattern(IStorage factory, String pkg, ClassLoader loader, Class<?> type) {
 		super(factory, pkg, loader, type);
-		
+
 		RelationshipEntity typeAnno = this.type.getAnnotation(RelationshipEntity.class);
 		this.direction = typeAnno.direction();
 		this.label = typeAnno.label();
-		_parse(this.type);
 
+	}
+
+	@Override
+	public void validate() throws Exception {
+		super.validate();
+		this.startField = super.getField(StartNode.class);
 		if (this.startField == null)
 			throw new Exception("Relation<" + type + "> is missing the @StartNode");
 		if (Collection.class.isAssignableFrom(this.startField.getType()))
 			throw new Exception("@StartNode of Relation<" + type + "> must not be a Collection");
 
+		this.targetField = super.getField(TargetNode.class);
 		if (this.targetField == null)
 			throw new Exception("Relation<" + type + "> is missing the @TargetNode");
 		if (Collection.class.isAssignableFrom(this.targetField.getType()))
 			throw new Exception("@TargetNode of Relation<" + type + "> must not be a Collection");
-	}
 
-	private void _parse(Class<?> type) throws Exception {
-		for (Field field : type.getDeclaredFields()) {
-			field.setAccessible(true);
-			if (this.parseId(field))
-				continue;
+		StartNode startAnno = this.startField.getAnno(StartNode.class);
+		TargetNode targetAnno = this.targetField.getAnno(TargetNode.class);
 
-			StartNode startAnno = field.getAnnotation(StartNode.class);
-			TargetNode targetAnno = field.getAnnotation(TargetNode.class);
+		if (this.startField.getField() == this.targetField.getField())
+			this.stEqTr = true;
 
-			if (startAnno != null) {
-				if (targetAnno != null) {
-					this.stEqTr = true;
-					this.targetField = field;
-				} else
-					this.readonlyStart = startAnno.readonly();
-				this.startField = field;
-				continue;
-			}
-			if (targetAnno != null) {
-				this.readonlyTarget = targetAnno.readonly();
-				this.targetField = field;
-			}
-		}
-		this.parseMethods(type);
-
-		if (type.getSuperclass().equals(Object.class))
-			return;
-		_parse(type.getSuperclass());
+		this.readonlyStart = startAnno.readonly();
+		this.readonlyTarget = targetAnno.readonly();
 	}
 
 	public PatternType getPatternType() {
@@ -97,16 +84,19 @@ public class RelationPattern extends APattern {
 	}
 
 	public IFilter search(boolean lazy) {
-		return _complete(this.storage.getFactory().createRelation(this.direction), lazy);
+		return _complete(this.factory.getFactory()
+				.createRelation(this.direction), lazy);
 	}
 
 	public IFilter search(Serializable id, boolean lazy) throws Exception {
-		return _complete(this.storage.getFactory().createIdRelation(this.direction, id, this.idConverter), lazy);
+		return _complete(this.factory.getFactory()
+				.createIdRelation(this.direction, id, this.idConverter), lazy);
 	}
 
 	private Relation _complete(Relation relation, boolean lazy) {
 		if (!isBlank(this.label))
-			relation.getLabels().add(label);
+			relation.getLabels()
+					.add(label);
 
 		if (this.stEqTr) {
 			IFNode node = this._getNode(this.startField.getType(), relation, lazy);
@@ -123,10 +113,12 @@ public class RelationPattern extends APattern {
 	}
 
 	public Relation createFilter(IFNode caller, Direction direction) {
-		Relation relation = this.storage.getFactory().createRelation(this.direction);
+		Relation relation = this.factory.getFactory()
+				.createRelation(this.direction);
 		relation.setPattern(this);
 		if (!isBlank(this.label))
-			relation.getLabels().add(this.label);
+			relation.getLabels()
+					.add(this.label);
 
 		if (this.stEqTr) {
 			relation.setStart(caller);
@@ -159,7 +151,8 @@ public class RelationPattern extends APattern {
 			public void postSave() {
 				for (Object object : includedData.keySet())
 					try {
-						storage.getPattern(object.getClass()).postSave(object);
+						factory.getPattern(object.getClass())
+								.callMethod(PostSave.class, object);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -174,10 +167,13 @@ public class RelationPattern extends APattern {
 
 	@Override
 	public IDeleteContainer delete(Object entity) throws Exception {
-		IBuffer.Entry entry = this.storage.getBuffer().getEntry(entity);
+		IBuffer.Entry entry = this.factory.getBuffer()
+				.getEntry(entity);
 		if (entry == null)
-			throw new Exception("Relation-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
-		Relation relation = this.storage.getFactory().createIdRelation(Direction.BIDIRECTIONAL, entry.getId(), null);
+			throw new Exception("Relation-Entity of type<" + entity.getClass()
+					.getName() + "> is not loaded!");
+		Relation relation = this.factory.getFactory()
+				.createIdRelation(Direction.BIDIRECTIONAL, entry.getId(), null);
 		relation.setReturned(true);
 		return new DeleteContainer(this, entity, entry.getId(), null, relation);
 	}
@@ -185,29 +181,32 @@ public class RelationPattern extends APattern {
 	public IDataRelation save(Object entity, IDataNode caller, Direction direction,
 			Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
 
-		if (entity == null || this.startField.get(entity) == null || this.targetField.get(entity) == null)
+		if (entity == null || this.startField.getValue(entity) == null || this.targetField.getValue(entity) == null)
 			return null;
 
 		if (includedData.containsKey(entity))
 			return (IDataRelation) includedData.get(entity);
 
-		this.preSave(entity);
+		this.callMethod(PreSave.class, entity);
 
 		IDataRelation relation = null;
 		if (this.isIdSet(entity)) {
 			// update (id)
-			relation = this.storage.getFactory().createDataRelation(this.direction, entity);
+			relation = this.factory.getFactory()
+					.createDataRelation(this.direction, entity);
 			relation.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
-			relation = this.storage.getFactory().createDataRelation(this.direction, entity);
+			relation = this.factory.getFactory()
+					.createDataRelation(this.direction, entity);
 			relation.setFilterType(FilterType.CREATE);
 		}
 		relation.setReturned(true);
 		includedData.put(entity, relation);
 
 		if (!isBlank(this.label))
-			relation.getLabels().add(this.label);
+			relation.getLabels()
+					.add(this.label);
 
 		if (caller == null) {
 			// Relation gets called first
@@ -249,22 +248,22 @@ public class RelationPattern extends APattern {
 
 	public void setStart(Object entity, Object value) {
 		try {
-			this.startField.set(entity, value);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+			this.startField.setValue(entity, value);
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void setTarget(Object entity, Object value) {
 		try {
-			this.targetField.set(entity, value);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+			this.targetField.setValue(entity, value);
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private IFNode _getNode(Class<?> type, IFRelation relation, boolean lazy) {
-		NodePattern node = this.storage.getNode(type);
+		INodePattern node = this.factory.getNode(type);
 		if (node == null)
 			return null;
 		return node.search(relation, lazy);
@@ -272,17 +271,13 @@ public class RelationPattern extends APattern {
 
 	private IDataNode _getDataNode(Field field, Object entity, Map<Object, IDataContainer> includedData,
 			IDataRelation relation, Integer depth) throws Exception {
-		NodePattern node = this.storage.getNode(field.getType());
+		INodePattern node = this.factory.getNode(field.getType());
 		if (node == null)
 			throw new Exception("NodePattern for Field<" + field.toString() + "> undefined!");
 		IDataNode dataNode = node.save(field.get(entity), includedData, depth);
-		dataNode.getRelations().add(relation);
+		dataNode.getRelations()
+				.add(relation);
 		return dataNode;
-	}
-
-	@Override
-	// Irrelevant as the relation will also get deleted
-	public void deleteRelations(Object entity, Collection<Object> delEntries) {
 	}
 
 }

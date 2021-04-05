@@ -37,4 +37,10 @@ public interface IStorage {
 	<T> Collection<T> parse(Class<T> type, IDataRecord record, Set<Entry> lazyEntries) throws Exception;
 
 	void update(Object entity, IDataRecord record, Set<Entry> relatedEntities) throws Exception;
+
+	FilterFactory getFactory();
+
+	INodePattern getNode(Class<?> clazz);
+
+	IRelationPattern getRelation(Class<?> clazz);
 }

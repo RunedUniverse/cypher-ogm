@@ -8,5 +8,7 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(FIELD)
-public @interface Id {
+public @interface Converter {
+
+	Class<?> converter() default IConverter.UnSet.class;
 }

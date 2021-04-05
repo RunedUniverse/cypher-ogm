@@ -15,9 +15,9 @@ import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.logging.SessionLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.EntitiyFactory;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
-import net.runeduniverse.libs.rogm.pattern.PatternStorage;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
@@ -37,7 +37,7 @@ public final class CoreSession implements Session {
 		this.parser = cnf.buildParserInstance();
 		this.module = cnf.buildModuleInstance();
 		this.lang = cnf.buildLanguageInstance(this.parser);
-		this.storage = new PatternStorage(cnf, this.parser);
+		this.storage = new EntitiyFactory(cnf, this.parser);
 		this.buffer = this.storage.getBuffer();
 
 		if (!this.module.connect(cnf))

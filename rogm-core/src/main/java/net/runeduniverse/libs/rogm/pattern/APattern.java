@@ -4,26 +4,32 @@ import java.io.Serializable;
 import java.util.Set;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.PreReload;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
+import net.runeduniverse.libs.rogm.pattern.IPattern;
+import net.runeduniverse.libs.rogm.querying.IFRelation;
+import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.scanner.MethodPattern;
 import net.runeduniverse.libs.rogm.scanner.TypePattern;
 
 public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> implements IPattern {
 
 	protected final IStorage factory;
-
+	protected FieldPattern idPattern;
 	@Getter
-	@Setter
 	protected IConverter<?> idConverter = null;
 
 	public APattern(IStorage factory, String pkg, ClassLoader loader, Class<?> type) {
 		super(pkg, loader, type);
 		this.factory = factory;
+	}
+
+	public void validate() throws Exception{
+		this.idPattern = super.getField(Id.class);
 	}
 
 	@Override
@@ -33,10 +39,7 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 
 	@Override
 	public Serializable getId(Object entity) {
-		FieldPattern fp = this.getField(Id.class);
-		if (fp == null)
-			return null;
-		return (Serializable) fp.getValue(entity);
+		return (Serializable) this.idPattern.getValue(entity);
 	}
 
 	@Override
@@ -52,13 +55,15 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 		if (entityId == null)
 			return id;
 		else if (entityId instanceof String)
-			return this.idConverter.convert((String) entityId);
+			return this.getField(Id.class)
+					.getConverter()
+					.convert((String) entityId);
 		return entityId;
 	}
 
 	@Override
 	public Object parse(IData data, LoadState loadState, Set<Entry> lazyEntries) throws Exception {
-		if (this.getField(Id.class) != null)
+		if (this.idPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
 		return this.factory.getBuffer()
@@ -78,4 +83,13 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 				.update(entity, data);
 	}
 
+	@RequiredArgsConstructor
+	@Getter
+	protected class DeleteContainer implements IDeleteContainer {
+		private final IPattern pattern;
+		private final Object entity;
+		private final Serializable deletedId;
+		private final IFRelation effectedFilter;
+		private final IFilter deleteFilter;
+	}
 }

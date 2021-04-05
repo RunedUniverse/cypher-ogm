@@ -12,7 +12,7 @@ public class TypeScanner<F extends FieldPattern, M extends MethodPattern, T exte
 		implements ITypeScanner {
 
 	protected final PatternCreator<F, M, T> creator;
-	protected final ResultConsumer consumer;
+	protected final ResultConsumer<F, M, T> consumer;
 
 	protected SCN<F, M, T> scanFieldsFnc = TypeScanner::scanFields;
 	protected SCN<F, M, T> scanMethodsFnc = TypeScanner::scanMethods;
@@ -40,6 +40,11 @@ public class TypeScanner<F extends FieldPattern, M extends MethodPattern, T exte
 		TypeScanner.cascade(this, this.scanFieldsFnc, pattern, pattern.getClass());
 		TypeScanner.cascade(this, this.scanMethodsFnc, pattern, pattern.getClass());
 		this.consumer.accept(pattern);
+	}
+
+	@FunctionalInterface
+	public static interface ResultConsumer<F extends FieldPattern, M extends MethodPattern, T extends TypePattern<F, M>> {
+		void accept(T pattern);
 	}
 
 	@FunctionalInterface
@@ -78,7 +83,7 @@ public class TypeScanner<F extends FieldPattern, M extends MethodPattern, T exte
 	}
 
 	public static TypeScanner<FieldPattern, MethodPattern, TypePattern<FieldPattern, MethodPattern>> DEFAULT(
-			ResultConsumer consumer) {
+			ResultConsumer<FieldPattern, MethodPattern, TypePattern<FieldPattern, MethodPattern>> consumer) {
 		return new TypeScanner<>(TypeScanner::createPattern, consumer);
 	}
 }

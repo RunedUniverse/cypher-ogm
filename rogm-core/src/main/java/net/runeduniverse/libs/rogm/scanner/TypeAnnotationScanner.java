@@ -8,7 +8,7 @@ public class TypeAnnotationScanner<F extends FieldPattern, M extends MethodPatte
 	private final Class<? extends Annotation> anno;
 
 	public TypeAnnotationScanner(Class<? extends Annotation> anno, PatternCreator<F, M, T> creator,
-			ResultConsumer consumer) {
+			ResultConsumer<F, M, T> consumer) {
 		super(creator, consumer);
 		this.anno = anno;
 	}
@@ -20,7 +20,8 @@ public class TypeAnnotationScanner<F extends FieldPattern, M extends MethodPatte
 	}
 
 	public static TypeAnnotationScanner<FieldPattern, MethodPattern, TypePattern<FieldPattern, MethodPattern>> DEFAULT(
-			Class<? extends Annotation> anno, ResultConsumer consumer) {
+			Class<? extends Annotation> anno,
+			ResultConsumer<FieldPattern, MethodPattern, TypePattern<FieldPattern, MethodPattern>> consumer) {
 		return new TypeAnnotationScanner<>(anno, TypeScanner::createPattern, consumer);
 	}
 }

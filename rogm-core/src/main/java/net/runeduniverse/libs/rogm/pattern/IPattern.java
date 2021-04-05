@@ -34,8 +34,6 @@ public interface IPattern {
 
 	IDeleteContainer delete(Object entity) throws Exception;
 
-	void deleteRelations(Object entity, Collection<Object> deletedEntities);
-
 	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
 
 	Serializable prepareEntityId(Serializable id, Serializable entityId);

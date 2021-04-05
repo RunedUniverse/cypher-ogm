@@ -1,5 +1,6 @@
 package net.runeduniverse.libs.rogm.scanner;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
@@ -86,5 +87,9 @@ public class FieldPattern {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public <A extends Annotation> A getAnno(Class<A> annoType) {
+		return this.field.getAnnotation(annoType);
 	}
 }
