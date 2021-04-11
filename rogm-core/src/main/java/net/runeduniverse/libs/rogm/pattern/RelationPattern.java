@@ -3,9 +3,11 @@ package net.runeduniverse.libs.rogm.pattern;
 import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,10 +53,14 @@ public class RelationPattern extends APattern implements IRelationPattern {
 	@Override
 	public void validate() throws Exception {
 		super.validate();
-		System.out.println("EXTRA @StartNode");
-		super.fields.forEach((c, x) -> System.out.println(c));
-		///
-		this.startField = super.getField(StartNode.class);
+		this.startField = super.fields.get(StartNode.class);
+
+		List<String> s = new ArrayList<>();
+		super.fields.forEach((c, f) -> s.add(c.toString()));
+		s.add((super.fields.get(StartNode.class) == null) + "");
+		if (super.fields.containsKey(StartNode.class))
+			throw new Exception("[" + String.join("|", s) + "]");// TODO WTF
+
 		if (this.startField == null)
 			throw new Exception("Relation<" + type + "> is missing the @StartNode");
 		if (Collection.class.isAssignableFrom(this.startField.getType()))
