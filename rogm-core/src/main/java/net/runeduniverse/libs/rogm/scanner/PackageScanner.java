@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.NoArgsConstructor;
 import net.runeduniverse.libs.utils.DataHashMap;
@@ -18,6 +21,7 @@ public class PackageScanner {
 	private final List<ClassLoader> loader = new ArrayList<>();
 	private final List<String> pkgs = new ArrayList<>();
 	private final List<ITypeScanner> scanner = new ArrayList<>();
+	private final Set<Exception> errors = new HashSet<>();
 	private boolean includeSubPkgs = false;
 
 	public PackageScanner includeClassLoader(List<ClassLoader> loader) {
@@ -53,6 +57,9 @@ public class PackageScanner {
 
 	public PackageScanner includeOptions(Object... options) {
 		for (Object obj : options) {
+			if (obj instanceof Collection<?>)
+				for (Object element : (Collection<?>) obj)
+					this.includeOptions(element);
 			if (obj instanceof ClassLoader)
 				this.loader.add((ClassLoader) obj);
 			if (obj instanceof ITypeScanner)
@@ -68,7 +75,7 @@ public class PackageScanner {
 		return this;
 	}
 
-	public void scan() {
+	public PackageScanner scan() {
 		if (this.loader.isEmpty())
 			this.loader.add(PackageScanner.class.getClassLoader());
 
@@ -79,8 +86,24 @@ public class PackageScanner {
 
 		classes.forEach((c, l, p) -> {
 			for (ITypeScanner s : PackageScanner.this.scanner)
-				s.scan(c, l, p);
+				try {
+					s.scan(c, l, p);
+				} catch (Exception e) {
+					this.errors.add(e);
+				}
 		});
+		return this;
+	}
+
+	public void throwSurpressions(Exception exception) throws Exception {
+		if (errors.isEmpty())
+			return;
+		errors.forEach(e -> exception.addSuppressed(e));
+		throw exception;
+	}
+
+	public void throwSurpressions() throws Exception {
+		this.throwSurpressions(new Exception("Package scanning failed! See surpressed Exceptions!"));
 	}
 
 	/**
@@ -96,7 +119,8 @@ public class PackageScanner {
 		}
 		List<File> dirs = new ArrayList<>();
 		while (resources.hasMoreElements())
-			dirs.add(new File(resources.nextElement().getFile()));
+			dirs.add(new File(resources.nextElement()
+					.getFile()));
 		for (File directory : dirs)
 			findClasses(classes, classLoader, directory, pkg);
 	}
@@ -109,12 +133,16 @@ public class PackageScanner {
 		if (!directory.exists())
 			return;
 		for (File file : directory.listFiles())
-			if (file.isDirectory() && !file.getName().contains(".")) {
+			if (file.isDirectory() && !file.getName()
+					.contains(".")) {
 				if (this.includeSubPkgs)
 					findClasses(classes, classLoader, file, pkg + "." + file.getName());
-			} else if (file.getName().endsWith(".class"))
+			} else if (file.getName()
+					.endsWith(".class"))
 				try {
-					classes.put(Class.forName(pkg + '.' + file.getName().substring(0, file.getName().length() - 6),
+					classes.put(Class.forName(pkg + '.' + file.getName()
+							.substring(0, file.getName()
+									.length() - 6),
 							true, classLoader), classLoader, pkg);
 				} catch (ClassNotFoundException e) {
 				}

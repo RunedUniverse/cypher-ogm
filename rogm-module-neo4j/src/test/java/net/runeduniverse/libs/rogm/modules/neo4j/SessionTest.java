@@ -82,9 +82,12 @@ public class SessionTest extends ATest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void updatePerson() throws Exception {
-		IParameterized personFilter = (IParameterized) session.getPattern(Person.class).search(false);
-		personFilter.getParams().put("firstName", "Shawn");
-		personFilter.getParams().put("lastName", "James");
+		IParameterized personFilter = (IParameterized) session.getPattern(Person.class)
+				.search(false);
+		personFilter.getParams()
+				.put("firstName", "Shawn");
+		personFilter.getParams()
+				.put("lastName", "James");
 
 		Person shawn = session.load(Person.class, personFilter);
 		System.out.println(shawn.toString());
@@ -109,8 +112,10 @@ public class SessionTest extends ATest {
 		ennio.setFirstName("Ennio");
 		ennio.setLastName("Morricone");
 		Song s = new Song("C’era una volta il West");
-		ennio.getCreated().add(s);
-		ennio.getPlayed().add(s);
+		ennio.getCreated()
+				.add(s);
+		ennio.getPlayed()
+				.add(s);
 		System.out.println(ennio.toString());
 		session.save(ennio);
 		System.out.println(ennio.toString());
@@ -148,8 +153,10 @@ public class SessionTest extends ATest {
 		ennio.setFirstName("Ennio");
 		ennio.setLastName("Morricone");
 		Song s = new Song("C’era una volta il West");
-		ennio.getCreated().add(s);
-		ennio.getPlayed().add(s);
+		ennio.getCreated()
+				.add(s);
+		ennio.getPlayed()
+				.add(s);
 		session.save(ennio);
 		session.delete(ennio);
 	}
@@ -157,15 +164,19 @@ public class SessionTest extends ATest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void loadCompany() throws Exception {
-		IParameterized gameFilter = (IParameterized) session.getPattern(Company.class).search(false);
-		gameFilter.getParams().put("name", "Naughty Dog");
+		IParameterized gameFilter = (IParameterized) session.getPattern(Company.class)
+				.search(false);
+		gameFilter.getParams()
+				.put("name", "Naughty Dog");
 
 		Company company = session.load(Company.class, gameFilter);
 		Game game = new Game();
 		game.setName("just another USELESS title");
-		company.getGames().add(game);
+		company.getGames()
+				.add(game);
 		session.save(company);
-		company.getGames().remove(game);
+		company.getGames()
+				.remove(game);
 		session.save(company, 4);
 		session.delete(game);
 	}
@@ -176,8 +187,10 @@ public class SessionTest extends ATest {
 		session.resolveAllLazyLoaded(actors, 3);
 		for (Actor actor : actors)
 			for (ActorPlaysPersonRelation rel : actor.getPlays())
-				System.out.println(
-						"Actor: " + rel.getActor().getFirstName() + " plays " + rel.getPerson().getFirstName());
+				System.out.println("Actor: " + rel.getActor()
+						.getFirstName() + " plays "
+						+ rel.getPerson()
+								.getFirstName());
 	}
 
 	@Test
@@ -192,7 +205,8 @@ public class SessionTest extends ATest {
 
 		Item item = new Item();
 		item.setItemStack("SAND");
-		inv.getSlots().add(new Slot(22, inv, item));
+		inv.getSlots()
+				.add(new Slot(22, inv, item));
 
 		session.save(player, 3);
 	}

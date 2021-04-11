@@ -56,33 +56,19 @@ public class EntitiyFactory implements IStorage {
 		this.buffer = cnf.getBuffer()
 				.initialize(this);
 
-		List<Exception> errors = new ArrayList<>();
 		new PackageScanner().includeOptions(cnf.getLoader(), cnf.getPkgs(), cnf.getScanner(),
 				new TypeScanner.NodeScanner(this, p -> {
-					try {
-						p.validate();
-					} catch (Exception e) {
-						errors.add(e);
-					}
+					p.validate();
 					patterns.put(p.getType(), (IPattern) p, PatternType.NODE);
 				}), new TypeScanner.RelationScanner(this, p -> {
-					try {
-						p.validate();
-					} catch (Exception e) {
-						errors.add(e);
-					}
+					p.validate();
 					patterns.put(p.getType(), (IPattern) p, PatternType.RELATION);
 				}))
-				.scan();
+				.scan()
+				.throwSurpressions(new Exception("Pattern parsing failed! See surpressed Exceptions!"));
 
 		this.logPatterns("Relations", patterns, PatternType.RELATION);
 		this.logPatterns("Nodes", patterns, PatternType.NODE);
-
-		if (!errors.isEmpty()) {
-			Exception ec = new Exception("Pattern parsing failed! See surpressed Exceptions!");
-			errors.forEach(e -> ec.addSuppressed(e));
-			throw ec;
-		}
 	}
 
 	public INodePattern getNode(Class<?> clazz) {

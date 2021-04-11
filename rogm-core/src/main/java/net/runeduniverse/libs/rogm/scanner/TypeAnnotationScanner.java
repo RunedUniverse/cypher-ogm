@@ -14,7 +14,7 @@ public class TypeAnnotationScanner<F extends FieldPattern, M extends MethodPatte
 	}
 
 	@Override
-	public void scan(Class<?> type, ClassLoader loader, String pkg) {
+	public void scan(Class<?> type, ClassLoader loader, String pkg) throws Exception {
 		if (type.isAnnotationPresent(this.anno))
 			super.scan(type, loader, pkg);
 	}

@@ -9,9 +9,9 @@ import lombok.Getter;
 public class TypePattern <F extends FieldPattern, M extends MethodPattern>{
 
 	@Getter
-	private final Map<Class<? extends Annotation>, F> fields = new HashMap<>();
+	protected final Map<Class<? extends Annotation>, F> fields = new HashMap<>();
 	@Getter
-	private final Map<Class<? extends Annotation>, M> methods = new HashMap<>();
+	protected final Map<Class<? extends Annotation>, M> methods = new HashMap<>();
 
 	@Getter
 	protected final String pkg;

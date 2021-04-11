@@ -4,7 +4,7 @@ import org.junit.*;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.modules.neo4j.Neo4jConfiguration;
-import net.runeduniverse.libs.rogm.pattern.PatternStorage;
+import net.runeduniverse.libs.rogm.pattern.EntitiyFactory;
 import net.runeduniverse.libs.rogm.test.ATest;
 import net.runeduniverse.libs.rogm.test.model.*;
 
@@ -20,7 +20,7 @@ public class PatternStorageTest extends ATest {
 		super(config);
 	}
 
-	private PatternStorage storage = null;
+	private EntitiyFactory processor = null;
 
 	private static final Person testi;
 	private static final Artist ennio;
@@ -38,7 +38,7 @@ public class PatternStorageTest extends ATest {
 
 	@Before
 	public void before() throws Exception {
-		storage = new PatternStorage(config, iParser);
+		processor = new EntitiyFactory(config, iParser);
 	}
 
 	@Test
@@ -72,12 +72,12 @@ public class PatternStorageTest extends ATest {
 	}
 
 	private String _query(Class<?> clazz) throws Exception {
-		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.storage.getNode(clazz).search(false))
+		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.processor.getNode(clazz).search(false))
 				+ '\n';
 	}
 
 	private String _save(Object entity) throws Exception {
 		return "[SAVE][" + entity.getClass().getSimpleName() + "]\n"
-				+ iLanguage.save(this.storage.save(entity, 1).getDataContainer(), null).qry() + '\n';
+				+ iLanguage.save(this.processor.save(entity, 1).getDataContainer(), null).qry() + '\n';
 	}
 }

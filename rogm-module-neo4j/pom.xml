@@ -18,17 +18,17 @@
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
 			<artifactId>core</artifactId>
-			<version>${parent.version}.${core.version}</version>
+			<version>2.0.13</version>
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm.lang</groupId>
 			<artifactId>cypher</artifactId>
-			<version>${parent.version}.${lang.cypher.version}</version>
+			<version>2.0.11</version>
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm.parser</groupId>
 			<artifactId>json</artifactId>
-			<version>${parent.version}.${parser.json.version}</version>
+			<version>2.0.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j.driver</groupId>

@@ -21,7 +21,7 @@ public class FieldAnnotationScanner<F extends FieldPattern> extends FieldScanner
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void scan(Field field, Class<?> type, TypePattern<F, ?> pattern) {
+	public void scan(Field field, Class<?> type, TypePattern<F, ?> pattern) throws Exception {
 		switch (this.order) {
 		case FIRST:
 			if (pattern.hasFields(this.anno))
@@ -30,10 +30,9 @@ public class FieldAnnotationScanner<F extends FieldPattern> extends FieldScanner
 			pattern.getFields()
 					.remove(Id.class);
 		case ALL:
-			F p = this.creator.createPattern(field);
-			if (p != null && type.isAnnotationPresent(this.anno))
+			if (field.isAnnotationPresent(this.anno))
 				pattern.getFields()
-						.put(this.anno, p);
+						.put(this.anno, this.creator.createPattern(field));
 		}
 	}
 

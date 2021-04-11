@@ -22,14 +22,14 @@ public class MethodScanner<M extends MethodPattern> implements IMethodScanner<M>
 	}
 
 	@Override
-	public void scan(Method method, Class<?> type, TypePattern<?, M> pattern) {
+	public void scan(Method method, Class<?> type, TypePattern<?, M> pattern) throws Exception {
 		pattern.getMethods()
 				.put(null, this.creator.createPattern(method));
 	}
 
 	@FunctionalInterface
 	public static interface PatternCreator<M extends MethodPattern> {
-		M createPattern(Method method);
+		M createPattern(Method method) throws Exception;
 	}
 
 	public static MethodScanner<MethodPattern> DEFAULT() {

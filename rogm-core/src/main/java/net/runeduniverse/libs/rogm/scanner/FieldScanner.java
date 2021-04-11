@@ -22,7 +22,7 @@ public class FieldScanner<F extends FieldPattern> implements IFieldScanner<F> {
 	}
 
 	@Override
-	public void scan(Field field, Class<?> type, TypePattern<F, ?> pattern) {
+	public void scan(Field field, Class<?> type, TypePattern<F, ?> pattern) throws Exception {
 		F p = this.creator.createPattern(field);
 		if (p != null)
 			pattern.getFields()
@@ -31,7 +31,7 @@ public class FieldScanner<F extends FieldPattern> implements IFieldScanner<F> {
 
 	@FunctionalInterface
 	public static interface PatternCreator<F extends FieldPattern> {
-		F createPattern(Field field);
+		F createPattern(Field field) throws Exception;
 	}
 
 	public static FieldScanner<FieldPattern> DEFAULT() {

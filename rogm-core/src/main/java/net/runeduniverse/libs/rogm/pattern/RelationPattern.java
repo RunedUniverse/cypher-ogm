@@ -51,6 +51,9 @@ public class RelationPattern extends APattern implements IRelationPattern {
 	@Override
 	public void validate() throws Exception {
 		super.validate();
+		System.out.println("EXTRA @StartNode");
+		super.fields.forEach((c, x) -> System.out.println(c));
+		///
 		this.startField = super.getField(StartNode.class);
 		if (this.startField == null)
 			throw new Exception("Relation<" + type + "> is missing the @StartNode");

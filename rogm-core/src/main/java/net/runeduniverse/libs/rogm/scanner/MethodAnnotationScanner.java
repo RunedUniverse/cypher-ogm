@@ -21,7 +21,7 @@ public class MethodAnnotationScanner<M extends MethodPattern> extends MethodScan
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void scan(Method method, Class<?> type, TypePattern<?, M> pattern) {
+	public void scan(Method method, Class<?> type, TypePattern<?, M> pattern) throws Exception {
 		switch (this.order) {
 		case FIRST:
 			if (pattern.hasMethods(this.anno))
@@ -30,7 +30,7 @@ public class MethodAnnotationScanner<M extends MethodPattern> extends MethodScan
 			pattern.getFields()
 					.remove(Id.class);
 		case ALL:
-			if (type.isAnnotationPresent(this.anno))
+			if (method.isAnnotationPresent(this.anno))
 				super.scan(method, type, pattern);
 		}
 	}
