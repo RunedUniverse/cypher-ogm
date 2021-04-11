@@ -3,7 +3,6 @@ package net.runeduniverse.libs.rogm.pattern;
 import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -269,12 +268,12 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		return node.search(relation, lazy);
 	}
 
-	private IDataNode _getDataNode(Field field, Object entity, Map<Object, IDataContainer> includedData,
+	private IDataNode _getDataNode(FieldPattern field, Object entity, Map<Object, IDataContainer> includedData,
 			IDataRelation relation, Integer depth) throws Exception {
 		INodePattern node = this.factory.getNode(field.getType());
 		if (node == null)
 			throw new Exception("NodePattern for Field<" + field.toString() + "> undefined!");
-		IDataNode dataNode = node.save(field.get(entity), includedData, depth);
+		IDataNode dataNode = node.save(field.getValue(entity), includedData, depth);
 		dataNode.getRelations()
 				.add(relation);
 		return dataNode;

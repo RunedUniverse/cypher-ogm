@@ -9,12 +9,9 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.annotations.IConverter;
-import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.libs.rogm.pattern.NodePattern;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
 import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
@@ -69,7 +66,7 @@ public class RelatedFieldPattern extends FieldPattern {
 	}
 
 	private IFNode _getNode(Class<?> type, IFRelation relation) throws Exception {
-		NodePattern node = this.factory.getNode(type);
+		INodePattern node = this.factory.getNode(type);
 		if (node == null)
 			throw new Exception("Unsupported Class<" + type.getName() + "> as @Relation found!");
 		return node.search(relation, true);
