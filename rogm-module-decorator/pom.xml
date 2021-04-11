@@ -8,13 +8,9 @@
 		<version>2.0</version>
 	</parent>
 
-	<properties>
-		<module.version>1</module.version>
-	</properties>
-
 	<groupId>net.runeduniverse.libs.rogm.modules</groupId>
 	<artifactId>decorator</artifactId>
-	<version>${parent.version}.${module.version}</version>
+	<version>${parent.version}.${module.decorator.version}</version>
 
 	<name>ROGM Module Decorator</name>
 
@@ -22,7 +18,7 @@
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
 			<artifactId>core</artifactId>
-			<version>2.0.12</version>
+			<version>${parent.version}.${core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

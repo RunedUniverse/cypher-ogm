@@ -19,6 +19,12 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- VERSIONS -->
+		<core.version>13</core.version>
+		<lang.cypher.version>11</lang.cypher.version>
+		<module.decorator.version>1</module.decorator.version>
+		<module.neo4j.version>12</module.neo4j.version>
+		<parser.json.version>12</parser.json.version>
 	</properties>
 
 	<repositories>

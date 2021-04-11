@@ -8,13 +8,9 @@
 		<version>2.0</version>
 	</parent>
 
-	<properties>
-		<module.version>13</module.version>
-	</properties>
-
 	<groupId>net.runeduniverse.libs.rogm</groupId>
 	<artifactId>core</artifactId>
-	<version>${parent.version}.${module.version}</version>
+	<version>${parent.version}.${core.version}</version>
 
 	<name>ROGM Core</name>
 

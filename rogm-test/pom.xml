@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
 			<artifactId>core</artifactId>
-			<version>1.1.11</version>
+			<version>${parent.version}.${core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

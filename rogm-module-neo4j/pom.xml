@@ -8,13 +8,9 @@
 		<version>2.0</version>
 	</parent>
 
-	<properties>
-		<module.version>12</module.version>
-	</properties>
-
 	<groupId>net.runeduniverse.libs.rogm.modules</groupId>
 	<artifactId>neo4j</artifactId>
-	<version>${parent.version}.${module.version}</version>
+	<version>${parent.version}.${module.neo4j.version}</version>
 
 	<name>ROGM Module Neo4j</name>
 
@@ -22,17 +18,17 @@
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
 			<artifactId>core</artifactId>
-			<version>2.0.11</version>
+			<version>${parent.version}.${core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm.lang</groupId>
 			<artifactId>cypher</artifactId>
-			<version>2.0.11</version>
+			<version>${parent.version}.${lang.cypher.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm.parser</groupId>
 			<artifactId>json</artifactId>
-			<version>2.0.12</version>
+			<version>${parent.version}.${parser.json.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j.driver</groupId>
