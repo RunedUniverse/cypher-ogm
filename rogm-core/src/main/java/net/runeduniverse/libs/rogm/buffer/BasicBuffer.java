@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
+import net.runeduniverse.libs.rogm.pattern.INodePattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
 
@@ -194,8 +195,7 @@ public class BasicBuffer implements IBuffer {
 				nodes.add(entry);
 
 		for (Entry entry : nodes)
-			entry.getPattern()
-					.deleteRelations(entry.getEntity(), deletedEntities);
+			((INodePattern) entry.getPattern()).deleteRelations(entry.getEntity(), deletedEntities);
 
 		for (Entry entry : deletedEntries) {
 			removeEntry(entry);
