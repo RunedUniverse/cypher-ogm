@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 import lombok.Getter;
@@ -16,7 +17,7 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.scanner.MethodPattern;
 import net.runeduniverse.libs.rogm.scanner.TypePattern;
 
-public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> implements IPattern {
+public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> implements IPattern, IValidatable {
 
 	protected final IStorage factory;
 	protected FieldPattern idPattern;
@@ -28,8 +29,11 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 		this.factory = factory;
 	}
 
-	public void validate() throws Exception{
+	public void validate() throws Exception {
 		this.idPattern = super.getField(Id.class);
+		for (Map.Entry<?, FieldPattern> entry : this.fields.entrySet())
+			if (entry.getValue() instanceof IValidatable)
+				((IValidatable) entry.getValue()).validate();
 	}
 
 	@Override

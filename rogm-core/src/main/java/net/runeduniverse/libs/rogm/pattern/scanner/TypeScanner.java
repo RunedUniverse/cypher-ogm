@@ -3,6 +3,7 @@ package net.runeduniverse.libs.rogm.pattern.scanner;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 
+import net.runeduniverse.libs.rogm.annotations.Converter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
@@ -37,6 +38,7 @@ public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPatte
 
 		// Fields
 		this.addFieldScanner(new FieldAnnoScanner(factory, Id.class, ScanOrder.FIRST));
+		this.addFieldScanner(new FieldAnnoScanner(factory, Converter.class, ScanOrder.ALL));
 		// Events
 		this.addFieldScanner(MethodAnnotationScanner.DEFAULT(PreReload.class, ScanOrder.FIRST));
 		this.addFieldScanner(MethodAnnotationScanner.DEFAULT(PreSave.class, ScanOrder.FIRST));
@@ -70,8 +72,8 @@ public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPatte
 			super(factory, (type, loader, pkg) -> new RelationPattern(factory, pkg, loader, type),
 					RelationshipEntity.class, consumer);
 			// Fields
-			this.addFieldScanner(new RelatedFieldAnnoScanner(factory, StartNode.class, ScanOrder.FIRST));
-			this.addFieldScanner(new RelatedFieldAnnoScanner(factory, TargetNode.class, ScanOrder.FIRST));
+			this.addFieldScanner(new FieldAnnoScanner(factory, StartNode.class, ScanOrder.FIRST));
+			this.addFieldScanner(new FieldAnnoScanner(factory, TargetNode.class, ScanOrder.FIRST));
 		}
 	}
 }

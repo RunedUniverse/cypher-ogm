@@ -1,8 +1,6 @@
 package net.runeduniverse.libs.rogm.pattern.scanner;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-
 import net.runeduniverse.libs.rogm.pattern.FieldPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.scanner.FieldScanner;
@@ -28,17 +26,6 @@ public class FieldAnnoScanner extends net.runeduniverse.libs.rogm.scanner.FieldA
 	}
 
 	private static FieldScanner.PatternCreator<FieldPattern> creator(IStorage factory) {
-		return new PatternCreator<FieldPattern>() {
-
-			@Override
-			public FieldPattern createPattern(Field field) {
-				try {
-					return new FieldPattern(factory, field);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				return null;
-			}
-		};
+		return f -> new FieldPattern(factory, f);
 	}
 }

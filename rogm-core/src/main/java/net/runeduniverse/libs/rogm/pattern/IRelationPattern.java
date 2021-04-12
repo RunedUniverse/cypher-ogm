@@ -9,7 +9,7 @@ import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 
-public interface IRelationPattern extends IPattern {
+public interface IRelationPattern extends IPattern, IValidatable {
 	String getLabel();
 
 	Relation createFilter(IFNode caller, Direction direction);

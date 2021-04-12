@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import lombok.NoArgsConstructor;
 import net.runeduniverse.libs.utils.DataHashMap;
 import net.runeduniverse.libs.utils.DataMap;
@@ -23,6 +22,7 @@ public class PackageScanner {
 	private final List<ITypeScanner> scanner = new ArrayList<>();
 	private final Set<Exception> errors = new HashSet<>();
 	private boolean includeSubPkgs = false;
+	private Validator validator = null;
 
 	public PackageScanner includeClassLoader(List<ClassLoader> loader) {
 		this.loader.addAll(loader);
@@ -55,6 +55,11 @@ public class PackageScanner {
 		return this;
 	}
 
+	public PackageScanner includeValidator(Validator validator) {
+		this.validator = validator;
+		return this;
+	}
+
 	public PackageScanner includeOptions(Object... options) {
 		for (Object obj : options) {
 			if (obj instanceof Collection<?>)
@@ -66,6 +71,8 @@ public class PackageScanner {
 				this.scanner.add((ITypeScanner) obj);
 			if (obj instanceof String)
 				this.pkgs.add((String) obj);
+			if (obj instanceof Validator)
+				this.validator = (Validator) obj;
 		}
 		return this;
 	}
@@ -92,6 +99,13 @@ public class PackageScanner {
 					this.errors.add(e);
 				}
 		});
+
+		if (this.validator != null)
+			try {
+				this.validator.validate();
+			} catch (Exception e) {
+				this.errors.add(e);
+			}
 		return this;
 	}
 
@@ -146,5 +160,9 @@ public class PackageScanner {
 							true, classLoader), classLoader, pkg);
 				} catch (ClassNotFoundException e) {
 				}
+	}
+
+	public static interface Validator {
+		public void validate() throws Exception;
 	}
 }

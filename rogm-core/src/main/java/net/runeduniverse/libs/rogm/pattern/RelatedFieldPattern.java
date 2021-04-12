@@ -22,43 +22,49 @@ import net.runeduniverse.libs.rogm.querying.IFRelation;
 
 @Getter
 @Setter
-public class RelatedFieldPattern extends FieldPattern {
-	
-	private IStorage factory;
-	private final String label;
-	private final Direction direction;
-	private final boolean definedRelation;
+public class RelatedFieldPattern extends FieldPattern implements IValidatable {
+
+	private String label = null;
+	private Direction direction;
+	private boolean definedRelation;
 
 	public RelatedFieldPattern(IStorage factory, Field field) throws Exception {
 		super(factory, field);
+	}
+
+	@Override
+	public void validate() throws Exception {
 		Relationship fieldAnno = this.field.getAnnotation(Relationship.class);
 		this.direction = fieldAnno.direction();
 
-		String label = null;
 		if (this.type.isAnnotationPresent(NodeEntity.class))
 			this.definedRelation = false;
 		else if (this.type.isAnnotationPresent(RelationshipEntity.class)) {
-			label = this.factory.getRelation(this.type).getLabel();
+			this.label = this.factory.getRelation(this.type)
+					.getLabel();
 			this.definedRelation = true;
 		} else
 			throw new Exception("Unsupported Class<" + this.type.getName() + "> as @Relation found!");
-		if (isBlank(label))
-			label = isBlank(fieldAnno.label()) ? this.field.getName() : fieldAnno.label();
-		this.label = label;
+		if (isBlank(this.label))
+			this.label = isBlank(fieldAnno.label()) ? this.field.getName() : fieldAnno.label();
 	}
 
 	public IFRelation queryRelation(IFNode origin) throws Exception {
 		Relation relation = null;
 		if (this.definedRelation)
-			relation = this.factory.getRelation(this.type).createFilter(origin, this.direction);
+			relation = this.factory.getRelation(this.type)
+					.createFilter(origin, this.direction);
 		else {
-			relation = this.factory.getFactory().createRelation(this.direction);
+			relation = this.factory.getFactory()
+					.createRelation(this.direction);
 			relation.setStart(origin);
 			relation.setTarget(this._getNode(this.type, relation));
 		}
 
-		if (relation.getLabels().isEmpty())
-			relation.getLabels().add(this.label);
+		if (relation.getLabels()
+				.isEmpty())
+			relation.getLabels()
+					.add(this.label);
 
 		relation.setReturned(true);
 		relation.setOptional(true);
@@ -95,20 +101,26 @@ public class RelatedFieldPattern extends FieldPattern {
 		// is a child of this.type
 		Class<?> clazz = relEntity.getClass();
 		if (clazz.isAnnotationPresent(RelationshipEntity.class)) {
-			relation = this.factory.getRelation(clazz).save(relEntity, node, this.direction, includedData, depth);
+			relation = this.factory.getRelation(clazz)
+					.save(relEntity, node, this.direction, includedData, depth);
 			if (relation == null)
 				return;
 		} else {
-			relation = this.factory.getFactory().createDataRelation(this.direction, null);
+			relation = this.factory.getFactory()
+					.createDataRelation(this.direction, null);
 			relation.setFilterType(FilterType.UPDATE);
 			relation.setStart(node);
-			relation.setTarget(this.factory.getNode(clazz).save(relEntity, includedData, depth));
+			relation.setTarget(this.factory.getNode(clazz)
+					.save(relEntity, includedData, depth));
 		}
 
-		if (relation.getLabels().isEmpty())
-			relation.getLabels().add(this.label);
+		if (relation.getLabels()
+				.isEmpty())
+			relation.getLabels()
+					.add(this.label);
 
-		node.getRelations().add(relation);
+		node.getRelations()
+				.add(relation);
 	}
 
 }

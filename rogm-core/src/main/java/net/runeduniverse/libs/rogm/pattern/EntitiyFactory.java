@@ -33,6 +33,7 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.scanner.PackageScanner;
 import net.runeduniverse.libs.utils.DataHashMap;
 import net.runeduniverse.libs.utils.DataMap;
+import net.runeduniverse.libs.utils.DataMap.Value;
 
 public class EntitiyFactory implements IStorage {
 
@@ -57,13 +58,19 @@ public class EntitiyFactory implements IStorage {
 				.initialize(this);
 
 		new PackageScanner().includeOptions(cnf.getLoader(), cnf.getPkgs(), cnf.getScanner(),
-				new TypeScanner.NodeScanner(this, p -> {
-					p.validate();
-					patterns.put(p.getType(), (IPattern) p, PatternType.NODE);
-				}), new TypeScanner.RelationScanner(this, p -> {
-					p.validate();
-					patterns.put(p.getType(), (IPattern) p, PatternType.RELATION);
-				}))
+				new TypeScanner.NodeScanner(this, p -> patterns.put(p.getType(), (IPattern) p, PatternType.NODE)),
+				new TypeScanner.RelationScanner(this,
+						p -> patterns.put(p.getType(), (IPattern) p, PatternType.RELATION)),
+				new PackageScanner.Validator() {
+
+					@Override
+					public void validate() throws Exception {
+						EntitiyFactory.this.validate(PatternType.NODE);
+						EntitiyFactory.this.validate(PatternType.RELATION);
+						EntitiyFactory.this.validate(PatternType.ADAPTER);
+						EntitiyFactory.this.validate(PatternType.UNKNOWN);
+					}
+				})
 				.scan()
 				.throwSurpressions(new Exception("Pattern parsing failed! See surpressed Exceptions!"));
 
@@ -276,5 +283,11 @@ public class EntitiyFactory implements IStorage {
 			msg.append("\n - " + c.getCanonicalName());
 		});
 		this.logger.finer(msg.toString());
+	}
+
+	private void validate(PatternType patternType) throws Exception {
+		for (Value<IPattern, PatternType> value : EntitiyFactory.this.patterns.valueSet())
+			if (patternType.equals(value.getData()))
+				IValidatable.validate(value.getValue());
 	}
 }

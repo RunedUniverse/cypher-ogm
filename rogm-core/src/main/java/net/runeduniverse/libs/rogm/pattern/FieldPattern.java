@@ -9,7 +9,7 @@ import net.runeduniverse.libs.rogm.annotations.Id;
 
 public class FieldPattern extends net.runeduniverse.libs.rogm.scanner.FieldPattern {
 
-	protected IStorage factory;
+	protected final IStorage factory;
 	@Getter
 	@Setter
 	protected IConverter<?> converter = null;
