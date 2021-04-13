@@ -6,7 +6,7 @@ import java.util.Map;
 
 import lombok.Getter;
 
-public class TypePattern <F extends FieldPattern, M extends MethodPattern>{
+public class TypePattern<F extends FieldPattern, M extends MethodPattern> {
 
 	@Getter
 	protected final Map<Class<? extends Annotation>, F> fields = new HashMap<>();

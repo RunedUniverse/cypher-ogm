@@ -3,8 +3,6 @@ package net.runeduniverse.libs.rogm.scanner;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-import net.runeduniverse.libs.rogm.annotations.Id;
-
 public class FieldAnnotationScanner<F extends FieldPattern> extends FieldScanner<F> {
 
 	protected final Class<? extends Annotation> anno;
@@ -19,16 +17,16 @@ public class FieldAnnotationScanner<F extends FieldPattern> extends FieldScanner
 		this.anno = anno;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void scan(Field field, Class<?> type, TypePattern<F, ?> pattern) throws Exception {
 		switch (this.order) {
 		case FIRST:
-			if (pattern.hasFields(this.anno))
+			if (pattern.getFields()
+					.containsKey(this.anno))
 				return;
 		case LAST:
 			pattern.getFields()
-					.remove(Id.class);
+					.remove(this.anno);
 		case ALL:
 			if (field.isAnnotationPresent(this.anno))
 				pattern.getFields()

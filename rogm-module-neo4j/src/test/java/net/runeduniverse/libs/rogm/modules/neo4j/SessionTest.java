@@ -122,21 +122,16 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
-	public void createPlayer_UUID_Id() {
+	public void saveAndLoadPlayer_UUID_Id() {
 		Player player = new Player(UUID.randomUUID(), "Testi", new Inventory());
 		System.out.println(player.toString());
 		session.save(player);
-		System.out.println(player.toString());
-	}
-
-	@Test
-	public void loadPlayer_UUID_Id() {
-		Player player = session.load(Player.class, UUID.fromString("12553411-d527-448d-b82b-33261e4f1618"));
-		assertNotNull("NO Entries in DB found", player);
-		System.out.println(player.toString());
-		session.save(player);
 		session.unload(player);
-		Player player2 = session.load(Player.class, UUID.fromString("12553411-d527-448d-b82b-33261e4f1618"));
+		Player player2 = session.load(Player.class, player.getUuid());
+		System.out.println(player2.toString());
+		assertNotNull("NO Entries in DB found", player2);
+		assertTrue("Player UUID doesn't match", player.getUuid()
+				.equals(player2.getUuid()));
 		assertFalse("Player did not get unloaded", player == player2);
 	}
 

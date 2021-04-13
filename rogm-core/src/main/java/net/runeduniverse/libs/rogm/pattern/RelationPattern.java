@@ -53,13 +53,6 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		super.validate();
 		this.startField = super.getField(StartNode.class);
 
-		/*
-		 * List<String> s = new ArrayList<>(); super.fields.forEach((c, f) ->
-		 * s.add(c.toString())); s.add((super.fields.get(StartNode.class) == null) +
-		 * ""); if (super.fields.containsKey(StartNode.class)) throw new Exception("[" +
-		 * String.join("|", s) + "]");// TODO WTF
-		 */
-
 		if (this.startField == null)
 			throw new Exception("Relation<" + type + "> is missing the @StartNode");
 		if (Collection.class.isAssignableFrom(this.startField.getType()))

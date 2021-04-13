@@ -37,8 +37,8 @@ public class TypeScanner<F extends FieldPattern, M extends MethodPattern, T exte
 	@Override
 	public void scan(Class<?> type, ClassLoader loader, String pkg) throws Exception {
 		T pattern = this.creator.createPattern(type, loader, pkg);
-		TypeScanner.cascade(this, this.scanFieldsFnc, pattern, pattern.getClass());
-		TypeScanner.cascade(this, this.scanMethodsFnc, pattern, pattern.getClass());
+		TypeScanner.cascade(this, this.scanFieldsFnc, pattern, pattern.getType());
+		TypeScanner.cascade(this, this.scanMethodsFnc, pattern, pattern.getType());
 		this.consumer.accept(pattern);
 	}
 
@@ -63,16 +63,14 @@ public class TypeScanner<F extends FieldPattern, M extends MethodPattern, T exte
 
 	protected static <F extends FieldPattern, M extends MethodPattern, T extends TypePattern<F, M>> void scanFields(
 			TypeScanner<F, M, T> scanner, T pattern, Class<?> type) throws Exception {
-		for (Field f : pattern.getType()
-				.getDeclaredFields())
+		for (Field f : type.getDeclaredFields())
 			for (IFieldScanner<F> fscan : scanner.fieldScanner)
 				fscan.scan(f, type, pattern);
 	}
 
 	protected static <F extends FieldPattern, M extends MethodPattern, T extends TypePattern<F, M>> void scanMethods(
 			TypeScanner<F, M, T> scanner, T pattern, Class<?> type) throws Exception {
-		for (Method m : pattern.getType()
-				.getDeclaredMethods())
+		for (Method m : type.getDeclaredMethods())
 			for (IMethodScanner<M> mscan : scanner.methodScanner)
 				mscan.scan(m, type, pattern);
 	}

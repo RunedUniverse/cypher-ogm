@@ -32,7 +32,7 @@ public class FilterFactory {
 			return new Node(id, labels, relations);
 		Node node = new Node(labels, relations);
 		node.getParams()
-				.put(this.module.getIdAlias(), converter.toProperty(id));
+				.put(this.module.getIdAlias(), (converter == null ? new IConverter.UnSet() : converter).toProperty(id));
 		return node;
 	}
 

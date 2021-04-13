@@ -32,8 +32,7 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 	public void validate() throws Exception {
 		this.idPattern = super.getField(Id.class);
 		for (Map.Entry<?, FieldPattern> entry : this.fields.entrySet())
-			if (entry.getValue() instanceof IValidatable)
-				((IValidatable) entry.getValue()).validate();
+			IValidatable.validate(entry.getValue());
 	}
 
 	@Override
@@ -43,24 +42,24 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 
 	@Override
 	public Serializable getId(Object entity) {
+		if (this.idPattern == null)
+			return null;
 		return (Serializable) this.idPattern.getValue(entity);
 	}
 
 	@Override
 	public Object setId(Object entity, Serializable id) {
-		FieldPattern fp = this.getField(Id.class);
-		if (fp != null)
-			fp.setValue(entity, id);
+		if (this.idPattern != null)
+			this.idPattern.setValue(entity, id);
 		return entity;
 	}
 
 	@Override
 	public Serializable prepareEntityId(Serializable id, Serializable entityId) {
-		if (entityId == null)
+		if (this.idPattern == null || entityId == null)
 			return id;
 		else if (entityId instanceof String)
-			return this.getField(Id.class)
-					.getConverter()
+			return this.idPattern.getConverter()
 					.convert((String) entityId);
 		return entityId;
 	}
@@ -76,7 +75,7 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 
 	@Override
 	public Entry update(IData data) throws Exception {
-		if (this.getField(Id.class) != null)
+		if (this.idPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
 		Object entity = this.factory.getBuffer()

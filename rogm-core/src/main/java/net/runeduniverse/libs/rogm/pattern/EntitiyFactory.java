@@ -74,8 +74,8 @@ public class EntitiyFactory implements IStorage {
 				.scan()
 				.throwSurpressions(new Exception("Pattern parsing failed! See surpressed Exceptions!"));
 
-		this.logPatterns("Relations", patterns, PatternType.RELATION);
 		this.logPatterns("Nodes", patterns, PatternType.NODE);
+		this.logPatterns("Relations", patterns, PatternType.RELATION);
 	}
 
 	public INodePattern getNode(Class<?> clazz) {
