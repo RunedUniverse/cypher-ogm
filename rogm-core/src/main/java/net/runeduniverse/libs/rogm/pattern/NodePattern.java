@@ -1,6 +1,9 @@
 package net.runeduniverse.libs.rogm.pattern;
 
+import static net.runeduniverse.libs.utils.StringUtils.isBlank;
+
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +14,7 @@ import java.util.Set;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
+import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.PostSave;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
@@ -34,6 +38,15 @@ public class NodePattern extends APattern implements INodePattern {
 
 	public NodePattern(IStorage factory, String pkg, ClassLoader loader, Class<?> type) {
 		super(factory, pkg, loader, type);
+
+		NodeEntity typeAnno = type.getAnnotation(NodeEntity.class);
+		String label = null;
+		if (typeAnno != null)
+			label = typeAnno.label();
+		if (isBlank(label) && !Modifier.isAbstract(type.getModifiers()))
+			label = type.getSimpleName();
+		if (!isBlank(label))
+			this.labels.add(label);
 	}
 
 	public PatternType getPatternType() {

@@ -14,8 +14,8 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.scanner.MethodPattern;
-import net.runeduniverse.libs.rogm.scanner.TypePattern;
+import net.runeduniverse.libs.scanner.MethodPattern;
+import net.runeduniverse.libs.scanner.TypePattern;
 
 public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> implements IPattern, IValidatable {
 
@@ -31,6 +31,7 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 
 	public void validate() throws Exception {
 		this.idPattern = super.getField(Id.class);
+		this.idConverter = this.idPattern.getConverter();
 		for (Map.Entry<?, FieldPattern> entry : this.fields.entrySet())
 			IValidatable.validate(entry.getValue());
 	}

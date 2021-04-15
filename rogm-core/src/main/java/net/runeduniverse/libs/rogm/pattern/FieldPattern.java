@@ -3,11 +3,13 @@ package net.runeduniverse.libs.rogm.pattern;
 import java.lang.reflect.Field;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import net.runeduniverse.libs.rogm.annotations.Converter;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 
-public class FieldPattern extends net.runeduniverse.libs.rogm.scanner.FieldPattern {
+@ToString(callSuper = true)
+public class FieldPattern extends net.runeduniverse.libs.scanner.FieldPattern {
 
 	protected final IStorage factory;
 	@Getter

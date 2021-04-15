@@ -1,7 +1,8 @@
 package net.runeduniverse.libs.rogm;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,9 +19,9 @@ import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 @Getter
 public class Configuration {
 
-	protected final List<String> pkgs = new ArrayList<>();
-	protected final List<ClassLoader> loader = new ArrayList<>();
-	protected final List<TypeScanner> scanner = new ArrayList<>();
+	protected final Set<String> pkgs = new HashSet<>();
+	protected final Set<ClassLoader> loader = new HashSet<>();
+	protected final Set<TypeScanner> scanner = new HashSet<>();
 	private final Parser parser;
 	protected final Language lang;
 	protected final Module module;

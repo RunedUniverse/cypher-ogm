@@ -30,7 +30,7 @@ import net.runeduniverse.libs.rogm.pattern.RelationPattern;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.scanner.PackageScanner;
+import net.runeduniverse.libs.scanner.PackageScanner;
 import net.runeduniverse.libs.utils.DataHashMap;
 import net.runeduniverse.libs.utils.DataMap;
 import net.runeduniverse.libs.utils.DataMap.Value;
@@ -45,6 +45,7 @@ public class EntitiyFactory implements IStorage {
 	private final Parser.Instance parser;
 	@Getter
 	private final IBuffer buffer;
+	@Getter
 	private final UniversalLogger logger;
 
 	private final DataMap<Class<?>, IPattern, PatternType> patterns = new DataHashMap<>();

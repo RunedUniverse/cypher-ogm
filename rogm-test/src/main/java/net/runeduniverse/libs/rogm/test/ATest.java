@@ -21,7 +21,7 @@ public abstract class ATest {
 	protected final Language.Instance iLanguage;
 
 	public ATest(Configuration cnf) {
-		this.cnf = cnf;
+		this.cnf = cnf.addClassLoader(this.getClass().getClassLoader());
 		// Builder
 		this.parser = this.cnf.getParser();
 		this.module = this.cnf.getModule();

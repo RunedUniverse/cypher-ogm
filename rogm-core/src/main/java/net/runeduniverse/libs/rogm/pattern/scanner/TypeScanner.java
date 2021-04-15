@@ -22,10 +22,10 @@ import net.runeduniverse.libs.rogm.pattern.FieldPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.pattern.NodePattern;
 import net.runeduniverse.libs.rogm.pattern.RelationPattern;
-import net.runeduniverse.libs.rogm.scanner.MethodAnnotationScanner;
-import net.runeduniverse.libs.rogm.scanner.MethodPattern;
-import net.runeduniverse.libs.rogm.scanner.ScanOrder;
-import net.runeduniverse.libs.rogm.scanner.TypeAnnotationScanner;
+import net.runeduniverse.libs.scanner.MethodAnnotationScanner;
+import net.runeduniverse.libs.scanner.MethodPattern;
+import net.runeduniverse.libs.scanner.ScanOrder;
+import net.runeduniverse.libs.scanner.TypeAnnotationScanner;
 
 public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPattern, APattern> {
 

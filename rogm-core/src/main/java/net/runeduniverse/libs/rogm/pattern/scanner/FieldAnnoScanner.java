@@ -3,10 +3,10 @@ package net.runeduniverse.libs.rogm.pattern.scanner;
 import java.lang.annotation.Annotation;
 import net.runeduniverse.libs.rogm.pattern.FieldPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
-import net.runeduniverse.libs.rogm.scanner.FieldScanner;
-import net.runeduniverse.libs.rogm.scanner.ScanOrder;
+import net.runeduniverse.libs.scanner.FieldScanner;
+import net.runeduniverse.libs.scanner.ScanOrder;
 
-public class FieldAnnoScanner extends net.runeduniverse.libs.rogm.scanner.FieldAnnotationScanner<FieldPattern> {
+public class FieldAnnoScanner extends net.runeduniverse.libs.scanner.FieldAnnotationScanner<FieldPattern> {
 
 	public FieldAnnoScanner(IStorage factory, Class<? extends Annotation> anno) {
 		super(creator(factory), anno);

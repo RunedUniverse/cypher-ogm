@@ -4,8 +4,8 @@ import java.lang.annotation.Annotation;
 import net.runeduniverse.libs.rogm.pattern.FieldPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.pattern.RelatedFieldPattern;
-import net.runeduniverse.libs.rogm.scanner.FieldScanner;
-import net.runeduniverse.libs.rogm.scanner.ScanOrder;
+import net.runeduniverse.libs.scanner.FieldScanner;
+import net.runeduniverse.libs.scanner.ScanOrder;
 
 public class RelatedFieldAnnoScanner extends FieldAnnoScanner {
 	

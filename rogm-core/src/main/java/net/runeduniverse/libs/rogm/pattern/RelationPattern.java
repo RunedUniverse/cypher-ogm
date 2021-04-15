@@ -45,7 +45,6 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		RelationshipEntity typeAnno = this.type.getAnnotation(RelationshipEntity.class);
 		this.direction = typeAnno.direction();
 		this.label = typeAnno.label();
-
 	}
 
 	@Override
