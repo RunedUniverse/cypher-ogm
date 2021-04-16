@@ -76,6 +76,7 @@ pipeline {
 				always {
 					sh '/usr/share/neo4j/bin/neo4j stop'
 					junit '*/target/surefire-reports/*.xml'
+					archiveArtifacts artifacts: '*/*.pom', fingerprint: true
 				}
 			}
 		}
@@ -83,7 +84,7 @@ pipeline {
 		stage('Deploy') {
 			steps {
 				sh 'mvn deploy'
-				archiveArtifacts artifacts: '*/target/*.jar, */*.pom', fingerprint: true
+				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
 
