@@ -60,10 +60,8 @@ pipeline {
 		}
 
 		stage('Test') {
-			pre {
-				sh '/usr/share/neo4j/bin/neo4j start'
-			}
 			steps {
+				sh '/usr/share/neo4j/bin/neo4j start'
 				dir(path: 'rogm-parser-json') {
 					sh 'mvn test'
 				}
