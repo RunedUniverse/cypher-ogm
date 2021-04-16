@@ -83,7 +83,7 @@ pipeline {
 		stage('Deploy') {
 			steps {
 				sh 'mvn deploy'
-				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
+				archiveArtifacts artifacts: '*/target/*.jar, */*.pom', fingerprint: true
 			}
 		}
 
