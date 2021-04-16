@@ -60,9 +60,9 @@ pipeline {
 		}
 
 		stage('Test') {
-			/*pre {
-				sh '/usr/share/neo4j/bin/neo4j'
-			}*/
+			pre {
+				sh '/usr/share/neo4j/bin/neo4j start'
+			}
 			steps {
 				dir(path: 'rogm-parser-json') {
 					sh 'mvn test'
@@ -76,7 +76,7 @@ pipeline {
 			}
 			post {
 				always {
-					sh ''
+					sh '/usr/share/neo4j/bin/neo4j stop'
 					junit '*/target/surefire-reports/*.xml'
 				}
 			}
