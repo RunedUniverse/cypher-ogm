@@ -17,11 +17,6 @@
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs</groupId>
-			<artifactId>utils</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.runeduniverse.libs</groupId>
 			<artifactId>scanner</artifactId>
 			<scope>compile</scope>
 		</dependency>
