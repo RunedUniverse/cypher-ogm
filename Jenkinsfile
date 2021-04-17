@@ -6,6 +6,8 @@ pipeline {
 				sh '''
 					echo "PATH = ${PATH}"
 					echo "M2_HOME = ${M2_HOME}"
+					JENKINS_ROGM_NEO4J_RES=${WORKSPACE}/src/test/resources/neo4j
+					export JENKINS_ROGM_NEO4J_RES
 				'''
 			}
 		}
@@ -67,8 +69,9 @@ pipeline {
 					steps {
 						// start Neo4J
 						sh '''
-							JENKINS_ROGM_NEO4J_ID=$(docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)
+							JENKINS_ROGM_NEO4J_ID=$(docker run -d --volume=${JENKINS_ROGM_NEO4J_RES}:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)
 							JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_NEO4J_ID})
+							printf ${JENKINS_ROGM_NEO4J_ID} > ${JENKINS_ROGM_NEO4J_RES}/pid
 							# make env vars global
 							export JENKINS_ROGM_NEO4J_ID
 							export JENKINS_ROGM_NEO4J_IP
@@ -81,7 +84,7 @@ pipeline {
 					post {
 						always {
 							// stop Neo4J
-							sh 'docker stop ${JENKINS_ROGM_NEO4J_ID}'
+							sh 'docker stop $(cat ${JENKINS_ROGM_NEO4J_RES}/pid)'
 							sh 'unset JENKINS_ROGM_NEO4J_ID'
 							sh 'unset JENKINS_ROGM_NEO4J_IP'
 						}
@@ -105,7 +108,10 @@ pipeline {
 
 		stage('Deploy') {
 			steps {
-				sh 'mvn deploy'
+				sh '''
+					mvn deploy
+					unset JENKINS_ROGM_NEO4J_RES
+				'''
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
