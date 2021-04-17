@@ -74,14 +74,16 @@ pipeline {
 
 						# run tests
 						mvn test
-
+					'''
+					post {
+						always {
 						# stop database
 						docker stop ${JENKINS_ROGM_TEST_NEO4J_ID}
-
 						# clean environment
 						unset JENKINS_ROGM_TEST_NEO4J_ID
 						unset JENKINS_ROGM_TEST_NEO4J_IP
-					'''
+						}
+					}
 				}
 				dir(path: 'rogm-module-decorator') {
 					sh 'mvn test'
