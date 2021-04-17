@@ -73,7 +73,7 @@ pipeline {
 							# setup environment
 							# start Neo4J
 							export JENKINS_ROGM_TEST_NEO4J_ID=$(docker run -d \
-									--volume=${WORKSPACE}/src/test/resources/neo4j-conf:/var/lib/neo4j/conf \
+									--volume=${WORKSPACE}/rogm-module-neo4j/src/test/resources/neo4j-conf:/var/lib/neo4j/conf \
 									--volume=/var/run/neo4j-jenkins-rogm:/run \
 									neo4j)
 							export JENKINS_ROGM_TEST_NEO4J_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${JENKINS_ROGM_TEST_NEO4J_ID})
