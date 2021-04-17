@@ -65,11 +65,11 @@ pipeline {
 				dir(path: 'rogm-module-neo4j') {
 					sh '''
 						# setup environment
-						#export JENKINS_ROGM_TEST_NEO4J_CONF = ${WORKSPACE}/src/test/resources
-						#export JENKINS_ROGM_TEST_NEO4J_HOME = /var/lib/neo4j
-
 						# start Neo4J
-						export JENKINS_ROGM_TEST_NEO4J_ID=$(docker run -d neo4j)
+						export JENKINS_ROGM_TEST_NEO4J_ID=$(docker run -d \
+																--volume=${WORKSPACE}/src/test/resources/neo4j-conf:/var/lib/neo4j/conf \
+																--volume=/var/run/neo4j-jenkins-rogm:/run \
+																neo4j)
 						export JENKINS_ROGM_TEST_NEO4J_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${JENKINS_ROGM_TEST_NEO4J_ID})
 
 						# run tests
@@ -79,8 +79,6 @@ pipeline {
 						docker stop ${JENKINS_ROGM_TEST_NEO4J_ID}
 
 						# clean environment
-						#unset JENKINS_ROGM_TEST_NEO4J_CONF
-						#unset JENKINS_ROGM_TEST_NEO4J_HOME
 						unset JENKINS_ROGM_TEST_NEO4J_ID
 						unset JENKINS_ROGM_TEST_NEO4J_IP
 					'''
