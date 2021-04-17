@@ -66,9 +66,14 @@ pipeline {
 				stage('Module Neo4J') {
 					steps {
 						// start Neo4J
-						sh 'export JENKINS_ROGM_NEO4J_ID = $(docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)'
-						sh 'export JENKINS_ROGM_NEO4J_IP = $(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_NEO4J_ID})'
-						sh 'printenv | sort'
+						sh '''
+							JENKINS_ROGM_NEO4J_ID=$(docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)
+							JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_NEO4J_ID})
+							# make env vars global
+							export JENKINS_ROGM_NEO4J_ID
+							export JENKINS_ROGM_NEO4J_IP
+							printenv | sort
+						'''
 						dir(path: 'rogm-module-neo4j') {
 							sh 'mvn test'
 						}
