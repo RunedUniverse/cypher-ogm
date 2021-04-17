@@ -59,10 +59,6 @@ pipeline {
 */
 		stage('Test') {
 			steps {
-				sh '''
-					echo "NEO4J_CONF = 
-					echo "NEO4J_HOME = /var/lib/neo4j"
-				'''
 				dir(path: 'rogm-parser-json') {
 					sh 'mvn test'
 				}
