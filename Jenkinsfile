@@ -9,7 +9,7 @@ pipeline {
 				'''
 			}
 		}
-// JUMP BUILD FOR TEST PURPUOSES
+
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
@@ -17,7 +17,6 @@ pipeline {
 				}
 			}
 		}
-
 		stage('Build TEST-LIB') {
 			steps {
 				dir(path: 'rogm-test') {
@@ -25,7 +24,6 @@ pipeline {
 				}
 			}
 		}
-
 		stage('Build Parser') {
 			parallel {
 				stage('JSON') {
@@ -37,7 +35,6 @@ pipeline {
 				}
 			}
 		}
-
 		stage('Build Module') {
 			parallel {
 				stage('Neo4J') {
@@ -56,7 +53,6 @@ pipeline {
 				}
 			}
 		}
-//
 
 		stage('Test') {
 			parallel {
@@ -68,14 +64,10 @@ pipeline {
 					}
 				}
 				stage('Module Neo4J') {
-					environment {
-						JENKINS_ROGM_TEST_NEO4J_ID = sh(script: 'docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j', , returnStdout: true).trim()
-						JENKINS_ROGM_TEST_NEO4J_IP = sh(script: 'docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_TEST_NEO4J_ID}', , returnStdout: true).trim()
-					}
 					steps {
 						// start Neo4J
-						sh 'echo  = $()'
-						sh 'echo  = $()'
+						sh 'export JENKINS_ROGM_TEST_NEO4J_ID = $(docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)'
+						sh 'export JENKINS_ROGM_TEST_NEO4J_IP = $(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_TEST_NEO4J_ID})'
 						sh 'printenv | sort'
 						dir(path: 'rogm-module-neo4j') {
 							sh 'mvn test'
@@ -85,6 +77,8 @@ pipeline {
 						always {
 							// stop Neo4J
 							sh 'docker stop ${JENKINS_ROGM_TEST_NEO4J_ID}'
+							sh 'unset JENKINS_ROGM_TEST_NEO4J_ID'
+							sh 'unset JENKINS_ROGM_TEST_NEO4J_IP'
 						}
 					}
 				}
