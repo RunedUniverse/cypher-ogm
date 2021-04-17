@@ -57,36 +57,49 @@ pipeline {
 			}
 		}
 */
-		stage('Test') {
-			steps {
-				dir(path: 'rogm-parser-json') {
-					sh 'mvn test'
-				}
-				dir(path: 'rogm-module-neo4j') {
-					sh '''
-						# setup environment
-						# start Neo4J
-						export JENKINS_ROGM_TEST_NEO4J_ID=$(docker run -d \
-																--volume=${WORKSPACE}/src/test/resources/neo4j-conf:/var/lib/neo4j/conf \
-																--volume=/var/run/neo4j-jenkins-rogm:/run \
-																neo4j)
-						export JENKINS_ROGM_TEST_NEO4J_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${JENKINS_ROGM_TEST_NEO4J_ID})
 
-						# run tests
-						mvn test
-					'''
-					post {
-						always {
-						# stop database
-						docker stop ${JENKINS_ROGM_TEST_NEO4J_ID}
-						# clean environment
-						unset JENKINS_ROGM_TEST_NEO4J_ID
-						unset JENKINS_ROGM_TEST_NEO4J_IP
+		stage('Test') {
+			parallel {
+				stage('Parser JSON') {
+					steps {
+						dir(path: 'rogm-parser-json') {
+							sh 'mvn test'
 						}
 					}
 				}
-				dir(path: 'rogm-module-decorator') {
-					sh 'mvn test'
+				stage('Module Neo4J') {
+					steps {
+						sh '''
+							# setup environment
+							# start Neo4J
+							export JENKINS_ROGM_TEST_NEO4J_ID=$(docker run -d \
+									--volume=${WORKSPACE}/src/test/resources/neo4j-conf:/var/lib/neo4j/conf \
+									--volume=/var/run/neo4j-jenkins-rogm:/run \
+									neo4j)
+							export JENKINS_ROGM_TEST_NEO4J_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${JENKINS_ROGM_TEST_NEO4J_ID})
+						'''
+						dir(path: 'rogm-module-neo4j') {
+							sh 'mvn test'
+						}
+					}
+					post {
+						always {
+							sh '''
+								# stop Neo4J
+								docker stop ${JENKINS_ROGM_TEST_NEO4J_ID}
+								# clean environment
+								unset JENKINS_ROGM_TEST_NEO4J_ID
+								unset JENKINS_ROGM_TEST_NEO4J_IP
+							'''
+						}
+					}
+				}
+				stage('Module Decorator') {
+					steps {
+						dir(path: 'rogm-module-decorator') {
+							sh 'mvn test'
+						}
+					}
 				}
 			}
 			post {
