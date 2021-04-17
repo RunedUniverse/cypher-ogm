@@ -71,7 +71,7 @@ pipeline {
 						sh '''
 							JENKINS_ROGM_NEO4J_ID=$(docker run -d --volume=${JENKINS_ROGM_NEO4J_RES}:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)
 							JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_NEO4J_ID})
-							printf ${JENKINS_ROGM_NEO4J_ID} > ${JENKINS_ROGM_NEO4J_RES}/pid
+							printf ${JENKINS_ROGM_NEO4J_ID} > '${JENKINS_ROGM_NEO4J_RES}/pid'
 							# make env vars global
 							export JENKINS_ROGM_NEO4J_ID
 							export JENKINS_ROGM_NEO4J_IP
