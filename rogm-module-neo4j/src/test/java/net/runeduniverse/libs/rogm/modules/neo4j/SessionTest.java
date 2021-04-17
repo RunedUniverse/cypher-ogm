@@ -31,7 +31,7 @@ public class SessionTest extends ATest {
 
 	static Configuration config;
 	static {
-		String ip = System.getenv("JENKINS_ROGM_TEST_NEO4J_IP");
+		String ip = System.getenv("JENKINS_ROGM_NEO4J_IP");
 		config = new Neo4jConfiguration(isBlank(ip) ? "127.0.0.1" : ip);
 		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
 

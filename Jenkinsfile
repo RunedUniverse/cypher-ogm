@@ -66,8 +66,8 @@ pipeline {
 				stage('Module Neo4J') {
 					steps {
 						// start Neo4J
-						sh 'export JENKINS_ROGM_TEST_NEO4J_ID = $(docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)'
-						sh 'export JENKINS_ROGM_TEST_NEO4J_IP = $(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_TEST_NEO4J_ID})'
+						sh 'export JENKINS_ROGM_NEO4J_ID = $(docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)'
+						sh 'export JENKINS_ROGM_NEO4J_IP = $(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_NEO4J_ID})'
 						sh 'printenv | sort'
 						dir(path: 'rogm-module-neo4j') {
 							sh 'mvn test'
@@ -77,8 +77,8 @@ pipeline {
 						always {
 							// stop Neo4J
 							sh 'docker stop ${JENKINS_ROGM_TEST_NEO4J_ID}'
-							sh 'unset JENKINS_ROGM_TEST_NEO4J_ID'
-							sh 'unset JENKINS_ROGM_TEST_NEO4J_IP'
+							sh 'unset JENKINS_ROGM_NEO4J_ID'
+							sh 'unset JENKINS_ROGM_NEO4J_IP'
 						}
 					}
 				}
