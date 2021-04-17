@@ -69,7 +69,7 @@ pipeline {
 						#export JENKINS_ROGM_TEST_NEO4J_HOME = /var/lib/neo4j
 
 						# start Neo4J
-						export JENKINS_ROGM_TEST_NEO4J_ID=$(docker run neo4j)
+						export JENKINS_ROGM_TEST_NEO4J_ID=$(docker run -d neo4j)
 						export JENKINS_ROGM_TEST_NEO4J_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${JENKINS_ROGM_TEST_NEO4J_ID})
 
 						# run tests
