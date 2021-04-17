@@ -68,11 +68,15 @@ pipeline {
 					}
 				}
 				stage('Module Neo4J') {
+					environment {
+						JENKINS_ROGM_TEST_NEO4J_ID = sh(script: 'docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j', , returnStdout: true).trim()
+						JENKINS_ROGM_TEST_NEO4J_IP = sh(script: 'docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_TEST_NEO4J_ID}', , returnStdout: true).trim()
+					}
 					steps {
 						// start Neo4J
-						sh 'echo JENKINS_ROGM_TEST_NEO4J_ID = $(docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)'
-						sh 'echo JENKINS_ROGM_TEST_NEO4J_IP = $(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${JENKINS_ROGM_TEST_NEO4J_ID})'
-						sh 'printenv'
+						sh 'echo  = $()'
+						sh 'echo  = $()'
+						sh 'printenv | sort'
 						dir(path: 'rogm-module-neo4j') {
 							sh 'mvn test'
 						}
