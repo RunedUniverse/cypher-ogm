@@ -6,12 +6,10 @@ pipeline {
 				sh '''
 					echo "PATH = ${PATH}"
 					echo "M2_HOME = ${M2_HOME}"
-					echo "NEO4J_CONF = ${WORKSPACE}/src/test/resources"
-					echo "NEO4J_HOME = /var/lib/neo4j"
 				'''
 			}
 		}
-
+/* JUMP BUILD FOR TEST PURPUOSES
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
@@ -58,19 +56,38 @@ pipeline {
 				}
 			}
 		}
-
+*/
 		stage('Test') {
 			steps {
 				sh '''
-					echo "NEO4J_CONF = ${WORKSPACE}/src/test/resources"
+					echo "NEO4J_CONF = 
 					echo "NEO4J_HOME = /var/lib/neo4j"
-					/usr/share/neo4j/bin/neo4j start
 				'''
 				dir(path: 'rogm-parser-json') {
 					sh 'mvn test'
 				}
 				dir(path: 'rogm-module-neo4j') {
-					sh 'mvn test'
+					sh '''
+						# setup environment
+						#export JENKINS_ROGM_TEST_NEO4J_CONF = ${WORKSPACE}/src/test/resources
+						#export JENKINS_ROGM_TEST_NEO4J_HOME = /var/lib/neo4j
+
+						# start Neo4J
+						export JENKINS_ROGM_TEST_NEO4J_ID=$(docker run neo4j)
+						export JENKINS_ROGM_TEST_NEO4J_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${JENKINS_ROGM_TEST_NEO4J_ID})
+
+						# run tests
+						mvn test
+
+						# stop database
+						docker stop ${JENKINS_ROGM_TEST_NEO4J_ID}
+
+						# clean environment
+						#unset JENKINS_ROGM_TEST_NEO4J_CONF
+						#unset JENKINS_ROGM_TEST_NEO4J_HOME
+						unset JENKINS_ROGM_TEST_NEO4J_ID
+						unset JENKINS_ROGM_TEST_NEO4J_IP
+					'''
 				}
 				dir(path: 'rogm-module-decorator') {
 					sh 'mvn test'
@@ -78,7 +95,6 @@ pipeline {
 			}
 			post {
 				always {
-					sh '/usr/share/neo4j/bin/neo4j stop'
 					junit '*/target/surefire-reports/*.xml'
 					archiveArtifacts artifacts: '*/*.pom', fingerprint: true
 				}

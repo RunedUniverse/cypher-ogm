@@ -1,5 +1,6 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
+import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
@@ -28,8 +29,10 @@ public class SessionTest extends ATest {
 	@ClassRule
 	public static final LogLevelRule LOG_LEVEL_RULE = new LogLevelRule(SessionTest.class, Level.ALL);
 
-	static Configuration config = new Neo4jConfiguration("127.0.0.1");
+	static Configuration config;
 	static {
+		String ip = System.getenv("JENKINS_ROGM_TEST_NEO4J_IP");
+		config = new Neo4jConfiguration(isBlank(ip) ? "127.0.0.1" : ip);
 		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
 
 		config.addPackage(MODEL_PKG_PATH);
