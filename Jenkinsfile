@@ -9,7 +9,7 @@ pipeline {
 				'''
 			}
 		}
-/* JUMP BUILD FOR TEST PURPUOSES
+// JUMP BUILD FOR TEST PURPUOSES
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
@@ -56,7 +56,7 @@ pipeline {
 				}
 			}
 		}
-*/
+//
 
 		stage('Test') {
 			parallel {
