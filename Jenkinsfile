@@ -81,7 +81,7 @@ pipeline {
 					post {
 						always {
 							// stop Neo4J
-							sh 'docker stop ${JENKINS_ROGM_TEST_NEO4J_ID}'
+							sh 'docker stop ${JENKINS_ROGM_NEO4J_ID}'
 							sh 'unset JENKINS_ROGM_NEO4J_ID'
 							sh 'unset JENKINS_ROGM_NEO4J_IP'
 						}
