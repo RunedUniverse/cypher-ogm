@@ -46,6 +46,11 @@
 			<groupId>net.runeduniverse.libs</groupId>
 			<artifactId>rogm-test</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs</groupId>
+			<artifactId>utils</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<profiles>
