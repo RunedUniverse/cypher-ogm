@@ -31,6 +31,7 @@ public class SessionTest extends ATest {
 	static Configuration config;
 	static {
 		config = new Neo4jConfiguration(System.getProperty("dbhost"));
+		config.addClassLoader(SessionTest.class.getClassLoader());
 		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
 
 		config.addPackage(MODEL_PKG_PATH);
