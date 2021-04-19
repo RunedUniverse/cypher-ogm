@@ -50,7 +50,7 @@ public class SessionTest extends ATest {
 	public void prepare() throws Exception {
 		assertEquals("bolt", config.getProtocol());
 		assertEquals(7687, config.getPort());
-		assertEquals("127.0.0.1", config.getUri());
+		assertEquals(System.getProperty("dbhost"), config.getUri());
 
 		this.session = Session.create(config);
 		assertTrue("Session is NOT connected", session.isConnected());
