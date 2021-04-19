@@ -10,7 +10,7 @@
 
 	<groupId>net.runeduniverse.libs.rogm.parser</groupId>
 	<artifactId>json</artifactId>
-	<version>${parent.version}.${parser.json.version}</version>
+	<version>${project.parent.version}.${parser.json.version}</version>
 
 	<name>ROGM Parser JSON</name>
 

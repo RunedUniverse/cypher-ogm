@@ -10,7 +10,7 @@
 
 	<groupId>net.runeduniverse.libs.rogm.lang</groupId>
 	<artifactId>cypher</artifactId>
-	<version>${parent.version}.${lang.cypher.version}</version>
+	<version>${project.parent.version}.${lang.cypher.version}</version>
 
 	<name>ROGM Lang Cypher</name>
 

@@ -10,7 +10,7 @@
 
 	<groupId>net.runeduniverse.libs.rogm.modules</groupId>
 	<artifactId>decorator</artifactId>
-	<version>${parent.version}.${module.decorator.version}</version>
+	<version>${project.parent.version}.${module.decorator.version}</version>
 
 	<name>ROGM Module Decorator</name>
 

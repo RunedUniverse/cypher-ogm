@@ -10,7 +10,7 @@
 
 	<groupId>net.runeduniverse.libs.rogm</groupId>
 	<artifactId>core</artifactId>
-	<version>${parent.version}.${core.version}</version>
+	<version>${project.parent.version}.${core.version}</version>
 
 	<name>ROGM Core</name>
 

@@ -10,7 +10,7 @@
 
 	<groupId>net.runeduniverse.libs.rogm.modules</groupId>
 	<artifactId>neo4j</artifactId>
-	<version>${parent.version}.${module.neo4j.version}</version>
+	<version>${project.parent.version}.${module.neo4j.version}</version>
 
 	<name>ROGM Module Neo4j</name>
 
@@ -54,7 +54,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<systemPropertyVariables>
