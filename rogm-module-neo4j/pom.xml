@@ -84,6 +84,7 @@
 						<dbuser>neo4j</dbuser>
 						<dbpw>Qwerty!</dbpw>
 					</systemPropertyVariables>
+					<!-- <useSystemClassLoader>false</useSystemClassLoader> -->
 				</configuration>
 			</plugin>
 		</plugins>
