@@ -92,8 +92,37 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<profiles>
+		<profile>
+			<id>dev-install</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<defaultGoal>clean compile install</defaultGoal>
+			</build>
+		</profile>
+		<profile>
+			<id>jenkins-install</id>
+			<build>
+				<defaultGoal>-DskipTests clean compile install</defaultGoal>
+			</build>
+		</profile>
+		<profile>
+			<id>jenkins-test</id>
+			<build>
+				<defaultGoal>test</defaultGoal>
+			</build>
+		</profile>
+		<profile>
+			<id>deploy</id>
+			<build>
+				<defaultGoal>deploy</defaultGoal>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
-		<defaultGoal>clean compile install deploy</defaultGoal>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testSourceDirectory>src/test/java</testSourceDirectory>
 		<testResources>
@@ -110,6 +139,10 @@
 						<source>1.8</source>
 						<target>1.8</target>
 					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.12.4</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-deploy-plugin</artifactId>

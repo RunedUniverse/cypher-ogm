@@ -1,6 +1,5 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
-import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
@@ -31,15 +30,14 @@ public class SessionTest extends ATest {
 
 	static Configuration config;
 	static {
-		String ip = System.getenv("JENKINS_ROGM_NEO4J_IP");
-		config = new Neo4jConfiguration(isBlank(ip) ? "127.0.0.1" : ip);
+		config = new Neo4jConfiguration(System.getProperty("dbhost"));
 		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
 
 		config.addPackage(MODEL_PKG_PATH);
 		config.addPackage(RELATIONS_PKG_PATH);
 
-		config.setUser("neo4j");
-		config.setPassword("Qwerty!");
+		config.setUser(System.getProperty("dbuser"));
+		config.setPassword(System.getProperty("dbpw"));
 	}
 
 	public SessionTest() {
