@@ -30,10 +30,13 @@ public class SessionTest extends ATest {
 	@ClassRule
 	public static final LogLevelRule LOG_LEVEL_RULE = new LogLevelRule(SessionTest.class, Level.ALL);
 
+	private static String DB_HOST = System.getProperty("dbhost", "127.0.0.1");
+	private static String DB_USER = System.getProperty("dbuser", "neo4j");
+	private static String DB_PW = System.getProperty("dbpw", "Qwerty!");
+
 	static Configuration config;
 	static {
-		config = new Neo4jConfiguration(System.getProperty("dbhost"));
-		// config = new Neo4jConfiguration("127.0.0.1");
+		config = new Neo4jConfiguration(DB_HOST);
 		config.addClassLoader(SessionTest.class.getClassLoader())
 				.addClassLoader(ClassLoader.getSystemClassLoader())
 				.addClassLoader(new URLClassLoader(new URL[] { SessionTest.class.getProtectionDomain()
@@ -44,10 +47,8 @@ public class SessionTest extends ATest {
 		config.addPackage(MODEL_PKG_PATH);
 		config.addPackage(RELATIONS_PKG_PATH);
 
-		config.setUser(System.getProperty("dbuser"));
-		// config.setUser("neo4j");
-		config.setPassword(System.getProperty("dbpw"));
-		// config.setPassword("Qwerty!");
+		config.setUser(DB_USER);
+		config.setPassword(DB_PW);
 	}
 
 	public SessionTest() {
@@ -60,7 +61,7 @@ public class SessionTest extends ATest {
 	public void prepare() throws Exception {
 		assertEquals("bolt", config.getProtocol());
 		assertEquals(7687, config.getPort());
-		// assertEquals(System.getProperty("dbhost"), config.getUri());
+		assertEquals(DB_HOST, config.getUri());
 
 		this.session = Session.create(config);
 		assertTrue("Session is NOT connected", session.isConnected());

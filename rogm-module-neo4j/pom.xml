@@ -73,20 +73,4 @@
 		</profile>
 	</profiles>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<dbhost>127.0.0.1</dbhost>
-						<dbuser>neo4j</dbuser>
-						<dbpw>Qwerty!</dbpw>
-					</systemPropertyVariables>
-					<!-- <useSystemClassLoader>false</useSystemClassLoader> -->
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
