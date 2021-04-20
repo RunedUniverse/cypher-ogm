@@ -78,7 +78,7 @@ pipeline {
 							printenv | sort
 						'''
 						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn -P jenkins-test -Ddbhost=${JENKINS_ROGM_NEO4J_IP} -Ddbuser=neo4j -Ddbpw=neo4j'
+							sh 'mvn -X -P jenkins-test -Ddbhost=${JENKINS_ROGM_NEO4J_IP} -Ddbuser=neo4j -Ddbpw=neo4j'
 						}
 					}
 					post {
