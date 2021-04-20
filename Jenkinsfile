@@ -76,7 +76,7 @@ pipeline {
 							sh '''
 								JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID)
 								sleep 10
-								docker exec $JENKINS_ROGM_NEO4J_ID /var/lib/neo4j/bin/neo4j-shell -f /var/lib/neo4j/conf/setup.cypher
+								docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -f /var/lib/neo4j/conf/setup.cypher
 								mvn -X -P jenkins-test -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
 							'''
 						}
