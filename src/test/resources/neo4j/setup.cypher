@@ -1,3 +1,5 @@
+// FLUSH DATABASE
+match (n) detach delete n;
 // DEPLOY DATABASE
 create (nd:Company {name:"Naughty Dog"})
 create (sony:Company {name:"Sony"})

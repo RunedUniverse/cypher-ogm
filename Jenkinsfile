@@ -71,18 +71,12 @@ pipeline {
 					}
 					steps {
 						// start Neo4J
-						sh '''
-							#JENKINS_ROGM_NEO4J_ID=$(docker run -d --volume=${JENKINS_ROGM_NEO4J_RES}:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j)
-							#JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID)
-							#printf ${JENKINS_ROGM_NEO4J_ID} > '${JENKINS_ROGM_NEO4J_RES}/pid'
-							# make env vars global
-							#export JENKINS_ROGM_NEO4J_ID
-							#export JENKINS_ROGM_NEO4J_IP
-						'''
 						dir(path: 'rogm-module-neo4j') {
 							sh 'printenv | sort'
 							sh '''
 								JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID)
+								sleep 10
+								docker exec $JENKINS_ROGM_NEO4J_ID /var/lib/neo4j/bin/neo4j-shell -f /var/lib/neo4j/conf/setup.cypher
 								mvn -X -P jenkins-test -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
 							'''
 						}
@@ -91,8 +85,6 @@ pipeline {
 						always {
 							// stop Neo4J
 							sh 'docker stop $JENKINS_ROGM_NEO4J_ID'
-							//sh 'unset JENKINS_ROGM_NEO4J_ID'
-							//sh 'unset JENKINS_ROGM_NEO4J_IP'
 						}
 					}
 				}
