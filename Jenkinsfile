@@ -79,7 +79,11 @@ pipeline {
 				stage('Module Neo4J') {
 					environment {
 						JENKINS_ROGM_NEO4J_NAME= sh(returnStdout: true, script: 'echo {$BUILD_TAG^^}').trim()
+					}
+					environment {
 						JENKINS_ROGM_NEO4J_ID= sh(returnStdout: true, script: 'docker run -d --volume=$JENKINS_ROGM_NEO4J_RES:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run --name=$JENKINS_ROGM_NEO4J_NAME neo4j').trim()
+					}
+					environment {
 						JENKINS_ROGM_NEO4J_IP= sh(returnStdout: true, script: 'docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID').trim()
 					}
 					steps {
