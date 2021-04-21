@@ -13,7 +13,7 @@ pipeline {
 				'''
 			}
 		}
-
+/*
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
@@ -68,7 +68,7 @@ pipeline {
 				}
 			}
 		}
-
+*/
 		stage('Test') {
 			parallel {
 				stage('Parser JSON') {
@@ -79,6 +79,14 @@ pipeline {
 					}
 				}
 				stage('Module Neo4J') {
+					sh '''
+						BUILD_TAG_CAPS=$(echo $BUILD_TAG | tr "[a-z]" "[A-Z]")
+						JENKINS_ROGM_NEO4J_RES=${WORKSPACE}/src/test/resources/neo4j
+						
+						export BUILD_TAG_CAPS
+						export JENKINS_ROGM_NEO4J_RES
+						printenv | sort
+					'''
 					environment {
 						JENKINS_ROGM_NEO4J_ID= sh(returnStdout: true, script: 'docker run -d --volume=$JENKINS_ROGM_NEO4J_RES:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run --name=$BUILD_TAG_CAPS neo4j').trim()
 					}
