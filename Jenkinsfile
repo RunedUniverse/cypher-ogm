@@ -37,6 +37,17 @@ pipeline {
 				}
 			}
 		}
+		stage('Build Languages') {
+			parallel {
+				stage('Cypher') {
+					steps {
+						dir(path: 'rogm-lang-cypher') {
+							sh 'mvn -P jenkins-install'
+						}
+					}
+				}
+			}
+		}
 		stage('Build Module') {
 			parallel {
 				stage('Neo4J') {
@@ -67,24 +78,34 @@ pipeline {
 				}
 				stage('Module Neo4J') {
 					environment {
-						JENKINS_ROGM_NEO4J_ID= sh(returnStdout: true, script: 'docker run -d --volume=$JENKINS_ROGM_NEO4J_RES:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run neo4j').trim()
+						JENKINS_ROGM_NEO4J_NAME= sh(returnStdout: true, script: 'echo {$BUILD_TAG^^}').trim()
+						JENKINS_ROGM_NEO4J_ID= sh(returnStdout: true, script: 'docker run -d --volume=$JENKINS_ROGM_NEO4J_RES:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run --name=$JENKINS_ROGM_NEO4J_NAME neo4j').trim()
+						JENKINS_ROGM_NEO4J_IP= sh(returnStdout: true, script: 'docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID').trim()
 					}
 					steps {
 						// start Neo4J
+						sh '''
+							echo 'waiting for Neo4J[docker:$JENKINS_ROGM_NEO4J_NAME] to start on $JENKINS_ROGM_NEO4J_IP
+							until $(curl --output /dev/null --silent --head --fail http://$NEO4J_IP:7474); do
+								printf '.'
+								sleep 5
+							done
+							echo '\nNeo4J online > setting up database'
+							docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -f /var/lib/neo4j/conf/setup.cypher
+						'''
 						dir(path: 'rogm-module-neo4j') {
 							sh 'printenv | sort'
-							sh '''
-								JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID)
-								sleep 10
-								docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -f /var/lib/neo4j/conf/setup.cypher
-								mvn -X -P jenkins-test -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
-							'''
+							sh 'mvn -X -P jenkins-test -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j'
 						}
 					}
 					post {
 						always {
 							// stop Neo4J
-							sh 'docker stop $JENKINS_ROGM_NEO4J_ID'
+							sh '''
+								docker stop $JENKINS_ROGM_NEO4J_ID
+								docker rm $JENKINS_ROGM_NEO4J_ID
+								echo 'Docker: stop/rm: $JENKINS_ROGM_NEO4J_NAME'
+							'''
 						}
 					}
 				}
