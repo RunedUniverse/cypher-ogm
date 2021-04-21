@@ -73,16 +73,16 @@ pipeline {
 					}
 					steps {
 						dir(path: 'rogm-module-neo4j') {
-							script{
+							sh """
 								JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID)
-								echo waiting for Neo4J[docker:$BUILD_TAG_CAPS] to start on $JENKINS_ROGM_NEO4J_IP
-								until $(curl --output /dev/null --silent --head --fail http://$JENKINS_ROGM_NEO4J_IP:7474); do sleep 5; done
+								echo waiting for Neo4J[docker:$BUILD_TAG_CAPS] to start on \$JENKINS_ROGM_NEO4J_IP
+								until $(curl --output /dev/null --silent --head --fail http://\$JENKINS_ROGM_NEO4J_IP:7474); do sleep 5; done
 								echo 'Neo4J online > setting up database'
 								docker exec $JENKINS_ROGM_NEO4J_ID cat '/var/lib/neo4j/conf/setup.cypher'
 								docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
 								echo 'database loaded > starting tests'
-								env.JENKINS_ROGM_NEO4J_IP = JENKINS_ROGM_NEO4J_IP
-							}
+								env.JENKINS_ROGM_NEO4J_IP = \$JENKINS_ROGM_NEO4J_IP
+							"""
 							sh "printenv | sort"
 							sh "mvn -X -P jenkins-test -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j"
 						}
