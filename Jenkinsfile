@@ -1,7 +1,7 @@
 pipeline {
 	agent any
 	stages {
-/*
+
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
@@ -56,7 +56,7 @@ pipeline {
 				}
 			}
 		}
-*/
+
 		stage('Test') {
 			parallel {
 				stage('Parser JSON') {
