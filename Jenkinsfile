@@ -4,10 +4,12 @@ pipeline {
 		stage('Initialize') {
 			steps {
 				sh '''
-					echo "PATH = ${PATH}"
-					echo "M2_HOME = ${M2_HOME}"
+					BUILD_TAG_CAPS={$BUILD_TAG^^}
 					JENKINS_ROGM_NEO4J_RES=${WORKSPACE}/src/test/resources/neo4j
+					
+					export BUILD_TAG_CAPS
 					export JENKINS_ROGM_NEO4J_RES
+					printenv | sort
 				'''
 			}
 		}
@@ -78,28 +80,23 @@ pipeline {
 				}
 				stage('Module Neo4J') {
 					environment {
-						JENKINS_ROGM_NEO4J_NAME= sh(returnStdout: true, script: 'echo {$BUILD_TAG^^}').trim()
-					}
-					environment {
-						JENKINS_ROGM_NEO4J_ID= sh(returnStdout: true, script: 'docker run -d --volume=$JENKINS_ROGM_NEO4J_RES:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run --name=$JENKINS_ROGM_NEO4J_NAME neo4j').trim()
-					}
-					environment {
-						JENKINS_ROGM_NEO4J_IP= sh(returnStdout: true, script: 'docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID').trim()
+						JENKINS_ROGM_NEO4J_ID= sh(returnStdout: true, script: 'docker run -d --volume=$JENKINS_ROGM_NEO4J_RES:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run --name=$BUILD_TAG_CAPS neo4j').trim()
 					}
 					steps {
-						// start Neo4J
-						sh '''
-							echo 'waiting for Neo4J[docker:$JENKINS_ROGM_NEO4J_NAME] to start on $JENKINS_ROGM_NEO4J_IP
-							until $(curl --output /dev/null --silent --head --fail http://$NEO4J_IP:7474); do
-								printf '.'
-								sleep 5
-							done
-							echo '\nNeo4J online > setting up database'
-							docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -f /var/lib/neo4j/conf/setup.cypher
-						'''
 						dir(path: 'rogm-module-neo4j') {
-							sh 'printenv | sort'
-							sh 'mvn -X -P jenkins-test -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j'
+							sh '''
+								JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID)
+								echo 'waiting for Neo4J[docker:$BUILD_TAG_CAPS] to start on $JENKINS_ROGM_NEO4J_IP
+								until $(curl --output /dev/null --silent --head --fail http://$NEO4J_IP:7474); do
+									printf '.'
+									sleep 5
+								done
+								echo '\nNeo4J online > setting up database'
+								docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -f /var/lib/neo4j/conf/setup.cypher
+								echo 'database loaded > starting tests'
+								printenv | sort
+								mvn -X -P jenkins-test -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
+							'''
 						}
 					}
 					post {
@@ -108,7 +105,7 @@ pipeline {
 							sh '''
 								docker stop $JENKINS_ROGM_NEO4J_ID
 								docker rm $JENKINS_ROGM_NEO4J_ID
-								echo 'Docker: stop/rm: $JENKINS_ROGM_NEO4J_NAME'
+								echo 'Docker: stop|rm: $BUILD_TAG_CAPS'
 							'''
 						}
 					}
