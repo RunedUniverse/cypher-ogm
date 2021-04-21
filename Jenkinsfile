@@ -3,7 +3,7 @@ pipeline {
 	stages {
 		stage('Initialize') {
 			steps {
-				sh '''
+				bash '''
 					BUILD_TAG_CAPS=${BUILD_TAG^^}
 					JENKINS_ROGM_NEO4J_RES=${WORKSPACE}/src/test/resources/neo4j
 					
