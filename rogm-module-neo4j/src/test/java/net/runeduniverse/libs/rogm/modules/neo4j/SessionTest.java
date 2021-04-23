@@ -2,8 +2,6 @@ package net.runeduniverse.libs.rogm.modules.neo4j;
 
 import static org.junit.Assert.*;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -37,11 +35,11 @@ public class SessionTest extends ATest {
 	static Configuration config;
 	static {
 		config = new Neo4jConfiguration(DB_HOST);
+
 		config.addClassLoader(SessionTest.class.getClassLoader())
 				.addClassLoader(ClassLoader.getSystemClassLoader())
-				.addClassLoader(new URLClassLoader(new URL[] { SessionTest.class.getProtectionDomain()
-						.getCodeSource()
-						.getLocation() }));
+				.addClassLoader(Thread.currentThread().getContextClassLoader());
+
 		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
 
 		config.addPackage(MODEL_PKG_PATH);
