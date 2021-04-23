@@ -9,13 +9,6 @@ pipeline {
 				}
 			}
 		}
-		stage('Build TEST-LIB') {
-			steps {
-				dir(path: 'rogm-test') {
-					sh 'mvn -P jenkins-install'
-				}
-			}
-		}
 		stage('Build Parser') {
 			parallel {
 				stage('JSON') {
