@@ -15,7 +15,6 @@ import org.junit.Test;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.Session;
 import net.runeduniverse.libs.rogm.logging.DebugLogger;
-import net.runeduniverse.libs.rogm.modules.neo4j.Neo4jConfiguration;
 import net.runeduniverse.libs.rogm.modules.neo4j.SessionTest;
 import net.runeduniverse.libs.rogm.querying.IParameterized;
 import net.runeduniverse.libs.rogm.test.ATest;

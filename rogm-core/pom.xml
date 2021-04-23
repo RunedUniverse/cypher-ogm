@@ -22,7 +22,6 @@
 		<dependency>
 			<groupId>net.runeduniverse.libs</groupId>
 			<artifactId>scanner</artifactId>
-			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

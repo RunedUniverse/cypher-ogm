@@ -11,7 +11,6 @@ import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.PreReload;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
-import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.scanner.MethodPattern;

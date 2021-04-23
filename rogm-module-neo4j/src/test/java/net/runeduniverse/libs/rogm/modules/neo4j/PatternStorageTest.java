@@ -3,7 +3,6 @@ package net.runeduniverse.libs.rogm.modules.neo4j;
 import org.junit.*;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.modules.neo4j.Neo4jConfiguration;
 import net.runeduniverse.libs.rogm.pattern.EntitiyFactory;
 import net.runeduniverse.libs.rogm.test.ATest;
 import net.runeduniverse.libs.rogm.test.model.*;

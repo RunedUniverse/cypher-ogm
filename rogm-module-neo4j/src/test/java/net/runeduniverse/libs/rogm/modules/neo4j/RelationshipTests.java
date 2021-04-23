@@ -21,7 +21,6 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.annotations.TargetNode;
-import net.runeduniverse.libs.rogm.modules.neo4j.Neo4jConfiguration;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
 import net.runeduniverse.libs.rogm.querying.IFNode;
