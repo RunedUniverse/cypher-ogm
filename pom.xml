@@ -20,10 +20,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- VERSIONS -->
 		<core.version>13</core.version>
+		<parser.json.version>12</parser.json.version>
 		<lang.cypher.version>11</lang.cypher.version>
 		<module.decorator.version>1</module.decorator.version>
 		<module.neo4j.version>12</module.neo4j.version>
-		<parser.json.version>12</parser.json.version>
 	</properties>
 
 	<repositories>
@@ -42,6 +42,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<artifactId>core</artifactId>
+				<version>${project.parent.version}.${core.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.libs</groupId>
 				<artifactId>utils</artifactId>
@@ -80,6 +85,14 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.13.1</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<artifactId>core</artifactId>
+				<version>${project.parent.version}.${core.version}</version>
+				<classifier>tests</classifier>
+				<type>test-jar</type>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
