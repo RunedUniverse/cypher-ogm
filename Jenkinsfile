@@ -97,7 +97,7 @@ pipeline {
 
 		stage('Deploy') {
 			steps {
-				sh '''mvn -P deploy'''
+				sh '''mvn -P jenkins-deploy'''
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}

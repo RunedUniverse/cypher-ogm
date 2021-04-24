@@ -169,9 +169,17 @@
 			</build>
 		</profile>
 		<profile>
-			<id>deploy</id>
+			<id>jenkins-deploy</id>
 			<build>
 				<defaultGoal>deploy</defaultGoal>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 	</profiles>
