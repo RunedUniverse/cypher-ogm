@@ -72,7 +72,7 @@ pipeline {
 							docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
 							echo 'database loaded > starting tests'
 							printenv | sort
-							mvn -P jenkins-test --projects=net.runeduniverse.libs.rogm:core,net.runeduniverse.libs.rogm.modules:neo4j -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
+							mvn -P jenkins-test -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
 						'''
 					}
 					post {
