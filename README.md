@@ -19,7 +19,7 @@ and implement the Modules only in the actual programm!
 <dependency>
   <groupId>net.runeduniverse.libs.rogm</groupId>
   <artifactId>core</artifactId>
-  <version>2.0.11</version>
+  <version>2.0.13</version>
 </dependency>
 
 <!-- Parser: JSON -->
