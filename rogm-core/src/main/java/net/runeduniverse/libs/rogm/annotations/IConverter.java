@@ -28,9 +28,10 @@ public interface IConverter<T extends Serializable> {
 		return conv;
 	}
 
-	public static IConverter<?> createConverter(Id anno, Class<?> type) throws Exception {
-		if (anno.converter() != UnSet.class)
-			return (IConverter<?>) anno.converter().newInstance();
+	public static IConverter<?> createConverter(Converter anno, Class<?> type) throws Exception {
+		if (anno != null && anno.converter() != UnSet.class)
+			return (IConverter<?>) anno.converter()
+					.newInstance();
 
 		switch (type.getName()) {
 		case "java.lang.Short":
@@ -44,7 +45,7 @@ public interface IConverter<T extends Serializable> {
 		case "java.lang.String":
 			return createConverter(StringConverter.class);
 		default:
-			throw new Exception("No idConverter for Class<" + type + "> defined!");
+			throw new Exception("No Converter for Class<" + type + "> defined!");
 		}
 
 	}

@@ -3,7 +3,6 @@ package net.runeduniverse.libs.rogm.pattern;
 import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +15,9 @@ import java.util.Set;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
-import net.runeduniverse.libs.rogm.annotations.Relationship;
+import net.runeduniverse.libs.rogm.annotations.PostSave;
+import net.runeduniverse.libs.rogm.annotations.PreDelete;
+import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
@@ -29,18 +30,15 @@ import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
-public class NodePattern extends APattern {
+public class NodePattern extends APattern implements INodePattern {
 
 	@Getter
 	private Set<String> labels = new HashSet<>();
-	private Set<FieldPattern> relFields = new HashSet<>();
+	private Set<RelatedFieldPattern> relFields = new HashSet<>();
 
-	public NodePattern(PatternStorage storage, Class<?> type) throws Exception {
-		super(storage, type);
-		this._parse(this.type);
-	}
+	public NodePattern(IStorage factory, String pkg, ClassLoader loader, Class<?> type) {
+		super(factory, pkg, loader, type);
 
-	private void _parse(Class<?> type) throws Exception {
 		NodeEntity typeAnno = type.getAnnotation(NodeEntity.class);
 		String label = null;
 		if (typeAnno != null)
@@ -49,20 +47,6 @@ public class NodePattern extends APattern {
 			label = type.getSimpleName();
 		if (!isBlank(label))
 			this.labels.add(label);
-
-		for (Field field : type.getDeclaredFields()) {
-			field.setAccessible(true);
-			if (this.parseId(field))
-				continue;
-
-			if (field.isAnnotationPresent(Relationship.class))
-				this.relFields.add(new FieldPattern(this.storage, field));
-		}
-		this.parseMethods(type);
-
-		if (type.getSuperclass().equals(Object.class))
-			return;
-		_parse(type.getSuperclass());
 	}
 
 	public PatternType getPatternType() {
@@ -70,18 +54,19 @@ public class NodePattern extends APattern {
 	}
 
 	public IFilter search(boolean lazy) throws Exception {
-		return this._search(this.storage.getFactory().createNode(this.labels, new ArrayList<>()), lazy, false);
+		return this._search(this.factory.getFactory()
+				.createNode(this.labels, new ArrayList<>()), lazy, false);
 	}
 
 	public IFilter search(Serializable id, boolean lazy) throws Exception {
-		return this._search(
-				this.storage.getFactory().createIdNode(this.labels, new ArrayList<>(), id, this.idConverter), lazy,
-				false);
+		return this._search(this.factory.getFactory()
+				.createIdNode(this.labels, new ArrayList<>(), id, this.idConverter), lazy, false);
 	}
 
 	public IFNode search(IFRelation caller, boolean lazy) {
 		// includes ONLY the caller-relation filter
-		Node node = this.storage.getFactory().createNode(this.labels, Arrays.asList(caller));
+		Node node = this.factory.getFactory()
+				.createNode(this.labels, Arrays.asList(caller));
 		try {
 			return this._search(node, lazy, true);
 		} catch (Exception e) {
@@ -98,8 +83,9 @@ public class NodePattern extends APattern {
 		if (lazy)
 			node.setLazy(true);
 		else
-			for (FieldPattern field : this.relFields)
-				node.getRelations().add(field.queryRelation(node));
+			for (RelatedFieldPattern field : this.relFields)
+				node.getRelations()
+						.add(field.queryRelation(node));
 		return node;
 	}
 
@@ -110,7 +96,7 @@ public class NodePattern extends APattern {
 
 			@Override
 			public IDataContainer getDataContainer() throws Exception {
-				return save(entity, includedData, depth);
+				return NodePattern.this.save(entity, includedData, depth);
 			}
 
 			@Override
@@ -118,7 +104,8 @@ public class NodePattern extends APattern {
 				for (Object object : includedData.keySet())
 					if (object != null)
 						try {
-							storage.getPattern(object.getClass()).postSave(object);
+							factory.getPattern(object.getClass())
+									.callMethod(PostSave.class, object);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -128,33 +115,22 @@ public class NodePattern extends APattern {
 			public Set<IFilter> getRelatedFilter() throws Exception {
 				Set<IFilter> set = new HashSet<>();
 				for (Object object : includedData.keySet()) {
-					if (!includedData.get(object).persist())
+					if (!includedData.get(object)
+							.persist())
 						continue;
-					Entry entry = storage.getBuffer().getEntry(object);
+					Entry entry = factory.getBuffer()
+							.getEntry(object);
 					if (entry == null || entry.getLoadState() == LoadState.LAZY)
 						continue;
-					set.add(entry.getPattern().search(entry.getId(), false));
+					set.add(entry.getPattern()
+							.search(entry.getId(), false));
 				}
 				return set;
 			}
 		};
 	}
 
-	@Override
-	public IDeleteContainer delete(Object entity) throws Exception {
-		IBuffer.Entry entry = this.storage.getBuffer().getEntry(entity);
-		if (entry == null)
-			throw new Exception("Node-Entity of type<" + entity.getClass().getName() + "> is not loaded!");
-
-		preDelete(entity);
-
-		Node node = this.storage.getFactory().createIdNode(null, null, entry.getId(), null);
-		node.setReturned(true);
-		return new DeleteContainer(this, entity, entry.getId(),
-				this.storage.getFactory().createEffectedFilter(entry.getId()), node);
-	}
-
-	protected IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
+	public IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
 		if (entity == null)
 			return null;
 
@@ -170,16 +146,18 @@ public class NodePattern extends APattern {
 				node = (DataNode) container;
 		} else if (this.isIdSet(entity)) {
 			// update (id)
-			node = this.storage.getFactory().createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity),
-					this.idConverter, entity, persist);
+			node = this.factory.getFactory()
+					.createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity), this.idConverter, entity,
+							persist);
 			node.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
-			node = this.storage.getFactory().createDataNode(this.labels, new ArrayList<>(), entity, persist);
+			node = this.factory.getFactory()
+					.createDataNode(this.labels, new ArrayList<>(), entity, persist);
 			node.setFilterType(FilterType.CREATE);
 		}
 
-		this.preSave(entity);
+		this.callMethod(PreSave.class, entity);
 
 		node.setReturned(true);
 		node.setReadonly(readonly);
@@ -187,30 +165,51 @@ public class NodePattern extends APattern {
 
 		if (persist) {
 			depth = depth - 1;
-			for (FieldPattern field : this.relFields)
+			for (RelatedFieldPattern field : this.relFields)
 				field.saveRelation(entity, node, includedData, depth);
 		}
 
 		return node;
 	}
 
+	@Override
+	public IDeleteContainer delete(Object entity) throws Exception {
+		IBuffer.Entry entry = this.factory.getBuffer()
+				.getEntry(entity);
+		if (entry == null)
+			throw new Exception("Node-Entity of type<" + entity.getClass()
+					.getName() + "> is not loaded!");
+
+		this.callMethod(PreDelete.class, entity);
+
+		Node node = this.factory.getFactory()
+				.createIdNode(null, null, entry.getId(), null);
+		node.setReturned(true);
+		return new DeleteContainer(this, entity, entry.getId(), this.factory.getFactory()
+				.createEffectedFilter(entry.getId()), node);
+	}
+
 	public void setRelation(Direction direction, String label, Object entity, Object value) {
-		for (FieldPattern field : this.relFields)
-			if (field.getDirection().equals(direction) && field.getLabel().equals(label)
-					&& field.getType().isAssignableFrom(value.getClass())) {
+		for (RelatedFieldPattern field : this.relFields)
+			if (field.getDirection()
+					.equals(direction)
+					&& field.getLabel()
+							.equals(label)
+					&& field.getType()
+							.isAssignableFrom(value.getClass())) {
 				field.putValue(entity, value);
 				return;
 			}
 	}
 
 	public void deleteRelations(Object entity) {
-		for (FieldPattern field : this.relFields)
+		for (RelatedFieldPattern field : this.relFields)
 			field.clearValue(entity);
 	}
 
 	@Override
 	public void deleteRelations(Object entity, Collection<Object> delEntries) {
-		for (FieldPattern field : this.relFields)
+		for (RelatedFieldPattern field : this.relFields)
 			field.removeValues(entity, delEntries);
 	}
 }

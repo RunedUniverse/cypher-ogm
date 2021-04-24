@@ -31,7 +31,8 @@ public class FilterFactory {
 		if (this.module.checkIdType(id.getClass()))
 			return new Node(id, labels, relations);
 		Node node = new Node(labels, relations);
-		node.getParams().put(this.module.getIdAlias(), converter.toProperty(id));
+		node.getParams()
+				.put(this.module.getIdAlias(), (converter == null ? new IConverter.UnSet() : converter).toProperty(id));
 		return node;
 	}
 
@@ -40,7 +41,8 @@ public class FilterFactory {
 		if (this.module.checkIdType(id.getClass()))
 			return new DataNode(data, id, labels, relations, persist);
 		DataNode node = new DataNode(data, labels, relations, persist);
-		node.getParams().put(this.module.getIdAlias(), converter.toProperty(id));
+		node.getParams()
+				.put(this.module.getIdAlias(), converter.toProperty(id));
 		return node;
 	}
 
@@ -56,7 +58,8 @@ public class FilterFactory {
 		if (this.module.checkIdType(id.getClass()))
 			return new Relation(id, direction);
 		Relation node = new Relation(direction);
-		node.getParams().put(this.module.getIdAlias(), converter.toProperty(id));
+		node.getParams()
+				.put(this.module.getIdAlias(), converter.toProperty(id));
 		return node;
 	}
 
@@ -75,13 +78,13 @@ public class FilterFactory {
 		return relation;
 	}
 
-	protected interface IDataNode extends IFNode, IDataContainer, ILabeled, IReturned {
+	public interface IDataNode extends IFNode, IDataContainer, ILabeled, IReturned {
 		void setFilterType(FilterType type);
 
 		void setReturned(boolean returned);
 	}
 
-	protected interface IDataRelation extends IFRelation, IDataContainer, ILabeled, IReturned {
+	public interface IDataRelation extends IFRelation, IDataContainer, ILabeled, IReturned {
 		void setFilterType(FilterType type);
 
 		void setReturned(boolean returned);
@@ -155,7 +158,7 @@ public class FilterFactory {
 
 	@Getter
 	@Setter
-	protected class Relation extends Filter implements IFRelation {
+	public class Relation extends Filter implements IFRelation {
 		protected IFNode start;
 		protected IFNode target;
 		protected Direction direction;

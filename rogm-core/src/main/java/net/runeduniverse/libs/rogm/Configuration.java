@@ -1,7 +1,8 @@
 package net.runeduniverse.libs.rogm;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,13 +12,16 @@ import net.runeduniverse.libs.rogm.buffer.BasicBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 
 @Getter
 public class Configuration {
 
-	protected final List<String> pkgs = new ArrayList<>();
-	protected final List<ClassLoader> loader = new ArrayList<>();
+	protected final Set<String> pkgs = new HashSet<>();
+	protected final Set<ClassLoader> loader = new HashSet<>();
+	protected final Set<TypeScanner> scanner = new HashSet<>();
 	private final Parser parser;
 	protected final Language lang;
 	protected final Module module;
@@ -66,6 +70,12 @@ public class Configuration {
 		return this;
 	}
 
+	public Configuration configure(PassiveModule passivemodule) {
+		if (passivemodule.getPatternScanner() != null)
+			this.scanner.addAll(passivemodule.getPatternScanner());
+		return this;
+	}
+
 	public Parser.Instance buildParserInstance() {
 		return this.parser.build(this);
 	}
@@ -76,5 +86,11 @@ public class Configuration {
 
 	public Language.Instance buildLanguageInstance(Parser.Instance parser) {
 		return this.lang.build(parser, this.module);
+	}
+
+	public Level getLoggingLevel() {
+		if (this.loggingLevel != null)
+			return this.loggingLevel;
+		return this.logger == null ? Level.INFO : this.logger.getLevel();
 	}
 }

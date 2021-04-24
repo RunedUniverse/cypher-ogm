@@ -7,6 +7,7 @@ import java.util.Set;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
+import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
@@ -20,6 +21,8 @@ public interface IStorage {
 	Parser.Instance getParser();
 
 	IBuffer getBuffer();
+	
+	UniversalLogger getLogger();
 
 	IPattern getPattern(Class<?> clazz) throws Exception;
 
@@ -36,4 +39,10 @@ public interface IStorage {
 	<T> Collection<T> parse(Class<T> type, IDataRecord record, Set<Entry> lazyEntries) throws Exception;
 
 	void update(Object entity, IDataRecord record, Set<Entry> relatedEntities) throws Exception;
+
+	FilterFactory getFactory();
+
+	INodePattern getNode(Class<?> clazz);
+
+	IRelationPattern getRelation(Class<?> clazz);
 }

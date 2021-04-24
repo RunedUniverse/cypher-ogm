@@ -15,10 +15,10 @@ import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.logging.SessionLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.EntitiyFactory;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.PatternStorage;
-import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
+import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public final class CoreSession implements Session {
@@ -37,7 +37,7 @@ public final class CoreSession implements Session {
 		this.parser = cnf.buildParserInstance();
 		this.module = cnf.buildModuleInstance();
 		this.lang = cnf.buildLanguageInstance(this.parser);
-		this.storage = new PatternStorage(cnf, this.parser);
+		this.storage = new EntitiyFactory(cnf, this.parser);
 		this.buffer = this.storage.getBuffer();
 
 		if (!this.module.connect(cnf))
@@ -155,8 +155,8 @@ public final class CoreSession implements Session {
 				try {
 					this._reloadObject(entity, this.storage.search(entity, depth == 0), depth < 2 ? null : stage);
 				} catch (Exception e) {
-					this.logger.log(Level.WARNING, "Loading of Class<" + entity.getClass().getCanonicalName()
-							+ "> Entity" + " (depth=" + depth + ") failed!", e);
+					this.logger.log(Level.WARNING, "Loading of Class<" + entity.getClass()
+							.getCanonicalName() + "> Entity" + " (depth=" + depth + ") failed!", e);
 				}
 
 		for (int i = 0; i < depth - 1; i++) {
@@ -186,8 +186,8 @@ public final class CoreSession implements Session {
 
 			this.storage.update(entity, record, relatedEntities);
 		} catch (Exception e) {
-			this.logger.log(Level.WARNING,
-					"Reloading of Class<" + entity.getClass().getCanonicalName() + "> Entity failed!", e);
+			this.logger.log(Level.WARNING, "Reloading of Class<" + entity.getClass()
+					.getCanonicalName() + "> Entity failed!", e);
 		}
 	}
 
@@ -205,8 +205,8 @@ public final class CoreSession implements Session {
 			}
 			container.postSave();
 		} catch (Exception e) {
-			this.logger.log(Level.WARNING, "Saving of Class<" + entity.getClass().getCanonicalName()
-					+ "> Entity failed! (depth=" + depth + ')', e);
+			this.logger.log(Level.WARNING, "Saving of Class<" + entity.getClass()
+					.getCanonicalName() + "> Entity failed! (depth=" + depth + ')', e);
 		}
 	}
 
@@ -386,8 +386,8 @@ public final class CoreSession implements Session {
 			mapper.updateBuffer(this.buffer, container.getDeletedId(), this.module.query(mapper.effectedQry()));
 			this.module.execute(mapper.qry());
 		} catch (Exception e) {
-			this.logger.log(Level.WARNING,
-					"Deletion of Class<" + entity.getClass().getCanonicalName() + "> Entity failed!", e);
+			this.logger.log(Level.WARNING, "Deletion of Class<" + entity.getClass()
+					.getCanonicalName() + "> Entity failed!", e);
 		}
 	}
 

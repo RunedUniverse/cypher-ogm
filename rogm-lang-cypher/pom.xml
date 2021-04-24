@@ -8,13 +8,9 @@
 		<version>2.0</version>
 	</parent>
 
-	<properties>
-		<module.version>11</module.version>
-	</properties>
-
 	<groupId>net.runeduniverse.libs.rogm.lang</groupId>
 	<artifactId>cypher</artifactId>
-	<version>${parent.version}.${module.version}</version>
+	<version>${project.parent.version}.${lang.cypher.version}</version>
 
 	<name>ROGM Lang Cypher</name>
 
@@ -22,25 +18,33 @@
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
 			<artifactId>core</artifactId>
-			<version>2.0.11</version>
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm.parser</groupId>
 			<artifactId>json</artifactId>
 			<version>2.0.12</version>
-			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs</groupId>
+			<artifactId>utils</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.runeduniverse.libs</groupId>
-			<artifactId>rogm-test</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs.rogm</groupId>
+			<artifactId>core</artifactId>
+			<classifier>tests</classifier>
+			<type>test-jar</type>
 		</dependency>
 	</dependencies>
 </project>

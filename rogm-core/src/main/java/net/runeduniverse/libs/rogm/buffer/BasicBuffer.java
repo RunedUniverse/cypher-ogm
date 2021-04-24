@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.runeduniverse.libs.rogm.annotations.PostDelete;
+import net.runeduniverse.libs.rogm.pattern.INodePattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
 
@@ -33,7 +35,8 @@ public class BasicBuffer implements IBuffer {
 				return (T) LoadState.merge(entry, loadState, lazyEntries);
 		}
 
-		T entity = this.storage.getParser().deserialize(type, data.getData());
+		T entity = this.storage.getParser()
+				.deserialize(type, data.getData());
 		pattern.setId(entity, data.getEntityId());
 		Entry entry = new Entry(data, entity, loadState, pattern);
 		if (lazyEntries != null && loadState == LoadState.LAZY)
@@ -48,9 +51,11 @@ public class BasicBuffer implements IBuffer {
 			return null;
 		Entry entry = entries.get(entity);
 
-		this.storage.getParser().deserialize(entity, data.getData());
+		this.storage.getParser()
+				.deserialize(entity, data.getData());
 		updateEntry(entry, data.getId(), data.getEntityId());
-		entry.getPattern().setId(entity, data.getEntityId());
+		entry.getPattern()
+				.setId(entity, data.getEntityId());
 		return entry;
 	}
 
@@ -61,7 +66,8 @@ public class BasicBuffer implements IBuffer {
 		if (te == null || te.idMap.get(id) == null)
 			return null;
 
-		return (T) te.idMap.get(id).getEntity();
+		return (T) te.idMap.get(id)
+				.getEntity();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -71,7 +77,8 @@ public class BasicBuffer implements IBuffer {
 		if (te == null || te.entityIdMap.get(entityId) == null)
 			return null;
 
-		return (T) te.entityIdMap.get(entityId).getEntity();
+		return (T) te.entityIdMap.get(entityId)
+				.getEntity();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -177,18 +184,23 @@ public class BasicBuffer implements IBuffer {
 		Set<Entry> nodes = new HashSet<>();
 
 		for (Entry entry : this.entries.values())
-			if (entry.getId().equals(deletedId) || entry.getId().equals(relationId)) {
+			if (entry.getId()
+					.equals(deletedId)
+					|| entry.getId()
+							.equals(relationId)) {
 				deletedEntries.add(entry);
 				deletedEntities.add(entry.getEntity());
-			} else if (entry.getId().equals(nodeId))
+			} else if (entry.getId()
+					.equals(nodeId))
 				nodes.add(entry);
 
 		for (Entry entry : nodes)
-			entry.getPattern().deleteRelations(entry.getEntity(), deletedEntities);
+			((INodePattern) entry.getPattern()).deleteRelations(entry.getEntity(), deletedEntities);
 
 		for (Entry entry : deletedEntries) {
 			removeEntry(entry);
-			entry.getPattern().postDelete(entry.getEntity());
+			entry.getPattern()
+					.callMethod(PostDelete.class, entry.getEntity());
 		}
 	}
 }
