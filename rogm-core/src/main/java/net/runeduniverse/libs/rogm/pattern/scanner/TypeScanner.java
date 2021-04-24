@@ -51,6 +51,8 @@ public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPatte
 
 	@Override
 	public void scan(Class<?> type, ClassLoader loader, String pkg) throws Exception {
+		//TODO rm debug line
+		System.out.println("TypeScanner > scan -> " + type.getCanonicalName());
 		if (Modifier.isAbstract(type.getModifiers()))
 			return;
 		super.scan(type, loader, pkg);

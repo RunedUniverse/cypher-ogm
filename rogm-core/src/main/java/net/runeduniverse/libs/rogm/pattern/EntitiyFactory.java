@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.Configuration;
@@ -69,6 +70,8 @@ public class EntitiyFactory implements IStorage {
 						EntitiyFactory.this.validate(PatternType.UNKNOWN);
 					}
 				})
+				.enableDebugMode(cnf.getLoggingLevel() != null && cnf.getLoggingLevel()
+						.intValue() < Level.INFO.intValue())
 				.scan()
 				.throwSurpressions(new Exception("Pattern parsing failed! See surpressed Exceptions!"));
 

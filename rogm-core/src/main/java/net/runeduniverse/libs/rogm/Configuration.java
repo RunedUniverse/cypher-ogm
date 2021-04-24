@@ -87,4 +87,10 @@ public class Configuration {
 	public Language.Instance buildLanguageInstance(Parser.Instance parser) {
 		return this.lang.build(parser, this.module);
 	}
+
+	public Level getLoggingLevel() {
+		if (this.loggingLevel != null)
+			return this.loggingLevel;
+		return this.logger == null ? Level.INFO : this.logger.getLevel();
+	}
 }
