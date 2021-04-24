@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
-import org.junit.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.pattern.EntitiyFactory;
@@ -31,11 +32,13 @@ public class PatternStorageTest extends ATest {
 		ennio.setFirstName("Ennio");
 		ennio.setLastName("Morricone");
 		Song s = new Song("C’era una volta il West");
-		ennio.getCreated().add(s);
-		ennio.getPlayed().add(s);
+		ennio.getCreated()
+				.add(s);
+		ennio.getPlayed()
+				.add(s);
 	}
 
-	@Before
+	@BeforeEach
 	public void before() throws Exception {
 		processor = new EntitiyFactory(config, iParser);
 	}
@@ -71,12 +74,16 @@ public class PatternStorageTest extends ATest {
 	}
 
 	private String _query(Class<?> clazz) throws Exception {
-		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.processor.getNode(clazz).search(false))
-				+ '\n';
+		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.processor.getNode(clazz)
+				.search(false)) + '\n';
 	}
 
 	private String _save(Object entity) throws Exception {
-		return "[SAVE][" + entity.getClass().getSimpleName() + "]\n"
-				+ iLanguage.save(this.processor.save(entity, 1).getDataContainer(), null).qry() + '\n';
+		return "[SAVE][" + entity.getClass()
+				.getSimpleName() + "]\n"
+				+ iLanguage.save(this.processor.save(entity, 1)
+						.getDataContainer(), null)
+						.qry()
+				+ '\n';
 	}
 }

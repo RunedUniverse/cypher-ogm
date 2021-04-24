@@ -1,6 +1,6 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -12,10 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import org.junit.After;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
@@ -34,10 +32,6 @@ public class RelationshipTests extends ATest {
 
 	public RelationshipTests() {
 		super(new Neo4jConfiguration(""));
-	}
-
-	@Before
-	public void prepare() {
 	}
 
 	@Test
@@ -97,7 +91,8 @@ public class RelationshipTests extends ATest {
 	}
 
 	private IFNode createFilterNode(Class<?> clazz, boolean isChild) throws Exception {
-		FilterNode fn = new FilterNode().setReturned(true).setOptional(isChild);
+		FilterNode fn = new FilterNode().setReturned(true)
+				.setOptional(isChild);
 		classMap.put(clazz, fn);
 
 		List<String> labels = new ArrayList<String>();
@@ -110,17 +105,20 @@ public class RelationshipTests extends ATest {
 			if (ff.isAnnotationPresent(Relationship.class)) {
 				Class<?> ffClazz = ff.getType();
 				Relationship r = ff.getAnnotation(Relationship.class);
-				String label = r.label().isEmpty() ? ff.getName() : r.label();
+				String label = r.label()
+						.isEmpty() ? ff.getName() : r.label();
 				if (isOfTypeCollection(ffClazz)) {
 					ffClazz = getClassFromCollectionField(ff);
 				}
 				if (ffClazz.isAnnotationPresent(RelationshipEntity.class)) {
 					FilterRelation fr = (FilterRelation) giveFilterNodeOrRelation(ffClazz, true);
-					if (fr.getLabels().isEmpty())
+					if (fr.getLabels()
+							.isEmpty())
 						fr.addLabel(label);
 					fn.addRelation(fr);
 				} else {
-					FilterRelation fr = new FilterRelation(r.direction()).addLabel(label).setReturned(true)
+					FilterRelation fr = new FilterRelation(r.direction()).addLabel(label)
+							.setReturned(true)
 							.setOptional(true);
 					fn.addRelation(fr, (IFNode) giveFilterNodeOrRelation(ffClazz, true));
 				}
@@ -131,12 +129,14 @@ public class RelationshipTests extends ATest {
 
 	private IFRelation createFilterRelation(Class<?> clazz, boolean isChild) throws Exception {
 		Boolean startNode = false, endNode = false;
-		FilterRelation fr = new FilterRelation().setReturned(true).setOptional(isChild);
+		FilterRelation fr = new FilterRelation().setReturned(true)
+				.setOptional(isChild);
 		classMap.put(clazz, fr);
 
 		RelationshipEntity re = clazz.getAnnotation(RelationshipEntity.class);
 		fr.setDirection(re.direction());
-		if (!re.label().isEmpty())
+		if (!re.label()
+				.isEmpty())
 			fr.addLabel(re.label());
 
 		Field[] fields = clazz.getDeclaredFields();
@@ -170,7 +170,8 @@ public class RelationshipTests extends ATest {
 
 	private <T> void getLabelsForClass(Class<T> type, List<String> labels) {
 		labels.add(type.getSimpleName());
-		if (Modifier.isAbstract(type.getSuperclass().getModifiers()) || type.getSuperclass() == Object.class)
+		if (Modifier.isAbstract(type.getSuperclass()
+				.getModifiers()) || type.getSuperclass() == Object.class)
 			return;
 		getLabelsForClass(type.getSuperclass(), labels);
 	}
@@ -181,10 +182,6 @@ public class RelationshipTests extends ATest {
 
 	private Boolean checkIfClassIsNode(Class<?> clazz) {
 		return clazz.isAnnotationPresent(NodeEntity.class);
-	}
-
-	@After
-	public void close() {
 	}
 
 }

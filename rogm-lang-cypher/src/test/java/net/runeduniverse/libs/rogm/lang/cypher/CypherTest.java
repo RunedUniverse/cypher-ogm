@@ -1,13 +1,13 @@
 package net.runeduniverse.libs.rogm.lang.cypher;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.Direction;
@@ -34,8 +34,8 @@ public class CypherTest extends ATest {
 	static FilterRelation anyRelationToSchool;
 	static FilterNode city = new FilterNode();
 
-	@Before
-	public void prep() {
+	@BeforeAll
+	public static void prepare() {
 		school = new FilterNode(10);
 
 		student = new FilterNode().addLabel("HTLStudent").addLabel("Maturant").addRelationTo(school);
@@ -58,7 +58,7 @@ public class CypherTest extends ATest {
 		} catch (Exception e) {
 			error = true;
 		}
-		assertTrue("String is not a valid id", error);
+		assertTrue(error, "String is not a valid id");
 	}
 
 	@Test

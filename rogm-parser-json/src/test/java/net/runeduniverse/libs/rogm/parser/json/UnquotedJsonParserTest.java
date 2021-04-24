@@ -1,10 +1,10 @@
 package net.runeduniverse.libs.rogm.parser.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.test.ATest;
@@ -15,12 +15,10 @@ import net.runeduniverse.libs.rogm.test.model.*;
 public class UnquotedJsonParserTest extends ATest {
 
 	public UnquotedJsonParserTest() {
-		super(new Configuration(
-				new JSONParser().configure(Feature.SERIALIZER_QUOTE_FIELD_NAMES, false)
-						.configure(Feature.DESERIALIZER_ALLOW_UNQUOTED_FIELD_NAMES, true)
-						.configure(Feature.MAPPER_AUTO_DETECT_GETTERS, false)
-						.configure(Feature.MAPPER_AUTO_DETECT_IS_GETTERS, false),
-				new DummyLanguage(), new DummyModule(), ""));
+		super(new Configuration(new JSONParser().configure(Feature.SERIALIZER_QUOTE_FIELD_NAMES, false)
+				.configure(Feature.DESERIALIZER_ALLOW_UNQUOTED_FIELD_NAMES, true)
+				.configure(Feature.MAPPER_AUTO_DETECT_GETTERS, false)
+				.configure(Feature.MAPPER_AUTO_DETECT_IS_GETTERS, false), new DummyLanguage(), new DummyModule(), ""));
 	}
 
 	private static final House h0;
@@ -78,14 +76,15 @@ public class UnquotedJsonParserTest extends ATest {
 		// \"empty\":false}";
 		String s = "{address:{street:\"Gardenstreet\",number:200},people:[{firstName:\"Georg\",lastName:\"Baker\",fictional:true},{firstName:\"Luna\",lastName:\"Moon\",fictional:true}], \"empty\":false}}";
 		// Direct equals fails -> probably due to Sets
-		assertEquals(h1.toString(), iParser.deserialize(House.class, s).toString());
+		assertEquals(h1.toString(), iParser.deserialize(House.class, s)
+				.toString());
 	}
 
 	@Test
 	public void parseEmpty() throws Exception {
 		Person person = iParser.deserialize(Person.class, "{}");
 		System.out.println("Person is " + person);
-		assertNotNull("Person {} is null", person);
+		assertNotNull(person, "Person {} is null");
 	}
 
 	@Test
