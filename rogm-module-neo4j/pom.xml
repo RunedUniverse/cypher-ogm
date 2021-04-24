@@ -56,7 +56,7 @@
 
 	<profiles>
 		<profile>
-			<id>jenkins-test</id>
+			<id>jenkins-test-db-neo4j</id>
 			<build>
 				<plugins>
 					<plugin>

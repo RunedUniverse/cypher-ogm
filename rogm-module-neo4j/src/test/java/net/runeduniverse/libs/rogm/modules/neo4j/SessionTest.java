@@ -65,6 +65,7 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
+	@Tag("db-neo4j")
 	public void loadAllPeople() {
 		Collection<Person> people = session.loadAll(Person.class);
 		if (people.isEmpty()) {
@@ -77,6 +78,7 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
+	@Tag("db-neo4j")
 	public void loadAllArtists() {
 		Collection<Artist> people = session.loadAll(Artist.class);
 		if (people.isEmpty()) {
@@ -90,6 +92,7 @@ public class SessionTest extends ATest {
 
 	@SuppressWarnings("deprecation")
 	@Test
+	@Tag("db-neo4j")
 	public void updatePerson() throws Exception {
 		IParameterized personFilter = (IParameterized) session.getPattern(Person.class)
 				.search(false);
@@ -108,6 +111,7 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
+	@Tag("db-neo4j")
 	public void createPerson() {
 		Person james = new Person("James", "North", true);
 		System.out.println(james.toString());
@@ -116,6 +120,7 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
+	@Tag("db-neo4j")
 	public void createArtist() {
 		Artist ennio = new Artist();
 		ennio.setFirstName("Ennio");
@@ -131,6 +136,7 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
+	@Tag("db-neo4j")
 	public void saveAndLoadPlayer_UUID_Id() {
 		Player player = new Player(UUID.randomUUID(), "Testi", new Inventory());
 		System.out.println(player.toString());
@@ -145,6 +151,7 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
+	@Tag("db-neo4j")
 	public void createAndDeletePlayer() {
 		Player player = new Player(UUID.randomUUID(), "DUMMY PLAYER", new Inventory());
 		session.save(player);
@@ -152,6 +159,7 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
+	@Tag("db-neo4j")
 	public void createAndDeleteEnnio() {
 		Artist ennio = new Artist();
 		ennio.setFirstName("Ennio");
@@ -167,6 +175,7 @@ public class SessionTest extends ATest {
 
 	@SuppressWarnings("deprecation")
 	@Test
+	@Tag("db-neo4j")
 	public void loadCompany() throws Exception {
 		IParameterized gameFilter = (IParameterized) session.getPattern(Company.class)
 				.search(false);
@@ -186,6 +195,7 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
+	@Tag("db-neo4j")
 	public void loadActors() {
 		Collection<Actor> actors = session.loadAllLazy(Actor.class);
 		session.resolveAllLazyLoaded(actors, 3);
@@ -198,6 +208,7 @@ public class SessionTest extends ATest {
 	}
 
 	@Test
+	@Tag("db-neo4j")
 	public void savePlayer() {
 		Player player = new Player();
 		player.setName("INV TEST PLAYER");

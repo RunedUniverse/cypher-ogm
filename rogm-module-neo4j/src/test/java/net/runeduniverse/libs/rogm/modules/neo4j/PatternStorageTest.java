@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
@@ -44,31 +45,37 @@ public class PatternStorageTest extends ATest {
 	}
 
 	@Test
+	@Tag("system")
 	public void queryCompany() throws Exception {
 		System.out.println(_query(Company.class));
 	}
 
 	@Test
+	@Tag("system")
 	public void queryActor() throws Exception {
 		System.out.println(_query(Actor.class));
 	}
 
 	@Test
+	@Tag("system")
 	public void queryHouse() throws Exception {
 		System.out.println(_query(House.class));
 	}
 
 	@Test
+	@Tag("system")
 	public void queryArtist() throws Exception {
 		System.out.println(_query(Artist.class));
 	}
 
 	@Test
+	@Tag("system")
 	public void savePerson() throws Exception {
 		System.out.println(_save(testi));
 	}
 
 	@Test
+	@Tag("system")
 	public void saveArtist() throws Exception {
 		System.out.println(_save(ennio));
 	}

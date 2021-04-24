@@ -141,9 +141,31 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jenkins-test</id>
+			<id>jenkins-test-system</id>
 			<build>
 				<defaultGoal>test</defaultGoal>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<groups>system</groups>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jenkins-test-db-neo4j</id>
+			<build>
+				<defaultGoal>test</defaultGoal>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<groups>db-neo4j</groups>
+						</configuration>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 		<profile>

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
@@ -53,6 +54,7 @@ public class UnquotedJsonParserTest extends ATest {
 	}
 
 	@Test
+	@Tag("system")
 	public void parseCityTest() throws Exception {
 		String s = "{name:\"Moonland\"," + "houses:["
 				+ "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\",fictional:true},{firstName:\"Frank\",lastName:\"Log\",fictional:true}]},"
@@ -63,12 +65,14 @@ public class UnquotedJsonParserTest extends ATest {
 	}
 
 	@Test
+	@Tag("system")
 	public void parseHouse() throws Exception {
 		String s = "{address:{street:\"Bakersstreet\",number:12},people:[{firstName:\"Marry\",lastName:\"Log\",fictional:true},{firstName:\"Frank\",lastName:\"Log\",fictional:true}]}";
 		assertEquals(s, iParser.serialize(h0));
 	}
 
 	@Test
+	@Tag("system")
 	public void parseHouseTransient() throws Exception {
 		// ignores empty varialbe while parsing and sets it as default true
 		// String serial =
@@ -81,6 +85,7 @@ public class UnquotedJsonParserTest extends ATest {
 	}
 
 	@Test
+	@Tag("system")
 	public void parseEmpty() throws Exception {
 		Person person = iParser.deserialize(Person.class, "{}");
 		System.out.println("Person is " + person);
@@ -88,12 +93,14 @@ public class UnquotedJsonParserTest extends ATest {
 	}
 
 	@Test
+	@Tag("system")
 	public void serialNoGetter() throws Exception {
 		String s = "{firstName:\"Gray\",lastName:\"Baker\",fictional:true}";
 		assertEquals(s, iParser.serialize(gray));
 	}
 
 	@Test
+	@Tag("system")
 	public void ignoreNull() throws Exception {
 		Item item = new Item();
 		item.setStr(null);

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
@@ -35,28 +36,33 @@ public class RelationshipTests extends ATest {
 	}
 
 	@Test
+	@Tag("system")
 	public void testIfClassIsNode() {
 		Boolean res = checkIfClassIsNode(Artist.class);
 		assertTrue(res);
 	}
 
 	@Test
+	@Tag("system")
 	public void testIfClassIsRelationship() {
 		Boolean res = checkIfClassIsRelationshipEntity(ActorPlaysPersonRelation.class);
 		assertTrue(res);
 	}
 
 	@Test
+	@Tag("system")
 	public void testUsingActorClass() throws Exception {
 		System.out.println(_build(Actor.class));
 	}
 
 	@Test
+	@Tag("system")
 	public void testUsingGameClass() throws Exception {
 		System.out.println(_build(Game.class));
 	}
 
 	@Test
+	@Tag("system")
 	public void testUsingCompanyClass() throws Exception {
 		System.out.println(_build(Company.class));
 	}

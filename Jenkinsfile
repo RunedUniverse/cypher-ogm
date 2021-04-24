@@ -52,14 +52,15 @@ pipeline {
 
 		stage('Test') {
 			parallel {
-				stage('Parser JSON') {
+				stage('System') {
 					steps {
-						sh 'mvn -P jenkins-test --projects=net.runeduniverse.libs.rogm:core,net.runeduniverse.libs.rogm.parser:json'
+						sh 'mvn -P jenkins-test-system'
 					}
 				}
-				stage('Module Neo4J') {
+				stage('Database Neo4J') {
 					environment {
 						BUILD_TAG_CAPS= sh(returnStdout: true, script: 'echo $BUILD_TAG | tr "[a-z]" "[A-Z]"').trim()
+						// start Neo4J
 						JENKINS_ROGM_NEO4J_ID= sh(returnStdout: true, script: 'docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run --name=$(echo $BUILD_TAG | tr "[a-z]" "[A-Z]") neo4j').trim()
 					}
 					steps {
@@ -72,7 +73,7 @@ pipeline {
 							docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
 							echo 'database loaded > starting tests'
 							printenv | sort
-							mvn -P jenkins-test -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
+							mvn -P jenkins-test-db-neo4j -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
 						'''
 					}
 					post {
@@ -86,26 +87,17 @@ pipeline {
 						}
 					}
 				}
-				stage('Module Decorator') {
-					steps {
-						sh 'mvn -P jenkins-test --projects=net.runeduniverse.libs.rogm:core,net.runeduniverse.libs.rogm.modules:decorator'
-					}
-				}
 			}
 			post {
 				always {
 					junit '*/target/surefire-reports/*.xml'
-					archiveArtifacts artifacts: '*/*.pom', fingerprint: true
 				}
 			}
 		}
 
 		stage('Deploy') {
 			steps {
-				sh '''
-					mvn -P deploy
-					unset JENKINS_ROGM_NEO4J_RES
-				'''
+				sh '''mvn -P deploy'''
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
