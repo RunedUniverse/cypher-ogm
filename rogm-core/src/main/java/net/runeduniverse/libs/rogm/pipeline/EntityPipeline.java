@@ -1,24 +1,26 @@
 package net.runeduniverse.libs.rogm.pipeline;
 
 import java.lang.annotation.Annotation;
-import java.util.Comparator;
 
-import net.runeduniverse.libs.rogm.pipeline.chains.DeleteChain;
 import net.runeduniverse.libs.rogm.pipeline.chains.LoadChain;
-import net.runeduniverse.libs.rogm.pipeline.chains.ReloadChain;
-import net.runeduniverse.libs.rogm.pipeline.chains.SaveChain;
 
 public class EntityPipeline implements Pipeline {
 
 	public EntityPipeline() {
-		this.registerChain(LoadChain.class, null);
-		this.registerChain(ReloadChain.class, null);
-		this.registerChain(SaveChain.class, null);
-		this.registerChain(DeleteChain.class, null);
+		this.registerChain(Chain.Load.LABEL, LoadChain.Data.class);
+		this.registerChain(Chain.Reload.LABEL, null);
+		this.registerChain(Chain.Save.LABEL, null);
+		this.registerChain(Chain.Delete.LABEL, null);
 	}
 
 	@Override
-	public <A extends Annotation, D> void registerChain(Class<A> anno, Class<D> dataClass, Comparator<A> a) {
+	public <A extends Annotation, D extends ChainData> void registerChain(String label, Class<D> dataClass) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerChainProcessor(Object processor) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,33 +1,53 @@
 package net.runeduniverse.libs.rogm.pipeline.chains;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.util.Comparator;
+import lombok.Getter;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.pipeline.Chain;
+import net.runeduniverse.libs.rogm.pipeline.Pipeline;
+import net.runeduniverse.libs.rogm.querying.IFilter;
 
-@Retention(RUNTIME)
-@Target(METHOD)
-public @interface LoadChain {
+public class LoadChain {
+	public static final String LABEL = Chain.Load.LABEL;
 
-	public static final int INIT = 0;
-	/*
-	 * PRE_FILTER =
-	 */
-
-	public static final Comparator<LoadChain> COMPARATOR = new Comparator<LoadChain>() {
-
-		@Override
-		public int compare(LoadChain o1, LoadChain o2) {
-			if (o1.level() < o2.level())
-				return -1;
-
-			if (o1.level() > o2.level())
-				return 11;
-			return 0;
+	@Getter
+	public static class Data<T, ID extends Serializable> extends AChainData {
+		public Data(Pipeline pipeline) {
+			super(pipeline);
 		}
-	};
 
-	public int level();
+		Class<T> type = null;
+		ID id = null;
+		int depth = 1;
+		IFilter filter = null;
+		Set<T> returnValues = new HashSet<>();
+	}
+
+	// BUFFER_REQUEST
+	@SuppressWarnings("null")
+	@Chain(label = LABEL, layer = Chain.Load.BUFFER_REQUEST)
+	public <T, ID extends Serializable> void checkBuffer(Data<T, ID> data) {
+		IBuffer buffer = null;
+		if (data.getType() == null || data.getId() == null)
+			return;
+		data.getReturnValues()
+				.add(data.getDepth() == 0 ? buffer.getByEntityId(data.getId(), data.getType())
+						: buffer.getCompleteByEntityId(data.getId(), data.getType()));
+
+		if (!data.returnValues.isEmpty())
+			data.commit();
+	}
+
+	// BUILD_FILTER
+	@Chain(label = LABEL, layer = Chain.Load.BUILD_FILTER)
+	public <T, ID extends Serializable> void buildFilter(Data<T, ID> data) {
+		if (data.getId() == null) {
+			// without id
+		} else {
+			// with id
+		}
+	}
 }
