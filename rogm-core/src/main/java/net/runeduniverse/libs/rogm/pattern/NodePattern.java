@@ -36,8 +36,8 @@ public class NodePattern extends APattern implements INodePattern {
 	private Set<String> labels = new HashSet<>();
 	private Set<RelatedFieldPattern> relFields = new HashSet<>();
 
-	public NodePattern(IStorage factory, String pkg, ClassLoader loader, Class<?> type) {
-		super(factory, pkg, loader, type);
+	public NodePattern(Archive archive, String pkg, ClassLoader loader, Class<?> type) {
+		super(archive, pkg, loader, type);
 
 		NodeEntity typeAnno = type.getAnnotation(NodeEntity.class);
 		String label = null;

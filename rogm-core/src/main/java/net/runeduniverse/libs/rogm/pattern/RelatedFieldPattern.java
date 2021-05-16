@@ -28,8 +28,8 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 	private Direction direction;
 	private boolean definedRelation;
 
-	public RelatedFieldPattern(IStorage factory, Field field) throws Exception {
-		super(factory, field);
+	public RelatedFieldPattern(Archive archive, Field field) throws Exception {
+		super(archive, field);
 	}
 
 	@Override

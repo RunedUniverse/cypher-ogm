@@ -18,14 +18,14 @@ import net.runeduniverse.libs.scanner.TypePattern;
 
 public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> implements IPattern, IValidatable {
 
-	protected final IStorage factory;
+	protected final Archive archive;
 	protected FieldPattern idPattern;
 	@Getter
 	protected IConverter<?> idConverter = null;
 
-	public APattern(IStorage factory, String pkg, ClassLoader loader, Class<?> type) {
+	public APattern(Archive archive, String pkg, ClassLoader loader, Class<?> type) {
 		super(pkg, loader, type);
-		this.factory = factory;
+		this.archive = archive;
 	}
 
 	public void validate() throws Exception {
