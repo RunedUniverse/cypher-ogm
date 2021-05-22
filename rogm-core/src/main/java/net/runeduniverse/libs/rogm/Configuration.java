@@ -14,14 +14,13 @@ import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 
 @Getter
 public class Configuration {
 
 	protected final Set<String> pkgs = new HashSet<>();
 	protected final Set<ClassLoader> loader = new HashSet<>();
-	protected final Set<TypeScanner> scanner = new HashSet<>();
+	protected final Set<PassiveModule> passiveModules = new HashSet<>();
 	private final Parser parser;
 	protected final Language lang;
 	protected final Module module;
@@ -47,6 +46,7 @@ public class Configuration {
 		this.parser = parser;
 		this.lang = lang;
 		this.module = module;
+		this.passiveModules.add(this.module);
 		this.uri = uri;
 	}
 
@@ -70,9 +70,8 @@ public class Configuration {
 		return this;
 	}
 
-	public Configuration configure(PassiveModule passivemodule) {
-		if (passivemodule.getPatternScanner() != null)
-			this.scanner.addAll(passivemodule.getPatternScanner());
+	public Configuration addPassiveModule(PassiveModule passivemodule) {
+		this.passiveModules.add(passivemodule);
 		return this;
 	}
 

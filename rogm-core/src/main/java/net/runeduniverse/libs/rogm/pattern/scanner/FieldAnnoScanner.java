@@ -4,7 +4,6 @@ import java.lang.annotation.Annotation;
 
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.FieldPattern;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.scanner.FieldScanner;
 import net.runeduniverse.libs.scanner.ScanOrder;
 

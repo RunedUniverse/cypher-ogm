@@ -1,13 +1,12 @@
 package net.runeduniverse.libs.rogm.modules;
 
-import java.util.List;
-
-import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
+import net.runeduniverse.libs.rogm.error.ScannerException;
+import net.runeduniverse.libs.rogm.pattern.Archive;
 
 public interface PassiveModule {
 
-	default List<TypeScanner> getPatternScanner() {
-		return null;
+	default void configure(Archive archive) throws ScannerException {
+
 	}
 
 }

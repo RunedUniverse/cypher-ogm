@@ -1,9 +1,9 @@
 package net.runeduniverse.libs.rogm.test.dummies;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.modules.AModule;
 
-public class DummyModule implements Module {
+public class DummyModule extends AModule {
 
 	@Override
 	public Instance<?> build(Configuration cnf) {

@@ -7,7 +7,7 @@ import java.util.Set;
 
 import net.runeduniverse.libs.rogm.Configuration;
 
-public interface Module {
+public interface Module extends PassiveModule {
 
 	// cnf might not get used from every module
 	// but is provided if needed
