@@ -1,12 +1,15 @@
 package net.runeduniverse.libs.rogm.querying;
 
 import java.io.Serializable;
+import java.lang.reflect.Proxy;
 
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.pattern.Archive;
-import net.runeduniverse.libs.rogm.pattern.INodePattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IRelationPattern;
+import net.runeduniverse.libs.rogm.querying.builder.IdentifiedHandler;
+import net.runeduniverse.libs.rogm.querying.builder.LabeledHandler;
+import net.runeduniverse.libs.rogm.querying.builder.NodeFilter;
+import net.runeduniverse.libs.rogm.querying.builder.ParamHandler;
 
 public final class QueryBuilder {
 	private final Archive archive;
@@ -15,66 +18,63 @@ public final class QueryBuilder {
 		this.archive = archive;
 	}
 
-	public Instance search(Class<?> type) {
-		for (IPattern p : this.archive.getPatterns(type)) {
-			if (p instanceof INodePattern)
-				return new NodeResult(this.archive);
-			if (p instanceof IRelationPattern)
-				return new RelationResult(this.archive);
-		}
-		return new NoResult();
-	}
-
-	public static interface Instance {
-		void whereId(Serializable id);
-		IFilter build();
+	public NodeQueryBuilder searchNode() {
+		return new NodeQueryBuilder(this.archive);
 	}
 
 	@RequiredArgsConstructor
-	protected class NodeResult implements Instance {
+	public static final class NodeQueryBuilder {
 		private final Archive archive;
-		private FilterNode filter;
 
-		@Override
-		public void whereId(Serializable id) {
-			
+		private Class<?> type = null;
+		private Serializable id = null;
+
+		private LabeledHandler labeledHandler = null;
+		private IdentifiedHandler identifiedHandler = null;
+		private ParamHandler paramHandler = null;
+
+		public NodeQueryBuilder where(Class<?> type) {
+			this.type = type;
+			this.labeledHandler = new LabeledHandler();
+			for (IPattern p : this.archive.getPatterns(type))
+				this.labeledHandler.addLabels(p.getLabels());
+			return this;
 		}
 
-		@Override
+		public NodeQueryBuilder whereParam(String label, Object value) {
+			this.addParam(label, value);
+			return this;
+		}
+
+		public NodeQueryBuilder whereId(Serializable id) {
+			this.id = id;
+			return this;
+		}
+
+		protected void addParam(String label, Object value) {
+			if (this.paramHandler == null)
+				this.paramHandler = new ParamHandler();
+			this.paramHandler.addParam(label, value);
+		}
+
 		public IFilter build() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+			if (this.archive.getCnf()
+					.getModule()
+					.checkIdType(id.getClass())) {
+				this.identifiedHandler = new IdentifiedHandler();
+				this.identifiedHandler.setId(id);
+			} else {
+				this.addParam(this.archive.getCnf()
+						.getModule()
+						.getIdAlias(),
+						this.archive.getIdFieldConverter(type)
+								.toProperty(id));
+			}
 
-	}
-
-	@RequiredArgsConstructor
-	protected class RelationResult implements Instance {
-		private final Archive archive;
-		private FilterRelation filter;
-
-		@Override
-		public void whereId(Serializable id) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public IFilter build() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-	}
-
-	protected class NoResult implements Instance {
-		@Override
-		public void whereId(Serializable id) {
-		}
-
-		@Override
-		public IFilter build() {
-			return null;
+			NodeFilter handler = new NodeFilter(FilterType.MATCH, this.labeledHandler, this.identifiedHandler,
+					this.paramHandler);
+			return (IFilter) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(), handler.gatherInterfaces(),
+					handler);
 		}
 	}
 }

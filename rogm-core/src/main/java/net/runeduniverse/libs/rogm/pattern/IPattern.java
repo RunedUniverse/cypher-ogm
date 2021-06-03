@@ -22,6 +22,8 @@ public interface IPattern {
 	Class<?> getType();
 
 	Collection<String> getLabels();
+	
+	FieldPattern getField(Class<? extends Annotation> anno);
 
 	IConverter<?> getIdConverter();
 

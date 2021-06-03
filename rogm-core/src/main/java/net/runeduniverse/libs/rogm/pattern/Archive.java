@@ -6,6 +6,8 @@ import java.util.Set;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.Configuration;
+import net.runeduniverse.libs.rogm.annotations.IConverter;
+import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
@@ -29,6 +31,7 @@ public final class Archive {
 				IValidatable.validate(pair.getValue());
 		}
 	};
+	@Getter
 	private final Configuration cnf;
 	@Getter
 	private final Assembler assembler;
@@ -67,9 +70,20 @@ public final class Archive {
 			m.configure(this);
 		return this;
 	}
-	
+
 	// QUERRYING
-	public Set<IPattern> getPatterns(Class<?> type){
+	public Set<IPattern> getPatterns(Class<?> type) {
 		return this.patterns.get(type);
+	}
+
+	public IConverter<?> getIdFieldConverter(Class<?> type) {
+		IConverter<?> converter = null;
+		for (IPattern p : this.patterns.get(type))
+			if (p.getField(Id.class) != null) {
+				converter = p.getField(Id.class)
+						.getConverter();
+				break;
+			}
+		return IConverter.validate(converter);
 	}
 }

@@ -30,7 +30,8 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 
 	public void validate() throws Exception {
 		this.idPattern = super.getField(Id.class);
-		this.idConverter = this.idPattern.getConverter();
+		if (this.idPattern != null)
+			this.idConverter = this.idPattern.getConverter();
 		for (Map.Entry<?, FieldPattern> entry : this.fields.entrySet())
 			IValidatable.validate(entry.getValue());
 	}

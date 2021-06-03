@@ -50,6 +50,12 @@ public interface IConverter<T extends Serializable> {
 
 	}
 
+	public static IConverter<?> validate(IConverter<?> converter) {
+		if (converter == null)
+			return new UnSet();
+		return converter;
+	}
+
 	public class UnSet implements IConverter<Serializable> {
 
 		@Override
