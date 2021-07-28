@@ -9,6 +9,7 @@ import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.error.ScannerException;
+import net.runeduniverse.libs.rogm.logging.Level;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 import net.runeduniverse.libs.rogm.pipeline.Assembler;
@@ -20,6 +21,8 @@ import net.runeduniverse.libs.utils.DataMap;
 import net.runeduniverse.libs.utils.DataMap.Value;
 
 public final class Archive {
+	public static boolean PACKAGE_SCANNER_DEBUG_MODE = false;
+
 	private final DataMap<Class<?>, Set<IPattern>, Set<EntityFactory>> patterns = new DataHashMap<>();
 	private final Set<ClassLoader> loader = new HashSet<>();
 	private final Set<String> pkgs = new HashSet<>();
@@ -48,10 +51,8 @@ public final class Archive {
 
 	public void scan(TypeScanner... scanner) throws ScannerException {
 		new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), this.validator)
-				/*
-				 * .enableDebugMode(cnf.getLoggingLevel() != null && cnf.getLoggingLevel()
-				 * .intValue() < Level.INFO.intValue())
-				 */
+				.enableDebugMode(PACKAGE_SCANNER_DEBUG_MODE || cnf.getLoggingLevel() != null && cnf.getLoggingLevel()
+						.intValue() < Level.INFO.intValue())
 				.scan()
 				.throwSurpressions(new ScannerException("Pattern parsing failed! See surpressed Exceptions!"));
 	}
