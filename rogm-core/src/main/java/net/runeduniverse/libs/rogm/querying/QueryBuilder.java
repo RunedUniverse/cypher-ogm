@@ -2,6 +2,8 @@ package net.runeduniverse.libs.rogm.querying;
 
 import java.io.Serializable;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.pattern.Archive;
@@ -29,15 +31,14 @@ public final class QueryBuilder {
 		private Class<?> type = null;
 		private Serializable id = null;
 
-		private LabeledHandler labeledHandler = null;
-		private IdentifiedHandler identifiedHandler = null;
-		private ParamHandler paramHandler = null;
+		private Map<Class<?>, Object> handler = new HashMap<>();
 
 		public NodeQueryBuilder where(Class<?> type) {
 			this.type = type;
-			this.labeledHandler = new LabeledHandler();
+			LabeledHandler labeledHandler = new LabeledHandler();
 			for (IPattern p : this.archive.getPatterns(type))
-				this.labeledHandler.addLabels(p.getLabels());
+				labeledHandler.addLabels(p.getLabels());
+			this.handler.put(LabeledHandler.class, labeledHandler);
 			return this;
 		}
 
@@ -52,29 +53,32 @@ public final class QueryBuilder {
 		}
 
 		protected void addParam(String label, Object value) {
-			if (this.paramHandler == null)
-				this.paramHandler = new ParamHandler();
-			this.paramHandler.addParam(label, value);
+			QueryBuilder.ensure(this.handler, new ParamHandler())
+					.addParam(label, value);
 		}
 
 		public IFilter build() {
 			if (this.archive.getCnf()
 					.getModule()
-					.checkIdType(id.getClass())) {
-				this.identifiedHandler = new IdentifiedHandler();
-				this.identifiedHandler.setId(id);
-			} else {
+					.checkIdType(id.getClass()))
+				this.handler.put(IdentifiedHandler.class, new IdentifiedHandler(id));
+			else
 				this.addParam(this.archive.getCnf()
 						.getModule()
 						.getIdAlias(),
 						this.archive.getIdFieldConverter(type)
 								.toProperty(id));
-			}
 
-			NodeFilter handler = new NodeFilter(FilterType.MATCH, this.labeledHandler, this.identifiedHandler,
-					this.paramHandler);
+			NodeFilter handler = new NodeFilter(FilterType.MATCH, this.handler);
 			return (IFilter) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(), handler.gatherInterfaces(),
 					handler);
 		}
+	}
+
+	protected static <T> T ensure(final Map<Class<?>, Object> handler, T instance) {
+		Class<?> clazz = instance.getClass();
+		if (!handler.containsKey(clazz))
+			handler.put(clazz, instance);
+		return instance;
 	}
 }

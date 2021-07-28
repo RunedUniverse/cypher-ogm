@@ -2,49 +2,43 @@ package net.runeduniverse.libs.rogm.querying.builder;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.querying.IIdentified;
-import net.runeduniverse.libs.rogm.querying.ILabeled;
-import net.runeduniverse.libs.rogm.querying.IParameterized;
 
 @RequiredArgsConstructor
 public class NodeFilter implements IFilter, InvocationHandler {
 
 	@Getter
 	private final FilterType filterType;
-
-	private final LabeledHandler labeledHandler;
-	private final IdentifiedHandler identifiedHandler;
-	private final ParamHandler paramHandler;
+	private final Map<Class<?>, Object> handler;
 
 	public Class<?>[] gatherInterfaces() {
-		List<Class<?>> l = new ArrayList<>();
+		Set<Class<?>> l = new HashSet<>();
 		l.add(IFilter.class);
-		if (this.labeledHandler != null)
-			l.add(ILabeled.class);
-		if (this.identifiedHandler != null)
-			l.add(IIdentified.class);
-		if (this.paramHandler != null)
-			l.add(IParameterized.class);
+		this.handler.forEach((c, i) -> {
+			if (i != null)
+				l.add(c);
+		});
 		return l.toArray(new Class<?>[l.size()]);
 	}
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		
 		if (has(IFilter.class, method))
 			return method.invoke(this, args);
-		if (has(ILabeled.class, method))
-			return method.invoke(this.labeledHandler, args);
-		if (has(IIdentified.class, method))
-			return method.invoke(this.identifiedHandler, args);
-		if (has(IParameterized.class, method))
-			return method.invoke(this.paramHandler, args);
+		
+		for (Class<?> clazz : this.handler.keySet()) {
+			if (has(clazz, method))
+				return method.invoke(this.handler.get(clazz), args);
+		}
 		return new Exception("Interface not found!");
 	}
 

@@ -2,13 +2,13 @@ package net.runeduniverse.libs.rogm.querying.builder;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IIdentified;
 
-@NoArgsConstructor
+@AllArgsConstructor
 public class IdentifiedHandler implements IIdentified<Serializable> {
 	@Getter
 	@Setter
