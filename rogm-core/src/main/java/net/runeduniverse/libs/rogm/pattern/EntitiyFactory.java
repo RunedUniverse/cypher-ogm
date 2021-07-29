@@ -39,7 +39,7 @@ public class EntitiyFactory implements IStorage {
 	private final IBuffer buffer;
 	@Getter
 	private final UniversalLogger logger;
-
+	@Getter
 	private final Archive archive;
 
 	public EntitiyFactory(Configuration cnf, Parser.Instance parser) throws Exception {
@@ -57,16 +57,16 @@ public class EntitiyFactory implements IStorage {
 	}
 
 	public INodePattern getNode(Class<?> clazz) {
-		return this.archive.getPattern(clazz, INodePattern.class);
+		return this.archive.getPattern(clazz, NodePattern.class);
 	}
 
 	public IRelationPattern getRelation(Class<?> clazz) {
-		return this.archive.getPattern(clazz, IRelationPattern.class);
+		return this.archive.getPattern(clazz, RelationPattern.class);
 	}
 
 	@Override
 	public IPattern getPattern(Class<?> clazz) throws Exception {
-		return this.archive.getPattern(clazz, IAnyPattern.class);
+		return this.archive.getPattern(clazz, NodePattern.class, RelationPattern.class);
 	}
 
 	public boolean isIdSet(Object entity) {
@@ -251,9 +251,5 @@ public class EntitiyFactory implements IStorage {
 				return RELATION;
 			return UNKNOWN;
 		}
-	}
-
-	protected interface IAnyPattern extends INodePattern, IRelationPattern {
-
 	}
 }

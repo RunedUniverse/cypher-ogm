@@ -151,7 +151,7 @@ public class RelationPattern extends APattern implements IRelationPattern {
 			public void postSave() {
 				for (Object object : includedData.keySet())
 					try {
-						RelationPattern.this.archive.getPattern(object.getClass(), EntitiyFactory.IAnyPattern.class)
+						RelationPattern.this.archive.getPattern(object.getClass(), NodePattern.class, RelationPattern.class)
 								.callMethod(PostSave.class, object);
 						// factory.getPattern(object.getClass()).callMethod(PostSave.class, object);
 					} catch (Exception e) {
@@ -281,7 +281,7 @@ public class RelationPattern extends APattern implements IRelationPattern {
 	}
 
 	private NodeQueryBuilder _getNode(Class<?> type, RelationQueryBuilder relation, boolean lazy) {
-		INodePattern node = this.archive.getPattern(type, INodePattern.class);
+		INodePattern node = this.archive.getPattern(type, NodePattern.class);
 		if (node == null)
 			return null;
 		return node.search(relation, lazy);
@@ -290,7 +290,7 @@ public class RelationPattern extends APattern implements IRelationPattern {
 	private NodeQueryBuilder _getDataNode(FieldPattern field, Object entity,
 			Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData, RelationQueryBuilder relation, Integer depth)
 			throws Exception {
-		INodePattern node = this.archive.getPattern(field.getType(), INodePattern.class);
+		INodePattern node = this.archive.getPattern(field.getType(), NodePattern.class);
 		if (node == null)
 			throw new Exception("NodePattern for Field<" + field.toString() + "> undefined!");
 		NodeQueryBuilder nodeBuilder = node.save(field.getValue(entity), includedData, depth);

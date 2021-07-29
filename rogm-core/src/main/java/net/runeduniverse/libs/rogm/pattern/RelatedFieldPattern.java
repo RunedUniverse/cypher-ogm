@@ -37,7 +37,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 		if (this.type.isAnnotationPresent(NodeEntity.class))
 			this.definedRelation = false;
 		else if (this.type.isAnnotationPresent(RelationshipEntity.class)) {
-			this.label = this.archive.getPattern(this.type, IRelationPattern.class)
+			this.label = this.archive.getPattern(this.type, RelationPattern.class)
 					.getLabel();
 			this.definedRelation = true;
 		} else
@@ -49,7 +49,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 	public RelationQueryBuilder queryRelation(NodeQueryBuilder origin) throws Exception {
 		RelationQueryBuilder relationBuilder = null;
 		if (this.definedRelation)
-			relationBuilder = this.archive.getPattern(this.type, IRelationPattern.class)
+			relationBuilder = this.archive.getPattern(this.type, RelationPattern.class)
 					.createFilter(origin, direction);
 		else {
 			relationBuilder = this.archive.getQueryBuilder()
@@ -70,7 +70,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 	}
 
 	private NodeQueryBuilder _getNode(Class<?> type, RelationQueryBuilder relation) throws Exception {
-		INodePattern node = this.archive.getPattern(type, INodePattern.class);
+		INodePattern node = this.archive.getPattern(type, NodePattern.class);
 		if (node == null)
 			throw new Exception("Unsupported Class<" + type.getName() + "> as @Relation found!");
 		return node.search(relation, true);
@@ -99,7 +99,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 		// is a child of this.type
 		Class<?> clazz = relEntity.getClass();
 		if (clazz.isAnnotationPresent(RelationshipEntity.class)) {
-			relationBuilder = this.archive.getPattern(clazz, IRelationPattern.class)
+			relationBuilder = this.archive.getPattern(clazz, RelationPattern.class)
 					.save(relEntity, nodeBuilder, this.direction, includedData, depth);
 			if (relationBuilder == null)
 				return;
@@ -108,7 +108,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 					.relation()
 					.whereDirection(this.direction)
 					.setStart(nodeBuilder)
-					.setTarget(this.archive.getPattern(clazz, INodePattern.class)
+					.setTarget(this.archive.getPattern(clazz, NodePattern.class)
 							.save(relEntity, includedData, depth));
 			// relationBuilder =
 			// this.factory.getFactory().createDataRelation(this.direction, null);

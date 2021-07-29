@@ -111,7 +111,7 @@ public class NodePattern extends APattern implements INodePattern {
 				for (Object object : includedData.keySet())
 					if (object != null)
 						try {
-							archive.getPattern(object.getClass(), EntitiyFactory.IAnyPattern.class)
+							archive.getPattern(object.getClass(), NodePattern.class, RelationPattern.class)
 									.callMethod(PostSave.class, object);
 						} catch (Exception e) {
 							e.printStackTrace();

@@ -108,6 +108,14 @@ public final class Archive {
 		return null;
 	}
 
+	public IPattern getPattern(Class<?> type, Class<?>... patternTypes) {
+		for (IPattern pattern : this.patterns.get(type))
+			for (int i = 0; i < patternTypes.length; i++)
+				if (patternTypes[i].isInstance(pattern))
+					return pattern;
+		return null;
+	}
+
 	public IConverter<?> getIdFieldConverter(Class<?> type) {
 		IConverter<?> converter = null;
 		for (IPattern p : this.patterns.get(type))

@@ -1,9 +1,11 @@
-package net.runeduniverse.libs.rogm.test;
+package net.runeduniverse.libs.rogm.test.system;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
+import net.runeduniverse.libs.rogm.test.ATest;
 import net.runeduniverse.libs.rogm.test.model.Company;
 
 public class QueryBuilderTest extends ATest {
@@ -14,7 +16,9 @@ public class QueryBuilderTest extends ATest {
 	}
 
 	@Test
+	@Tag("system")
 	private void test() {
-		builder.search(Company.class);
+		builder.node()
+				.where(Company.class);
 	}
 }
