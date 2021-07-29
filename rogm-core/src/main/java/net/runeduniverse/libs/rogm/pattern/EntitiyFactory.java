@@ -46,7 +46,7 @@ public class EntitiyFactory implements IStorage {
 	@Getter
 	private final UniversalLogger logger;
 
-	private final DataMap<Class<?>, IPattern, PatternType> patterns = new DataHashMap<>();
+	private final Archive archive;
 
 	public EntitiyFactory(Configuration cnf, Parser.Instance parser) throws Exception {
 		this.config = cnf;
@@ -55,46 +55,24 @@ public class EntitiyFactory implements IStorage {
 		this.parser = parser;
 		this.buffer = cnf.getBuffer()
 				.initialize(this);
-
-		new PackageScanner().includeOptions(cnf.getLoader(), cnf.getPkgs(), cnf.getScanner(),
-				new TypeScanner.NodeScanner(this, p -> patterns.put(p.getType(), (IPattern) p, PatternType.NODE)),
-				new TypeScanner.RelationScanner(this,
-						p -> patterns.put(p.getType(), (IPattern) p, PatternType.RELATION)),
-				new PackageScanner.Validator() {
-
-					@Override
-					public void validate() throws Exception {
-						EntitiyFactory.this.validate(PatternType.NODE);
-						EntitiyFactory.this.validate(PatternType.RELATION);
-						EntitiyFactory.this.validate(PatternType.ADAPTER);
-						EntitiyFactory.this.validate(PatternType.UNKNOWN);
-					}
-				})
-				.enableDebugMode(cnf.getLoggingLevel() != null && cnf.getLoggingLevel()
-						.intValue() < Level.INFO.intValue())
-				.scan()
-				.throwSurpressions(new Exception("Pattern parsing failed! See surpressed Exceptions!"));
-
-		this.logPatterns("Nodes", patterns, PatternType.NODE);
-		this.logPatterns("Relations", patterns, PatternType.RELATION);
+		this.archive = new Archive(this.config);
+		
+		this.archive.applyConfig();
+		
+		this.archive.logPatterns(this.logger);
 	}
 
 	public INodePattern getNode(Class<?> clazz) {
-		if (this.patterns.getData(clazz) == PatternType.NODE)
-			return (INodePattern) this.patterns.get(clazz);
-		return null;
+		return this.archive.getPattern(clazz, INodePattern.class);
 	}
 
 	public IRelationPattern getRelation(Class<?> clazz) {
-		if (this.patterns.getData(clazz) == PatternType.RELATION)
-			return (IRelationPattern) this.patterns.get(clazz);
-		return null;
+		return this.archive.getPattern(clazz, IRelationPattern.class);
 	}
 
+	@Override
 	public IPattern getPattern(Class<?> clazz) throws Exception {
-		if (this.patterns.containsKey(clazz))
-			return this.patterns.get(clazz);
-		throw logger.throwing("getPattern(Class<?>)", new Exception("Unsupported Entity-Class <" + clazz + "> found!"));
+		return this.archive.getPattern(clazz, IAnyPattern.class);
 	}
 
 	public boolean isIdSet(Object entity) {
@@ -277,18 +255,8 @@ public class EntitiyFactory implements IStorage {
 			return UNKNOWN;
 		}
 	}
-
-	private void logPatterns(String name, DataMap<Class<?>, IPattern, PatternType> patterns, PatternType type) {
-		StringBuilder msg = new StringBuilder(name + ':');
-		patterns.forEach(type, (c, p) -> {
-			msg.append("\n - " + c.getCanonicalName());
-		});
-		this.logger.finer(msg.toString());
-	}
-
-	private void validate(PatternType patternType) throws Exception {
-		for (Value<IPattern, PatternType> value : EntitiyFactory.this.patterns.valueSet())
-			if (patternType.equals(value.getData()))
-				IValidatable.validate(value.getValue());
+	
+	private interface IAnyPattern extends INodePattern, IRelationPattern{
+		
 	}
 }
