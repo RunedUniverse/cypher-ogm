@@ -4,28 +4,28 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.ILabeled;
 
-@RequiredArgsConstructor
-public class AProxyFilter <FILTER> implements IFilter, ILabeled, InvocationHandler {
+public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, InvocationHandler {
 	protected FILTER instance;
-	
-	protected final Map<Class<?>, Object> handler;
+
+	@Getter
+	protected final Map<Class<?>, Object> handler = new HashMap<>();
 	@Getter
 	@Setter
 	protected FilterType filterType = FilterType.MATCH;
 	@Getter
 	protected Set<String> labels;
-	
+
 	public FILTER addLabel(String label) {
 		this.labels.add(label);
 		return this.instance;

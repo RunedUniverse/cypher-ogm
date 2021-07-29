@@ -11,6 +11,7 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
 public interface IPattern {
 	PatternType getPatternType();
@@ -22,15 +23,15 @@ public interface IPattern {
 	Class<?> getType();
 
 	Collection<String> getLabels();
-	
+
 	FieldPattern getField(Class<? extends Annotation> anno);
 
 	IConverter<?> getIdConverter();
 
-	IFilter search(boolean lazy) throws Exception;
+	IQueryBuilder<?, ? extends IFilter> search(boolean lazy) throws Exception;
 
 	// search exactly 1 node / querry deeper layers for node
-	IFilter search(Serializable id, boolean lazy) throws Exception;
+	IQueryBuilder<?, ? extends IFilter> search(Serializable id, boolean lazy) throws Exception;
 
 	ISaveContainer save(Object entity, Integer depth) throws Exception;
 

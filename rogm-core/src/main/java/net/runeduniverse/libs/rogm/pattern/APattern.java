@@ -65,25 +65,27 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 		return entityId;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Object parse(IData data, LoadState loadState, Set<Entry> lazyEntries) throws Exception {
 		if (this.idPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
-		return this.factory.getBuffer()
+		return this.archive.getBuffer()
 				.acquire(this, data, this.type, loadState, lazyEntries);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Entry update(IData data) throws Exception {
 		if (this.idPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
-		Object entity = this.factory.getBuffer()
+		Object entity = this.archive.getBuffer()
 				.getById(data.getId(), this.type);
 
 		this.callMethod(PreReload.class, entity);
-		return this.factory.getBuffer()
+		return this.archive.getBuffer()
 				.update(entity, data);
 	}
 

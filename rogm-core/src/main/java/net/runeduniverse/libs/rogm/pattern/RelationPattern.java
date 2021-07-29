@@ -17,14 +17,11 @@ import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
-import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
-import net.runeduniverse.libs.rogm.querying.IFNode;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
 public class RelationPattern extends APattern implements IRelationPattern {
 
@@ -82,76 +79,81 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		return Arrays.asList(this.label);
 	}
 
-	public IFilter search(boolean lazy) {
-		return _complete(this.factory.getFactory()
-				.createRelation(this.direction), lazy);
+	public IQueryBuilder<?, ? extends IFilter> search(boolean lazy) {
+		return _complete(this.archive.getQueryBuilder()
+				.relation()
+				.whereDirection(this.direction), lazy);
+		// return _complete(this.factory.getFactory().createRelation(this.direction),
+		// lazy);
 	}
 
-	public IFilter search(Serializable id, boolean lazy) throws Exception {
-		return _complete(this.factory.getFactory()
-				.createIdRelation(this.direction, id, this.idConverter), lazy);
+	public IQueryBuilder<?, ? extends IFilter> search(Serializable id, boolean lazy) throws Exception {
+		return _complete(this.archive.getQueryBuilder()
+				.relation()
+				.whereDirection(this.direction)
+				.whereId(id), lazy);
+		// return _complete(this.factory.getFactory().createIdRelation(this.direction,
+		// id, this.idConverter), lazy);
 	}
 
-	private Relation _complete(Relation relation, boolean lazy) {
+	private RelationQueryBuilder _complete(RelationQueryBuilder relationBuilder, boolean lazy) {
 		if (!isBlank(this.label))
-			relation.getLabels()
+			relationBuilder.getLabels()
 					.add(label);
 
 		if (this.stEqTr) {
-			IFNode node = this._getNode(this.startField.getType(), relation, lazy);
-			relation.setStart(node);
-			relation.setTarget(node);
-			return relation;
+			NodeQueryBuilder nodeBuilder = this._getNode(this.startField.getType(), relationBuilder, lazy);
+			return relationBuilder.setStart(nodeBuilder)
+					.setTarget(nodeBuilder);
 		}
 
-		relation.setStart(this._getNode(this.startField.getType(), relation, lazy));
-		relation.setTarget(this._getNode(this.targetField.getType(), relation, lazy));
-		relation.setPattern(this);
-		relation.setReturned(true);
-		return relation;
+		return relationBuilder.setStart(this._getNode(this.startField.getType(), relationBuilder, lazy))
+				.setTarget(this._getNode(this.targetField.getType(), relationBuilder, lazy))
+				.storePattern(this)
+				.setReturned(true);
 	}
 
-	public Relation createFilter(IFNode caller, Direction direction) {
-		Relation relation = this.factory.getFactory()
-				.createRelation(this.direction);
-		relation.setPattern(this);
+	public RelationQueryBuilder createFilter(NodeQueryBuilder caller, Direction direction) {
+		RelationQueryBuilder relationBuilder = this.archive.getQueryBuilder()
+				.relation()
+				.whereDirection(this.direction)
+				.storePattern(this);
 		if (!isBlank(this.label))
-			relation.getLabels()
+			relationBuilder.getLabels()
 					.add(this.label);
 
-		if (this.stEqTr) {
-			relation.setStart(caller);
-			relation.setTarget(caller);
-			return relation;
-		}
+		if (this.stEqTr)
+			return relationBuilder.setStart(caller)
+					.setTarget(caller);
 
 		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
-				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING)) {
-			relation.setTarget(caller);
-			relation.setStart(this._getNode(this.startField.getType(), relation, true));
-		} else {
-			relation.setStart(caller);
-			relation.setTarget(this._getNode(this.targetField.getType(), relation, true));
-		}
-		return relation;
+				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING))
+			relationBuilder.setTarget(caller)
+					.setStart(this._getNode(this.startField.getType(), relationBuilder, true));
+		else
+			relationBuilder.setStart(caller)
+					.setTarget(this._getNode(this.targetField.getType(), relationBuilder, true));
+
+		return relationBuilder;
 	}
 
 	@Override
 	public ISaveContainer save(Object entity, Integer depth) throws Exception {
-		Map<Object, IDataContainer> includedData = new HashMap<>();
+		Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
 			@Override
 			public IDataContainer getDataContainer() throws Exception {
-				return save(entity, null, direction, includedData, depth);
+				return (IDataContainer) save(entity, null, direction, includedData, depth).getResult();
 			}
 
 			@Override
 			public void postSave() {
 				for (Object object : includedData.keySet())
 					try {
-						factory.getPattern(object.getClass())
+						RelationPattern.this.archive.getPattern(object.getClass(), EntitiyFactory.IAnyPattern.class)
 								.callMethod(PostSave.class, object);
+						// factory.getPattern(object.getClass()).callMethod(PostSave.class, object);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -164,85 +166,102 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		};
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IDeleteContainer delete(Object entity) throws Exception {
-		IBuffer.Entry entry = this.factory.getBuffer()
+		IBuffer.Entry entry = this.archive.getBuffer()
 				.getEntry(entity);
 		if (entry == null)
 			throw new Exception("Relation-Entity of type<" + entity.getClass()
 					.getName() + "> is not loaded!");
-		Relation relation = this.factory.getFactory()
-				.createIdRelation(Direction.BIDIRECTIONAL, entry.getId(), null);
-		relation.setReturned(true);
-		return new DeleteContainer(this, entity, entry.getId(), null, relation);
+
+		// this.factory.getFactory().createIdRelation(Direction.BIDIRECTIONAL,
+		// entry.getId(), null);
+		// relation.setReturned(true);
+		return new DeleteContainer(this, entity, entry.getId(), null, this.archive.getQueryBuilder()
+				.relation()
+				.whereDirection(Direction.BIDIRECTIONAL)
+				.whereId(entry.getId())
+				.setReturned(true)
+				.getResult());
 	}
 
-	public IDataRelation save(Object entity, IDataNode caller, Direction direction,
-			Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
+	public RelationQueryBuilder save(Object entity, NodeQueryBuilder caller, Direction direction,
+			Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 
 		if (entity == null || this.startField.getValue(entity) == null || this.targetField.getValue(entity) == null)
 			return null;
 
 		if (includedData.containsKey(entity))
-			return (IDataRelation) includedData.get(entity);
+			return (RelationQueryBuilder) includedData.get(entity);
 
 		this.callMethod(PreSave.class, entity);
 
-		IDataRelation relation = null;
+		RelationQueryBuilder relationBuilder = null;
+		// TODO simplify #1
 		if (this.isIdSet(entity)) {
 			// update (id)
-			relation = this.factory.getFactory()
-					.createDataRelation(this.direction, entity);
-			relation.setFilterType(FilterType.UPDATE);
+			relationBuilder = this.archive.getQueryBuilder()
+					.relation()
+					.whereDirection(this.direction)
+					.storeData(entity);
+			relationBuilder.asUpdate();
+			// this.factory.getFactory().createDataRelation(this.direction, entity);
+			// relationBuilder.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
-			relation = this.factory.getFactory()
-					.createDataRelation(this.direction, entity);
-			relation.setFilterType(FilterType.CREATE);
+			relationBuilder = this.archive.getQueryBuilder()
+					.relation()
+					.whereDirection(this.direction)
+					.storeData(entity);
+			relationBuilder.asWrite();
+			// this.factory.getFactory().createDataRelation(this.direction, entity);
+			// relationBuilder.setFilterType(FilterType.CREATE);
 		}
-		relation.setReturned(true);
-		includedData.put(entity, relation);
+		// #1 end
+		relationBuilder.setReturned(true);
+		includedData.put(entity, relationBuilder);
 
 		if (!isBlank(this.label))
-			relation.getLabels()
+			relationBuilder.getLabels()
 					.add(this.label);
 
 		if (caller == null) {
 			// Relation gets called first
-			caller = _getDataNode(this.startField, entity, includedData, relation, depth);
-			relation.setStart(caller);
+			caller = _getDataNode(this.startField, entity, includedData, relationBuilder, depth);
+			relationBuilder.setStart(caller);
 
 			if (this.stEqTr)
-				relation.setTarget(caller);
+				relationBuilder.setTarget(caller);
 			else
-				relation.setTarget(_getDataNode(this.targetField, entity, includedData, relation, depth));
+				relationBuilder.setTarget(_getDataNode(this.targetField, entity, includedData, relationBuilder, depth));
 
-			return _savecheck(relation);
+			return _savecheck(relationBuilder);
 		}
 
 		if (this.stEqTr) {
-			relation.setStart(caller);
-			relation.setTarget(caller);
-			return _savecheck(relation);
+			relationBuilder.setStart(caller);
+			relationBuilder.setTarget(caller);
+			return _savecheck(relationBuilder);
 		}
 
 		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
 				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING)) {
-			relation.setTarget(caller);
-			relation.setStart(
-					_getDataNode(this.startField, entity, includedData, relation, this.readonlyStart ? -1 : depth));
+			relationBuilder.setTarget(caller);
+			relationBuilder.setStart(_getDataNode(this.startField, entity, includedData, relationBuilder,
+					this.readonlyStart ? -1 : depth));
 		} else {
-			relation.setStart(caller);
-			relation.setTarget(
-					_getDataNode(this.targetField, entity, includedData, relation, this.readonlyTarget ? -1 : depth));
+			relationBuilder.setStart(caller);
+			relationBuilder.setTarget(_getDataNode(this.targetField, entity, includedData, relationBuilder,
+					this.readonlyTarget ? -1 : depth));
 		}
-		return _savecheck(relation);
+		return _savecheck(relationBuilder);
 	}
 
-	private IDataRelation _savecheck(IDataRelation relation) {
-		if (relation.getStart() == null || relation.getTarget() == null)
+	private RelationQueryBuilder _savecheck(RelationQueryBuilder relationBuilder) {
+		if (relationBuilder.getStart() == null || relationBuilder.getTarget() == null)
 			return null;
-		return relation;
+		return relationBuilder;
 	}
 
 	public void setStart(Object entity, Object value) {
@@ -261,22 +280,22 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		}
 	}
 
-	private IFNode _getNode(Class<?> type, IFRelation relation, boolean lazy) {
-		INodePattern node = this.factory.getNode(type);
+	private NodeQueryBuilder _getNode(Class<?> type, RelationQueryBuilder relation, boolean lazy) {
+		INodePattern node = this.archive.getPattern(type, INodePattern.class);
 		if (node == null)
 			return null;
 		return node.search(relation, lazy);
 	}
 
-	private IDataNode _getDataNode(FieldPattern field, Object entity, Map<Object, IDataContainer> includedData,
-			IDataRelation relation, Integer depth) throws Exception {
-		INodePattern node = this.factory.getNode(field.getType());
+	private NodeQueryBuilder _getDataNode(FieldPattern field, Object entity,
+			Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData, RelationQueryBuilder relation, Integer depth)
+			throws Exception {
+		INodePattern node = this.archive.getPattern(field.getType(), INodePattern.class);
 		if (node == null)
 			throw new Exception("NodePattern for Field<" + field.toString() + "> undefined!");
-		IDataNode dataNode = node.save(field.getValue(entity), includedData, depth);
-		dataNode.getRelations()
-				.add(relation);
-		return dataNode;
+		NodeQueryBuilder nodeBuilder = node.save(field.getValue(entity), includedData, depth);
+		nodeBuilder.addRelation(relation);
+		return nodeBuilder;
 	}
 
 }

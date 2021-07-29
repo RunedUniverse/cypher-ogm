@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.Direction;
@@ -23,15 +21,11 @@ import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
-import net.runeduniverse.libs.rogm.pattern.IPattern.PatternType;
-import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.scanner.PackageScanner;
 import net.runeduniverse.libs.utils.DataHashMap;
 import net.runeduniverse.libs.utils.DataMap;
-import net.runeduniverse.libs.utils.DataMap.Value;
 
 public class EntitiyFactory implements IStorage {
 
@@ -56,9 +50,9 @@ public class EntitiyFactory implements IStorage {
 		this.buffer = cnf.getBuffer()
 				.initialize(this);
 		this.archive = new Archive(this.config);
-		
+
 		this.archive.applyConfig();
-		
+
 		this.archive.logPatterns(this.logger);
 	}
 
@@ -87,18 +81,21 @@ public class EntitiyFactory implements IStorage {
 
 	public IFilter search(Class<?> clazz, boolean lazy) throws Exception {
 		return this.getPattern(clazz)
-				.search(lazy);
+				.search(lazy)
+				.getResult();
 	}
 
 	public IFilter search(Class<?> clazz, Serializable id, boolean lazy) throws Exception {
 		return this.getPattern(clazz)
-				.search(id, lazy);
+				.search(id, lazy)
+				.getResult();
 	}
 
 	public IFilter search(Object entity, boolean lazy) throws Exception {
 		IBuffer.Entry entry = this.buffer.getEntry(entity);
 		return entry.getPattern()
-				.search(entry.getId(), lazy);
+				.search(entry.getId(), lazy)
+				.getResult();
 	}
 
 	public ISaveContainer save(Object entity, Integer depth) throws Exception {
@@ -255,8 +252,8 @@ public class EntitiyFactory implements IStorage {
 			return UNKNOWN;
 		}
 	}
-	
-	private interface IAnyPattern extends INodePattern, IRelationPattern{
-		
+
+	protected interface IAnyPattern extends INodePattern, IRelationPattern {
+
 	}
 }

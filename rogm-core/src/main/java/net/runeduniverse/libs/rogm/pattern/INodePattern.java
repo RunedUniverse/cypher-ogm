@@ -3,16 +3,16 @@ package net.runeduniverse.libs.rogm.pattern;
 import java.util.Collection;
 import java.util.Map;
 
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
-import net.runeduniverse.libs.rogm.querying.IDataContainer;
-import net.runeduniverse.libs.rogm.querying.IFNode;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
+import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
 public interface INodePattern extends IPattern {
 
-	IFNode search(IFRelation caller, boolean lazy);
+	NodeQueryBuilder search(RelationQueryBuilder caller, boolean lazy);
 
-	IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception;
+	NodeQueryBuilder save(Object entity, Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData, Integer depth) throws Exception;
 
 	void deleteRelations(Object entity, Collection<Object> deletedEntities);
 }

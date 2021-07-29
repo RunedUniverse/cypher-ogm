@@ -1,7 +1,5 @@
 package net.runeduniverse.libs.rogm.querying.builder;
 
-import java.util.Map;
-
 import lombok.Getter;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
@@ -15,9 +13,8 @@ public class RelationFilter extends AProxyFilter<RelationFilter> implements IFRe
 	private Direction direction;
 	private IFNode start;
 	private IFNode target;
-	
-	public RelationFilter(Map<Class<?>, Object> handler) {
-		super(handler);
+
+	public RelationFilter() {
 		this.instance = this;
 	}
 

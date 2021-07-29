@@ -4,8 +4,6 @@ import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,14 +19,12 @@ import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.DataNode;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.Node;
-import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
-import net.runeduniverse.libs.rogm.querying.IFNode;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
 public class NodePattern extends APattern implements INodePattern {
 
@@ -53,50 +49,61 @@ public class NodePattern extends APattern implements INodePattern {
 		return PatternType.NODE;
 	}
 
-	public IFilter search(boolean lazy) throws Exception {
-		return this._search(this.factory.getFactory()
-				.createNode(this.labels, new ArrayList<>()), lazy, false);
+	public NodeQueryBuilder search(boolean lazy) throws Exception {
+		return this._search(this.archive.getQueryBuilder()
+				.node()
+				.where(this.type), lazy, false);
+		// return this._search(this.factory.getFactory().createNode(this.labels, new
+		// ArrayList<>()), lazy, false);
 	}
 
-	public IFilter search(Serializable id, boolean lazy) throws Exception {
-		return this._search(this.factory.getFactory()
-				.createIdNode(this.labels, new ArrayList<>(), id, this.idConverter), lazy, false);
+	public NodeQueryBuilder search(Serializable id, boolean lazy) throws Exception {
+		return this._search(this.archive.getQueryBuilder()
+				.node()
+				.where(this.type)
+				.whereId(id), lazy, false);
+		// return this._search(this.factory.getFactory().createIdNode(this.labels, new
+		// ArrayList<>(), id, this.idConverter), lazy, false);
 	}
 
-	public IFNode search(IFRelation caller, boolean lazy) {
+	public NodeQueryBuilder search(RelationQueryBuilder caller, boolean lazy) {
 		// includes ONLY the caller-relation filter
-		Node node = this.factory.getFactory()
-				.createNode(this.labels, Arrays.asList(caller));
+		NodeQueryBuilder nodeBuilder = this.archive.getQueryBuilder()
+				.node()
+				.where(this.type)
+				.addRelation(caller);
+		// Node node = this.factory.getFactory().createNode(this.labels,
+		// Arrays.asList(caller));
 		try {
-			return this._search(node, lazy, true);
+			return this._search(nodeBuilder, lazy, true);
+			// return this._search(node, lazy, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return node;
+		return nodeBuilder;
 	}
 
-	private IFNode _search(Node node, boolean lazy, boolean optional) throws Exception {
-		node.setPattern(this);
-		node.setReturned(true);
-		if (optional)
-			node.setOptional(true);
+	private NodeQueryBuilder _search(NodeQueryBuilder nodeBuilder, boolean lazy, boolean optional) throws Exception {
+		nodeBuilder.storePattern(this)
+				.setReturned(true)
+				.setOptional(optional);
 		if (lazy)
-			node.setLazy(true);
+			nodeBuilder.setLazy(true);
 		else
 			for (RelatedFieldPattern field : this.relFields)
-				node.getRelations()
-						.add(field.queryRelation(node));
-		return node;
+				nodeBuilder.addRelation(field.queryRelation(nodeBuilder));
+		return nodeBuilder;
 	}
 
 	@Override
 	public ISaveContainer save(Object entity, Integer depth) throws Exception {
-		Map<Object, IDataContainer> includedData = new HashMap<>();
+		Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
 			@Override
 			public IDataContainer getDataContainer() throws Exception {
-				return NodePattern.this.save(entity, includedData, depth);
+				return (IDataContainer) NodePattern.this.save(entity, includedData, depth)
+						.getResult();
 			}
 
 			@Override
@@ -104,77 +111,91 @@ public class NodePattern extends APattern implements INodePattern {
 				for (Object object : includedData.keySet())
 					if (object != null)
 						try {
-							archive.getPattern(object.getClass())
+							archive.getPattern(object.getClass(), EntitiyFactory.IAnyPattern.class)
 									.callMethod(PostSave.class, object);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 			}
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public Set<IFilter> getRelatedFilter() throws Exception {
 				Set<IFilter> set = new HashSet<>();
 				for (Object object : includedData.keySet()) {
-					if (!includedData.get(object)
-							.persist())
+					if (!includedData.get(object).persist())
 						continue;
-					Entry entry = factory.getBuffer()
+					Entry entry = NodePattern.this.archive.getBuffer()
 							.getEntry(object);
 					if (entry == null || entry.getLoadState() == LoadState.LAZY)
 						continue;
 					set.add(entry.getPattern()
-							.search(entry.getId(), false));
+							.search(entry.getId(), false)
+							.getResult());
 				}
 				return set;
 			}
 		};
 	}
 
-	public IDataNode save(Object entity, Map<Object, IDataContainer> includedData, Integer depth) throws Exception {
+	public NodeQueryBuilder save(Object entity, Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData,
+			Integer depth) throws Exception {
 		if (entity == null)
 			return null;
 
 		boolean readonly = depth == -1;
 		boolean persist = 0 < depth;
-		IDataContainer container = includedData.get(entity);
-		DataNode node = null;
+		IQueryBuilder<?, ? extends IFilter> container = includedData.get(entity);
+		NodeQueryBuilder nodeBuilder = null;
 
 		if (container != null) {
 			if (!(!readonly && container.isReadonly()))
-				return (IDataNode) container;
+				return (NodeQueryBuilder) container;
 			else
-				node = (DataNode) container;
+				nodeBuilder = (NodeQueryBuilder) container;
 		} else if (this.isIdSet(entity)) {
 			// update (id)
-			node = this.factory.getFactory()
-					.createIdDataNode(this.labels, new ArrayList<>(), this.getId(entity), this.idConverter, entity,
-							persist);
-			node.setFilterType(FilterType.UPDATE);
+			nodeBuilder = this.archive.getQueryBuilder()
+					.node()
+					.where(this.type)
+					.whereId(this.getId(entity))
+					.storeData(entity)
+					.setPersist(persist)
+					.asUpdate();
+			// nodeBuilder = this.factory.getFactory().createIdDataNode(this.labels, new
+			// ArrayList<>(), this.getId(entity), this.idConverter, entity, persist);
+			// nodeBuilder.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
-			node = this.factory.getFactory()
-					.createDataNode(this.labels, new ArrayList<>(), entity, persist);
-			node.setFilterType(FilterType.CREATE);
+			nodeBuilder = this.archive.getQueryBuilder()
+					.node()
+					.where(this.type)
+					.storeData(entity)
+					.setPersist(persist);
+			// nodeBuilder = this.factory.getFactory().createDataNode(this.labels, new
+			// ArrayList<>(), entity, persist);
+			// nodeBuilder.setFilterType(FilterType.CREATE);
 		}
 
 		this.callMethod(PreSave.class, entity);
 
-		node.setReturned(true);
-		node.setReadonly(readonly);
-		includedData.put(entity, node);
+		nodeBuilder.setReturned(true)
+				.setReadonly(readonly);
+		includedData.put(entity, nodeBuilder);
 
 		if (persist) {
 			depth = depth - 1;
 			for (RelatedFieldPattern field : this.relFields)
-				field.saveRelation(entity, node, includedData, depth);
+				field.saveRelation(entity, nodeBuilder, includedData, depth);
 		}
 
-		return node;
+		return nodeBuilder;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IDeleteContainer delete(Object entity) throws Exception {
-		IBuffer.Entry entry = this.factory.getBuffer()
+		IBuffer.Entry entry = this.archive.getBuffer()
 				.getEntry(entity);
 		if (entry == null)
 			throw new Exception("Node-Entity of type<" + entity.getClass()
@@ -182,11 +203,23 @@ public class NodePattern extends APattern implements INodePattern {
 
 		this.callMethod(PreDelete.class, entity);
 
-		Node node = this.factory.getFactory()
-				.createIdNode(null, null, entry.getId(), null);
-		node.setReturned(true);
-		return new DeleteContainer(this, entity, entry.getId(), this.factory.getFactory()
-				.createEffectedFilter(entry.getId()), node);
+		// TODO simplyfy / shirnk
+		QueryBuilder qryBuilder = this.archive.getQueryBuilder();
+		NodeQueryBuilder nodeBuilder = qryBuilder.node()
+				.whereId(entry.getId());
+		nodeBuilder.asDelete(); // ? missing ?
+		// Node node = this.factory.getFactory().createIdNode(null, null, entry.getId(),
+		// null);
+		nodeBuilder.setReturned(true);
+		return new DeleteContainer(this, entity, entry.getId(), qryBuilder.relation()
+				.setStart(qryBuilder.node()
+						.whereId(entry.getId()))
+				.setTarget(qryBuilder.node()
+						.setReturned(true))
+				.setReturned(true)
+				.getResult(), nodeBuilder.getResult());
+		// return new DeleteContainer(this, entity, entry.getId(),
+		// this.factory.getFactory().createEffectedFilter(entry.getId()), node);
 	}
 
 	public void setRelation(Direction direction, String label, Object entity, Object value) {

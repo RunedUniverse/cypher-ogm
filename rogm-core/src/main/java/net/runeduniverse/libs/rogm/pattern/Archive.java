@@ -9,6 +9,7 @@ import lombok.Getter;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.logging.Level;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
@@ -39,11 +40,17 @@ public final class Archive {
 	@Getter
 	private final QueryBuilder queryBuilder;
 
+	// TODO remove
+	@Getter(onMethod_ = { @Deprecated })
+	private final IBuffer buffer;
+
 	public Archive(final Configuration cnf) {
 		this.cnf = cnf;
 		this.loader.addAll(this.cnf.getLoader());
 		this.pkgs.addAll(this.cnf.getPkgs());
 		this.queryBuilder = new QueryBuilder(this);
+		// TODO remove
+		this.buffer = this.cnf.getBuffer();
 	}
 
 	public void scan(TypeScanner... scanner) throws ScannerException {
