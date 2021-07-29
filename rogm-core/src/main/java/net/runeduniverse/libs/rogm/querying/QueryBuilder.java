@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.querying.builder.IdentifiedHandler;
-import net.runeduniverse.libs.rogm.querying.builder.LabeledHandler;
 import net.runeduniverse.libs.rogm.querying.builder.NodeFilter;
 import net.runeduniverse.libs.rogm.querying.builder.ParamHandler;
+import net.runeduniverse.libs.rogm.querying.builder.RelationFilter;
 
 public final class QueryBuilder {
 	private final Archive archive;
@@ -20,25 +20,31 @@ public final class QueryBuilder {
 		this.archive = archive;
 	}
 
-	public NodeQueryBuilder searchNode() {
+	public NodeQueryBuilder node() {
 		return new NodeQueryBuilder(this.archive);
 	}
 
-	@RequiredArgsConstructor
+	public RelationQueryBuilder relation() {
+		return new RelationQueryBuilder(this.archive);
+	}
+
 	public static final class NodeQueryBuilder {
 		private final Archive archive;
+		private final NodeFilter proxyFilter;
+		private final Map<Class<?>, Object> handler = new HashMap<>();
 
 		private Class<?> type = null;
 		private Serializable id = null;
 
-		private Map<Class<?>, Object> handler = new HashMap<>();
+		public NodeQueryBuilder(Archive archive) {
+			this.archive = archive;
+			this.proxyFilter = new NodeFilter(this.handler);
+		}
 
 		public NodeQueryBuilder where(Class<?> type) {
 			this.type = type;
-			LabeledHandler labeledHandler = new LabeledHandler();
 			for (IPattern p : this.archive.getPatterns(type))
-				labeledHandler.addLabels(p.getLabels());
-			this.handler.put(LabeledHandler.class, labeledHandler);
+				proxyFilter.addLabels(p.getLabels());
 			return this;
 		}
 
@@ -69,9 +75,54 @@ public final class QueryBuilder {
 						this.archive.getIdFieldConverter(type)
 								.toProperty(id));
 
-			NodeFilter handler = new NodeFilter(FilterType.MATCH, this.handler);
-			return (IFilter) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(), handler.gatherInterfaces(),
-					handler);
+			return (IFilter) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(), this.proxyFilter.gatherInterfaces(),
+					this.proxyFilter);
+		}
+	}
+
+	@RequiredArgsConstructor
+	public static final class RelationQueryBuilder {
+		private final Archive archive;
+		private final RelationFilter proxyFilter;
+		private final Map<Class<?>, Object> handler = new HashMap<>();
+
+		private Class<?> type = null;
+		private Serializable id = null;
+
+		public RelationQueryBuilder(Archive archive) {
+			this.archive = archive;
+			this.proxyFilter = new RelationFilter(this.handler);
+		}
+
+		public RelationQueryBuilder whereParam(String label, Object value) {
+			this.addParam(label, value);
+			return this;
+		}
+
+		public RelationQueryBuilder whereId(Serializable id) {
+			this.id = id;
+			return this;
+		}
+
+		protected void addParam(String label, Object value) {
+			QueryBuilder.ensure(this.handler, new ParamHandler())
+					.addParam(label, value);
+		}
+
+		public IFilter build() {
+			if (this.archive.getCnf()
+					.getModule()
+					.checkIdType(id.getClass()))
+				this.handler.put(IdentifiedHandler.class, new IdentifiedHandler(id));
+			else
+				this.addParam(this.archive.getCnf()
+						.getModule()
+						.getIdAlias(),
+						this.archive.getIdFieldConverter(type)
+								.toProperty(id));
+
+			return (IFilter) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(),
+					this.proxyFilter.gatherInterfaces(), this.proxyFilter);
 		}
 	}
 
