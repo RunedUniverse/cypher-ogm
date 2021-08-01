@@ -68,7 +68,8 @@ public class CypherLanguage implements Language {
 					qry.append(',' + _returnLabel(c, filter instanceof IFNode) + ',' + c);
 			} else
 				qry.append(String.join(",", rt));
-			return qry.append(';').toString();
+			return qry.append(';')
+					.toString();
 		}
 
 		@Override
@@ -84,20 +85,25 @@ public class CypherLanguage implements Language {
 
 			map.forEach((f, c) -> {
 				rt.add(_returnId(c));
-				try {
-					IDataContainer d = (IDataContainer) f;
-					if (d.isReadonly())
-						return;
-					if (d.getData() != null)
-						st.add(c + '=' + parser.serialize(d.getData()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				if (f instanceof IDataContainer)
+					try {
+						IDataContainer d = (IDataContainer) f;
+						if (d.isReadonly())
+							return;
+						if (d.getData() != null)
+							st.add(c + '=' + parser.serialize(d.getData()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 			});
 
 			// SET + RETURN
-			return new Mapper(this, node, qry.append("SET ").append(String.join(",", st)).append("\nRETURN ")
-					.append(String.join(",", rt)).append(';').toString(), filter, map);
+			return new Mapper(this, node, qry.append("SET ")
+					.append(String.join(",", st))
+					.append("\nRETURN ")
+					.append(String.join(",", rt))
+					.append(';')
+					.toString(), filter, map);
 		}
 
 		@Override
@@ -121,7 +127,8 @@ public class CypherLanguage implements Language {
 				qryBuilder.append(String.join("\n", dl));
 
 			DataMap<IFilter, String, FilterStatus> effectedMap = new DataHashMap<>();
-			return new Mapper(qryBuilder.append(';').toString(), this._load(effectedMap, relation, false), effectedMap);
+			return new Mapper(qryBuilder.append(';')
+					.toString(), this._load(effectedMap, relation, false), effectedMap);
 		}
 
 		@Override
@@ -215,7 +222,9 @@ public class CypherLanguage implements Language {
 			});
 			if (!where.isEmpty())
 				matchBuilder.append("WHERE " + String.join(" AND ", where) + '\n');
-			return matchBuilder.append(createBuilder).append(mergeBuilder).append(relMergeBuilder)
+			return matchBuilder.append(createBuilder)
+					.append(mergeBuilder)
+					.append(relMergeBuilder)
 					.append(optionalMatchBuilder);
 		}
 
@@ -227,8 +236,8 @@ public class CypherLanguage implements Language {
 			case UPDATE:
 				if (filter instanceof IFRelation)
 					return 0;
-				if (filter instanceof IParameterized
-						&& ((IParameterized) filter).getParams().containsKey(this.module.getIdAlias()))
+				if (filter instanceof IParameterized && ((IParameterized) filter).getParams()
+						.containsKey(this.module.getIdAlias()))
 					return 1;
 			default:
 				return -1;
@@ -297,7 +306,8 @@ public class CypherLanguage implements Language {
 				boolean optional, boolean skipData) {
 			StringBuilder builder = new StringBuilder(map.get(filter));
 
-			if (!skipData && !map.getData(filter).equals(FilterStatus.PRINTED)) {
+			if (!skipData && !map.getData(filter)
+					.equals(FilterStatus.PRINTED)) {
 				// PRINT LABELS
 				if (filter instanceof ILabeled) {
 					ILabeled holder = (ILabeled) filter;
@@ -308,7 +318,8 @@ public class CypherLanguage implements Language {
 				// PRINT DATA
 				if (filter instanceof IParameterized) {
 					IParameterized holder = (IParameterized) filter;
-					if (!holder.getParams().isEmpty())
+					if (!holder.getParams()
+							.isEmpty())
 						try {
 							builder.append(' ' + parser.serialize(holder.getParams()));
 						} catch (Exception e) {
@@ -457,7 +468,8 @@ public class CypherLanguage implements Language {
 			List<Set<IPattern.IData>> recordData = new ArrayList<>();
 
 			for (Map<String, Data> record : records) {
-				ids.add(record.get(this.map.get(this.primary)).getId());
+				ids.add(record.get(this.map.get(this.primary))
+						.getId());
 
 				Set<IPattern.IData> set = new HashSet<IPattern.IData>();
 				recordData.add(set);
@@ -527,8 +539,9 @@ public class CypherLanguage implements Language {
 
 		@Override
 		public String toString() {
-			return "PDATA filter:<" + filter.getClass().getSimpleName() + "> id<" + id + "> eid<" + entityId
-					+ "> labels<" + labels + "> data<" + data + ">";
+			return "PDATA filter:<" + filter.getClass()
+					.getSimpleName() + "> id<" + id + "> eid<" + entityId + "> labels<" + labels + "> data<" + data
+					+ ">";
 		}
 	}
 }

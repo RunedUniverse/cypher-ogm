@@ -90,8 +90,10 @@ public final class Archive {
 
 	private void appendSetContent(StringBuilder builder, Set<?> set) {
 		for (Object obj : set) {
+			if (obj == null)
+				continue;
 			Class<?> clazz = obj.getClass();
-			builder.append("\n - [" + clazz.getSimpleName() + "] " + clazz.getCanonicalName());
+			builder.append("\n   - [" + clazz.getSimpleName() + "] " + clazz.getCanonicalName());
 		}
 	}
 
@@ -100,9 +102,19 @@ public final class Archive {
 		return this.patterns.get(type);
 	}
 
-	@SuppressWarnings("unchecked")
 	public <P extends IPattern> P getPattern(Class<?> type, Class<P> patternType) {
-		for (IPattern pattern : this.patterns.get(type))
+		if (this.patterns.containsKey(type))
+			return this._getPattern(this.patterns.get(type), patternType);
+
+		for (Class<?> key : this.patterns.keySet())
+			if (type.isInstance(key))
+				return this._getPattern(this.patterns.get(key), patternType);
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <P extends IPattern> P _getPattern(Set<IPattern> patterns, Class<P> patternType) {
+		for (IPattern pattern : patterns)
 			if (patternType.isInstance(pattern))
 				return (P) pattern;
 		return null;

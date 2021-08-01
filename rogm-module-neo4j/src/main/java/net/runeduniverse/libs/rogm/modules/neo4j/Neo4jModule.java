@@ -22,10 +22,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.logging.UniversalLogger;
+import net.runeduniverse.libs.rogm.modules.AModule;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 
-public class Neo4jModule implements Module {
+public class Neo4jModule extends AModule {
 
 	private static final String ID_ALIAS = "_id";
 

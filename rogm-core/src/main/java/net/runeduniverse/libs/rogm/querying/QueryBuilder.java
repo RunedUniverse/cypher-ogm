@@ -67,7 +67,7 @@ public final class QueryBuilder {
 					.addAll(this.relations);
 
 			return (IFNode) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(),
-					this.proxyFilter.gatherInterfaces(), this.proxyFilter);
+					this.proxyFilter.buildInvocationHandler(), this.proxyFilter);
 		}
 	}
 
@@ -113,7 +113,7 @@ public final class QueryBuilder {
 			this.proxyFilter.setTarget(this.targetNodeBuilder.getResult());
 
 			return (IFRelation) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(),
-					this.proxyFilter.gatherInterfaces(), this.proxyFilter);
+					this.proxyFilter.buildInvocationHandler(), this.proxyFilter);
 		}
 	}
 
@@ -164,7 +164,7 @@ public final class QueryBuilder {
 
 		@Override
 		public BUILDER storeData(Object data) {
-			AQueryBuilder.ensure(this.handler, new DataContainerHandler())
+			AQueryBuilder.ensure(this.handler, IDataContainer.class, new DataContainerHandler())
 					.setData(data);
 			return this.instance;
 		}
@@ -189,14 +189,14 @@ public final class QueryBuilder {
 
 		@Override
 		public BUILDER setPersist(boolean persist) {
-			AQueryBuilder.ensure(this.handler, new DataContainerHandler())
+			AQueryBuilder.ensure(this.handler, IDataContainer.class, new DataContainerHandler())
 					.setPersist(persist);
 			return this.instance;
 		}
 
 		@Override
 		public BUILDER setReadonly(boolean readonly) {
-			AQueryBuilder.ensure(this.handler, new DataContainerHandler())
+			AQueryBuilder.ensure(this.handler, IDataContainer.class, new DataContainerHandler())
 					.setReadonly(readonly);
 			return this.instance;
 		}
@@ -207,7 +207,7 @@ public final class QueryBuilder {
 
 		@Override
 		public boolean persist() {
-			DataContainerHandler container = (DataContainerHandler) handler.get(DataContainerHandler.class);
+			DataContainerHandler container = (DataContainerHandler) handler.get(IDataContainer.class);
 			if (container == null)
 				return false;
 			return container.persist();
@@ -215,7 +215,7 @@ public final class QueryBuilder {
 
 		@Override
 		public boolean isReadonly() {
-			DataContainerHandler container = (DataContainerHandler) handler.get(DataContainerHandler.class);
+			DataContainerHandler container = (DataContainerHandler) handler.get(IDataContainer.class);
 			if (container == null)
 				return false;
 			return container.isReadonly();
@@ -246,16 +246,18 @@ public final class QueryBuilder {
 		}
 
 		public void prebuild() {
+			if (this.id == null)
+				return;
 			if (this.archive.getCnf()
 					.getModule()
-					.checkIdType(id.getClass()))
-				this.handler.put(IdentifiedHandler.class, new IdentifiedHandler(id));
+					.checkIdType(this.id.getClass()))
+				this.handler.put(IdentifiedHandler.class, new IdentifiedHandler(this.id));
 			else
 				this.addParam(this.archive.getCnf()
 						.getModule()
 						.getIdAlias(),
-						this.archive.getIdFieldConverter(type)
-								.toProperty(id));
+						this.archive.getIdFieldConverter(this.type)
+								.toProperty(this.id));
 		}
 
 		@Override
@@ -269,16 +271,15 @@ public final class QueryBuilder {
 		}
 
 		protected void addParam(String label, Object value) {
-			AQueryBuilder.ensure(this.handler, new ParamHandler())
+			AQueryBuilder.ensure(this.handler, IParameterized.class, new ParamHandler())
 					.addParam(label, value);
 		}
 
 		@SuppressWarnings("unchecked")
-		protected static <T> T ensure(final Map<Class<?>, Object> handler, T instance) {
-			Class<?> clazz = instance.getClass();
-			if (!handler.containsKey(clazz))
-				handler.put(clazz, instance);
-			return (T) handler.get(clazz);
+		protected static <T> T ensure(final Map<Class<?>, Object> handler, Class<?> keyInterface, T instance) {
+			if (!handler.containsKey(keyInterface))
+				handler.put(keyInterface, instance);
+			return (T) handler.get(keyInterface);
 		}
 	}
 }
