@@ -207,7 +207,7 @@ public final class QueryBuilder {
 
 		@Override
 		public boolean persist() {
-			DataContainerHandler container = (DataContainerHandler) handler.get(IDataContainer.class);
+			IDataContainer container = (IDataContainer) handler.get(IDataContainer.class);
 			if (container == null)
 				return false;
 			return container.persist();
@@ -215,7 +215,7 @@ public final class QueryBuilder {
 
 		@Override
 		public boolean isReadonly() {
-			DataContainerHandler container = (DataContainerHandler) handler.get(IDataContainer.class);
+			IDataContainer container = (IDataContainer) handler.get(IDataContainer.class);
 			if (container == null)
 				return false;
 			return container.isReadonly();
@@ -246,18 +246,25 @@ public final class QueryBuilder {
 		}
 
 		public void prebuild() {
-			if (this.id == null)
-				return;
-			if (this.archive.getCnf()
-					.getModule()
-					.checkIdType(this.id.getClass()))
-				this.handler.put(IdentifiedHandler.class, new IdentifiedHandler(this.id));
-			else
-				this.addParam(this.archive.getCnf()
+			// IIdentified.class
+			if (this.id != null)
+				if (this.archive.getCnf()
 						.getModule()
-						.getIdAlias(),
-						this.archive.getIdFieldConverter(this.type)
-								.toProperty(this.id));
+						.checkIdType(this.id.getClass()))
+					this.handler.put(IIdentified.class, new IdentifiedHandler(this.id));
+				else
+					this.addParam(this.archive.getCnf()
+							.getModule()
+							.getIdAlias(),
+							this.archive.getIdFieldConverter(this.type)
+									.toProperty(this.id));
+			// IDataContainer.class
+			DataContainerHandler dataContainer = (DataContainerHandler) this.handler.get(IDataContainer.class);
+			if (DataContainerHandler.required(dataContainer, this.proxyFilter.getFilterType())) {
+				if (dataContainer == null)
+					this.handler.put(IDataContainer.class, new DataContainerHandler());
+			} else
+				this.handler.remove(IDataContainer.class);
 		}
 
 		@Override
