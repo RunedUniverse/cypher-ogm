@@ -22,6 +22,7 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 
 	@Getter
 	protected final Map<Class<?>, Object> handler = new HashMap<>();
+	protected final Map<Method, Object> methodHandlerMapper = new HashMap<>();
 	protected final Set<Method> localMethods = new HashSet<>();
 	@Getter
 	@Setter
@@ -51,9 +52,25 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 				l.add(c);
 		});
 
+		this.localMethods.clear();
 		_collectMethods(this.instance.getClass());
 		for (Class<?> calzz : l)
 			_collectMethods(calzz);
+
+		// NEW
+		this.methodHandlerMapper.clear();
+		for (Class<?> clazz : this.handler.keySet()) {
+			Object methodHandler = this.handler.get(clazz);
+			for (Method m : methodHandler.getClass()
+					.getMethods())
+				this.methodHandlerMapper.put(m, methodHandler);
+		}
+		// remove locals => any thing from IFilter, ILabeled, InvocationHandler, Object
+		/*
+		 * this.localMethods.forEach(m -> { this.methodHandlerMapper.remove(m); });
+		 */
+
+		// OLD
 		return l.toArray(new Class<?>[l.size()]);
 	}
 
@@ -66,19 +83,34 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		try {
+
+			if (this.methodHandlerMapper.containsKey(method)) {
+				/*
+				 * Object x =
+				 * method.getDeclaringClass().cast(this.methodHandlerMapper.get(method)); return
+				 * method.invoke(x, args);-> call()
+				 */
+				return call(proxy, method, args);
+			}
+
 			if (this.localMethods.contains(method))
 				return method.invoke(this.instance, args);
 
-			for (Class<?> clazz : this.handler.keySet()) {
-				if (has(clazz, method))
-					return method.invoke(this.handler.get(clazz), args);
-			}
-			if (has(Object.class, method))
-				return method.invoke(this.instance, args);
+			/*
+			 * for (Class<?> clazz : this.handler.keySet()) { if (has(clazz, method)) return
+			 * method.invoke(this.handler.get(clazz), args); } if (has(Object.class,
+			 * method)) return method.invoke(this.instance, args);
+			 */
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw AProxyFilter.surpressErr(this, proxy, method, args, e);
 		}
 		throw new Exception("Interface for Method<" + method + "> not found! > ");
+	}
+
+	private Object call(Object proxy, Method method, Object[] args) throws Throwable {
+		Object x = method.getDeclaringClass()
+				.cast(this.methodHandlerMapper.get(method));
+		return method.invoke(x, args);
 	}
 
 	protected static boolean has(Class<?> c, Method method) {
@@ -92,6 +124,9 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 				+ (args == null ? "" : "\n  args[" + args.length + ']') + ")\n  registered Interfaces:";
 		for (Class<?> c : instance.handler.keySet())
 			msg += "\n  - " + c.getCanonicalName() + " > " + instance.handler.get(c);
+		msg += "\n  Mapper:";
+		for (Method m : instance.methodHandlerMapper.keySet())
+			msg += "\n  - " + m + "\n    '-> " + instance.methodHandlerMapper.get(m);
 
 		ExceptionSurpression surpression = new ExceptionSurpression(msg);
 		surpression.addSuppressed(throwable);
