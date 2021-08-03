@@ -5,6 +5,7 @@ pipeline {
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
+					sh 'mvn dependency:resolve'
 					sh 'mvn -P jenkins-install'
 				}
 			}
@@ -97,7 +98,7 @@ pipeline {
 
 		stage('Deploy') {
 			steps {
-				sh '''mvn -P jenkins-deploy'''
+				sh 'mvn -P jenkins-deploy'
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
