@@ -97,7 +97,6 @@ public class SessionTest extends ATest {
 	@Test
 	@Tag("db-neo4j")
 	public void updatePerson() throws Exception {
-
 		IFNode personFilter = this.qryBuilder.node()
 				.where(Person.class)
 				.whereParam("firstName", "Shawn")
@@ -105,7 +104,7 @@ public class SessionTest extends ATest {
 				.getResult();
 
 		Person shawn = session.load(Person.class, personFilter);
-		System.out.println(shawn.toString());
+		System.out.println("[Shawn]\n" + iLanguage.load(personFilter) + '\n');
 		shawn.setFirstName("Shawn");
 		shawn.setLastName("James");
 		shawn.setFictional(false);

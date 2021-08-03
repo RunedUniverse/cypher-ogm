@@ -111,7 +111,6 @@ public class CypherTest extends ATest {
 	public void matchCity() throws Exception {
 		System.out.println("[CITY]\n" + iLanguage.load(city) + '\n');
 	}
-
 	@Test
 	@Tag("system")
 	public void deleteEnnio() throws Exception {
