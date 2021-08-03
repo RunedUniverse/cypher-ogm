@@ -24,6 +24,7 @@ import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.utils.DataHashMap;
 import net.runeduniverse.libs.utils.DataMap;
 
@@ -54,6 +55,11 @@ public class EntitiyFactory implements IStorage {
 		this.archive.applyConfig();
 
 		this.archive.logPatterns(this.logger);
+	}
+
+	@Override
+	public QueryBuilder getQueryBuilder() {
+		return this.archive.getQueryBuilder();
 	}
 
 	public INodePattern getNode(Class<?> clazz) {

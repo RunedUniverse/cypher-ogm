@@ -19,27 +19,27 @@ and implement the Modules only in the actual programm!
 <dependency>
   <groupId>net.runeduniverse.libs.rogm</groupId>
   <artifactId>core</artifactId>
-  <version>2.0.13</version>
+  <version>2.1.1</version>
 </dependency>
 
 <!-- Parser: JSON -->
 <dependency>
   <groupId>net.runeduniverse.libs.rogm.parser</groupId>
   <artifactId>json</artifactId>
-  <version>2.0.12</version>
+  <version>2.1.1</version>
 </dependency>
 
 <!-- Language: Cypher -->
 <dependency>
   <groupId>net.runeduniverse.libs.rogm.lang</groupId>
   <artifactId>cypher</artifactId>
-  <version>2.0.11</version>
+  <version>2.1.1</version>
 </dependency>
 
 <!-- Module: Neo4j -->
 <dependency>
   <groupId>net.runeduniverse.libs.rogm.modules</groupId>
   <artifactId>neo4j</artifactId>
-  <version>2.0.12</version>
+  <version>2.1.1</version>
 </dependency>
 ```

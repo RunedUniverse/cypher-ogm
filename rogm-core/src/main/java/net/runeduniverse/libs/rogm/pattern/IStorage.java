@@ -13,15 +13,18 @@ import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 
 public interface IStorage {
 
 	Configuration getConfig();
 
+	QueryBuilder getQueryBuilder();
+
 	Parser.Instance getParser();
 
 	IBuffer getBuffer();
-	
+
 	UniversalLogger getLogger();
 
 	IPattern getPattern(Class<?> clazz) throws Exception;

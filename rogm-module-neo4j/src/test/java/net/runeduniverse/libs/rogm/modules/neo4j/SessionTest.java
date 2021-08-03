@@ -11,7 +11,8 @@ import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.Session;
 import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.modules.neo4j.SessionTest;
-import net.runeduniverse.libs.rogm.querying.IParameterized;
+import net.runeduniverse.libs.rogm.querying.IFNode;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.rogm.test.ATest;
 import net.runeduniverse.libs.rogm.test.model.*;
 import net.runeduniverse.libs.rogm.test.model.relations.*;
@@ -29,6 +30,7 @@ public class SessionTest extends ATest {
 	}
 
 	private Session session = null;
+	private QueryBuilder qryBuilder = null;
 
 	@BeforeAll
 	public static void prepare() {
@@ -56,6 +58,7 @@ public class SessionTest extends ATest {
 	public void connectionTest() throws Exception {
 		this.session = Session.create(config);
 		assertTrue(session.isConnected(), "Session is NOT connected");
+		this.qryBuilder = this.session.getQueryBuilder();
 	}
 
 	@AfterEach
@@ -94,12 +97,12 @@ public class SessionTest extends ATest {
 	@Test
 	@Tag("db-neo4j")
 	public void updatePerson() throws Exception {
-		IParameterized personFilter = (IParameterized) session.getPattern(Person.class)
-				.search(false);
-		personFilter.getParams()
-				.put("firstName", "Shawn");
-		personFilter.getParams()
-				.put("lastName", "James");
+
+		IFNode personFilter = this.qryBuilder.node()
+				.where(Person.class)
+				.whereParam("firstName", "Shawn")
+				.whereParam("lastName", "James")
+				.getResult();
 
 		Person shawn = session.load(Person.class, personFilter);
 		System.out.println(shawn.toString());
@@ -177,10 +180,10 @@ public class SessionTest extends ATest {
 	@Test
 	@Tag("db-neo4j")
 	public void loadCompany() throws Exception {
-		IParameterized gameFilter = (IParameterized) session.getPattern(Company.class)
-				.search(false);
-		gameFilter.getParams()
-				.put("name", "Naughty Dog");
+		IFNode gameFilter = this.qryBuilder.node()
+				.where(Company.class)
+				.whereParam("name", "Naughty Dog")
+				.getResult();
 
 		Company company = session.load(Company.class, gameFilter);
 		Game game = new Game();

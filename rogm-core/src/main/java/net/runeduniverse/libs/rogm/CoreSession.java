@@ -20,6 +20,7 @@ import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 
 public final class CoreSession implements Session {
 
@@ -312,8 +313,8 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public IPattern getPattern(Class<?> type) throws Exception {
-		return this.storage.getPattern(type);
+	public QueryBuilder getQueryBuilder() {
+		return this.storage.getQueryBuilder();
 	}
 
 	@Override
