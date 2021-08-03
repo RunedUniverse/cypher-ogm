@@ -4,6 +4,7 @@ pipeline {
 		stage('Update Maven Repo') {
 			steps {
 				sh 'mvn dependency:resolve'
+				sh 'mvn install --non-recursive'
 			}
 		}
 		stage('Build CORE') {
