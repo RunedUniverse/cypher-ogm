@@ -22,7 +22,6 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 	@Getter
 	protected final Map<Class<?>, Object> handler = new HashMap<>();
 	protected final Map<Method, Object> methodHandlerMapper = new HashMap<>();
-	protected final Set<Method> localMethods = new HashSet<>();
 	@Getter
 	@Setter
 	protected FilterType filterType = FilterType.MATCH;
@@ -51,9 +50,6 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 				l.add(c);
 		});
 
-		this.localMethods.clear();
-		_collectMethods(this.instance.getClass());
-
 		this.methodHandlerMapper.clear();
 		// PUT ORDER > LAST ADDED => PERSISTS
 		// 1. exten
@@ -73,12 +69,6 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 				this.methodHandlerMapper.put(m, this.instance);
 		}
 		return l.toArray(new Class<?>[l.size()]);
-	}
-
-	private void _collectMethods(Class<?> clazz) {
-		Method[] mArr = clazz.getMethods();
-		for (int i = 0; i < mArr.length; i++)
-			this.localMethods.add(mArr[i]);
 	}
 
 	@Override
