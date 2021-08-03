@@ -1,11 +1,14 @@
 pipeline {
 	agent any
 	stages {
-
+		stage('Update Maven Repo') {
+			steps {
+				sh 'mvn dependency:resolve'
+			}
+		}
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
-					sh 'mvn dependency:resolve'
 					sh 'mvn -P jenkins-install'
 				}
 			}
@@ -15,7 +18,6 @@ pipeline {
 				stage('JSON') {
 					steps {
 						dir(path: 'rogm-parser-json') {
-							sh 'mvn dependency:resolve'
 							sh 'mvn -P jenkins-install'
 						}
 					}
@@ -27,7 +29,6 @@ pipeline {
 				stage('Cypher') {
 					steps {
 						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn dependency:resolve'
 							sh 'mvn -P jenkins-install'
 						}
 					}
@@ -39,15 +40,13 @@ pipeline {
 				stage('Neo4J') {
 					steps {
 						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn dependency:resolve'
 							sh 'mvn -P jenkins-install'
 						}
 					}
 				}
 				stage('Decorator') {
 					steps {
-						dir(path: 'rogm-module-decorator') 
-							sh 'mvn dependency:resolve'{
+						dir(path: 'rogm-module-decorator') {
 							sh 'mvn -P jenkins-install'
 						}
 					}
