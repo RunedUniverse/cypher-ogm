@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.querying.builder;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
 import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.ILabeled;
@@ -63,20 +65,36 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		if (this.localMethods.contains(method))
-			return method.invoke(this.instance, args);
+		try {
+			if (this.localMethods.contains(method))
+				return method.invoke(this.instance, args);
 
-		for (Class<?> clazz : this.handler.keySet()) {
-			if (has(clazz, method))
-				return method.invoke(this.handler.get(clazz), args);
+			for (Class<?> clazz : this.handler.keySet()) {
+				if (has(clazz, method))
+					return method.invoke(this.handler.get(clazz), args);
+			}
+			if (has(Object.class, method))
+				return method.invoke(this.instance, args);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw AProxyFilter.surpressErr(this, proxy, method, args, e);
 		}
-		if (has(Object.class, method))
-			return method.invoke(this.instance, args);
 		throw new Exception("Interface for Method<" + method + "> not found! > ");
 	}
 
 	protected static boolean has(Class<?> c, Method method) {
 		return Arrays.asList(c.getMethods())
 				.contains(method);
+	}
+
+	private static Throwable surpressErr(AProxyFilter<?> instance, Object proxy, Method method, Object[] args,
+			Throwable throwable) {
+		String msg = "QueryBuilder > AProxyFilter > invoke()\n  Proxy: " + proxy + "\n  Method: " + method
+				+ (args == null ? "" : "\n  args[" + args.length + ']') + ")\n  registered Interfaces:";
+		for (Class<?> c : instance.handler.keySet())
+			msg += "\n  - " + c.getCanonicalName() + " > " + instance.handler.get(c);
+
+		ExceptionSurpression surpression = new ExceptionSurpression(msg);
+		surpression.addSuppressed(throwable);
+		return surpression;
 	}
 }
