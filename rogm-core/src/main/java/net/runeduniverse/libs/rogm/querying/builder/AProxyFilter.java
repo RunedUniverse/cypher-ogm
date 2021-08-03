@@ -3,7 +3,6 @@ package net.runeduniverse.libs.rogm.querying.builder;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,34 +53,25 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 
 		this.localMethods.clear();
 		_collectMethods(this.instance.getClass());
-		for (Class<?> calzz : l)
-			_collectMethods(calzz);
 
-		// NEW
 		this.methodHandlerMapper.clear();
+		// PUT ORDER > LAST ADDED => PERSISTS
+		// 1. exten
 		for (Class<?> clazz : this.handler.keySet()) {
 			Object methodHandler = this.handler.get(clazz);
 			for (Method m : clazz.getMethods())
 				this.methodHandlerMapper.put(m, methodHandler);
 		}
-		// remove locals => any thing from IFilter, ILabeled, InvocationHandler, Object
-		// add locals
+		// 2. this.instance Object
+		for (Method m : this.instance.getClass()
+				.getMethods())
+			this.methodHandlerMapper.put(m, this.instance);
+		// 3. this.instance Interfaces [IFilter, ILabeled, InvocationHandler, ...]
 		for (Class<?> clazz : this.instance.getClass()
 				.getInterfaces()) {
 			for (Method m : clazz.getMethods())
 				this.methodHandlerMapper.put(m, this.instance);
 		}
-		// ^^ instead of vv
-		/*
-		 * for (Method m : this.instance.getClass() .getMethods())
-		 * this.methodHandlerMapper.put(m, this.instance);
-		 */
-
-		/*
-		 * this.localMethods.forEach(m -> { this.methodHandlerMapper.remove(m); });
-		 */
-
-		// OLD
 		return l.toArray(new Class<?>[l.size()]);
 	}
 
@@ -95,38 +85,12 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		try {
 
-			if (this.methodHandlerMapper.containsKey(method)) {
-				/*
-				 * Object x =
-				 * method.getDeclaringClass().cast(this.methodHandlerMapper.get(method)); return
-				 * method.invoke(x, args);-> call()
-				 */
-				return call(proxy, method, args);
-			}
-
-			if (this.localMethods.contains(method))
-				return method.invoke(this.instance, args);
-
-			/*
-			 * for (Class<?> clazz : this.handler.keySet()) { if (has(clazz, method)) return
-			 * method.invoke(this.handler.get(clazz), args); } if (has(Object.class,
-			 * method)) return method.invoke(this.instance, args);
-			 */
+			if (this.methodHandlerMapper.containsKey(method))
+				return method.invoke(this.methodHandlerMapper.get(method), args);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw AProxyFilter.surpressErr(this, proxy, method, args, e);
 		}
-		throw new Exception("Interface for Method<" + method + "> not found! > ");
-	}
-
-	private Object call(Object proxy, Method method, Object[] args) throws Throwable {
-		Object x = method.getDeclaringClass()
-				.cast(this.methodHandlerMapper.get(method));
-		return method.invoke(x, args);
-	}
-
-	protected static boolean has(Class<?> c, Method method) {
-		return Arrays.asList(c.getMethods())
-				.contains(method);
+		throw new Exception("Interface for Method<" + method + "> not found!");
 	}
 
 	private static Throwable surpressErr(AProxyFilter<?> instance, Object proxy, Method method, Object[] args,
