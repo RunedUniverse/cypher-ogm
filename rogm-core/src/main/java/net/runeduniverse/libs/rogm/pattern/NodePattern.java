@@ -123,7 +123,8 @@ public class NodePattern extends APattern implements INodePattern {
 			public Set<IFilter> getRelatedFilter() throws Exception {
 				Set<IFilter> set = new HashSet<>();
 				for (Object object : includedData.keySet()) {
-					if (!includedData.get(object).persist())
+					if (!includedData.get(object)
+							.persist())
 						continue;
 					Entry entry = NodePattern.this.archive.getBuffer()
 							.getEntry(object);
@@ -171,7 +172,8 @@ public class NodePattern extends APattern implements INodePattern {
 					.node()
 					.where(this.type)
 					.storeData(entity)
-					.setPersist(persist);
+					.setPersist(persist)
+					.asWrite();
 			// nodeBuilder = this.factory.getFactory().createDataNode(this.labels, new
 			// ArrayList<>(), entity, persist);
 			// nodeBuilder.setFilterType(FilterType.CREATE);
