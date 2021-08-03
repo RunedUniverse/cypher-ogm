@@ -61,11 +61,22 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 		this.methodHandlerMapper.clear();
 		for (Class<?> clazz : this.handler.keySet()) {
 			Object methodHandler = this.handler.get(clazz);
-			for (Method m : methodHandler.getClass()
-					.getMethods())
+			for (Method m : clazz.getMethods())
 				this.methodHandlerMapper.put(m, methodHandler);
 		}
 		// remove locals => any thing from IFilter, ILabeled, InvocationHandler, Object
+		// add locals
+		for (Class<?> clazz : this.instance.getClass()
+				.getInterfaces()) {
+			for (Method m : clazz.getMethods())
+				this.methodHandlerMapper.put(m, this.instance);
+		}
+		// ^^ instead of vv
+		/*
+		 * for (Method m : this.instance.getClass() .getMethods())
+		 * this.methodHandlerMapper.put(m, this.instance);
+		 */
+
 		/*
 		 * this.localMethods.forEach(m -> { this.methodHandlerMapper.remove(m); });
 		 */
