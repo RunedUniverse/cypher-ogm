@@ -287,6 +287,7 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		return node.search(relation, lazy);
 	}
 
+	@SuppressWarnings("deprecation")
 	private NodeQueryBuilder _getDataNode(FieldPattern field, Object entity,
 			Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData, RelationQueryBuilder relation, Integer depth)
 			throws Exception {

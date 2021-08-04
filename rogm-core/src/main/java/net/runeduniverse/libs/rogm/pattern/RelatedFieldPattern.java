@@ -89,6 +89,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 			_addRelation(nodeBuilder, this.field.get(entity), includedData, depth);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void _addRelation(NodeQueryBuilder nodeBuilder, Object relEntity,
 			Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 		if (relEntity == null)
