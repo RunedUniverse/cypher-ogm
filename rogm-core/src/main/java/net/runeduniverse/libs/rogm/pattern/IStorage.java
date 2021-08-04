@@ -43,8 +43,6 @@ public interface IStorage {
 
 	void update(Object entity, IDataRecord record, Set<Entry> relatedEntities) throws Exception;
 
-	FilterFactory getFactory();
-
 	INodePattern getNode(Class<?> clazz);
 
 	IRelationPattern getRelation(Class<?> clazz);

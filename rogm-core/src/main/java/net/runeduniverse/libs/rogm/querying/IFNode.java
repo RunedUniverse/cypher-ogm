@@ -1,7 +1,7 @@
 package net.runeduniverse.libs.rogm.querying;
 
-import java.util.List;
+import java.util.Set;
 
 public interface IFNode extends IFilter, ILabeled {
-	List<IFRelation> getRelations();
+	Set<IFRelation> getRelations();
 }

@@ -33,8 +33,6 @@ public class EntitiyFactory implements IStorage {
 	@Getter
 	private final Configuration config;
 	@Getter
-	private final FilterFactory factory;
-	@Getter
 	private final Parser.Instance parser;
 	@Getter
 	private final IBuffer buffer;
@@ -46,7 +44,6 @@ public class EntitiyFactory implements IStorage {
 	public EntitiyFactory(Configuration cnf, Parser.Instance parser) throws Exception {
 		this.config = cnf;
 		this.logger = new UniversalLogger(EntitiyFactory.class, cnf.getLogger());
-		this.factory = new FilterFactory(cnf.getModule());
 		this.parser = parser;
 		this.buffer = cnf.getBuffer()
 				.initialize(this);
