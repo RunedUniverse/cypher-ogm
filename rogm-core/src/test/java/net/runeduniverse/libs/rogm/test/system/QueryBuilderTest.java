@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -95,24 +96,42 @@ public class QueryBuilderTest {
 
 		// get filter interfaces
 		IFNode inventory = inventoryNodeQryBuilder.getResult();
-		IFRelation slot = inventory.getRelations()
-				.get(0);
-		IFNode item = slot.getTarget();
+		IFRelation slot = slotRelQryBuilder.getResult();
+		IFNode item = itemNodeQryBuilder.getResult();
+		// check for null in results
+		assertNotNull(inventory, "Inventory is null");
+		assertNotNull(slot, "Slot is null");
+		assertNotNull(item, "Item is null");
+		// DEBUG
+		System.out.println("Slot >> Filter              [" + slot + "]: " + slot.hashCode()
+				+ "\n     >> Inventory.relations [" + inventory.getRelations()
+						.get(0)
+				+ "]: " + inventory.getRelations()
+						.get(0)
+						.hashCode()
+				+ "\n     >> Item.relations      [" + item.getRelations()
+						.get(0)
+				+ "]: " + item.getRelations()
+						.get(0)
+						.hashCode());
 		// assert connected Object-References
 		assertFalse(inventory.getRelations()
 				.isEmpty(), "Inventory.relations is empty");
 		assertFalse(item.getRelations()
 				.isEmpty(), "Item.relations is empty");
-		System.out.println("inventory.getRelations().contains(slot) >> " + inventory.getRelations()
-				.contains(slot));
-		assertTrue(inventory.getRelations()
-				.contains(slot), "Inventory.relations is missing ref to Slot");
-		assertTrue(item.getRelations()
-				.contains(slot), "Item.relations is missing ref to Slot");
+		assertTrue(contains(inventory.getRelations(), slot), "Inventory.relations is missing ref to Slot");
+		assertTrue(contains(item.getRelations(), slot), "Item.relations is missing ref to Slot");
 		assertNotNull(slot.getStart(), "Slot.start == null");
 		assertTrue(inventory == slot.getStart(), "Slot.start != inventory");
 		assertNotNull(slot.getTarget(), "Slot.target == null");
 		assertTrue(item == slot.getTarget(), "Slot.target != item");
+	}
+
+	private static boolean contains(Collection<?> coll, Object o) {
+		for (Object x : coll)
+			if (x == o)
+				return true;
+		return false;
 	}
 
 	private static class DebugNodeQueryBuilder extends NodeQueryBuilder {
