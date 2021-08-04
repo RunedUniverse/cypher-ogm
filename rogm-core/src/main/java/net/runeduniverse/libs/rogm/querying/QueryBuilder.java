@@ -119,8 +119,7 @@ public final class QueryBuilder {
 		}
 	}
 
-	public static class RelationQueryBuilder
-			extends AQueryBuilder<RelationQueryBuilder, RelationFilter, IFRelation> {
+	public static class RelationQueryBuilder extends AQueryBuilder<RelationQueryBuilder, RelationFilter, IFRelation> {
 
 		protected Direction direction = Direction.BIDIRECTIONAL;
 		protected NodeQueryBuilder startNodeBuilder = null;

@@ -92,7 +92,7 @@ public class PatternStorageTest extends ATest {
 		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.qryBuilder.node()
 				.where(clazz)
 				.setLazy(false)
-				.build()) + '\n';
+				.getResult()) + '\n';
 	}
 
 	private String _save(Object entity) throws Exception {

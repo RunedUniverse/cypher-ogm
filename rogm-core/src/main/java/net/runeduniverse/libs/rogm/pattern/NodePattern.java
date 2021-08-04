@@ -66,6 +66,7 @@ public class NodePattern extends APattern implements INodePattern {
 		// ArrayList<>(), id, this.idConverter), lazy, false);
 	}
 
+	@SuppressWarnings("deprecation")
 	public NodeQueryBuilder search(RelationQueryBuilder caller, boolean lazy) {
 		// includes ONLY the caller-relation filter
 		NodeQueryBuilder nodeBuilder = this.archive.getQueryBuilder()
@@ -83,6 +84,7 @@ public class NodePattern extends APattern implements INodePattern {
 		return nodeBuilder;
 	}
 
+	@SuppressWarnings("deprecation")
 	private NodeQueryBuilder _search(NodeQueryBuilder nodeBuilder, boolean lazy, boolean optional) throws Exception {
 		nodeBuilder.storePattern(this)
 				.setReturned(true)
