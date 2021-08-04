@@ -1,8 +1,10 @@
 package net.runeduniverse.libs.rogm.test.system;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Tag;
@@ -16,6 +18,7 @@ import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 import net.runeduniverse.libs.rogm.test.ATest;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 import net.runeduniverse.libs.rogm.test.model.Company;
@@ -30,6 +33,8 @@ public class QueryBuilderTest {
 
 	static {
 		Archive.PACKAGE_SCANNER_DEBUG_MODE = true;
+		QueryBuilder.CREATOR_NODE_BUILDER = a -> new DebugNodeQueryBuilder(a);
+		QueryBuilder.CREATOR_REALATION_BUILDER = a -> new DebugRelationQueryBuilder(a);
 	}
 
 	protected final Configuration cnf;
@@ -60,19 +65,46 @@ public class QueryBuilderTest {
 	@Tag("system")
 	public void nodeToNode() {
 		// build with QueryBuilder
-		NodeQueryBuilder invQryBuilder = builder.node()
+		DebugRelationQueryBuilder slotRelQryBuilder = (DebugRelationQueryBuilder) builder.relation()
+				.where(Slot.class)
+				.whereParam("slot", 0);
+		DebugNodeQueryBuilder itemNodeQryBuilder = (DebugNodeQueryBuilder) builder.node()
+				.where(Item.class);
+		DebugNodeQueryBuilder inventoryNodeQryBuilder = (DebugNodeQueryBuilder) builder.node()
 				.where(Inventory.class)
-				.addRelation(builder.relation()
-						.where(Slot.class)
-						.setTarget(builder.node()
-								.where(Item.class)))
+				.addRelationTo(/* relation: */
+						slotRelQryBuilder,
+						/* target: */
+						itemNodeQryBuilder)
 				.asRead();
+		// check Builder
+		// assert connected Object-References
+		assertFalse(inventoryNodeQryBuilder.getRelationBuilders()
+				.isEmpty(), "NodeQueryBuilder: Inventory.relations is empty");
+		assertFalse(itemNodeQryBuilder.getRelationBuilders()
+				.isEmpty(), "NodeQueryBuilder: Item.relations is empty");
+		assertTrue(inventoryNodeQryBuilder.getRelationBuilders()
+				.contains(slotRelQryBuilder), "NodeQueryBuilder: Inventory.relations is missing ref to Slot");
+		assertTrue(itemNodeQryBuilder.getRelationBuilders()
+				.contains(slotRelQryBuilder), "NodeQueryBuilder: Item.relations is missing ref to Slot");
+		assertNotNull(slotRelQryBuilder.getStart(), "NodeQueryBuilder: Slot.start == null");
+		assertTrue(inventoryNodeQryBuilder == slotRelQryBuilder.getStart(),
+				"NodeQueryBuilder: Slot.start != inventory");
+		assertNotNull(slotRelQryBuilder.getTarget(), "NodeQueryBuilder: Slot.target == null");
+		assertTrue(itemNodeQryBuilder == slotRelQryBuilder.getTarget(), "NodeQueryBuilder: Slot.target != item");
+
 		// get filter interfaces
-		IFNode inventory = invQryBuilder.getResult();
+		IFNode inventory = inventoryNodeQryBuilder.getResult();
 		IFRelation slot = inventory.getRelations()
 				.get(0);
 		IFNode item = slot.getTarget();
 		// assert connected Object-References
+		assertFalse(inventory.getRelations()
+				.isEmpty(), "Inventory.relations is empty");
+		assertFalse(item.getRelations()
+				.isEmpty(), "Item.relations is empty");
+		System.out.println("inventory.getRelations().contains(slot) >> " + inventory.getRelations()
+				.contains(slot));
 		assertTrue(inventory.getRelations()
 				.contains(slot), "Inventory.relations is missing ref to Slot");
 		assertTrue(item.getRelations()
@@ -81,5 +113,29 @@ public class QueryBuilderTest {
 		assertTrue(inventory == slot.getStart(), "Slot.start != inventory");
 		assertNotNull(slot.getTarget(), "Slot.target == null");
 		assertTrue(item == slot.getTarget(), "Slot.target != item");
+	}
+
+	private static class DebugNodeQueryBuilder extends NodeQueryBuilder {
+		public DebugNodeQueryBuilder(Archive archive) {
+			super(archive);
+		}
+
+		public Set<RelationQueryBuilder> getRelationBuilders() {
+			return super.relationBuilders;
+		}
+	}
+
+	private static class DebugRelationQueryBuilder extends RelationQueryBuilder {
+		public DebugRelationQueryBuilder(Archive archive) {
+			super(archive);
+		}
+
+		public NodeQueryBuilder getStart() {
+			return super.startNodeBuilder;
+		}
+
+		public NodeQueryBuilder getTarget() {
+			return super.targetNodeBuilder;
+		}
 	}
 }

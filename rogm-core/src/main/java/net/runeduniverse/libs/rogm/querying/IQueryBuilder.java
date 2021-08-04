@@ -39,7 +39,5 @@ public interface IQueryBuilder<B extends IQueryBuilder<?, R>, R extends IFilter>
 
 	public B asDelete();
 
-	public R build();
-
 	public R getResult();
 }

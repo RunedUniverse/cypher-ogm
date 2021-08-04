@@ -2,6 +2,7 @@ package net.runeduniverse.libs.rogm.querying;
 
 import java.io.Serializable;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,8 @@ import net.runeduniverse.libs.rogm.querying.builder.RelationFilter;
 import net.runeduniverse.libs.rogm.querying.builder.ReturnedHandler;
 
 public final class QueryBuilder {
+	public static creator<NodeQueryBuilder> CREATOR_NODE_BUILDER = QueryBuilder::createNodeBuilder;
+	public static creator<RelationQueryBuilder> CREATOR_REALATION_BUILDER = QueryBuilder::createRelationBuilder;
 	private final Archive archive;
 
 	public QueryBuilder(Archive archive) {
@@ -27,25 +30,66 @@ public final class QueryBuilder {
 	}
 
 	public NodeQueryBuilder node() {
-		return new NodeQueryBuilder(this.archive);
+		return CREATOR_NODE_BUILDER.create(this.archive);
 	}
 
 	public RelationQueryBuilder relation() {
-		return new RelationQueryBuilder(this.archive);
+		return CREATOR_REALATION_BUILDER.create(this.archive);
 	}
 
-	public static final class NodeQueryBuilder extends AQueryBuilder<NodeQueryBuilder, NodeFilter, IFNode> {
+	@FunctionalInterface
+	public static interface creator<BUILDER> {
+		BUILDER create(Archive archive);
+	}
 
-		private Set<RelationQueryBuilder> relationBuilders = new HashSet<>();
-		private Set<IFRelation> relations = new HashSet<>();
+	private static NodeQueryBuilder createNodeBuilder(Archive archive) {
+		return new NodeQueryBuilder(archive);
+	}
+
+	private static RelationQueryBuilder createRelationBuilder(Archive archive) {
+		return new RelationQueryBuilder(archive);
+	}
+
+	public static class NodeQueryBuilder extends AQueryBuilder<NodeQueryBuilder, NodeFilter, IFNode> {
+
+		protected Set<RelationQueryBuilder> relationBuilders = new HashSet<>();
 
 		public NodeQueryBuilder(Archive archive) {
 			super(archive, new NodeFilter());
 			super.instance = this;
 		}
 
+		@Deprecated
 		public NodeQueryBuilder addRelation(RelationQueryBuilder relation) {
 			this.relationBuilders.add(relation);
+			return this;
+		}
+
+		public NodeQueryBuilder addRelationTo(NodeQueryBuilder target) {
+			super.archive.getQueryBuilder()
+					.relation()
+					.setStart(this)
+					.setTarget(target);
+			return this;
+		}
+
+		public NodeQueryBuilder addRelationTo(RelationQueryBuilder relation, NodeQueryBuilder target) {
+			relation.setStart(this)
+					.setTarget(target);
+			return this;
+		}
+
+		public NodeQueryBuilder addRelationFrom(NodeQueryBuilder start) {
+			super.archive.getQueryBuilder()
+					.relation()
+					.setStart(start)
+					.setTarget(this);
+			return this;
+		}
+
+		public NodeQueryBuilder addRelationFrom(RelationQueryBuilder relation, NodeQueryBuilder start) {
+			relation.setStart(start)
+					.setTarget(this);
 			return this;
 		}
 
@@ -57,29 +101,34 @@ public final class QueryBuilder {
 			return this;
 		}
 
-		public IFNode build() {
+		protected IFNode build(final Map<IQueryBuilder<?, ?>, Object> registry) {
+			if (registry.containsKey(this))
+				return (IFNode) registry.get(this);
+
 			super.prebuild();
 
+			registry.put(this, super.result = (IFNode) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(),
+					this.proxyFilter.buildInvocationHandler(), this.proxyFilter));
+
+			// resolve relations AFTER the registry entry got created!!!
 			for (RelationQueryBuilder rqb : this.relationBuilders)
-				this.relations.add(rqb.getResult());
+				this.proxyFilter.getRelations()
+						.add(rqb.build(registry));
 
-			this.proxyFilter.getRelations()
-					.addAll(this.relations);
-
-			return (IFNode) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(),
-					this.proxyFilter.buildInvocationHandler(), this.proxyFilter);
+			return super.result;
 		}
 	}
 
-	public static final class RelationQueryBuilder
+	public static class RelationQueryBuilder
 			extends AQueryBuilder<RelationQueryBuilder, RelationFilter, IFRelation> {
 
-		private Direction direction = Direction.BIDIRECTIONAL;
-		private NodeQueryBuilder startNodeBuilder = null;
-		private NodeQueryBuilder targetNodeBuilder = null;
+		protected Direction direction = Direction.BIDIRECTIONAL;
+		protected NodeQueryBuilder startNodeBuilder = null;
+		protected NodeQueryBuilder targetNodeBuilder = null;
 
 		public RelationQueryBuilder(Archive archive) {
 			super(archive, new RelationFilter());
+			super.instance = this;
 		}
 
 		public RelationQueryBuilder whereDirection(Direction direction) {
@@ -88,12 +137,12 @@ public final class QueryBuilder {
 		}
 
 		public RelationQueryBuilder setStart(NodeQueryBuilder start) {
-			this.startNodeBuilder = start;
+			this.startNodeBuilder = start.addRelation(this);
 			return this;
 		}
 
 		public RelationQueryBuilder setTarget(NodeQueryBuilder target) {
-			this.targetNodeBuilder = target;
+			this.targetNodeBuilder = target.addRelation(this);
 			return this;
 		}
 
@@ -105,15 +154,21 @@ public final class QueryBuilder {
 			return this.targetNodeBuilder;
 		}
 
-		public IFRelation build() {
+		protected IFRelation build(final Map<IQueryBuilder<?, ?>, Object> registry) {
+			if (registry.containsKey(this))
+				return (IFRelation) registry.get(this);
+
 			super.prebuild();
-
 			this.proxyFilter.setDirection(this.direction);
-			this.proxyFilter.setStart(this.startNodeBuilder.getResult());
-			this.proxyFilter.setTarget(this.targetNodeBuilder.getResult());
 
-			return (IFRelation) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(),
-					this.proxyFilter.buildInvocationHandler(), this.proxyFilter);
+			registry.put(this, super.result = (IFRelation) Proxy.newProxyInstance(QueryBuilder.class.getClassLoader(),
+					this.proxyFilter.buildInvocationHandler(), this.proxyFilter));
+
+			// resolve relations AFTER the registry entry got created!!!
+			this.proxyFilter.setStart(this.startNodeBuilder == null ? null : this.startNodeBuilder.build(registry));
+			this.proxyFilter.setTarget(this.targetNodeBuilder == null ? null : this.targetNodeBuilder.build(registry));
+
+			return super.result;
 		}
 	}
 
@@ -267,14 +322,11 @@ public final class QueryBuilder {
 				this.handler.remove(IDataContainer.class);
 		}
 
-		@Override
-		public abstract RESULT build();
+		protected abstract RESULT build(final Map<IQueryBuilder<?, ?>, Object> registry);
 
 		@Override
 		public RESULT getResult() {
-			if (this.result == null)
-				this.result = this.build();
-			return this.result;
+			return this.result == null ? this.build(new HashMap<>()) : this.result;
 		}
 
 		protected void addParam(String label, Object value) {
