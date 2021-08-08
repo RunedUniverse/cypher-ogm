@@ -49,7 +49,7 @@ public class QueryBuilderTest {
 		cnf.addPackage(MODEL_PKG_PATH);
 		cnf.addPackage(RELATIONS_PKG_PATH);
 
-		this.archive = new Archive(this.cnf);
+		this.archive = new Archive(this.cnf.getPackageInfo());
 		this.archive.applyConfig();
 		this.builder = this.archive.getQueryBuilder();
 	}

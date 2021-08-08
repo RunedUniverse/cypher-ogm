@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.pipeline;
+package net.runeduniverse.libs.rogm.info;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,16 +6,18 @@ import java.util.logging.Level;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import net.runeduniverse.libs.rogm.Configuration;
 
 @Getter
 @NoArgsConstructor
-public class ModelInfo {
+public class PackageInfo {
 	private final Set<String> pkgs = new HashSet<>();
 	private final Set<ClassLoader> loader = new HashSet<>();
+	@Setter
 	private Level loggingLevel = null;
 
-	public ModelInfo(Configuration cnf) {
+	public PackageInfo(Configuration cnf) {
 		this.pkgs.addAll(cnf.getPkgs());
 		this.loader.addAll(cnf.getLoader());
 		if (this.loggingLevel == null || this.loggingLevel.intValue() > cnf.getLoggingLevel()
@@ -23,7 +25,7 @@ public class ModelInfo {
 			this.loggingLevel = cnf.getLoggingLevel();
 	}
 
-	public ModelInfo merge(ModelInfo info) {
+	public PackageInfo merge(PackageInfo info) {
 		this.pkgs.addAll(info.getPkgs());
 		this.loader.addAll(info.getLoader());
 		if (this.loggingLevel == null || this.loggingLevel.intValue() > info.getLoggingLevel()

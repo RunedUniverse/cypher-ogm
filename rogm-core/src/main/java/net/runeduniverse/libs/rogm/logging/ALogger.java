@@ -11,17 +11,18 @@ public abstract class ALogger extends Logger {
 
 	protected ALogger(String name, String resourceBundleName) {
 		super(name, resourceBundleName);
-		debugLogger = null;
+		this.debugLogger = null;
 	}
 
 	protected ALogger(String name, String resourceBundleName, Logger parent) {
 		super(name, resourceBundleName);
 		if (parent == null) {
-			parent = LogManager.getLogManager().getLogger(Logger.GLOBAL_LOGGER_NAME);
+			parent = LogManager.getLogManager()
+					.getLogger(Logger.GLOBAL_LOGGER_NAME);
 			parent.setLevel(Level.ALL);
 		}
 		super.setParent(parent);
-		debugLogger = parent instanceof DebugLogger ? (DebugLogger) parent : null;
+		this.debugLogger = parent instanceof DebugLogger ? (DebugLogger) parent : null;
 	}
 
 	@Override

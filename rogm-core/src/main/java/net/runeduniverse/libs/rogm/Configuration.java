@@ -10,11 +10,12 @@ import lombok.Getter;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.BasicBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.info.ConnectionInfo;
+import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.pipeline.ModelInfo;
 
 @Getter
 public class Configuration {
@@ -76,25 +77,17 @@ public class Configuration {
 		return this;
 	}
 
-	public Parser.Instance buildParserInstance() {
-		return this.parser.build(this);
-	}
-
-	public Module.Instance<?> buildModuleInstance() {
-		return this.module.build(this);
-	}
-
-	public Language.Instance buildLanguageInstance(Parser.Instance parser) {
-		return this.lang.build(parser, this.module);
-	}
-
 	public Level getLoggingLevel() {
 		if (this.loggingLevel != null)
 			return this.loggingLevel;
 		return this.logger == null ? Level.INFO : this.logger.getLevel();
 	}
 
-	public ModelInfo getModelInfo() {
-		return new ModelInfo(this);
+	public PackageInfo getPackageInfo() {
+		return new PackageInfo(this);
+	}
+
+	public ConnectionInfo getConnectionInfo() {
+		return new ConnectionInfo(this);
 	}
 }

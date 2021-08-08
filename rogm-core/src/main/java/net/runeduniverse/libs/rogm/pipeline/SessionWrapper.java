@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm;
+package net.runeduniverse.libs.rogm.pipeline;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,59 +8,41 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 
-import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.Session;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
+import net.runeduniverse.libs.rogm.info.SessionInfo;
 import net.runeduniverse.libs.rogm.lang.Language;
+import net.runeduniverse.libs.rogm.logging.PipelineLogger;
 import net.runeduniverse.libs.rogm.logging.SessionLogger;
-import net.runeduniverse.libs.rogm.modules.Module;
-import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.pattern.EntitiyFactory;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
+import net.runeduniverse.libs.rogm.pipeline.transaction.ATransactionFactory;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 
-public final class CoreSession implements Session {
+public final class SessionWrapper implements Session {
 
+	private final ATransactionFactory factory;
 	private final SessionLogger logger;
-	private final Language.Instance lang;
-	private final Parser.Instance parser;
-	private final Module.Instance<?> module;
-	private final IStorage storage;
-	private final IBuffer buffer;
 
-	protected CoreSession(Configuration cnf) throws Exception {
-		this.logger = new SessionLogger(CoreSession.class, cnf.getLogger(), cnf.getLoggingLevel());
-		this.logger.config(cnf);
-
-		this.parser = cnf.buildParserInstance();
-		this.module = cnf.buildModuleInstance();
-		this.lang = cnf.buildLanguageInstance(this.parser);
-		this.storage = new EntitiyFactory(cnf, this.parser);
-		this.buffer = this.storage.getBuffer();
-
-		if (!this.module.connect(cnf))
-			this.logger.warning("initial connection to database failed!");
+	protected SessionWrapper(ATransactionFactory factory, PipelineLogger pipelineLogger, SessionInfo info) {
+		this.factory = factory;
+		this.logger = new SessionLogger(SessionWrapper.class, pipelineLogger, info).logConfig();
 	}
 
 	@Override
 	public void close() throws Exception {
-		this.module.disconnect();
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		this.close();
-		super.finalize();
+		this.factory.closeConnections();
 	}
 
 	@Override
 	public boolean isConnected() {
-		return this.module.isConnected();
+		return this.factory.isConnected();
 	}
 
+	// TODO invoke Transaction
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private <T, ID extends Serializable> T _load(Class<T> type, ID id, Integer depth) {
 		T o;
 		if (depth == 0)
@@ -210,6 +192,7 @@ public final class CoreSession implements Session {
 					.getCanonicalName() + "> Entity failed! (depth=" + depth + ')', e);
 		}
 	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
@@ -313,11 +296,6 @@ public final class CoreSession implements Session {
 	}
 
 	@Override
-	public QueryBuilder getQueryBuilder() {
-		return this.storage.getQueryBuilder();
-	}
-
-	@Override
 	public void reload(Object entity) {
 		Set<Object> set = new HashSet<Object>();
 		set.add(entity);
@@ -408,4 +386,11 @@ public final class CoreSession implements Session {
 		for (Object object : entities)
 			this.unload(object);
 	}
+
+	@Override
+	public QueryBuilder getQueryBuilder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

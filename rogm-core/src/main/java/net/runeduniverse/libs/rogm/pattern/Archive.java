@@ -11,11 +11,11 @@ import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.error.ScannerException;
+import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.logging.Level;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 import net.runeduniverse.libs.rogm.pipeline.EntityFactory;
-import net.runeduniverse.libs.rogm.pipeline.ModelInfo;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.scanner.PackageScanner;
 import net.runeduniverse.libs.utils.DataHashMap;
@@ -37,11 +37,11 @@ public final class Archive {
 		}
 	};
 	@Getter
-	private final ModelInfo info;
+	private final PackageInfo info;
 	@Getter
 	private final QueryBuilder queryBuilder;
 
-	public Archive(final ModelInfo info) {
+	public Archive(final PackageInfo info) {
 		this.info = info;
 		this.pkgs.addAll(this.info.getPkgs());
 		this.loader.addAll(this.info.getLoader());
