@@ -11,8 +11,9 @@ import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pipeline.transaction.Assembler;
 
-public class EntityFactory implements IFactory {
+public class EntityFactory  {
 	protected final Assembler assembler;
 	protected final UniversalLogger logger;
 	protected final IBuffer buffer;

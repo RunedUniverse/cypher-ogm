@@ -128,6 +128,7 @@ public class NodePattern extends APattern implements INodePattern {
 					if (!includedData.get(object)
 							.persist())
 						continue;
+					// TODO FIX
 					Entry entry = NodePattern.this.archive.getBuffer()
 							.getEntry(object);
 					if (entry == null || entry.getLoadState() == LoadState.LAZY)
@@ -199,6 +200,7 @@ public class NodePattern extends APattern implements INodePattern {
 	@SuppressWarnings("deprecation")
 	@Override
 	public IDeleteContainer delete(Object entity) throws Exception {
+		// TODO FIX
 		IBuffer.Entry entry = this.archive.getBuffer()
 				.getEntry(entity);
 		if (entry == null)

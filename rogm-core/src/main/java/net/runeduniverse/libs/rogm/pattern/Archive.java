@@ -15,6 +15,7 @@ import net.runeduniverse.libs.rogm.logging.Level;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 import net.runeduniverse.libs.rogm.pipeline.EntityFactory;
+import net.runeduniverse.libs.rogm.pipeline.ModelInfo;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.scanner.PackageScanner;
 import net.runeduniverse.libs.utils.DataHashMap;
@@ -25,8 +26,8 @@ public final class Archive {
 	public static boolean PACKAGE_SCANNER_DEBUG_MODE = false;
 
 	private final DataMap<Class<?>, Set<IPattern>, Set<EntityFactory>> patterns = new DataHashMap<>();
-	private final Set<ClassLoader> loader = new HashSet<>();
 	private final Set<String> pkgs = new HashSet<>();
+	private final Set<ClassLoader> loader = new HashSet<>();
 	private final PackageScanner.Validator validator = new PackageScanner.Validator() {
 
 		@Override
@@ -36,26 +37,20 @@ public final class Archive {
 		}
 	};
 	@Getter
-	private final Configuration cnf;
+	private final ModelInfo info;
 	@Getter
 	private final QueryBuilder queryBuilder;
 
-	// TODO remove
-	@Getter(onMethod_ = { @Deprecated })
-	private final IBuffer buffer;
-
-	public Archive(final Configuration cnf) {
-		this.cnf = cnf;
-		this.loader.addAll(this.cnf.getLoader());
-		this.pkgs.addAll(this.cnf.getPkgs());
+	public Archive(final ModelInfo info) {
+		this.info = info;
+		this.pkgs.addAll(this.info.getPkgs());
+		this.loader.addAll(this.info.getLoader());
 		this.queryBuilder = new QueryBuilder(this);
-		// TODO remove
-		this.buffer = this.cnf.getBuffer();
 	}
 
 	public void scan(TypeScanner... scanner) throws ScannerException {
 		new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), this.validator)
-				.enableDebugMode(PACKAGE_SCANNER_DEBUG_MODE || cnf.getLoggingLevel() != null && cnf.getLoggingLevel()
+				.enableDebugMode(PACKAGE_SCANNER_DEBUG_MODE || info.getLoggingLevel() != null && info.getLoggingLevel()
 						.intValue() < Level.INFO.intValue())
 				.scan()
 				.throwSurpressions(new ScannerException("Pattern parsing failed! See surpressed Exceptions!"));

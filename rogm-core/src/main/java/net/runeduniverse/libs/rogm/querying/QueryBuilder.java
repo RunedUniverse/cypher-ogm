@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import net.runeduniverse.libs.rogm.annotations.Direction;
+import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.querying.builder.AProxyFilter;
@@ -301,6 +302,7 @@ public final class QueryBuilder {
 
 		public void prebuild() {
 			// IIdentified.class
+			Module.Instance<?> activeModuleInstance = this.ar
 			if (this.id != null)
 				if (this.archive.getCnf()
 						.getModule()

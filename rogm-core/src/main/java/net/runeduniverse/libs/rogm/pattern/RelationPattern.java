@@ -169,6 +169,7 @@ public class RelationPattern extends APattern implements IRelationPattern {
 	@SuppressWarnings("deprecation")
 	@Override
 	public IDeleteContainer delete(Object entity) throws Exception {
+		// TODO FIX
 		IBuffer.Entry entry = this.archive.getBuffer()
 				.getEntry(entity);
 		if (entry == null)

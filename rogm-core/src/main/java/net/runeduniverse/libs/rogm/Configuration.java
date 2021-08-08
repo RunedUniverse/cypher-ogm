@@ -14,6 +14,7 @@ import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pipeline.ModelInfo;
 
 @Getter
 public class Configuration {
@@ -21,7 +22,7 @@ public class Configuration {
 	protected final Set<String> pkgs = new HashSet<>();
 	protected final Set<ClassLoader> loader = new HashSet<>();
 	protected final Set<PassiveModule> passiveModules = new HashSet<>();
-	private final Parser parser;
+	protected final Parser parser;
 	protected final Language lang;
 	protected final Module module;
 
@@ -91,5 +92,9 @@ public class Configuration {
 		if (this.loggingLevel != null)
 			return this.loggingLevel;
 		return this.logger == null ? Level.INFO : this.logger.getLevel();
+	}
+
+	public ModelInfo getModelInfo() {
+		return new ModelInfo(this);
 	}
 }

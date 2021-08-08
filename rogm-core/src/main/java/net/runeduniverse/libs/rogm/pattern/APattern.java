@@ -71,6 +71,7 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 		if (this.idPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
+		// TODO FIX
 		return this.archive.getBuffer()
 				.acquire(this, data, this.type, loadState, lazyEntries);
 	}
@@ -81,10 +82,12 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 		if (this.idPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
+		// TODO FIX
 		Object entity = this.archive.getBuffer()
 				.getById(data.getId(), this.type);
 
 		this.callMethod(PreReload.class, entity);
+		// TODO FIX
 		return this.archive.getBuffer()
 				.update(entity, data);
 	}
