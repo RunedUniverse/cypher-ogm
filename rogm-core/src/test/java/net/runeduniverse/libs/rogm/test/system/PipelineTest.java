@@ -10,8 +10,8 @@ import net.runeduniverse.libs.rogm.Session;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pipeline.DatabaseTransactionFactory;
 import net.runeduniverse.libs.rogm.pipeline.Pipeline;
-import net.runeduniverse.libs.rogm.pipeline.transaction.DatabaseTransactionFactory;
 import net.runeduniverse.libs.rogm.test.ATest;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 

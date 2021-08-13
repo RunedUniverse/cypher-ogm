@@ -82,35 +82,6 @@ public class EntitiyFactory implements IStorage {
 		}
 	}
 
-	public IFilter search(Class<?> clazz, boolean lazy) throws Exception {
-		return this.getPattern(clazz)
-				.search(lazy)
-				.getResult();
-	}
-
-	public IFilter search(Class<?> clazz, Serializable id, boolean lazy) throws Exception {
-		return this.getPattern(clazz)
-				.search(id, lazy)
-				.getResult();
-	}
-
-	public IFilter search(Object entity, boolean lazy) throws Exception {
-		IBuffer.Entry entry = this.buffer.getEntry(entity);
-		return entry.getPattern()
-				.search(entry.getId(), lazy)
-				.getResult();
-	}
-
-	public ISaveContainer save(Object entity, Integer depth) throws Exception {
-		return this.getPattern(entity.getClass())
-				.save(entity, depth);
-	}
-
-	public IDeleteContainer delete(Object entity) throws Exception {
-		return this.getPattern(entity.getClass())
-				.delete(entity);
-	}
-
 	public Object setId(Object entity, Serializable id) {
 		try {
 			return this.getPattern(entity.getClass())

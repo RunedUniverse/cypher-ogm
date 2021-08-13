@@ -6,14 +6,11 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import lombok.Getter;
-import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
-import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.logging.Level;
-import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 import net.runeduniverse.libs.rogm.pipeline.EntityFactory;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
@@ -65,12 +62,6 @@ public final class Archive {
 				.add(factory);
 	}
 
-	public Archive applyConfig() throws ScannerException {
-		for (PassiveModule m : this.cnf.getPassiveModules())
-			m.configure(this);
-		return this;
-	}
-
 	public void logPatterns(Logger logger) {
 		StringBuilder msg = new StringBuilder("Archive Pattern Dump");
 		this.patterns.forEach((c, patterns, factorys) -> {
@@ -97,29 +88,39 @@ public final class Archive {
 		return this.patterns.get(type);
 	}
 
-	public <P extends IPattern> P getPattern(Class<?> type, Class<P> patternType) {
-		if (this.patterns.containsKey(type))
-			return this._getPattern(this.patterns.get(type), patternType);
+	@SuppressWarnings("unchecked")
+	public <P extends IPattern> Set<P> getPatterns(Class<?> entityType, Class<P> patternType) {
+		Set<P> rPatterns = new HashSet<>();
+		for (IPattern pattern : this.patterns.get(entityType))
+			if (patternType.isInstance(pattern))
+				rPatterns.add((P) pattern);
+
+		return rPatterns;
+	}
+
+	public <P extends IPattern> P getPattern(Class<?> entityType, Class<P> patternType) {
+		if (this.patterns.containsKey(entityType))
+			return this._getPattern(entityType, patternType);
 
 		for (Class<?> key : this.patterns.keySet())
-			if (type.isInstance(key))
-				return this._getPattern(this.patterns.get(key), patternType);
+			if (entityType.isInstance(key))
+				return this._getPattern(key, patternType);
+		return null;
+	}
+
+	public IPattern getPattern(Class<?> entityType, Class<?>... patternTypes) {
+		for (IPattern pattern : this.patterns.get(entityType))
+			for (int i = 0; i < patternTypes.length; i++)
+				if (patternTypes[i].isInstance(pattern))
+					return pattern;
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	private <P extends IPattern> P _getPattern(Set<IPattern> patterns, Class<P> patternType) {
-		for (IPattern pattern : patterns)
+	private <P extends IPattern> P _getPattern(Class<?> entityType, Class<P> patternType) {
+		for (IPattern pattern : this.patterns.get(entityType))
 			if (patternType.isInstance(pattern))
 				return (P) pattern;
-		return null;
-	}
-
-	public IPattern getPattern(Class<?> type, Class<?>... patternTypes) {
-		for (IPattern pattern : this.patterns.get(type))
-			for (int i = 0; i < patternTypes.length; i++)
-				if (patternTypes[i].isInstance(pattern))
-					return pattern;
 		return null;
 	}
 

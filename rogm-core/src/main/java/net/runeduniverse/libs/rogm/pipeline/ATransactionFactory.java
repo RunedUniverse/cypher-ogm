@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.pipeline.transaction;
+package net.runeduniverse.libs.rogm.pipeline;
 
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.error.ScannerException;
@@ -9,6 +9,7 @@ import net.runeduniverse.libs.rogm.pattern.Archive;
 @RequiredArgsConstructor
 public abstract class ATransactionFactory {
 	protected final Archive archive;
+	protected final ATransactionRouter router;
 	protected final UniversalLogger logger;
 
 	// SETUP / CONNECTION

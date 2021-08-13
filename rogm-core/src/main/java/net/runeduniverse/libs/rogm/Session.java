@@ -3,8 +3,8 @@ package net.runeduniverse.libs.rogm;
 import java.io.Serializable;
 import java.util.Collection;
 
+import net.runeduniverse.libs.rogm.pipeline.DatabaseTransactionFactory;
 import net.runeduniverse.libs.rogm.pipeline.Pipeline;
-import net.runeduniverse.libs.rogm.pipeline.transaction.DatabaseTransactionFactory;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 
@@ -19,7 +19,7 @@ public interface Session extends AutoCloseable {
 	<T, ID extends Serializable> T loadLazy(Class<T> type, ID id);
 
 	@Deprecated
-	<T, ID extends Serializable> T load(Class<T> type, IFilter filter);
+	<T, ID extends Serializable> T load(IFilter filter);
 
 	<T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id);
 
@@ -34,7 +34,7 @@ public interface Session extends AutoCloseable {
 	<T> Collection<T> loadAllLazy(Class<T> type);
 
 	@Deprecated
-	<T> Collection<T> loadAll(Class<T> type, IFilter filter);
+	<T> Collection<T> loadAll(IFilter filter);
 
 	void resolveLazyLoaded(Object entity);
 

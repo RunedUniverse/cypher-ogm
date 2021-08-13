@@ -11,7 +11,6 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
 public interface IPattern {
 	PatternType getPatternType();
@@ -27,15 +26,6 @@ public interface IPattern {
 	FieldPattern getField(Class<? extends Annotation> anno);
 
 	IConverter<?> getIdConverter();
-
-	IQueryBuilder<?, ? extends IFilter> search(boolean lazy) throws Exception;
-
-	// search exactly 1 node / querry deeper layers for node
-	IQueryBuilder<?, ? extends IFilter> search(Serializable id, boolean lazy) throws Exception;
-
-	ISaveContainer save(Object entity, Integer depth) throws Exception;
-
-	IDeleteContainer delete(Object entity) throws Exception;
 
 	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
 

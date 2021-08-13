@@ -8,11 +8,11 @@ import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
-public interface IRelationPattern extends IPattern, IValidatable {
+public interface IRelationPattern extends IBaseQueryPattern, IValidatable {
 	String getLabel();
 
 	RelationQueryBuilder createFilter(NodeQueryBuilder caller, Direction direction);
 
-	RelationQueryBuilder save(Object entity, NodeQueryBuilder caller, Direction direction, Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData,
-			Integer depth) throws Exception;
+	RelationQueryBuilder save(Object entity, NodeQueryBuilder caller, Direction direction,
+			Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData, Integer depth) throws Exception;
 }

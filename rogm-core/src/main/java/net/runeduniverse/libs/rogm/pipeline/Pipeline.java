@@ -2,7 +2,6 @@ package net.runeduniverse.libs.rogm.pipeline;
 
 import net.runeduniverse.libs.rogm.Session;
 import net.runeduniverse.libs.rogm.logging.PipelineLogger;
-import net.runeduniverse.libs.rogm.pipeline.transaction.ATransactionFactory;
 
 public class Pipeline {
 	private final ATransactionFactory factory;

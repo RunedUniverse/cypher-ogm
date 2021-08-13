@@ -2,7 +2,7 @@ package net.runeduniverse.libs.rogm.info;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.pipeline.transaction.ATransactionFactory;
+import net.runeduniverse.libs.rogm.pipeline.ATransactionFactory;
 
 @Getter
 public class SessionInfo {

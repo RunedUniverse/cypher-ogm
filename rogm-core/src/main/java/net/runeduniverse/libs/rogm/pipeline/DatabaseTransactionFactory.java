@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.pipeline.transaction;
+package net.runeduniverse.libs.rogm.pipeline;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.error.ScannerException;
@@ -24,7 +24,7 @@ public class DatabaseTransactionFactory extends ATransactionFactory {
 	}
 
 	public DatabaseTransactionFactory(Configuration config, UniversalLogger logger) {
-		super(new Archive(config.getPackageInfo()), logger);
+		super(new Archive(config.getPackageInfo()), new DatabaseTransactionRouter(), logger);
 		this.cnf = config;
 
 		this.parser = this.cnf.getParser();
