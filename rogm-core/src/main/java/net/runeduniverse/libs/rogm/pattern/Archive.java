@@ -1,5 +1,6 @@
 package net.runeduniverse.libs.rogm.pattern;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -137,5 +138,21 @@ public final class Archive {
 				break;
 			}
 		return IConverter.validate(converter);
+	}
+
+	/**
+	 * Used to call all parsed Methods matching the Class
+	 * 
+	 * @param entityType
+	 * @param anno
+	 * @param obj
+	 * @return {@code true} if all calls returned successfully
+	 */
+	public boolean callMethod(Class<?> entityType, Class<? extends Annotation> anno, Object obj, Object... args) {
+		boolean success = true;
+		for (IPattern pattern : this.patterns.get(entityType))
+			if (!pattern.callMethod(anno, obj, args))
+				success = false;
+		return success;
 	}
 }
