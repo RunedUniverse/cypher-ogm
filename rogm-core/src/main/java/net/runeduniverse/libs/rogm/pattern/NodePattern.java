@@ -53,8 +53,6 @@ public class NodePattern extends APattern implements INodePattern {
 		return this._search(this.archive.getQueryBuilder()
 				.node()
 				.where(this.type), lazy, false);
-		// return this._search(this.factory.getFactory().createNode(this.labels, new
-		// ArrayList<>()), lazy, false);
 	}
 
 	public NodeQueryBuilder search(Serializable id, boolean lazy) throws Exception {
@@ -62,8 +60,6 @@ public class NodePattern extends APattern implements INodePattern {
 				.node()
 				.where(this.type)
 				.whereId(id), lazy, false);
-		// return this._search(this.factory.getFactory().createIdNode(this.labels, new
-		// ArrayList<>(), id, this.idConverter), lazy, false);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -73,11 +69,8 @@ public class NodePattern extends APattern implements INodePattern {
 				.node()
 				.where(this.type)
 				.addRelation(caller);
-		// Node node = this.factory.getFactory().createNode(this.labels,
-		// Arrays.asList(caller));
 		try {
 			return this._search(nodeBuilder, lazy, true);
-			// return this._search(node, lazy, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -165,9 +158,6 @@ public class NodePattern extends APattern implements INodePattern {
 					.storeData(entity)
 					.setPersist(persist)
 					.asUpdate();
-			// nodeBuilder = this.factory.getFactory().createIdDataNode(this.labels, new
-			// ArrayList<>(), this.getId(entity), this.idConverter, entity, persist);
-			// nodeBuilder.setFilterType(FilterType.UPDATE);
 		} else {
 			// create (!id)
 			nodeBuilder = this.archive.getQueryBuilder()
@@ -176,9 +166,6 @@ public class NodePattern extends APattern implements INodePattern {
 					.storeData(entity)
 					.setPersist(persist)
 					.asWrite();
-			// nodeBuilder = this.factory.getFactory().createDataNode(this.labels, new
-			// ArrayList<>(), entity, persist);
-			// nodeBuilder.setFilterType(FilterType.CREATE);
 		}
 
 		this.callMethod(PreSave.class, entity);
@@ -196,35 +183,28 @@ public class NodePattern extends APattern implements INodePattern {
 		return nodeBuilder;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public IDeleteContainer delete(Object entity) throws Exception {
-		// TODO FIX
-		IBuffer.Entry entry = this.archive.getBuffer()
-				.getEntry(entity);
+	public IDeleteContainer delete(final IBuffer buffer, Object entity) throws Exception {
+		IBuffer.Entry entry = buffer.getEntry(entity);
 		if (entry == null)
 			throw new Exception("Node-Entity of type<" + entity.getClass()
 					.getName() + "> is not loaded!");
 
 		this.callMethod(PreDelete.class, entity);
 
-		// TODO simplyfy / shirnk
 		QueryBuilder qryBuilder = this.archive.getQueryBuilder();
-		NodeQueryBuilder nodeBuilder = qryBuilder.node()
-				.whereId(entry.getId());
-		nodeBuilder.asDelete(); // ? missing ?
-		// Node node = this.factory.getFactory().createIdNode(null, null, entry.getId(),
-		// null);
-		nodeBuilder.setReturned(true);
 		return new DeleteContainer(this, entity, entry.getId(), qryBuilder.relation()
 				.setStart(qryBuilder.node()
 						.whereId(entry.getId()))
 				.setTarget(qryBuilder.node()
 						.setReturned(true))
 				.setReturned(true)
-				.getResult(), nodeBuilder.getResult());
-		// return new DeleteContainer(this, entity, entry.getId(),
-		// this.factory.getFactory().createEffectedFilter(entry.getId()), node);
+				.getResult(),
+				qryBuilder.node()
+						.whereId(entry.getId())
+						.setReturned(true)
+						.asDelete()
+						.getResult());
 	}
 
 	public void setRelation(Direction direction, String label, Object entity, Object value) {

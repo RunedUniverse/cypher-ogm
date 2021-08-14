@@ -47,29 +47,9 @@ public class EntitiyFactory implements IStorage {
 		this.parser = parser;
 		this.buffer = cnf.getBuffer()
 				.initialize(this);
-		this.archive = new Archive(this.config);
-
-		this.archive.applyConfig();
+		this.archive = null;
 
 		this.archive.logPatterns(this.logger);
-	}
-
-	@Override
-	public QueryBuilder getQueryBuilder() {
-		return this.archive.getQueryBuilder();
-	}
-
-	public INodePattern getNode(Class<?> clazz) {
-		return this.archive.getPattern(clazz, NodePattern.class);
-	}
-
-	public IRelationPattern getRelation(Class<?> clazz) {
-		return this.archive.getPattern(clazz, RelationPattern.class);
-	}
-
-	@Override
-	public IPattern getPattern(Class<?> clazz) throws Exception {
-		return this.archive.getPattern(clazz, NodePattern.class, RelationPattern.class);
 	}
 
 	public boolean isIdSet(Object entity) {
@@ -107,7 +87,7 @@ public class EntitiyFactory implements IStorage {
 				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
 				if (IPatternContainer.identify(data.getFilter()))
 					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern()
-							.parse(data, LoadState.get(data.getFilter()), lazyEntries));
+							.parse(this.buffer, data, LoadState.get(data.getFilter()), lazyEntries));
 			}
 		}
 
@@ -167,7 +147,7 @@ public class EntitiyFactory implements IStorage {
 
 				if (IPatternContainer.identify(data.getFilter()) && LoadState.get(data.getFilter()) == LoadState.LAZY) {
 					Entry entry = ((IPatternContainer) data.getFilter()).getPattern()
-							.update(data);
+							.update(this.buffer, data);
 					if (entry.getEntity() != entity && dtype != DataType.RELATION)
 						relatedEntities.add(entry);
 				}

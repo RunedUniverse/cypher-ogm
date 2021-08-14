@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
@@ -31,9 +32,9 @@ public interface IPattern {
 
 	Serializable prepareEntityId(Serializable id, Serializable entityId);
 
-	Object parse(IData data, LoadState loadState, Set<Entry> lazyEntries) throws Exception;
+	Object parse(final IBuffer buffer, IData data, LoadState loadState, Set<Entry> lazyEntries) throws Exception;
 
-	Entry update(IData data) throws Exception;
+	Entry update(final IBuffer buffer, IData data) throws Exception;
 
 	/**
 	 * Used to call parsed Methods

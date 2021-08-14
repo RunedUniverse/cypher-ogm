@@ -24,7 +24,10 @@ import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 public abstract class ATransactionRouter {
 	protected Archive archive;
 	
-	protected ATransactionRouter()
+	public ATransactionRouter initialize(Archive archive) {
+		this.archive = archive;
+		return this;
+	}
 
 	public abstract <E> E load(IFilter filter);
 

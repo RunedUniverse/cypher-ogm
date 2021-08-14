@@ -83,8 +83,6 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		return _complete(this.archive.getQueryBuilder()
 				.relation()
 				.whereDirection(this.direction), lazy);
-		// return _complete(this.factory.getFactory().createRelation(this.direction),
-		// lazy);
 	}
 
 	public IQueryBuilder<?, ? extends IFilter> search(Serializable id, boolean lazy) throws Exception {
@@ -92,8 +90,6 @@ public class RelationPattern extends APattern implements IRelationPattern {
 				.relation()
 				.whereDirection(this.direction)
 				.whereId(id), lazy);
-		// return _complete(this.factory.getFactory().createIdRelation(this.direction,
-		// id, this.idConverter), lazy);
 	}
 
 	private RelationQueryBuilder _complete(RelationQueryBuilder relationBuilder, boolean lazy) {
@@ -151,7 +147,8 @@ public class RelationPattern extends APattern implements IRelationPattern {
 			public void postSave() {
 				for (Object object : includedData.keySet())
 					try {
-						RelationPattern.this.archive.getPattern(object.getClass(), NodePattern.class, RelationPattern.class)
+						RelationPattern.this.archive
+								.getPattern(object.getClass(), NodePattern.class, RelationPattern.class)
 								.callMethod(PostSave.class, object);
 						// factory.getPattern(object.getClass()).callMethod(PostSave.class, object);
 					} catch (Exception e) {
@@ -166,19 +163,13 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		};
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public IDeleteContainer delete(Object entity) throws Exception {
-		// TODO FIX
-		IBuffer.Entry entry = this.archive.getBuffer()
-				.getEntry(entity);
+	public IDeleteContainer delete(final IBuffer buffer, Object entity) throws Exception {
+		IBuffer.Entry entry = buffer.getEntry(entity);
 		if (entry == null)
 			throw new Exception("Relation-Entity of type<" + entity.getClass()
 					.getName() + "> is not loaded!");
 
-		// this.factory.getFactory().createIdRelation(Direction.BIDIRECTIONAL,
-		// entry.getId(), null);
-		// relation.setReturned(true);
 		return new DeleteContainer(this, entity, entry.getId(), null, this.archive.getQueryBuilder()
 				.relation()
 				.whereDirection(Direction.BIDIRECTIONAL)
@@ -198,29 +189,19 @@ public class RelationPattern extends APattern implements IRelationPattern {
 
 		this.callMethod(PreSave.class, entity);
 
-		RelationQueryBuilder relationBuilder = null;
-		// TODO simplify #1
-		if (this.isIdSet(entity)) {
+		RelationQueryBuilder relationBuilder = this.archive.getQueryBuilder()
+				.relation()
+				.whereDirection(this.direction)
+				.storeData(entity)
+				.setReturned(true);
+
+		if (this.isIdSet(entity))
 			// update (id)
-			relationBuilder = this.archive.getQueryBuilder()
-					.relation()
-					.whereDirection(this.direction)
-					.storeData(entity);
 			relationBuilder.asUpdate();
-			// this.factory.getFactory().createDataRelation(this.direction, entity);
-			// relationBuilder.setFilterType(FilterType.UPDATE);
-		} else {
+		else
 			// create (!id)
-			relationBuilder = this.archive.getQueryBuilder()
-					.relation()
-					.whereDirection(this.direction)
-					.storeData(entity);
 			relationBuilder.asWrite();
-			// this.factory.getFactory().createDataRelation(this.direction, entity);
-			// relationBuilder.setFilterType(FilterType.CREATE);
-		}
-		// #1 end
-		relationBuilder.setReturned(true);
+
 		includedData.put(entity, relationBuilder);
 
 		if (!isBlank(this.label))
@@ -241,16 +222,16 @@ public class RelationPattern extends APattern implements IRelationPattern {
 		}
 
 		if (this.stEqTr) {
-			relationBuilder.setStart(caller);
-			relationBuilder.setTarget(caller);
+			relationBuilder.setStart(caller)
+					.setTarget(caller);
 			return _savecheck(relationBuilder);
 		}
 
 		if ((this.direction == Direction.OUTGOING && direction == Direction.INCOMING)
 				|| (this.direction == Direction.INCOMING && direction == Direction.OUTGOING)) {
-			relationBuilder.setTarget(caller);
 			relationBuilder.setStart(_getDataNode(this.startField, entity, includedData, relationBuilder,
 					this.readonlyStart ? -1 : depth));
+			relationBuilder.setTarget(caller);
 		} else {
 			relationBuilder.setStart(caller);
 			relationBuilder.setTarget(_getDataNode(this.targetField, entity, includedData, relationBuilder,

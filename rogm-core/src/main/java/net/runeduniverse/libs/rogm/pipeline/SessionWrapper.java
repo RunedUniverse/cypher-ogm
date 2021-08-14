@@ -21,10 +21,10 @@ public final class SessionWrapper implements Session {
 	private final ATransactionRouter router;
 	private final SessionLogger logger;
 
-	protected SessionWrapper(final ATransactionFactory factory, final ATransactionRouter router,
-			final PipelineLogger pipelineLogger, final SessionInfo info) {
+	protected SessionWrapper(final ATransactionFactory factory, final PipelineLogger pipelineLogger,
+			final SessionInfo info) {
 		this.factory = factory;
-		this.router = router;
+		this.router = this.factory.getRouter();
 		this.logger = new SessionLogger(SessionWrapper.class, pipelineLogger, info).logConfig();
 	}
 
@@ -77,7 +77,6 @@ public final class SessionWrapper implements Session {
 					.getCanonicalName() + "> Entity failed! (depth=" + depth + ')', e);
 		}
 	}
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public <T, ID extends Serializable> T load(Class<T> type, ID id) {
@@ -250,8 +249,7 @@ public final class SessionWrapper implements Session {
 
 	@Override
 	public QueryBuilder getQueryBuilder() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.factory.getQueryBuilder();
 	}
 
 }

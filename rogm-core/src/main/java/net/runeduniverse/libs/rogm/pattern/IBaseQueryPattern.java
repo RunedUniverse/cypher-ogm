@@ -2,10 +2,11 @@ package net.runeduniverse.libs.rogm.pattern;
 
 import java.io.Serializable;
 
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
-public interface IBaseQueryPattern extends IPattern{
+public interface IBaseQueryPattern extends IPattern {
 	IQueryBuilder<?, ? extends IFilter> search(boolean lazy) throws Exception;
 
 	// search exactly 1 node / querry deeper layers for node
@@ -13,5 +14,5 @@ public interface IBaseQueryPattern extends IPattern{
 
 	ISaveContainer save(Object entity, Integer depth) throws Exception;
 
-	IDeleteContainer delete(Object entity) throws Exception;
+	IDeleteContainer delete(final IBuffer buffer, Object entity) throws Exception;
 }

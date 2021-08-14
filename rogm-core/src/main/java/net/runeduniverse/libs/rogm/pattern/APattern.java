@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.PreReload;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
@@ -65,31 +66,27 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 		return entityId;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public Object parse(IData data, LoadState loadState, Set<Entry> lazyEntries) throws Exception {
+	public Object parse(final IBuffer buffer, IData data, LoadState loadState, Set<Entry> lazyEntries)
+			throws Exception {
 		if (this.idPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
 		// TODO FIX
-		return this.archive.getBuffer()
-				.acquire(this, data, this.type, loadState, lazyEntries);
+		return buffer.acquire(this, data, this.type, loadState, lazyEntries);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public Entry update(IData data) throws Exception {
+	public Entry update(final IBuffer buffer, IData data) throws Exception {
 		if (this.idPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
 		// TODO FIX
-		Object entity = this.archive.getBuffer()
-				.getById(data.getId(), this.type);
+		Object entity = buffer.getById(data.getId(), this.type);
 
 		this.callMethod(PreReload.class, entity);
 		// TODO FIX
-		return this.archive.getBuffer()
-				.update(entity, data);
+		return buffer.update(entity, data);
 	}
 
 	@RequiredArgsConstructor
