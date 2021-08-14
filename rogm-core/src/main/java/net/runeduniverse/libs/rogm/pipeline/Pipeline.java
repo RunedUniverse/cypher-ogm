@@ -7,8 +7,8 @@ public class Pipeline {
 	private final ATransactionFactory factory;
 	private final PipelineLogger logger;
 
-	public Pipeline(ATransactionFactory transactionBuilder) {
-		this.factory = transactionBuilder;
+	public Pipeline(ATransactionFactory transactionFactory) {
+		this.factory = transactionFactory;
 		this.logger = new PipelineLogger(Pipeline.class, this.factory.getLogger());
 	}
 

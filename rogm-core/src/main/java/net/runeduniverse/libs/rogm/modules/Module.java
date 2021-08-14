@@ -6,21 +6,16 @@ import java.util.Map;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.Configuration;
+import net.runeduniverse.libs.rogm.info.ConnectionInfo;
 
-public interface Module extends PassiveModule {
+public interface Module extends PassiveModule, IdTypeResolver {
 
 	// cnf might not get used from every module
 	// but is provided if needed
 	Instance<?> build(Configuration cnf);
 
-	Class<?> idType();
-
-	boolean checkIdType(Class<?> type);
-
-	String getIdAlias();
-
 	public interface Instance<ID extends Serializable> {
-		boolean connect(Configuration cnf);
+		boolean connect(ConnectionInfo info);
 
 		boolean disconnect();
 

@@ -11,6 +11,7 @@ import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.logging.Level;
+import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 import net.runeduniverse.libs.rogm.pipeline.EntityFactory;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
@@ -25,6 +26,12 @@ public final class Archive {
 	private final DataMap<Class<?>, Set<IPattern>, Set<EntityFactory>> patterns = new DataHashMap<>();
 	private final Set<String> pkgs = new HashSet<>();
 	private final Set<ClassLoader> loader = new HashSet<>();
+	@Getter
+	private final PackageInfo info;
+	@Getter
+	private final IdTypeResolver idTypeResolver;
+	@Getter
+	private final QueryBuilder queryBuilder;
 	private final PackageScanner.Validator validator = new PackageScanner.Validator() {
 
 		@Override
@@ -33,15 +40,12 @@ public final class Archive {
 				IValidatable.validate(pair.getValue());
 		}
 	};
-	@Getter
-	private final PackageInfo info;
-	@Getter
-	private final QueryBuilder queryBuilder;
 
-	public Archive(final PackageInfo info) {
+	public Archive(final PackageInfo info, IdTypeResolver idTypeResolver) {
 		this.info = info;
 		this.pkgs.addAll(this.info.getPkgs());
 		this.loader.addAll(this.info.getLoader());
+		this.idTypeResolver = idTypeResolver;
 		this.queryBuilder = new QueryBuilder(this);
 	}
 

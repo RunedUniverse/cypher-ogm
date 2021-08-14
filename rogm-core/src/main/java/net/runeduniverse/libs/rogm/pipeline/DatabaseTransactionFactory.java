@@ -7,7 +7,6 @@ import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.pattern.Archive;
 
 public class DatabaseTransactionFactory extends ATransactionFactory {
 
@@ -24,7 +23,7 @@ public class DatabaseTransactionFactory extends ATransactionFactory {
 	}
 
 	public DatabaseTransactionFactory(Configuration config, UniversalLogger logger) {
-		super(new Archive(config.getPackageInfo()), new DatabaseTransactionRouter(), logger);
+		super(config.getPackageInfo(), config.getModule(), new DatabaseTransactionRouter(), logger);
 		this.cnf = config;
 
 		this.parser = this.cnf.getParser();
@@ -41,7 +40,7 @@ public class DatabaseTransactionFactory extends ATransactionFactory {
 	@Override
 	public void setup() throws ScannerException {
 		super.setup();
-		if (!this.moduleInstance.connect(this.cnf))
+		if (!this.moduleInstance.connect(this.cnf.getConnectionInfo()))
 			this.logger.warning("Failed to establish initial database-connection!");
 	}
 

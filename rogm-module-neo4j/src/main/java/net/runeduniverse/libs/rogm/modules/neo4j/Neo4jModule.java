@@ -21,6 +21,7 @@ import org.neo4j.driver.Value;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.Configuration;
+import net.runeduniverse.libs.rogm.info.ConnectionInfo;
 import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.AModule;
 import net.runeduniverse.libs.rogm.modules.Module;
@@ -35,8 +36,8 @@ public class Neo4jModule extends AModule {
 		return new Neo4jModuleInstance(cnf.buildParserInstance(), cnf.getLogger());
 	}
 
-	protected String _buildUri(Configuration cnf) {
-		return cnf.getProtocol() + "://" + cnf.getUri() + ':' + cnf.getPort();
+	protected String _buildUri(ConnectionInfo info) {
+		return info.getProtocol() + "://" + info.getUri() + ':' + info.getPort();
 	}
 
 	@Override
@@ -66,8 +67,8 @@ public class Neo4jModule extends AModule {
 		}
 
 		@Override
-		public boolean connect(Configuration cnf) {
-			this.driver = GraphDatabase.driver(_buildUri(cnf), AuthTokens.basic(cnf.getUser(), cnf.getPassword()));
+		public boolean connect(ConnectionInfo info) {
+			this.driver = GraphDatabase.driver(_buildUri(info), AuthTokens.basic(info.getUser(), info.getPassword()));
 			return isConnected();
 		}
 

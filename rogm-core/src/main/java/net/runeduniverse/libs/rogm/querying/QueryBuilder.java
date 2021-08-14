@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.querying.builder.AProxyFilter;
@@ -302,18 +302,13 @@ public final class QueryBuilder {
 
 		public void prebuild() {
 			// IIdentified.class
-			Module.Instance<?> activeModuleInstance = this.ar
+			IdTypeResolver resolver = this.archive.getIdTypeResolver();
 			if (this.id != null)
-				if (this.archive.getCnf()
-						.getModule()
-						.checkIdType(this.id.getClass()))
+				if (resolver.checkIdType(this.id.getClass()))
 					this.handler.put(IIdentified.class, new IdentifiedHandler(this.id));
 				else
-					this.addParam(this.archive.getCnf()
-							.getModule()
-							.getIdAlias(),
-							this.archive.getIdFieldConverter(this.type)
-									.toProperty(this.id));
+					this.addParam(resolver.getIdAlias(), this.archive.getIdFieldConverter(this.type)
+							.toProperty(this.id));
 			// IDataContainer.class
 			DataContainerHandler dataContainer = (DataContainerHandler) this.handler.get(IDataContainer.class);
 			if (DataContainerHandler.required(dataContainer, this.proxyFilter.getFilterType())) {

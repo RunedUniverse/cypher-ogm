@@ -103,7 +103,7 @@ public class SessionTest extends ATest {
 				.whereParam("lastName", "James")
 				.getResult();
 
-		Person shawn = session.load(Person.class, personFilter);
+		Person shawn = session.load(personFilter);
 		System.out.println("[Shawn]\n" + iLanguage.load(personFilter) + '\n');
 		shawn.setFirstName("Shawn");
 		shawn.setLastName("James");
@@ -184,7 +184,7 @@ public class SessionTest extends ATest {
 				.whereParam("name", "Naughty Dog")
 				.getResult();
 
-		Company company = session.load(Company.class, gameFilter);
+		Company company = session.load(gameFilter);
 		Game game = new Game();
 		game.setName("just another USELESS title");
 		company.getGames()
