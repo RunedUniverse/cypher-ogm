@@ -6,6 +6,7 @@ import net.runeduniverse.libs.rogm.info.SessionInfo;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
 
 public class DatabaseTransactionFactory extends ATransactionFactory {
@@ -39,7 +40,9 @@ public class DatabaseTransactionFactory extends ATransactionFactory {
 
 	@Override
 	public void setup() throws ScannerException {
-		super.setup();
+		for (PassiveModule module : this.cnf.getPassiveModules())
+			module.configure(this.archive);
+
 		if (!this.moduleInstance.connect(this.cnf.getConnectionInfo()))
 			this.logger.warning("Failed to establish initial database-connection!");
 	}

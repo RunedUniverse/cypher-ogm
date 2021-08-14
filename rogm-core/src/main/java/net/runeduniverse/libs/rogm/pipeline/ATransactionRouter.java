@@ -23,6 +23,8 @@ import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
 public abstract class ATransactionRouter {
 	protected Archive archive;
+	
+	protected ATransactionRouter()
 
 	public abstract <E> E load(IFilter filter);
 

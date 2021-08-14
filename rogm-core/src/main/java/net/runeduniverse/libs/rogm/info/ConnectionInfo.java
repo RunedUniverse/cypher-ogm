@@ -16,6 +16,7 @@ public class ConnectionInfo {
 	private String protocol;
 	private int port;
 	private String user;
+	private String password;
 
 	public ConnectionInfo(Configuration cnf) {
 		this.module = cnf.getModule();
@@ -23,5 +24,6 @@ public class ConnectionInfo {
 		this.protocol = cnf.getProtocol();
 		this.port = cnf.getPort();
 		this.user = cnf.getUser();
+		this.password = cnf.getPassword();
 	}
 }

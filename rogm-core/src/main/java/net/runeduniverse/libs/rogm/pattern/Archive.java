@@ -2,7 +2,9 @@ package net.runeduniverse.libs.rogm.pattern;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -14,17 +16,13 @@ import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.logging.Level;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
-import net.runeduniverse.libs.rogm.pipeline.EntityFactory;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.scanner.PackageScanner;
-import net.runeduniverse.libs.utils.DataHashMap;
-import net.runeduniverse.libs.utils.DataMap;
-import net.runeduniverse.libs.utils.DataMap.Value;
 
 public final class Archive {
 	public static boolean PACKAGE_SCANNER_DEBUG_MODE = false;
 
-	private final DataMap<Class<?>, Set<IPattern>, Set<EntityFactory>> patterns = new DataHashMap<>();
+	private final Map<Class<?>, Set<IPattern>> patterns = new HashMap<>();
 	private final Set<String> pkgs = new HashSet<>();
 	private final Set<ClassLoader> loader = new HashSet<>();
 	@Getter
@@ -37,8 +35,7 @@ public final class Archive {
 
 		@Override
 		public void validate() throws Exception {
-			for (Value<Set<IPattern>, ?> pair : patterns.valueSet())
-				IValidatable.validate(pair.getValue());
+			IValidatable.validate(patterns.values());
 		}
 	};
 
@@ -58,23 +55,19 @@ public final class Archive {
 				.throwSurpressions(new ScannerException("Pattern parsing failed! See surpressed Exceptions!"));
 	}
 
-	public void addEntry(Class<?> type, IPattern pattern, EntityFactory factory) {
+	public void addEntry(Class<?> type, IPattern pattern) {
 		if (!this.patterns.containsKey(type))
-			this.patterns.put(type, new HashSet<>(), new HashSet<>());
+			this.patterns.put(type, new HashSet<>());
 		this.patterns.get(type)
 				.add(pattern);
-		this.patterns.getData(type)
-				.add(factory);
 	}
 
 	public void logPatterns(Logger logger) {
 		StringBuilder msg = new StringBuilder("Archive Pattern Dump");
-		this.patterns.forEach((c, patterns, factorys) -> {
+		this.patterns.forEach((c, patterns) -> {
 			msg.append("\n [" + c.getSimpleName() + "] " + c.getCanonicalName());
 			msg.append("\n   Pattern:");
 			this.appendSetContent(msg, patterns);
-			msg.append("\n   EntityFactories:");
-			this.appendSetContent(msg, factorys);
 		});
 		logger.finer(msg.toString());
 	}

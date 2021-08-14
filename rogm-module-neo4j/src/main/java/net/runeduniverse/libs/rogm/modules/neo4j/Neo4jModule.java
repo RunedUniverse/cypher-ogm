@@ -96,7 +96,8 @@ public class Neo4jModule extends AModule {
 
 					@Override
 					public List<Record> execute(Transaction tx) {
-						return tx.run(qry).list();
+						return tx.run(qry)
+								.list();
 					}
 				});
 			} catch (Exception e) {
@@ -188,7 +189,8 @@ public class Neo4jModule extends AModule {
 					if (value.isNull())
 						results.put(key, null);
 					else
-						results.put(key, record.get(key).asString());
+						results.put(key, record.get(key)
+								.asString());
 
 				} else
 					results.put(key, record.get(key, -1L));
@@ -216,7 +218,8 @@ public class Neo4jModule extends AModule {
 			Value idProperty = record.get("id_" + key);
 			if (idProperty.isNull())
 				return;
-			this.id = record.get("id_" + key).asLong();
+			this.id = record.get("id_" + key)
+					.asLong();
 
 			Value eidProperty = record.get("eid_" + key);
 			if (eidProperty.isNull())
@@ -224,14 +227,18 @@ public class Neo4jModule extends AModule {
 			else
 				this.entityId = eidProperty.asString();
 
-			if (record.get(key).isNull())
+			if (record.get(key)
+					.isNull())
 				this.data = parser.serialize(null);
 			else
-				this.data = parser.serialize(record.get(key).asMap());
+				this.data = parser.serialize(record.get(key)
+						.asMap());
 
 			Value labelsProperty = record.get("labels_" + key);
-			if (List.class.isAssignableFrom(labelsProperty.asObject().getClass()))
-				for (Object o : record.get("labels_" + key).asList())
+			if (List.class.isAssignableFrom(labelsProperty.asObject()
+					.getClass()))
+				for (Object o : record.get("labels_" + key)
+						.asList())
 					this.labels.add((String) o);
 			else
 				this.labels.add(labelsProperty.asString());

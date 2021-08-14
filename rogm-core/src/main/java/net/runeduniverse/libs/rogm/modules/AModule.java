@@ -8,7 +8,7 @@ public abstract class AModule implements Module {
 
 	@Override
 	public void configure(Archive archive) throws ScannerException {
-		archive.scan(new TypeScanner.NodeScanner(archive, p -> archive.addEntry(p.getType(), p, null)),
-				new TypeScanner.RelationScanner(archive, p -> archive.addEntry(p.getType(), p, null)));
+		archive.scan(new TypeScanner.NodeScanner(archive, p -> archive.addEntry(p.getType(), p)),
+				new TypeScanner.RelationScanner(archive, p -> archive.addEntry(p.getType(), p)));
 	}
 }

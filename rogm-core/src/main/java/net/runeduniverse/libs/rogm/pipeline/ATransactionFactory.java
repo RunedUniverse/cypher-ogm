@@ -1,6 +1,5 @@
 package net.runeduniverse.libs.rogm.pipeline;
 
-import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.info.SessionInfo;
@@ -22,9 +21,7 @@ public abstract class ATransactionFactory {
 
 	// SETUP / CONNECTION
 
-	public void setup() throws ScannerException {
-		this.archive.applyConfig();
-	}
+	public abstract void setup() throws ScannerException;
 
 	public abstract boolean isConnected();
 
