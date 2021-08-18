@@ -2,12 +2,11 @@ package net.runeduniverse.libs.rogm.buffer;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Set;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
+import net.runeduniverse.libs.rogm.pipeline.chains.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.ILazyLoading;;
@@ -16,7 +15,7 @@ public interface IBuffer {
 
 	IBuffer initialize(IStorage storage);
 
-	<T> T acquire(IPattern pattern, IData data, Class<T> type, LoadState loadState, Set<Entry> lazyEntries)
+	<T> T acquire(IPattern pattern, IData data, Class<T> type, LoadState loadState, LazyEntriesContainer lazyEntries)
 			throws Exception;
 
 	Entry update(Object entity, IData data) throws Exception;
@@ -91,13 +90,13 @@ public interface IBuffer {
 			return get(filter instanceof ILazyLoading && ((ILazyLoading) filter).isLazy());
 		}
 
-		protected static Object merge(Entry entry, LoadState state, Set<Entry> lazyEntries) {
+		protected static Object merge(Entry entry, LoadState state, LazyEntriesContainer lazyEntries) {
 			if (entry.getLoadState() == COMPLETE || state == COMPLETE)
 				entry.setLoadState(COMPLETE);
 			else {
 				entry.setLoadState(LAZY);
 				if (lazyEntries != null)
-					lazyEntries.add(entry);
+					lazyEntries.addEntry(entry);
 			}
 			return entry.getEntity();
 		}

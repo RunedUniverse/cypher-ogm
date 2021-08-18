@@ -107,16 +107,16 @@ public class Neo4jModule extends AModule {
 		}
 
 		@Override
-		public List<Map<String, Object>> query(String qry) {
-			List<Map<String, Object>> lst = new ArrayList<Map<String, Object>>();
+		public IRawRecord query(String qry) {
+			RawRecord rawRecord = new RawRecord();
 			for (Record record : _query(qry))
-				lst.add(record.asMap());
-			return lst;
+				rawRecord.addEntry(record.asMap());
+			return rawRecord;
 		}
 
 		@Override
-		public List<Map<String, Module.Data>> queryObject(String qry) {
-			List<Map<String, Module.Data>> qryResults = new ArrayList<>();
+		public IRawDataRecord queryObject(String qry) {
+			RawDataRecord dataRecord = new RawDataRecord();
 
 			try {
 				for (Record record : _query(qry)) {
@@ -126,41 +126,41 @@ public class Neo4jModule extends AModule {
 							continue;
 						data.put(key, new Data(this.parser, record, key));
 					}
-					qryResults.add(data);
+					dataRecord.addEntry(data);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
-			return qryResults;
+			return dataRecord;
 		}
 
 		@Override
-		public Map<String, Serializable> execute(String qry) {
+		public IRawIdRecord execute(String qry) {
 			// -1 -> not found
 			this.logger.finest("[[EXECUTE]]\n" + qry);
 			try (Session session = driver.session()) {
-				return session.writeTransaction(new TransactionWork<Map<String, Serializable>>() {
+				return session.writeTransaction(new TransactionWork<IRawIdRecord>() {
 
 					@Override
-					public Map<String, Serializable> execute(Transaction tx) {
+					public IRawIdRecord execute(Transaction tx) {
 						Result result = tx.run(qry);
+						RawIdRecord idRecord = new RawIdRecord();
 						if (!result.hasNext())
-							return new HashMap<>();
-						Map<String, Serializable> results = new HashMap<>();
+							return idRecord;
 						Record record = result.next();
 						List<String> keys = record.keys();
 						List<Thread> threads = new ArrayList<>();
 
 						for (int i = 0; i <= (int) keys.size() / Processor.BATCH_SIZE; i++)
-							threads.add(new Processor(record, i, keys, results).runAsThread());
+							threads.add(new Processor(record, i, keys, idRecord).runAsThread());
 						for (Thread t : threads)
 							try {
 								t.join();
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
-						return results;
+						return idRecord;
 					}
 				});
 			}
@@ -174,7 +174,7 @@ public class Neo4jModule extends AModule {
 		private final Record record;
 		private final Integer batch;
 		private final List<String> keys;
-		private final Map<String, Serializable> results;
+		private final RawIdRecord idRecord;
 
 		@Override
 		public void run() {
@@ -187,13 +187,13 @@ public class Neo4jModule extends AModule {
 				if (key.charAt(0) == 'e') {
 					Value value = record.get(key);
 					if (value.isNull())
-						results.put(key, null);
+						idRecord.put(key, null);
 					else
-						results.put(key, record.get(key)
+						idRecord.put(key, record.get(key)
 								.asString());
 
 				} else
-					results.put(key, record.get(key, -1L));
+					idRecord.put(key, record.get(key, -1L));
 			}
 		}
 

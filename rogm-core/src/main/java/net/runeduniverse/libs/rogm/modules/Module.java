@@ -21,14 +21,26 @@ public interface Module extends PassiveModule, IdTypeResolver {
 
 		boolean isConnected();
 
+		IRawRecord query(String qry);
+
+		IRawDataRecord queryObject(String qry);
+
+		IRawIdRecord execute(String qry);
+	}
+
+	public static interface IRawRecord {
 		// return the raw data
-		List<Map<String, Object>> query(String qry);
+		List<Map<String, Object>> getRawData();
+	}
 
+	public static interface IRawDataRecord {
 		// returns a Map with the ALIAS as Key and DATA as Value
-		List<Map<String, Data>> queryObject(String qry);
+		List<Map<String, Data>> getData();
+	}
 
+	public static interface IRawIdRecord {
 		// returns a Map with the ALIAS and the IDs
-		Map<String, Serializable> execute(String qry);
+		Map<String, Serializable> getIds();
 	}
 
 	public interface Data {

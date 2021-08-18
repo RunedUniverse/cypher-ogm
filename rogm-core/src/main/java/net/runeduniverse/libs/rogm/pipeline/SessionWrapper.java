@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -17,11 +18,11 @@ import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 
 public final class SessionWrapper implements Session {
 
-	private final ATransactionFactory factory;
-	private final ATransactionRouter router;
+	private final APipelineFactory<?> factory;
+	private final AChainRouter router;
 	private final SessionLogger logger;
 
-	protected SessionWrapper(final ATransactionFactory factory, final PipelineLogger pipelineLogger,
+	protected SessionWrapper(final APipelineFactory<?> factory, final PipelineLogger pipelineLogger,
 			final SessionInfo info) {
 		this.factory = factory;
 		this.router = this.factory.getRouter();
@@ -141,7 +142,12 @@ public final class SessionWrapper implements Session {
 
 	@Override
 	public <T> Collection<T> loadAll(IFilter filter) {
-		return this.router.loadAll(filter);
+		try {
+			return this.router.loadAll(filter);
+		} catch (Exception e) {
+			this.logger.log(Level.WARNING, "Loading of Class Entities by custom Filter failed!", e);
+		}
+		return Collections.emptyList();
 	}
 
 	@Override

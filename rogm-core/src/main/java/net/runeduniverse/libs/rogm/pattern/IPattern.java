@@ -9,6 +9,7 @@ import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
+import net.runeduniverse.libs.rogm.pipeline.chains.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -32,7 +33,7 @@ public interface IPattern {
 
 	Serializable prepareEntityId(Serializable id, Serializable entityId);
 
-	Object parse(final IBuffer buffer, IData data, LoadState loadState, Set<Entry> lazyEntries) throws Exception;
+	Object parse(final IBuffer buffer, IData data, LoadState loadState, LazyEntriesContainer lazyEntries) throws Exception;
 
 	Entry update(final IBuffer buffer, IData data) throws Exception;
 

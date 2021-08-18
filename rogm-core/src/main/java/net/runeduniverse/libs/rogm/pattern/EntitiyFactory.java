@@ -21,6 +21,8 @@ import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
+import net.runeduniverse.libs.rogm.pipeline.chains.ChainContainer.ResultType;
+import net.runeduniverse.libs.rogm.pipeline.chains.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -72,66 +74,7 @@ public class EntitiyFactory implements IStorage {
 		return entity;
 	}
 
-	public <T> Collection<T> parse(Class<T> type, IDataRecord record, Set<Entry> lazyEntries) throws Exception {
-		// type || vv
-		// IPattern primaryPattern = record.getPrimaryFilter().getPattern();
-
-		List<DataMap<IFilter, IData, DataType>> dataRecords = new ArrayList<>();
-		Set<Object> loadedObjects = new HashSet<>();
-
-		// preloads all mentioned nodes
-		for (Set<IData> dataList : record.getData()) {
-			DataMap<IFilter, IData, DataType> map = new DataHashMap<>();
-			dataRecords.add(map);
-			for (IData data : dataList) {
-				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
-				if (IPatternContainer.identify(data.getFilter()))
-					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern()
-							.parse(this.buffer, data, LoadState.get(data.getFilter()), lazyEntries));
-			}
-		}
-
-		for (DataMap<IFilter, IData, DataType> dataMap : dataRecords)
-			dataMap.forEach(DataType.RELATION, (filter, data) -> {
-				IFRelation fRelation = (IFRelation) filter;
-				String label = fRelation.getPrimaryLabel();
-				IFNode fStartNode = fRelation.getStart();
-				NodePattern pStartNode = (NodePattern) ((IPatternContainer) fStartNode).getPattern();
-				Object eStartNode = this.buffer.getById(dataMap.get(fStartNode)
-						.getId(), pStartNode.getType());
-				IFNode fTargetNode = fRelation.getTarget();
-				NodePattern pTargetNode = (NodePattern) ((IPatternContainer) fTargetNode).getPattern();
-				Object eTargetNode = this.buffer.getById(dataMap.get(fTargetNode)
-						.getId(), pTargetNode.getType());
-
-				if (!IPatternContainer.identify(fRelation)) {
-					pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, eTargetNode);
-					pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode,
-							eStartNode);
-					return;
-				}
-
-				// RelationshipEntity
-				RelationPattern rel = (RelationPattern) ((IPatternContainer) fRelation).getPattern();
-				Object relEntity = this.buffer.getById(data.getId(), rel.getType());
-
-				rel.setStart(relEntity, eStartNode);
-				rel.setTarget(relEntity, eTargetNode);
-
-				pStartNode.setRelation(fRelation.getDirection(), label, eStartNode, relEntity);
-				pTargetNode.setRelation(Direction.opposing(fRelation.getDirection()), label, eTargetNode, relEntity);
-			});
-
-		Set<T> nodes = new HashSet<>();
-		for (Serializable primId : record.getIds())
-			nodes.add(this.buffer.getById(primId, type));
-
-		for (Object object : loadedObjects)
-			this.getPattern(object.getClass())
-					.callMethod(PostLoad.class, object);
-
-		return nodes;
-	}
+	
 
 	@Override
 	public void update(Object entity, IDataRecord record, Set<Entry> relatedEntities) throws Exception {
@@ -193,17 +136,5 @@ public class EntitiyFactory implements IStorage {
 
 		this.getPattern(entity.getClass())
 				.callMethod(PostReload.class, entity);
-	}
-
-	private enum DataType {
-		NODE, RELATION, UNKNOWN;
-
-		private static DataType fromFilter(IFilter filter) {
-			if (filter instanceof IFNode)
-				return NODE;
-			if (filter instanceof IFRelation)
-				return RELATION;
-			return UNKNOWN;
-		}
 	}
 }

@@ -2,6 +2,7 @@ package net.runeduniverse.libs.rogm.pipeline;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,23 +18,41 @@ import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
+import net.runeduniverse.libs.rogm.pipeline.chains.Assembler;
+import net.runeduniverse.libs.rogm.pipeline.chains.ChainManager;
+import net.runeduniverse.libs.rogm.pipeline.chains.DepthContainer;
+import net.runeduniverse.libs.rogm.pipeline.chains.LookupLayers;
+import net.runeduniverse.libs.rogm.pipeline.chains.ReduceLayer;
 import net.runeduniverse.libs.rogm.pattern.IQueryPattern;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
-public abstract class ATransactionRouter {
+public abstract class AChainRouter {
+	static {
+		ChainManager.addChainLayers(LookupLayers.class);
+		ChainManager.addChainLayers(Assembler.class);
+		ChainManager.addChainLayers(ReduceLayer.class);
+	}
+
 	protected Archive archive;
-	
-	public ATransactionRouter initialize(Archive archive) {
+	protected Set<Object> baseChainParamPool = new HashSet<>();
+
+	public AChainRouter initialize(Archive archive) {
 		this.archive = archive;
+		this.baseChainParamPool.add(this.archive);
 		return this;
 	}
 
-	public abstract <E> E load(IFilter filter);
+	public abstract <E> E load(Class<E> entityType, IFilter filter, DepthContainer depth) throws Exception;
 
-	public abstract <E> Collection<E> loadAll(IFilter filter);
+	public abstract <E> Collection<E> loadAll(Class<E> entityType, IFilter filter, DepthContainer depth)
+			throws Exception;
 
 	// internal helper
+	protected IBaseQueryPattern _getBaseQueryPattern(final Class<?> entityType) {
+		return this.archive.getPattern(entityType, IBaseQueryPattern.class);
+	}
+
 	protected <E> IQueryBuilder<?, ? extends IFilter> _loadFilterQueryPatter(final Class<E> entityType,
 			final IQueryBuilder<?, ? extends IFilter> builder) throws Exception {
 		for (IQueryPattern pattern : this.archive.getPatterns(entityType, IQueryPattern.class))
@@ -41,25 +60,45 @@ public abstract class ATransactionRouter {
 		return builder;
 	}
 
+	protected <R> R callChain(String label, Class<R> resultType, Object... args) throws Exception {
+		int size = this.baseChainParamPool.size();
+		Object[] arr = new Object[size + args.length];
+		this.baseChainParamPool.toArray(arr);
+		for (int i = 0; i < args.length; i++)
+			arr[size + i] = args[i];
+		return ChainManager.callChain(label, resultType, arr);
+	}
+
 	// Route Invocation from Session Wrapper
+	public <E> E load(IFilter filter) throws Exception {
+		return this.load(null, filter, new DepthContainer(1));
+	}
+	public <E> Collection<E> loadAll(IFilter filter) throws Exception {
+		return this.load(null, filter, new DepthContainer(1));
+	}
+
 	public <E> E load(Class<E> entityType, int depth) throws Exception {
-		return load(_loadFilterQueryPatter(entityType, this.archive.getPattern(entityType, IBaseQueryPattern.class)
-				.search(depth == 0)).getResult());
+		return load(entityType,
+				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(depth == 0)).getResult(),
+				new DepthContainer(depth));
 	}
 
 	public <E> E load(Class<E> entityType, Serializable id, int depth) throws Exception {
-		return load(_loadFilterQueryPatter(entityType, this.archive.getPattern(entityType, IBaseQueryPattern.class)
-				.search(id, depth == 0)).getResult());
+		return load(entityType,
+				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(id, depth == 0)).getResult(),
+				new DepthContainer(depth));
 	}
 
 	public <E> Collection<E> loadAll(Class<E> entityType, int depth) throws Exception {
-		return loadAll(_loadFilterQueryPatter(entityType, this.archive.getPattern(entityType, IBaseQueryPattern.class)
-				.search(depth == 0)).getResult());
+		return loadAll(entityType,
+				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(depth == 0)).getResult(),
+				new DepthContainer(depth));
 	}
 
 	public <E> Collection<E> loadAll(Class<E> entityType, Serializable id, int depth) throws Exception {
-		return loadAll(_loadFilterQueryPatter(entityType, this.archive.getPattern(entityType, IBaseQueryPattern.class)
-				.search(id, depth == 0)).getResult());
+		return loadAll(entityType,
+				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(id, depth == 0)).getResult(),
+				new DepthContainer(depth));
 	}
 
 	private <T, ID extends Serializable> T _load(Class<T> type, ID id, Integer depth) {
@@ -244,4 +283,5 @@ public abstract class ATransactionRouter {
 	public void unload(Object entity) {
 		this.buffer.removeEntry(entity);
 	}
+
 }

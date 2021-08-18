@@ -4,11 +4,11 @@ import net.runeduniverse.libs.rogm.Session;
 import net.runeduniverse.libs.rogm.logging.PipelineLogger;
 
 public class Pipeline {
-	private final ATransactionFactory factory;
+	private final APipelineFactory factory;
 	private final PipelineLogger logger;
 
-	public Pipeline(ATransactionFactory transactionFactory) {
-		this.factory = transactionFactory;
+	public Pipeline(APipelineFactory pipelineFactory) {
+		this.factory = pipelineFactory;
 		this.logger = new PipelineLogger(Pipeline.class, this.factory.getLogger());
 	}
 

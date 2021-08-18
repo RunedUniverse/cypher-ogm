@@ -9,7 +9,7 @@ import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
 
-public class DatabaseTransactionFactory extends ATransactionFactory {
+public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRouter> {
 
 	protected final Configuration cnf;
 	protected final Parser parser;
@@ -19,12 +19,12 @@ public class DatabaseTransactionFactory extends ATransactionFactory {
 	protected final Language.Instance langInstance;
 	protected final Module.Instance<?> moduleInstance;
 
-	public DatabaseTransactionFactory(Configuration config) {
-		this(config, new UniversalLogger(DatabaseTransactionFactory.class, config.getLogger()));
+	public DatabasePipelineFactory(Configuration config) {
+		this(config, new UniversalLogger(DatabasePipelineFactory.class, config.getLogger()));
 	}
 
-	public DatabaseTransactionFactory(Configuration config, UniversalLogger logger) {
-		super(config.getPackageInfo(), config.getModule(), new DatabaseTransactionRouter(), logger);
+	public DatabasePipelineFactory(Configuration config, UniversalLogger logger) {
+		super(config.getPackageInfo(), config.getModule(), new DatabaseChainRouter(), logger);
 		this.cnf = config;
 
 		this.parser = this.cnf.getParser();
@@ -34,6 +34,8 @@ public class DatabaseTransactionFactory extends ATransactionFactory {
 		this.parserInstance = this.parser.build(this.cnf);
 		this.moduleInstance = this.module.build(this.cnf);
 		this.langInstance = this.lang.build(this.parserInstance, this.module);
+
+		this.router.initialize(this.parserInstance, this.langInstance, this.moduleInstance);
 	}
 
 	// SETUP / CONNECTION
@@ -63,7 +65,7 @@ public class DatabaseTransactionFactory extends ATransactionFactory {
 
 	@Override
 	public SessionInfo getSessionInfo() {
-		return new SessionInfo(DatabaseTransactionFactory.class, this.cnf.getBuffer()
+		return new SessionInfo(DatabasePipelineFactory.class, this.cnf.getBuffer()
 				.getClass(), this.cnf.getPackageInfo(), this.cnf.getConnectionInfo());
 	}
 

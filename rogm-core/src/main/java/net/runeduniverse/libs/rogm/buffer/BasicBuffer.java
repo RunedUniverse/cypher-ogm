@@ -11,6 +11,7 @@ import net.runeduniverse.libs.rogm.annotations.PostDelete;
 import net.runeduniverse.libs.rogm.pattern.INodePattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IStorage;
+import net.runeduniverse.libs.rogm.pipeline.chains.LazyEntriesContainer;
 
 public class BasicBuffer implements IBuffer {
 
@@ -27,7 +28,7 @@ public class BasicBuffer implements IBuffer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type, LoadState loadState,
-			Set<Entry> lazyEntries) throws Exception {
+			LazyEntriesContainer lazyEntries) throws Exception {
 		TypeEntry te = this.typeMap.get(type);
 		if (te != null) {
 			Entry entry = te.idMap.get(data.getId());
@@ -40,7 +41,7 @@ public class BasicBuffer implements IBuffer {
 		pattern.setId(entity, data.getEntityId());
 		Entry entry = new Entry(data, entity, loadState, pattern);
 		if (lazyEntries != null && loadState == LoadState.LAZY)
-			lazyEntries.add(entry);
+			lazyEntries.addEntry(entry);
 		addEntry(entry);
 		return entity;
 	}
