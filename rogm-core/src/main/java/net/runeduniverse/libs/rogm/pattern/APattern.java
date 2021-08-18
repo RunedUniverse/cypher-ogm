@@ -20,7 +20,7 @@ import net.runeduniverse.libs.scanner.TypePattern;
 public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> implements IPattern, IValidatable {
 
 	protected final Archive archive;
-	protected FieldPattern idPattern;
+	protected FieldPattern idFieldPattern;
 	@Getter
 	protected IConverter<?> idConverter = null;
 
@@ -30,9 +30,9 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 	}
 
 	public void validate() throws Exception {
-		this.idPattern = super.getField(Id.class);
-		if (this.idPattern != null)
-			this.idConverter = this.idPattern.getConverter();
+		this.idFieldPattern = super.getField(Id.class);
+		if (this.idFieldPattern != null)
+			this.idConverter = this.idFieldPattern.getConverter();
 		for (Map.Entry<?, FieldPattern> entry : this.fields.entrySet())
 			IValidatable.validate(entry.getValue());
 	}
@@ -44,24 +44,24 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 
 	@Override
 	public Serializable getId(Object entity) {
-		if (this.idPattern == null)
+		if (this.idFieldPattern == null)
 			return null;
-		return (Serializable) this.idPattern.getValue(entity);
+		return (Serializable) this.idFieldPattern.getValue(entity);
 	}
 
 	@Override
 	public Object setId(Object entity, Serializable id) {
-		if (this.idPattern != null)
-			this.idPattern.setValue(entity, id);
+		if (this.idFieldPattern != null)
+			this.idFieldPattern.setValue(entity, id);
 		return entity;
 	}
 
 	@Override
 	public Serializable prepareEntityId(Serializable id, Serializable entityId) {
-		if (this.idPattern == null || entityId == null)
+		if (this.idFieldPattern == null || entityId == null)
 			return id;
 		else if (entityId instanceof String)
-			return this.idPattern.getConverter()
+			return this.idFieldPattern.getConverter()
 					.convert((String) entityId);
 		return entityId;
 	}
@@ -69,7 +69,7 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 	@Override
 	public Object parse(final IBuffer buffer, IData data, LoadState loadState, Set<Entry> lazyEntries)
 			throws Exception {
-		if (this.idPattern != null)
+		if (this.idFieldPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
 		// TODO FIX
@@ -78,7 +78,7 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 
 	@Override
 	public Entry update(final IBuffer buffer, IData data) throws Exception {
-		if (this.idPattern != null)
+		if (this.idFieldPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 
 		// TODO FIX
