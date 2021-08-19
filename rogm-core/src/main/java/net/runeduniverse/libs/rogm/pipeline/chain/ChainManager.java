@@ -1,10 +1,12 @@
-package net.runeduniverse.libs.rogm.pipeline.chains;
+package net.runeduniverse.libs.rogm.pipeline.chain;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.BaseChainLayer;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainContainer;
 import static net.runeduniverse.libs.utils.StringUtils.*;
 
 public final class ChainManager {
@@ -16,7 +18,7 @@ public final class ChainManager {
 			int mods = method.getModifiers();
 			if (Modifier.isAbstract(mods) || !Modifier.isStatic(mods) || !Modifier.isPublic(mods))
 				continue;
-			ChainLayer layer = new ChainLayer(method);
+			BaseChainLayer layer = new BaseChainLayer(method);
 			for (Chain anno : method.getAnnotationsByType(Chain.class)) {
 				if (isBlank(anno.label()) || anno.layers() == null)
 					continue;

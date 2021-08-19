@@ -10,7 +10,8 @@ import net.runeduniverse.libs.rogm.annotations.PreReload;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
-import net.runeduniverse.libs.rogm.pipeline.chains.LazyEntriesContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.Chain;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.scanner.MethodPattern;
@@ -66,12 +67,14 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 	}
 
 	@Override
-	public Object parse(final IBuffer buffer, IData data, LoadState loadState, LazyEntriesContainer lazyEntries)
-			throws Exception {
+	public void prepareEntityId(IData data) {
 		if (this.idFieldPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
+	}
 
-		// TODO FIX
+	public Object parse(final IBuffer buffer, IData data, LoadState loadState, LazyEntriesContainer lazyEntries)
+			throws Exception {
+		// TODO REMOVE
 		return buffer.acquire(this, data, this.type, loadState, lazyEntries);
 	}
 

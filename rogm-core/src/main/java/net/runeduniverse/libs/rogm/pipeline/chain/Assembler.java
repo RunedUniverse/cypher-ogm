@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.pipeline.chains;
+package net.runeduniverse.libs.rogm.pipeline.chain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +10,6 @@ import java.util.Set;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.PostLoad;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.pattern.NodePattern;
 import net.runeduniverse.libs.rogm.pattern.RelationPattern;
 import net.runeduniverse.libs.rogm.pattern.Archive;
@@ -18,7 +17,8 @@ import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
-import net.runeduniverse.libs.rogm.pipeline.chains.ChainContainer.ResultType;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.Result;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.Store;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -27,11 +27,16 @@ import net.runeduniverse.libs.utils.DataMap;
 
 public interface Assembler {
 
+	@Chain(label = Chain.BUFFER_LOAD_CHAIN, layers = { 10 })
+	public static void prepareDataForBuffer(IPattern pattern, IData data) {
+		pattern.prepareEntityId(data);
+	}
+
 	@Chain(label = Chain.LOAD_ALL_CHAIN, layers = { 400 }) // TODO FIX layers
 	@Chain(label = Chain.LOAD_ONE_CHAIN, layers = { 400 }) // TODO FIX layers
 	@SuppressWarnings("unchecked")
-	public static <T> Collection<T> parse(ResultType<T> resultType, Archive archive, IBuffer buffer, IDataRecord record,
-			LazyEntriesContainer lazyEntries) throws Exception {
+	public static <T> Collection<T> parse(Store store, Result<T> resultType, Archive archive, IBuffer buffer,
+			IDataRecord record) throws Exception {
 		// type || vv
 		final Class<?> returnType;
 		IFilter primaryFilter = record.getPrimaryFilter();
@@ -49,10 +54,13 @@ public interface Assembler {
 			DataMap<IFilter, IData, DataType> map = new DataHashMap<>();
 			dataRecords.add(map);
 			for (IData data : dataList) {
-				map.put(data.getFilter(), data, DataType.fromFilter(data.getFilter()));
-				if (IPatternContainer.identify(data.getFilter()))
-					loadedObjects.add(((IPatternContainer) data.getFilter()).getPattern()
-							.parse(buffer, data, LoadState.get(data.getFilter()), lazyEntries));
+				IFilter dataFilter = data.getFilter();
+				map.put(dataFilter, data, DataType.fromFilter(dataFilter));
+				if (IPatternContainer.identify(dataFilter)) {
+					IPattern dataPattern = ((IPatternContainer) dataFilter).getPattern();
+					loadedObjects.add(ChainManager.callChain(Chain.BUFFER_LOAD_CHAIN, dataPattern.getType(), store,
+							data, dataPattern));
+				}
 			}
 		}
 

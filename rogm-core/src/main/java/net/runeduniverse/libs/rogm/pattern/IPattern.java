@@ -5,11 +5,9 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
-import net.runeduniverse.libs.rogm.pipeline.chains.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -17,23 +15,11 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 public interface IPattern {
 	PatternType getPatternType();
 
-	boolean isIdSet(Object entity);
-
-	Serializable getId(Object entity);
-
 	Class<?> getType();
 
 	Collection<String> getLabels();
 
 	FieldPattern getField(Class<? extends Annotation> anno);
-
-	IConverter<?> getIdConverter();
-
-	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
-
-	Serializable prepareEntityId(Serializable id, Serializable entityId);
-
-	Object parse(final IBuffer buffer, IData data, LoadState loadState, LazyEntriesContainer lazyEntries) throws Exception;
 
 	Entry update(final IBuffer buffer, IData data) throws Exception;
 
@@ -70,6 +56,10 @@ public interface IPattern {
 		String getData();
 
 		IFilter getFilter();
+
+		default LoadState getLoadState() {
+			return LoadState.get(this.getFilter());
+		}
 	}
 
 	public interface IDataRecord {

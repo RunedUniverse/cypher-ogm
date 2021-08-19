@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.pipeline.chains;
+package net.runeduniverse.libs.rogm.pipeline.chain;
 
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.lang.Language.ILoadMapper;

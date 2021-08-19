@@ -4,21 +4,18 @@ import java.io.Serializable;
 import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
-import net.runeduniverse.libs.rogm.pipeline.chains.LazyEntriesContainer;
+import net.runeduniverse.libs.rogm.buffer.BasicBuffer.TypeEntry;
+import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.ILazyLoading;;
 
 public interface IBuffer {
 
-	IBuffer initialize(IStorage storage);
-
-	<T> T acquire(IPattern pattern, IData data, Class<T> type, LoadState loadState, LazyEntriesContainer lazyEntries)
-			throws Exception;
-
-	Entry update(Object entity, IData data) throws Exception;
+	Entry update(Parser.Instance parser, Object entity, IData data) throws Exception;
 
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
@@ -43,9 +40,10 @@ public interface IBuffer {
 
 	void addEntry(Entry entry);
 
-	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState, IPattern pattern);
+	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState, IBaseQueryPattern pattern);
 
-	void updateEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState) throws Exception;
+	void updateEntry(Archive archive, Serializable id, Serializable entityId, Object entity, LoadState loadState)
+			throws Exception;
 
 	void removeEntry(Entry entry);
 
@@ -57,6 +55,9 @@ public interface IBuffer {
 
 	Collection<Entry> getAllEntries();
 
+	@Deprecated
+	TypeEntry getTypeEntry(Class<?> type);
+
 	@Data
 	@AllArgsConstructor
 	public class Entry {
@@ -65,9 +66,9 @@ public interface IBuffer {
 		private Object entity;
 		private LoadState loadState;
 		private Class<?> type;
-		private IPattern pattern;
+		private IBaseQueryPattern pattern;
 
-		public Entry(IData data, Object entity, LoadState loadState, IPattern pattern) {
+		public Entry(IData data, Object entity, LoadState loadState, IBaseQueryPattern pattern) {
 			this.id = data.getId();
 			this.entityId = data.getEntityId();
 			this.entity = entity;

@@ -5,8 +5,8 @@ import java.util.Collection;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.pipeline.chains.Chain;
-import net.runeduniverse.libs.rogm.pipeline.chains.DepthContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.Chain;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class DatabaseChainRouter extends AChainRouter {

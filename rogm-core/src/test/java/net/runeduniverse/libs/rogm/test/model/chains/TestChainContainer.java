@@ -1,6 +1,6 @@
 package net.runeduniverse.libs.rogm.test.model.chains;
 
-import net.runeduniverse.libs.rogm.pipeline.chains.Chain;
+import net.runeduniverse.libs.rogm.pipeline.chain.Chain;
 import net.runeduniverse.libs.rogm.test.system.ChainManagerTest;
 
 public interface TestChainContainer {

@@ -8,52 +8,49 @@ import java.util.Map;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
+import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.INodePattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
-import net.runeduniverse.libs.rogm.pipeline.chains.LazyEntriesContainer;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
+import net.runeduniverse.libs.rogm.pipeline.chain.Chain;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.Result;
 
 public class BasicBuffer implements IBuffer {
 
-	protected IStorage storage = null;
 	private Map<Object, Entry> entries = new HashMap<>();
 	private Map<Class<?>, TypeEntry> typeMap = new HashMap<>();
 
-	@Override
-	public IBuffer initialize(IStorage storage) {
-		this.storage = storage;
-		return this;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type, LoadState loadState,
-			LazyEntriesContainer lazyEntries) throws Exception {
-		TypeEntry te = this.typeMap.get(type);
+	@SuppressWarnings("deprecation")
+	@Chain(label = Chain.BUFFER_LOAD_CHAIN, layers = { 20 })
+	public static Object acquire(IBuffer buffer, Parser.Instance parser, IBaseQueryPattern pattern, IData data,
+			LazyEntriesContainer lazyEntries, Result<?> result) throws Exception {
+		LoadState loadState = data.getLoadState();
+		TypeEntry te = buffer.getTypeEntry(pattern.getType());
 		if (te != null) {
 			Entry entry = te.idMap.get(data.getId());
 			if (entry != null)
-				return (T) LoadState.merge(entry, loadState, lazyEntries);
+				return result.setResult(LoadState.merge(entry, loadState, lazyEntries));
 		}
 
-		T entity = this.storage.getParser()
-				.deserialize(type, data.getData());
+		Object entity = parser.deserialize(pattern.getType(), data.getData());
 		pattern.setId(entity, data.getEntityId());
 		Entry entry = new Entry(data, entity, loadState, pattern);
 		if (lazyEntries != null && loadState == LoadState.LAZY)
 			lazyEntries.addEntry(entry);
-		addEntry(entry);
-		return entity;
+		buffer.addEntry(entry);
+		return result.setResult(entity);
 	}
 
 	@Override
-	public Entry update(Object entity, IPattern.IData data) throws Exception {
+	public Entry update(Parser.Instance parser, Object entity, IPattern.IData data) throws Exception {
 		if (entity == null)
 			return null;
 		Entry entry = entries.get(entity);
 
-		this.storage.getParser()
-				.deserialize(entity, data.getData());
+		parser.deserialize(entity, data.getData());
 		updateEntry(entry, data.getId(), data.getEntityId());
 		entry.getPattern()
 				.setId(entity, data.getEntityId());
@@ -109,19 +106,20 @@ public class BasicBuffer implements IBuffer {
 	}
 
 	@Override
-	public void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState, IPattern pattern) {
+	public void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState,
+			IBaseQueryPattern pattern) {
 		addEntry(new Entry(id, entityId, entity, loadState, entity.getClass(), pattern));
 	}
 
 	@Override
-	public void updateEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState)
+	public void updateEntry(Archive archive, Serializable id, Serializable entityId, Object entity, LoadState loadState)
 			throws Exception {
 		if (entity == null)
 			return;
 		Entry entry = entries.get(entity);
 
 		Class<?> type = entity.getClass();
-		IPattern pattern = this.storage.getPattern(type);
+		IBaseQueryPattern pattern = archive.getPattern(type, IBaseQueryPattern.class);
 		entityId = pattern.prepareEntityId(id, entityId);
 
 		if (entry == null)
@@ -171,6 +169,11 @@ public class BasicBuffer implements IBuffer {
 	protected class TypeEntry {
 		protected Map<Serializable, Entry> idMap = new HashMap<>();
 		protected Map<Serializable, Entry> entityIdMap = new HashMap<>();
+	}
+
+	@Override
+	public TypeEntry getTypeEntry(Class<?> type) {
+		return this.typeMap.get(type);
 	}
 
 	@Override
