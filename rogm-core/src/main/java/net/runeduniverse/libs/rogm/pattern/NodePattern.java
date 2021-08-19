@@ -91,7 +91,7 @@ public class NodePattern extends APattern implements INodePattern {
 	}
 
 	@Override
-	public ISaveContainer save(Object entity, Integer depth) throws Exception {
+	public ISaveContainer save(final IBuffer buffer, Object entity, Integer depth) throws Exception {
 		Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData = new HashMap<>();
 		return new ISaveContainer() {
 
@@ -112,7 +112,6 @@ public class NodePattern extends APattern implements INodePattern {
 						}
 			}
 
-			@SuppressWarnings("deprecation")
 			@Override
 			public Set<IFilter> getRelatedFilter() throws Exception {
 				Set<IFilter> set = new HashSet<>();
@@ -120,9 +119,7 @@ public class NodePattern extends APattern implements INodePattern {
 					if (!includedData.get(object)
 							.persist())
 						continue;
-					// TODO FIX
-					Entry entry = NodePattern.this.archive.getBuffer()
-							.getEntry(object);
+					Entry entry = buffer.getEntry(object);
 					if (entry == null || entry.getLoadState() == LoadState.LAZY)
 						continue;
 					set.add(entry.getPattern()

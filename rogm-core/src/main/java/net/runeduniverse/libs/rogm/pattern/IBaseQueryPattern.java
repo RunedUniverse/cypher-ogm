@@ -26,7 +26,7 @@ public interface IBaseQueryPattern extends IPattern {
 	// search exactly 1 node / querry deeper layers for node
 	IQueryBuilder<?, ? extends IFilter> search(Serializable id, boolean lazy) throws Exception;
 
-	ISaveContainer save(Object entity, Integer depth) throws Exception;
+	ISaveContainer save(final IBuffer buffer, Object entity, Integer depth) throws Exception;
 
 	IDeleteContainer delete(final IBuffer buffer, Object entity) throws Exception;
 }

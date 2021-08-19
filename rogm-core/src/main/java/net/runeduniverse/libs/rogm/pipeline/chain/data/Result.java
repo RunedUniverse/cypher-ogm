@@ -10,7 +10,7 @@ public final class Result<R> {
 	private R result;
 
 	public boolean hasResult() {
-		return result == null;
+		return result != null;
 	}
 
 	@SuppressWarnings("unchecked")

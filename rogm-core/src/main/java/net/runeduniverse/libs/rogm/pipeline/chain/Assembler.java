@@ -13,6 +13,7 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.pattern.NodePattern;
 import net.runeduniverse.libs.rogm.pattern.RelationPattern;
 import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
@@ -28,23 +29,23 @@ import net.runeduniverse.libs.utils.DataMap;
 public interface Assembler {
 
 	@Chain(label = Chain.BUFFER_LOAD_CHAIN, layers = { 10 })
-	public static void prepareDataForBuffer(IPattern pattern, IData data) {
+	public static void prepareDataForBuffer(IBaseQueryPattern pattern, IData data) {
 		pattern.prepareEntityId(data);
 	}
 
 	@Chain(label = Chain.LOAD_ALL_CHAIN, layers = { 400 }) // TODO FIX layers
 	@Chain(label = Chain.LOAD_ONE_CHAIN, layers = { 400 }) // TODO FIX layers
 	@SuppressWarnings("unchecked")
-	public static <T> Collection<T> parse(Store store, Result<T> resultType, Archive archive, IBuffer buffer,
+	public static <T> Collection<T> parse(Store store, Result<?> result, Archive archive, IBuffer buffer,
 			IDataRecord record) throws Exception {
 		// type || vv
 		final Class<?> returnType;
 		IFilter primaryFilter = record.getPrimaryFilter();
-		if (resultType.getType() == null && primaryFilter != null && primaryFilter instanceof IPatternContainer) {
+		if (result.getType() == null && primaryFilter != null && primaryFilter instanceof IPatternContainer) {
 			IPattern primaryPattern = ((IPatternContainer) primaryFilter).getPattern();
 			returnType = primaryPattern.getType();
 		} else
-			returnType = resultType.getType();
+			returnType = result.getType();
 
 		List<DataMap<IFilter, IData, DataType>> dataRecords = new ArrayList<>();
 		Set<Object> loadedObjects = new HashSet<>();
@@ -58,8 +59,9 @@ public interface Assembler {
 				map.put(dataFilter, data, DataType.fromFilter(dataFilter));
 				if (IPatternContainer.identify(dataFilter)) {
 					IPattern dataPattern = ((IPatternContainer) dataFilter).getPattern();
-					loadedObjects.add(ChainManager.callChain(Chain.BUFFER_LOAD_CHAIN, dataPattern.getType(), store,
-							data, dataPattern));
+					if (dataPattern instanceof IBaseQueryPattern)
+						loadedObjects.add(ChainManager.callChain(Chain.BUFFER_LOAD_CHAIN, dataPattern.getType(), store,
+								data, dataPattern));
 				}
 			}
 		}
@@ -98,10 +100,10 @@ public interface Assembler {
 		Set<T> nodes = new HashSet<>();
 		for (Serializable primId : record.getIds())
 			nodes.add((T) buffer.getById(primId, returnType));
+		result.setResult(nodes);
 
 		for (Object object : loadedObjects)
 			archive.callMethod(object.getClass(), PostLoad.class, object);
-
 		return nodes;
 	}
 

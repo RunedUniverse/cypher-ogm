@@ -2,9 +2,12 @@ package net.runeduniverse.libs.rogm.buffer;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.runeduniverse.libs.rogm.buffer.BasicBuffer.TypeEntry;
+import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
@@ -40,7 +43,8 @@ public interface IBuffer {
 
 	void addEntry(Entry entry);
 
-	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState, IBaseQueryPattern pattern);
+	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState,
+			IBaseQueryPattern pattern);
 
 	void updateEntry(Archive archive, Serializable id, Serializable entityId, Object entity, LoadState loadState)
 			throws Exception;
@@ -57,6 +61,14 @@ public interface IBuffer {
 
 	@Deprecated
 	TypeEntry getTypeEntry(Class<?> type);
+
+	public class TypeEntry {
+		protected TypeEntry() {
+		}
+
+		protected Map<Serializable, Entry> idMap = new HashMap<>();
+		protected Map<Serializable, Entry> entityIdMap = new HashMap<>();
+	}
 
 	@Data
 	@AllArgsConstructor
