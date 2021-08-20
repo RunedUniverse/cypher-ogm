@@ -3,6 +3,7 @@ package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 import java.util.Map;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @SuppressWarnings("deprecation")
 public class ChainRuntime<R> {
@@ -12,6 +13,10 @@ public class ChainRuntime<R> {
 	protected final ChainContainer container;
 	protected final Store store;
 	protected final Result<R> result;
+
+	@Getter
+	@Setter
+	protected boolean canceled = false;
 
 	protected ChainRuntime(ChainContainer container, Class<R> resultType, Object[] args) {
 		this(null, container, resultType, null, args);
@@ -64,6 +69,12 @@ public class ChainRuntime<R> {
 		return this.store.getData(paramTypes);
 	}
 
+	public boolean active() {
+		if (this.canceled || this.hasResult())
+			return false;
+		return true;
+	}
+
 	public boolean isRoot() {
 		return this.root == null;
 	}
@@ -74,6 +85,9 @@ public class ChainRuntime<R> {
 
 	@SuppressWarnings("unchecked")
 	protected R getFinalResult() {
+		if (this.canceled)
+			return null;
+
 		Class<R> resultType = this.result.getType();
 		if (resultType == null)
 			return (R) store.getLastAdded();
