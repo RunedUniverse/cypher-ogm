@@ -11,6 +11,6 @@ public interface Parser {
 
 		<T> T deserialize(Class<T> clazz, String value) throws Exception;
 
-		<T> T deserialize(T obj, String value) throws Exception;
+		<T> void deserialize(T obj, String value) throws Exception;
 	}
 }

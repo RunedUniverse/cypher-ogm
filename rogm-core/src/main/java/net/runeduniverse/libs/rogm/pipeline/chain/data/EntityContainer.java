@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EntityContainer {
 
-	private Object enitity = null;
+	private Object entity = null;
 }

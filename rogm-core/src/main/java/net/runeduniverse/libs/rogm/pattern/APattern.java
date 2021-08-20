@@ -8,16 +8,13 @@ import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.PreReload;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.scanner.MethodPattern;
 import net.runeduniverse.libs.scanner.TypePattern;
 
-public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> implements IPattern, IValidatable {
+public abstract class APattern extends TypePattern<FieldPattern, MethodPattern>
+		implements IBaseQueryPattern, IValidatable {
 
 	protected final Archive archive;
 	protected FieldPattern idFieldPattern;
@@ -72,23 +69,15 @@ public abstract class APattern extends TypePattern<FieldPattern, MethodPattern> 
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 	}
 
-	public Object parse(final IBuffer buffer, IData data, LoadState loadState, LazyEntriesContainer lazyEntries)
-			throws Exception {
-		// TODO REMOVE
-		return buffer.acquire(this, data, this.type, loadState, lazyEntries);
-	}
-
 	@Override
-	public Entry update(final IBuffer buffer, IData data) throws Exception {
-		if (this.idFieldPattern != null)
-			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
+	public Object prepareEntityUpdate(final IBuffer buffer, IData data) {
+		this.prepareEntityId(data);
 
-		// TODO FIX
 		Object entity = buffer.getById(data.getId(), this.type);
-
 		this.callMethod(PreReload.class, entity);
+		return entity;
 		// TODO FIX
-		return buffer.update(entity, data);
+		// return buffer.update(entity, data);
 	}
 
 	@RequiredArgsConstructor

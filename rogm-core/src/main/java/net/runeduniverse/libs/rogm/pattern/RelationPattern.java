@@ -134,7 +134,7 @@ public class RelationPattern extends APattern implements IRelationPattern {
 	}
 
 	@Override
-	public ISaveContainer save(Object entity, Integer depth) throws Exception {
+	public ISaveContainer save(IBuffer buffer, Object entity, Integer depth) throws Exception {
 		Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData = new HashMap<>();
 		return new ISaveContainer() {
 

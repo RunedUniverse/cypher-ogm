@@ -28,13 +28,13 @@ public class DatabaseChainRouter extends AChainRouter {
 
 	@Override
 	public <E> E load(Class<E> entityType, IFilter filter, DepthContainer depth) throws Exception {
-		return super.callChain(Chains.LOAD_ONE_CHAIN, entityType, filter, depth);
+		return super.callChain(Chains.LOAD_CHAIN.ONE.LABEL, entityType, filter, depth);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <E> Collection<E> loadAll(Class<E> entityType, IFilter filter, DepthContainer depth) throws Exception {
-		return super.callChain(Chains.LOAD_ALL_CHAIN, Collection.class, filter, depth);
+		return super.callChain(Chains.LOAD_CHAIN.ALL.LABEL, Collection.class, filter, depth);
 	}
 
 }

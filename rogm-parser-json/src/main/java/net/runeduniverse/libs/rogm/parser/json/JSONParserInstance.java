@@ -25,9 +25,10 @@ class JSONParserInstance implements Instance {
 	}
 
 	@Override
-	public <T> T deserialize(T obj, String value) throws JsonMappingException, JsonProcessingException {
+	public <T> void deserialize(T obj, String value) throws JsonMappingException, JsonProcessingException {
 		if (value == null)
-			return obj;
-		return this.mapper.readerForUpdating(obj).readValue(value);
+			return;
+		this.mapper.readerForUpdating(obj)
+				.readValue(value);
 	}
 }

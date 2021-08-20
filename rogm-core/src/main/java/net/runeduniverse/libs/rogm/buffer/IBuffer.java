@@ -2,14 +2,11 @@ package net.runeduniverse.libs.rogm.buffer;
 
 import java.io.Serializable;
 import java.util.Collection;
-import net.runeduniverse.libs.rogm.parser.Parser;
+
 import net.runeduniverse.libs.rogm.pattern.Archive;
-import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
-import net.runeduniverse.libs.rogm.pattern.IPattern.IData;;
+import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;;
 
-public interface IBuffer extends InternalBufferTypes{
-
-	Entry update(Parser.Instance parser, Object entity, IData data) throws Exception;
+public interface IBuffer extends InternalBufferTypes {
 
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
@@ -49,6 +46,10 @@ public interface IBuffer extends InternalBufferTypes{
 	Entry getEntry(Object entity);
 
 	Collection<Entry> getAllEntries();
+
+	// INTERNAL USE //
+	@Deprecated
+	void updateEntry(Entry entry, Serializable id, Serializable entityId);
 
 	@Deprecated
 	TypeEntry getTypeEntry(Class<?> type);

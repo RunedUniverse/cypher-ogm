@@ -1,5 +1,6 @@
 package net.runeduniverse.libs.rogm.pattern;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -120,6 +121,28 @@ public final class Archive {
 			if (patternType.isInstance(pattern))
 				return (P) pattern;
 		return null;
+	}
+
+	// TODO move to needed pos
+	public boolean isIdSet(Object entity) {
+		try {
+			return this.getPattern(entity.getClass(), IBaseQueryPattern.class)
+					.isIdSet(entity);
+		} catch (Exception e) {
+			// this.logger.burying("isIdSet(Object)", e);
+			return false;
+		}
+	}
+
+	// TODO move to needed pos
+	public Object setId(Object entity, Serializable id) {
+		try {
+			return this.getPattern(entity.getClass(), IBaseQueryPattern.class)
+					.setId(entity, id);
+		} catch (Exception e) {
+			// this.logger.burying("setId(Object, Serializable)", e);
+		}
+		return entity;
 	}
 
 	public IConverter<?> getIdFieldConverter(Class<?> type) {

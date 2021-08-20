@@ -5,13 +5,12 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
-public interface IPattern extends InternalBufferTypes{
+public interface IPattern {
 	PatternType getPatternType();
 
 	Class<?> getType();
@@ -19,8 +18,6 @@ public interface IPattern extends InternalBufferTypes{
 	Collection<String> getLabels();
 
 	FieldPattern getField(Class<? extends Annotation> anno);
-
-	Entry update(final IBuffer buffer, IData data) throws Exception;
 
 	/**
 	 * Used to call parsed Methods
@@ -43,7 +40,7 @@ public interface IPattern extends InternalBufferTypes{
 		}
 	}
 
-	public interface IData {
+	public interface IData extends InternalBufferTypes {
 		Serializable getId();
 
 		Serializable getEntityId();

@@ -7,8 +7,9 @@ import net.runeduniverse.libs.rogm.pipeline.chain.sys.Result;
 
 public interface ReduceLayer {
 
-	@Chain(label = Chains.LOAD_ONE_CHAIN, layers = { 450 }, ignoreCancelled = true) // TODO FIX layers
-	public static <T> T convertRecord(Collection<T> collection, Result<T> result) {
+	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = {
+			Chains.LOAD_CHAIN.ONE.REDUCE_COLLECTION }, ignoreResult = true) // TODO FIX layers
+	public static <T> T reduceCollection(Collection<T> collection, Result<T> result) {
 		for (T t : collection) {
 			result.setResult(t);
 			return t;

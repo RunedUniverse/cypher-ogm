@@ -21,6 +21,8 @@ public interface IBaseQueryPattern extends IPattern {
 
 	void prepareEntityId(IData data);
 
+	Object prepareEntityUpdate(final IBuffer buffer, IData data);
+
 	IQueryBuilder<?, ? extends IFilter> search(boolean lazy) throws Exception;
 
 	// search exactly 1 node / querry deeper layers for node

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
+import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
@@ -366,7 +367,7 @@ public class CypherLanguage implements Language {
 		}
 	}
 
-	protected static class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper {
+	protected static class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper, InternalBufferTypes {
 
 		private CypherInstance cypher;
 		private IFilter primary;
@@ -440,7 +441,7 @@ public class CypherLanguage implements Language {
 			for (IFilter qryFilter : effectedQrys) {
 				DataMap<IFilter, String, FilterStatus> effectedMap = new DataHashMap<>();
 
-				for (Map<String, Object> ids : module.query(cypher._load(effectedMap, qryFilter, false))) {
+				for (Map<String, Object> ids : module.query(cypher._load(effectedMap, qryFilter, false)).getRawData()) {
 					effectedMap.forEach((filter, code) -> {
 						if (!(filter instanceof IFNode))
 							return;

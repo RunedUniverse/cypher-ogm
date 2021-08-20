@@ -8,29 +8,14 @@ import java.util.Map;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
-import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.INodePattern;
-import net.runeduniverse.libs.rogm.pattern.IPattern;
 
 public class BasicBuffer implements IBuffer {
 
 	private Map<Object, Entry> entries = new HashMap<>();
 	private Map<Class<?>, TypeEntry> typeMap = new HashMap<>();
-
-	@Override
-	public Entry update(Parser.Instance parser, Object entity, IPattern.IData data) throws Exception {
-		if (entity == null)
-			return null;
-		Entry entry = entries.get(entity);
-
-		parser.deserialize(entity, data.getData());
-		updateEntry(entry, data.getId(), data.getEntityId());
-		entry.getPattern()
-				.setId(entity, data.getEntityId());
-		return entry;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -104,7 +89,7 @@ public class BasicBuffer implements IBuffer {
 		pattern.setId(entity, entityId);
 	}
 
-	protected void updateEntry(Entry entry, Serializable id, Serializable entityId) {
+	public void updateEntry(Entry entry, Serializable id, Serializable entityId) {
 		TypeEntry te = this.typeMap.get(entry.getType());
 
 		if (id != entry.getId()) {
