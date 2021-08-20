@@ -8,6 +8,8 @@ import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 
 public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRouter> {
 
@@ -41,12 +43,22 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 	// SETUP / CONNECTION
 
 	@Override
-	public void setup() throws ScannerException {
-		for (PassiveModule module : this.cnf.getPassiveModules())
-			module.configure(this.archive);
+	protected void setupCallOrder() throws Exception {
+		super.setupCallOrder();
 
 		if (!this.moduleInstance.connect(this.cnf.getConnectionInfo()))
 			this.logger.warning("Failed to establish initial database-connection!");
+	}
+
+	@Override
+	protected void setupArchive(Archive archive) throws ScannerException {
+		for (PassiveModule module : this.cnf.getPassiveModules())
+			module.configure(archive);
+	}
+
+	@Override
+	protected void setupChainManager(ChainManager chainManager) throws Exception {
+		
 	}
 
 	@Override
@@ -61,6 +73,14 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 
 	}
 
+	@Override
+	public void closePipeline(Pipeline closingPipeline) {
+		this.closeConnections();
+	}
+
+	// HELPER
+	protected void setup
+	
 	// GETTER
 
 	@Override

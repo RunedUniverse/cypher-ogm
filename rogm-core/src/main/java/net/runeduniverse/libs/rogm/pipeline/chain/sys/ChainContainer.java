@@ -12,11 +12,11 @@ public final class ChainContainer {
 	private final String label;
 	private final Map<Integer, ILayer> chain = new TreeMap<>();
 
-	public ChainContainer(String label) {
+	protected ChainContainer(String label) {
 		this.label = label;
 	}
 
-	public void putAtLayers(final int[] ids, final ILayer layer) {
+	protected void putAtLayers(final int[] ids, final ILayer layer) {
 		for (int id : ids)
 			this.chain.put(id, layer);
 	}
@@ -33,10 +33,27 @@ public final class ChainContainer {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public <R> R call(Class<R> resultType, Object[] args) throws Exception {
+	public <R> R callChain(Class<R> resultType, Object[] args) throws Exception {
+		// init
 		Store store = new Store(args);
 		Result<R> result = new Result<>(resultType);
 		store.putData(Result.class, result);
+		ChainRuntime runtime = new ChainRuntime();
+
+		// runtime
+		for (ILayer layer : this.chain.values()) {
+			if (!result.hasResult() || ChainLayer.ignoreCancelled(layer))
+				layer.call(store);
+		}
+
+		// return result
+		if (resultType == null)
+			return (R) store.getLastAdded();
+		else if (result.hasResult())
+			return result.getResult();
+		return store.getData(resultType);
+	}
+
 		for (ILayer layer : this.chain.values()) {
 			if (!result.hasResult() || ChainLayer.ignoreCancelled(layer))
 				layer.call(store);

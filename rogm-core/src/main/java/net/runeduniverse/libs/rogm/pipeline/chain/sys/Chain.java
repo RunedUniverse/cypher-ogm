@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.pipeline.chain;
+package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -6,8 +6,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chains;
 
 @Retention(RUNTIME)
 @Target(METHOD)

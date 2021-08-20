@@ -3,6 +3,7 @@ package net.runeduniverse.libs.rogm.pipeline.chain;
 import java.util.Collection;
 
 import net.runeduniverse.libs.rogm.pipeline.chain.data.Result;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 
 public interface ReduceLayer {
 

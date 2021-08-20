@@ -1,7 +1,5 @@
 package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
-import net.runeduniverse.libs.rogm.pipeline.chain.Chain;
-
 public final class ChainLayer implements ILayer {
 
 	private final BaseChainLayer base;

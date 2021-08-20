@@ -18,11 +18,11 @@ import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
-import net.runeduniverse.libs.rogm.pipeline.chain.Assembler;
-import net.runeduniverse.libs.rogm.pipeline.chain.ChainManager;
+import net.runeduniverse.libs.rogm.pipeline.chain.AssemblyLayers;
 import net.runeduniverse.libs.rogm.pipeline.chain.LookupLayers;
 import net.runeduniverse.libs.rogm.pipeline.chain.ReduceLayer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 import net.runeduniverse.libs.rogm.pattern.IQueryPattern;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
@@ -30,7 +30,7 @@ import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 public abstract class AChainRouter {
 	static {
 		ChainManager.addChainLayers(LookupLayers.class);
-		ChainManager.addChainLayers(Assembler.class);
+		ChainManager.addChainLayers(AssemblyLayers.class);
 		ChainManager.addChainLayers(ReduceLayer.class);
 	}
 

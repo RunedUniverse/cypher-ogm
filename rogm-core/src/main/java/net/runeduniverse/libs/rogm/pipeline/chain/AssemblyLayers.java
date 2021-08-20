@@ -19,6 +19,8 @@ import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.Result;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.Store;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
@@ -26,7 +28,7 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.utils.DataHashMap;
 import net.runeduniverse.libs.utils.DataMap;
 
-public interface Assembler {
+public interface AssemblyLayers {
 
 	@Chain(label = Chain.BUFFER_LOAD_CHAIN, layers = { 10 })
 	public static void prepareDataForBuffer(IBaseQueryPattern pattern, IData data) {

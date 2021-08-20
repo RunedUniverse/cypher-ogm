@@ -6,7 +6,7 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
+import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
 
 @NoArgsConstructor
 public class LazyEntriesContainer {

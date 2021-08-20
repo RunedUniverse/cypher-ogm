@@ -1,20 +1,25 @@
-package net.runeduniverse.libs.rogm.pipeline.chain;
+package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.BaseChainLayer;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainContainer;
 import static net.runeduniverse.libs.utils.StringUtils.*;
 
 public final class ChainManager {
 
-	private static final Map<String, ChainContainer> chains = new HashMap<>();
+	private final Set<Method> existingMethods = new HashSet<>();
+	private final Map<String, ChainContainer> chains = new HashMap<>();
 
-	public static void addChainLayers(Class<?> carrierClass) {
+	public void addChainLayers(Class<?> carrierClass) {
+
 		for (Method method : carrierClass.getMethods()) {
+			if (this.existingMethods.contains(method))
+				continue;
+			this.existingMethods.add(method);
 			int mods = method.getModifiers();
 			if (Modifier.isAbstract(mods) || !Modifier.isStatic(mods) || !Modifier.isPublic(mods))
 				continue;
@@ -27,19 +32,19 @@ public final class ChainManager {
 		}
 	}
 
-	public static <R> R callChain(String label, Class<R> resultType, Object... args) throws Exception {
-		ChainContainer container = ChainManager.chains.get(label);
+	public <R> R callChain(String label, Class<R> resultType, Object... args) throws Exception {
+		ChainContainer container = this.chains.get(label);
 		if (container == null)
 			return null;
-		return container.call(resultType, args);
+		return container.callChain(resultType, args);
 	}
 
-	private static ChainContainer _getChain(String label) {
-		ChainContainer c = ChainManager.chains.get(label);
+	private ChainContainer _getChain(String label) {
+		ChainContainer c = this.chains.get(label);
 		if (c != null)
 			return c;
 		c = new ChainContainer(label);
-		ChainManager.chains.put(label, c);
+		this.chains.put(label, c);
 		return c;
 	}
 }

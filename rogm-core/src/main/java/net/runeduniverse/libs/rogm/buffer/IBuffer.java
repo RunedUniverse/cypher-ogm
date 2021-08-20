@@ -2,21 +2,12 @@ package net.runeduniverse.libs.rogm.buffer;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
-import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
-import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.querying.ILazyLoading;;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IData;;
 
-public interface IBuffer {
+public interface IBuffer extends InternalBufferTypes{
 
 	Entry update(Parser.Instance parser, Object entity, IData data) throws Exception;
 
@@ -62,56 +53,4 @@ public interface IBuffer {
 	@Deprecated
 	TypeEntry getTypeEntry(Class<?> type);
 
-	public class TypeEntry {
-		protected TypeEntry() {
-		}
-
-		protected Map<Serializable, Entry> idMap = new HashMap<>();
-		protected Map<Serializable, Entry> entityIdMap = new HashMap<>();
-	}
-
-	@Data
-	@AllArgsConstructor
-	public class Entry {
-		private Serializable id;
-		private Serializable entityId;
-		private Object entity;
-		private LoadState loadState;
-		private Class<?> type;
-		private IBaseQueryPattern pattern;
-
-		public Entry(IData data, Object entity, LoadState loadState, IBaseQueryPattern pattern) {
-			this.id = data.getId();
-			this.entityId = data.getEntityId();
-			this.entity = entity;
-			this.loadState = loadState;
-			this.type = entity.getClass();
-			this.pattern = pattern;
-		}
-	}
-
-	public enum LoadState {
-		COMPLETE, LAZY;
-
-		public static LoadState get(boolean lazy) {
-			if (lazy)
-				return LAZY;
-			return COMPLETE;
-		}
-
-		public static LoadState get(IFilter filter) {
-			return get(filter instanceof ILazyLoading && ((ILazyLoading) filter).isLazy());
-		}
-
-		protected static Object merge(Entry entry, LoadState state, LazyEntriesContainer lazyEntries) {
-			if (entry.getLoadState() == COMPLETE || state == COMPLETE)
-				entry.setLoadState(COMPLETE);
-			else {
-				entry.setLoadState(LAZY);
-				if (lazyEntries != null)
-					lazyEntries.addEntry(entry);
-			}
-			return entry.getEntity();
-		}
-	}
 }

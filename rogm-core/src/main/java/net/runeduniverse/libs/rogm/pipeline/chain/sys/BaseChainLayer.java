@@ -2,8 +2,6 @@ package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
 import java.lang.reflect.Method;
 
-import net.runeduniverse.libs.rogm.pipeline.chain.Chain;
-
 public class BaseChainLayer implements ILayer {
 
 	private final Method method;

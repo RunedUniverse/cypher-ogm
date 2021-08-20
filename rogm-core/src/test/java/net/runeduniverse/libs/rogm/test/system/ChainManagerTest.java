@@ -3,8 +3,8 @@ package net.runeduniverse.libs.rogm.test.system;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import net.runeduniverse.libs.rogm.pipeline.chain.Chain;
-import net.runeduniverse.libs.rogm.pipeline.chain.ChainManager;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 import net.runeduniverse.libs.rogm.test.model.Player;
 
 public class ChainManagerTest {

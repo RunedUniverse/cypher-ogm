@@ -6,8 +6,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import net.runeduniverse.libs.rogm.pipeline.chain.Chain;
-
 @Retention(RUNTIME)
 @Target(METHOD)
 public @interface Chains {

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
+import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;

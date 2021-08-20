@@ -6,6 +6,7 @@ import net.runeduniverse.libs.rogm.lang.Language.IMapper;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.IRawDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface LookupLayers {

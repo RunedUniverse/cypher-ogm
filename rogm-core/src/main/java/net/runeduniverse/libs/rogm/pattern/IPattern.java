@@ -6,13 +6,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
+import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
-public interface IPattern {
+public interface IPattern extends InternalBufferTypes{
 	PatternType getPatternType();
 
 	Class<?> getType();
