@@ -27,7 +27,7 @@ public final class ChainManager {
 			for (Chain anno : method.getAnnotationsByType(Chain.class)) {
 				if (isBlank(anno.label()) || anno.layers() == null)
 					continue;
-				_getChain(anno.label()).putAtLayers(anno.layers(), layer);
+				_getChain(anno.label()).putAtLayers(anno.layers(), layer.asChainLayer(anno));
 			}
 		}
 	}

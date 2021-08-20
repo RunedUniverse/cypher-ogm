@@ -16,4 +16,8 @@ public @interface Chain {
 	int[] layers();
 
 	boolean ignoreCancelled() default false;
+
+	boolean ignoreResult() default false;
+
+	boolean ignoreErrors() default false;
 }

@@ -1,9 +1,12 @@
 package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import lombok.Getter;
+import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
 
 public final class ChainContainer {
 
@@ -23,12 +26,12 @@ public final class ChainContainer {
 			this.chain.put(id, layer);
 	}
 
-	public <R> R callChain(Class<R> resultType, Object[] args) throws Exception {
+	public <R> R callChain(Class<R> resultType, Object[] args) throws ExceptionSurpression {
 		return this._callChain(new ChainRuntime<>(this, resultType, args));
 	}
 
 	public <R> R callChain(Class<R> resultType, ChainRuntime<?> rootRuntime, Map<Class<?>, Object> sourceDataMap,
-			Object[] args) throws Exception {
+			Object[] args) throws ExceptionSurpression {
 		return this._callChain(new ChainRuntime<>(rootRuntime, this, resultType, sourceDataMap, args));
 	}
 
@@ -40,12 +43,22 @@ public final class ChainContainer {
 	 *         the resultType is null the last returned (!null) value in the chain;
 	 *         returns <code>null</code> if the chain got canceled or no castable
 	 *         Entity for the resultType got returned/stored
-	 * @throws Exception
+	 * @throws <code>ExceptionSurpression</code>
 	 */
-	private <R> R _callChain(ChainRuntime<R> runtime) throws Exception {
+	private <R> R _callChain(ChainRuntime<R> runtime) throws ExceptionSurpression {
+		Set<Exception> errors = new HashSet<>();
+		boolean noErrors = true;
 		for (ILayer layer : this.chain.values()) {
-			if (runtime.active() || ChainLayer.ignoreCancelled(layer))
-				layer.call(runtime);
+			try {
+				if ((noErrors || ChainLayer.ignoreErrors(layer))
+						&& (runtime.active() || ChainLayer.ignoreInActive(layer)))
+					layer.call(runtime);
+			} catch (Exception e) {
+				errors.add(e);
+				noErrors = false;
+			}
+			if (!noErrors)
+				throw new ExceptionSurpression("Chain<" + this.label + "> errored out!").addSuppressed(errors);
 		}
 		return runtime.getFinalResult();
 	}
