@@ -39,11 +39,19 @@ public final class ChainManager {
 		return container.callChain(resultType, args);
 	}
 
+	protected <R> R callChain(String label, Class<R> resultType, ChainRuntime<?> rootRuntime,
+			Map<Class<?>, Object> sourceDataMap, Object... args) throws Exception {
+		ChainContainer container = this.chains.get(label);
+		if (container == null)
+			return null;
+		return container.callChain(resultType, rootRuntime, sourceDataMap, args);
+	}
+
 	private ChainContainer _getChain(String label) {
 		ChainContainer c = this.chains.get(label);
 		if (c != null)
 			return c;
-		c = new ChainContainer(label);
+		c = new ChainContainer(this, label);
 		this.chains.put(label, c);
 		return c;
 	}

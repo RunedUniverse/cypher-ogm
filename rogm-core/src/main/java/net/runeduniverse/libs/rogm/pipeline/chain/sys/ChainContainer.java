@@ -4,15 +4,17 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lombok.Getter;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.Result;
 
 public final class ChainContainer {
 
 	@Getter
+	private final ChainManager manager;
+	@Getter
 	private final String label;
 	private final Map<Integer, ILayer> chain = new TreeMap<>();
 
-	protected ChainContainer(String label) {
+	protected ChainContainer(ChainManager manager, String label) {
+		this.manager = manager;
 		this.label = label;
 	}
 
@@ -21,47 +23,31 @@ public final class ChainContainer {
 			this.chain.put(id, layer);
 	}
 
+	public <R> R callChain(Class<R> resultType, Object[] args) throws Exception {
+		return this._callChain(new ChainRuntime<>(this, resultType, args));
+	}
+
+	public <R> R callChain(Class<R> resultType, ChainRuntime<?> rootRuntime, Map<Class<?>, Object> sourceDataMap,
+			Object[] args) throws Exception {
+		return this._callChain(new ChainRuntime<>(rootRuntime, this, resultType, sourceDataMap, args));
+	}
+
 	/***
 	 * call(...) calls the chain and returns the Object defined by the resultType.
 	 * In case no castable Entity for the resultType got returned or added to the
 	 * Store, null is returned. In case resultType is null, the result of the last
 	 * layer in the chain gets returned!
 	 * 
-	 * @param resultType
-	 * @param args
+	 * @param ChainRuntime<R> runtime
 	 * @return <R> R
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
-	public <R> R callChain(Class<R> resultType, Object[] args) throws Exception {
-		// init
-		Store store = new Store(args);
-		Result<R> result = new Result<>(resultType);
-		store.putData(Result.class, result);
-		ChainRuntime runtime = new ChainRuntime();
-
-		// runtime
+	private <R> R _callChain(ChainRuntime<R> runtime) throws Exception {
 		for (ILayer layer : this.chain.values()) {
-			if (!result.hasResult() || ChainLayer.ignoreCancelled(layer))
-				layer.call(store);
+			if (!runtime.hasResult() || ChainLayer.ignoreCancelled(layer))
+				layer.call(runtime);
 		}
-
-		// return result
-		if (resultType == null)
-			return (R) store.getLastAdded();
-		else if (result.hasResult())
-			return result.getResult();
-		return store.getData(resultType);
+		return runtime.getFinalResult();
 	}
 
-		for (ILayer layer : this.chain.values()) {
-			if (!result.hasResult() || ChainLayer.ignoreCancelled(layer))
-				layer.call(store);
-		}
-		if (resultType == null)
-			return (R) store.getLastAdded();
-		else if (result.hasResult())
-			return result.getResult();
-		return store.getData(resultType);
-	}
 }

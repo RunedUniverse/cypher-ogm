@@ -3,27 +3,34 @@ package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Getter;
+
+@Deprecated
+// for internal use only
+// depracted so that noone tries to get Store in chain args -> use ChainRuntime!
 public final class Store {
-	private final Map<Class<?>, Object> dataMap = new HashMap<>();
+	@Getter
+	private final Map<Class<?>, Object> sourceDataMap = new HashMap<>();
+	@Getter
+	private final Map<Class<?>, Object> runtimeDataMap = new HashMap<>();
 	private Object last = null;
 
-	protected Store(Object[] args) {
+	protected Store(Map<Class<?>, Object> sourceMap, Object[] args) {
+		if (sourceMap != null)
+			this.sourceDataMap.putAll(sourceMap);
 		for (Object data : args)
-			if (data != null) {
-				if (data instanceof Store)
-					this.dataMap.putAll(((Store) data).dataMap);
-				else
-					this.dataMap.put(data.getClass(), data);
-			}
+			if (data != null)
+				this.sourceDataMap.put(data.getClass(), data);
+		this.runtimeDataMap.putAll(this.sourceDataMap);
 	}
 
 	public void putData(Class<?> dataType, Object data) {
 		if (data == null) {
 			if (dataType == null)
 				return;
-			this.dataMap.put(dataType, data);
+			this.runtimeDataMap.put(dataType, data);
 		} else
-			this.dataMap.put(data.getClass(), data);
+			this.runtimeDataMap.put(data.getClass(), data);
 		this.last = data;
 	}
 
@@ -31,15 +38,13 @@ public final class Store {
 	public <T> T getData(Class<T> type) {
 		if (type == null)
 			return null;
-		if (type.equals(Store.class))
-			return (T) this;
-		Object obj = this.dataMap.get(type);
+		Object obj = this.runtimeDataMap.get(type);
 		if (obj != null)
 			return (T) obj;
 
-		for (Class<?> clazz : this.dataMap.keySet())
+		for (Class<?> clazz : this.runtimeDataMap.keySet())
 			if (type.isAssignableFrom(clazz))
-				return (T) this.dataMap.get(clazz);
+				return (T) this.runtimeDataMap.get(clazz);
 		return null;
 	}
 

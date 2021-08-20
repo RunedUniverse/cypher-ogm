@@ -26,7 +26,7 @@ public final class Pipeline implements AutoCloseable {
 
 	@Override
 	public void close() throws Exception {
-		this.factory.closePipeline();
+		this.factory.closePipeline(this);
 	}
 
 	// FLOW

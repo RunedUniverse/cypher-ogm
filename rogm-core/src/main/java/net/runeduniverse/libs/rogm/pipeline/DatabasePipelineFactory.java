@@ -9,6 +9,10 @@ import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pipeline.chain.AssemblyLayers;
+import net.runeduniverse.libs.rogm.pipeline.chain.BufferLayers;
+import net.runeduniverse.libs.rogm.pipeline.chain.LookupLayers;
+import net.runeduniverse.libs.rogm.pipeline.chain.ReduceLayer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 
 public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRouter> {
@@ -58,7 +62,10 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 
 	@Override
 	protected void setupChainManager(ChainManager chainManager) throws Exception {
-		
+		chainManager.addChainLayers(AssemblyLayers.class);
+		chainManager.addChainLayers(BufferLayers.class);
+		chainManager.addChainLayers(LookupLayers.class);
+		chainManager.addChainLayers(ReduceLayer.class);
 	}
 
 	@Override
@@ -78,9 +85,6 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 		this.closeConnections();
 	}
 
-	// HELPER
-	protected void setup
-	
 	// GETTER
 
 	@Override

@@ -13,15 +13,17 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.pattern.NodePattern;
 import net.runeduniverse.libs.rogm.pattern.RelationPattern;
 import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pattern.DataType;
+import net.runeduniverse.libs.rogm.pattern.Entry;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.Result;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.Store;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainRuntime;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.Result;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -30,15 +32,15 @@ import net.runeduniverse.libs.utils.DataMap;
 
 public interface AssemblyLayers {
 
-	@Chain(label = Chain.BUFFER_LOAD_CHAIN, layers = { 10 })
+	@Chain(label = Chains.BUFFER_LOAD_CHAIN, layers = { 10 })
 	public static void prepareDataForBuffer(IBaseQueryPattern pattern, IData data) {
 		pattern.prepareEntityId(data);
 	}
 
-	@Chain(label = Chain.LOAD_ALL_CHAIN, layers = { 400 }) // TODO FIX layers
-	@Chain(label = Chain.LOAD_ONE_CHAIN, layers = { 400 }) // TODO FIX layers
+	@Chain(label = Chains.LOAD_ALL_CHAIN, layers = { 400 }) // TODO FIX layers
+	@Chain(label = Chains.LOAD_ONE_CHAIN, layers = { 400 }) // TODO FIX layers
 	@SuppressWarnings("unchecked")
-	public static <T> Collection<T> parse(Store store, Result<?> result, Archive archive, IBuffer buffer,
+	public static <T> Collection<T> parse(ChainRuntime<?> runtime, Result<?> result, Archive archive, IBuffer buffer,
 			IDataRecord record) throws Exception {
 		// type || vv
 		final Class<?> returnType;
@@ -62,8 +64,8 @@ public interface AssemblyLayers {
 				if (IPatternContainer.identify(dataFilter)) {
 					IPattern dataPattern = ((IPatternContainer) dataFilter).getPattern();
 					if (dataPattern instanceof IBaseQueryPattern)
-						loadedObjects.add(ChainManager.callChain(Chain.BUFFER_LOAD_CHAIN, dataPattern.getType(), store,
-								data, dataPattern));
+						loadedObjects.add(runtime.callSubChainWithRuntimeData(Chains.BUFFER_LOAD_CHAIN,
+								dataPattern.getType(), data, dataPattern));
 				}
 			}
 		}
@@ -102,7 +104,7 @@ public interface AssemblyLayers {
 		Set<T> nodes = new HashSet<>();
 		for (Serializable primId : record.getIds())
 			nodes.add((T) buffer.getById(primId, returnType));
-		result.setResult(nodes);
+		runtime.setPossibleResult(nodes);
 
 		for (Object object : loadedObjects)
 			archive.callMethod(object.getClass(), PostLoad.class, object);

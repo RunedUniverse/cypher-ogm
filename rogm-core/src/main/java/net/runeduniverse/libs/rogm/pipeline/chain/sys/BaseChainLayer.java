@@ -14,8 +14,8 @@ public class BaseChainLayer implements ILayer {
 		this.returnType = this.method.getReturnType();
 	}
 
-	public void call(Store store) throws Exception {
-		store.putData(this.returnType, this.method.invoke(null, store.getData(this.paramTypes)));
+	public void call(ChainRuntime<?> runtime) throws Exception {
+		runtime.storeData(this.returnType, this.method.invoke(null, runtime.getParameters(this.paramTypes)));
 	}
 
 	public ChainLayer asChainLayer(Chain chain) {

@@ -11,8 +11,8 @@ public final class ChainLayer implements ILayer {
 	}
 
 	@Override
-	public void call(Store store) throws Exception {
-		this.base.call(store);
+	public void call(ChainRuntime<?> runtime) throws Exception {
+		this.base.call(runtime);
 	}
 
 	public boolean ignoreCancelled() {

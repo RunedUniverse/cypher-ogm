@@ -28,13 +28,14 @@ public abstract class APipelineFactory<ROUTER extends AChainRouter> {
 
 	// SETUP / CONNECTION
 
-	public void setup(ChainManager chainManager) throws Exception {
+	public void setup(final ChainManager chainManager) throws Exception {
 		this.chainManager = chainManager;
 		this.setupCallOrder();
 	}
 
 	protected void setupCallOrder() throws Exception {
 		this.setupChainManager(this.chainManager);
+		this.router.setChainManager(this.chainManager);
 		this.setupArchive(this.archive);
 	}
 

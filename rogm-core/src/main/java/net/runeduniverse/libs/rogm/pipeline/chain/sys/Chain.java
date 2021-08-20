@@ -11,11 +11,6 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 @Repeatable(Chains.class)
 public @interface Chain {
-	public static final String LOAD_ALL_CHAIN = "LOAD_ALL";
-	public static final String LOAD_ONE_CHAIN = "LOAD_ONE";
-
-	public static final String BUFFER_LOAD_CHAIN = "BUFFER_LOAD";
-
 	String label();
 
 	int[] layers();

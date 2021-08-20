@@ -9,8 +9,6 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.pattern.Archive;
@@ -28,19 +26,19 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
 public abstract class AChainRouter {
-	static {
-		ChainManager.addChainLayers(LookupLayers.class);
-		ChainManager.addChainLayers(AssemblyLayers.class);
-		ChainManager.addChainLayers(ReduceLayer.class);
-	}
 
-	protected Archive archive;
 	protected Set<Object> baseChainParamPool = new HashSet<>();
+	protected Archive archive;
+	protected ChainManager manager;
 
-	public AChainRouter initialize(Archive archive) {
+	public AChainRouter initialize(final Archive archive) {
 		this.archive = archive;
 		this.baseChainParamPool.add(this.archive);
 		return this;
+	}
+
+	public void setChainManager(final ChainManager manager) {
+		this.manager = manager;
 	}
 
 	public abstract <E> E load(Class<E> entityType, IFilter filter, DepthContainer depth) throws Exception;
@@ -66,13 +64,14 @@ public abstract class AChainRouter {
 		this.baseChainParamPool.toArray(arr);
 		for (int i = 0; i < args.length; i++)
 			arr[size + i] = args[i];
-		return ChainManager.callChain(label, resultType, arr);
+		return this.manager.callChain(label, resultType, arr);
 	}
 
 	// Route Invocation from Session Wrapper
 	public <E> E load(IFilter filter) throws Exception {
 		return this.load(null, filter, new DepthContainer(1));
 	}
+
 	public <E> Collection<E> loadAll(IFilter filter) throws Exception {
 		return this.load(null, filter, new DepthContainer(1));
 	}

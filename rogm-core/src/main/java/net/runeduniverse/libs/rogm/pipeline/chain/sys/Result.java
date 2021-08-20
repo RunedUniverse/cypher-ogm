@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.pipeline.chain.data;
+package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

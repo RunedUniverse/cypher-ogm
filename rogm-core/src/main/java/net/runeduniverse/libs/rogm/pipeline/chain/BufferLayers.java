@@ -7,12 +7,12 @@ import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.Result;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.Result;
 
 public interface BufferLayers extends InternalBufferTypes {
 	@SuppressWarnings("deprecation")
-	@Chain(label = Chain.BUFFER_LOAD_CHAIN, layers = { 20 })
+	@Chain(label = Chains.BUFFER_LOAD_CHAIN, layers = { 20 })
 	public static Object acquireBuffered(final IBuffer buffer, IBaseQueryPattern pattern, IData data,
 			LazyEntriesContainer lazyEntries, Result<?> result) throws Exception {
 		LoadState loadState = data.getLoadState();
@@ -25,13 +25,13 @@ public interface BufferLayers extends InternalBufferTypes {
 		return null;
 	}
 
-	@Chain(label = Chain.BUFFER_LOAD_CHAIN, layers = { 30 })
+	@Chain(label = Chains.BUFFER_LOAD_CHAIN, layers = { 30 })
 	public static EntityContainer parseData(final Parser.Instance parser, IBaseQueryPattern pattern, IData data)
 			throws Exception {
 		return new EntityContainer(parser.deserialize(pattern.getType(), data.getData()));
 	}
 
-	@Chain(label = Chain.BUFFER_LOAD_CHAIN, layers = { 40 })
+	@Chain(label = Chains.BUFFER_LOAD_CHAIN, layers = { 40 })
 	public static Object acquireNew(final IBuffer buffer, IBaseQueryPattern pattern, IData data,
 			LazyEntriesContainer lazyEntries, EntityContainer container, Result<?> result) throws Exception {
 		Object entity = container.getEnitity();

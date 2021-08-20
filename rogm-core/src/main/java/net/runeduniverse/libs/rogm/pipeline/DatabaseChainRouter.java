@@ -5,8 +5,8 @@ import java.util.Collection;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class DatabaseChainRouter extends AChainRouter {
@@ -28,13 +28,13 @@ public class DatabaseChainRouter extends AChainRouter {
 
 	@Override
 	public <E> E load(Class<E> entityType, IFilter filter, DepthContainer depth) throws Exception {
-		return super.callChain(Chain.LOAD_ONE_CHAIN, entityType, filter, depth);
+		return super.callChain(Chains.LOAD_ONE_CHAIN, entityType, filter, depth);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <E> Collection<E> loadAll(Class<E> entityType, IFilter filter, DepthContainer depth) throws Exception {
-		return super.callChain(Chain.LOAD_ALL_CHAIN, Collection.class, filter, depth);
+		return super.callChain(Chains.LOAD_ALL_CHAIN, Collection.class, filter, depth);
 	}
 
 }

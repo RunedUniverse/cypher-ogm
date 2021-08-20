@@ -11,20 +11,20 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface LookupLayers {
 
-	@Chain(label = Chain.LOAD_ALL_CHAIN, layers = { 100 }) // TODO FIX layers
-	@Chain(label = Chain.LOAD_ONE_CHAIN, layers = { 100 }) // TODO FIX layers
+	@Chain(label = Chains.LOAD_ALL_CHAIN, layers = { 100 }) // TODO FIX layers
+	@Chain(label = Chains.LOAD_ONE_CHAIN, layers = { 100 }) // TODO FIX layers
 	public static IMapper buildQryMapper(Language.Instance lang, IFilter filter) throws Exception {
 		return lang.load(filter);
 	}
 
-	@Chain(label = Chain.LOAD_ALL_CHAIN, layers = { 200 }) // TODO FIX layers
-	@Chain(label = Chain.LOAD_ONE_CHAIN, layers = { 200 }) // TODO FIX layers
+	@Chain(label = Chains.LOAD_ALL_CHAIN, layers = { 200 }) // TODO FIX layers
+	@Chain(label = Chains.LOAD_ONE_CHAIN, layers = { 200 }) // TODO FIX layers
 	public static IRawDataRecord queryDatabase(Module.Instance<?> db, IMapper mapper) {
 		return db.queryObject(mapper.qry());
 	}
 
-	@Chain(label = Chain.LOAD_ALL_CHAIN, layers = { 300 }) // TODO FIX layers
-	@Chain(label = Chain.LOAD_ONE_CHAIN, layers = { 300 }) // TODO FIX layers
+	@Chain(label = Chains.LOAD_ALL_CHAIN, layers = { 300 }) // TODO FIX layers
+	@Chain(label = Chains.LOAD_ONE_CHAIN, layers = { 300 }) // TODO FIX layers
 	public static IDataRecord convertRecord(ILoadMapper mapper, IRawDataRecord rawDataRecord) {
 		return mapper.parseDataRecord(rawDataRecord.getData());
 	}
