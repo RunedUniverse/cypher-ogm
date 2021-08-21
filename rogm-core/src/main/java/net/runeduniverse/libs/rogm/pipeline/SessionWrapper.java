@@ -162,12 +162,16 @@ public final class SessionWrapper implements Session {
 
 	@Override
 	public void resolveAllLazyLoaded(Collection<? extends Object> entities) {
-		this.router.resolveAllLazyLoaded(entities, 1);
+		this.resolveAllLazyLoaded(entities, 1);
 	}
 
 	@Override
 	public void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth) {
-		this.router.resolveAllLazyLoaded(entities, depth);
+		try {
+			this.router.resolveAllLazyLoaded(entities, depth);
+		} catch (Exception e) {
+			this.logger.log(Level.WARNING, "Resolving of lazy loaded Buffer-Entries failed!", e);
+		}
 	}
 
 	@Override
@@ -233,7 +237,12 @@ public final class SessionWrapper implements Session {
 
 	@Override
 	public void delete(Object entity) {
-
+		try {
+			this.router.delete(entity, 1);
+		} catch (Exception e) {
+			this.logger.log(Level.WARNING, "Deletion of Class-Entity of Type<" + entity.getClass()
+					.getCanonicalName() + "> failed!", e);
+		}
 	}
 
 	@Override

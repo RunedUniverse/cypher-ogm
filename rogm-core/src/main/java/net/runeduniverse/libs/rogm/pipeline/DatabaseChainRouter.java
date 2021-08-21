@@ -20,8 +20,8 @@ public class DatabaseChainRouter extends AChainRouter {
 	protected Language.Instance langInstance;
 	protected Module.Instance<?> moduleInstance;
 
-	public DatabaseChainRouter initialize(final Parser.Instance parserInstance, final Language.Instance langInstance,
-			final Module.Instance<?> moduleInstance, final IBuffer buffer) {
+	public DatabaseChainRouter initialize(final IBuffer buffer, final Parser.Instance parserInstance,
+			final Language.Instance langInstance, final Module.Instance<?> moduleInstance) {
 		this.buffer = buffer;
 		this.parserInstance = parserInstance;
 		this.langInstance = langInstance;

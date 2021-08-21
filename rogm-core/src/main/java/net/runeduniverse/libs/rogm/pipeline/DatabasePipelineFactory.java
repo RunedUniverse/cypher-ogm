@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.pipeline;
 
 import net.runeduniverse.libs.rogm.Configuration;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.info.SessionInfo;
 import net.runeduniverse.libs.rogm.lang.Language;
@@ -18,6 +19,7 @@ import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRouter> {
 
 	protected final Configuration cnf;
+	protected final IBuffer buffer;
 	protected final Parser parser;
 	protected final Language lang;
 	protected final Module module;
@@ -33,6 +35,7 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 		super(config.getPackageInfo(), config.getModule(), new DatabaseChainRouter(), logger);
 		this.cnf = config;
 
+		this.buffer = this.cnf.getBuffer();
 		this.parser = this.cnf.getParser();
 		this.lang = this.cnf.getLang();
 		this.module = this.cnf.getModule();
@@ -41,7 +44,7 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 		this.moduleInstance = this.module.build(this.cnf);
 		this.langInstance = this.lang.build(this.parserInstance, this.module);
 
-		this.router.initialize(this.parserInstance, this.langInstance, this.moduleInstance);
+		this.router.initialize(this.buffer, this.parserInstance, this.langInstance, this.moduleInstance);
 	}
 
 	// SETUP / CONNECTION

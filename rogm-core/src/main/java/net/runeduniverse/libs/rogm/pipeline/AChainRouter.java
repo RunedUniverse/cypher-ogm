@@ -176,17 +176,13 @@ public abstract class AChainRouter {
 	}
 
 	// TODO FIX
-	public IDeleteContainer delete(Object entity, int depth) throws Exception {
-		try {
-			IPattern.IDeleteContainer container = this.getPattern(entity.getClass())
-					.delete(entity);
-			Language.IDeleteMapper mapper = this.lang.delete(container.getDeleteFilter(),
-					container.getEffectedFilter());
-			mapper.updateBuffer(this.buffer, container.getDeletedId(), this.module.query(mapper.effectedQry()));
-			this.module.execute(mapper.qry());
-		} catch (Exception e) {
-			this.logger.log(Level.WARNING, "Deletion of Class<" + entity.getClass()
-					.getCanonicalName() + "> Entity failed!", e);
-		}
+	public void delete(Object entity, int depth) throws Exception {
+		
+		IPattern.IDeleteContainer container = this.getPattern(entity.getClass())
+				.delete(entity);
+		Language.IDeleteMapper mapper = this.lang.delete(container.getDeleteFilter(),
+				container.getEffectedFilter());
+		mapper.updateBuffer(this.buffer, container.getDeletedId(), this.module.query(mapper.effectedQry()));
+		this.module.execute(mapper.qry());
 	}
 }
