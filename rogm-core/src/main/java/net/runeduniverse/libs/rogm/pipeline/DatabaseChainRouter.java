@@ -7,6 +7,7 @@ import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class DatabaseChainRouter extends AChainRouter {
@@ -27,8 +28,8 @@ public class DatabaseChainRouter extends AChainRouter {
 	}
 
 	@Override
-	public <E> E load(Class<E> entityType, IFilter filter, DepthContainer depth) throws Exception {
-		return super.callChain(Chains.LOAD_CHAIN.ONE.LABEL, entityType, filter, depth);
+	public <E> E load(Class<E> entityType, IFilter filter, IdContainer id, DepthContainer depth) throws Exception {
+		return super.callChain(Chains.LOAD_CHAIN.ONE.LABEL, entityType, filter, id, depth);
 	}
 
 	@SuppressWarnings("unchecked")

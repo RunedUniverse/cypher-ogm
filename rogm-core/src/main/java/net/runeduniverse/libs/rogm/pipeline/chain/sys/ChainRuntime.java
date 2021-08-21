@@ -12,7 +12,10 @@ public class ChainRuntime<R> {
 	protected final ChainRuntime<?> root;
 	protected final ChainContainer container;
 	protected final Store store;
-	protected final Result<R> result;
+	@Getter
+	private final Class<R> resultType;
+	@Getter
+	private R result;
 
 	@Getter
 	@Setter
@@ -27,9 +30,7 @@ public class ChainRuntime<R> {
 		this.root = root;
 		this.container = container;
 		this.store = new Store(sourceDataMap, args);
-		this.result = new Result<R>(resultType);
-
-		this.store.putData(Result.class, this.result);
+		this.resultType = resultType;
 	}
 
 	public <S> S callSubChain(String label, Class<S> resultType, Object... args) throws Exception {
@@ -48,18 +49,20 @@ public class ChainRuntime<R> {
 	}
 
 	public void storeData(Class<?> type, Object entity) {
-		if (entity instanceof ChainRuntime<?> || entity instanceof Result<?>)
-			return;
-		if (entity instanceof Store)
+		if (entity instanceof ChainRuntime<?> || entity instanceof Store)
 			return;
 
 		this.store.putData(type, entity);
 	}
 
+	public void setResult(R result) {
+		this.result = result;
+	}
+
+	@SuppressWarnings("unchecked")
 	public boolean setPossibleResult(Object entity) {
-		if (this.result.getType()
-				.isAssignableFrom(entity.getClass())) {
-			this.result.setResult(entity);
+		if (this.resultType.isAssignableFrom(entity.getClass())) {
+			this.result = (R) entity;
 			return true;
 		}
 		return false;
@@ -80,7 +83,7 @@ public class ChainRuntime<R> {
 	}
 
 	public boolean hasResult() {
-		return this.result.hasResult();
+		return this.result != null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,12 +91,11 @@ public class ChainRuntime<R> {
 		if (this.canceled)
 			return null;
 
-		Class<R> resultType = this.result.getType();
-		if (resultType == null)
+		if (this.resultType == null)
 			return (R) store.getLastAdded();
-		else if (result.hasResult())
-			return result.getResult();
-		return store.getData(resultType);
+		else if (this.result != null)
+			return this.result;
+		return store.getData(this.resultType);
 	}
 
 }

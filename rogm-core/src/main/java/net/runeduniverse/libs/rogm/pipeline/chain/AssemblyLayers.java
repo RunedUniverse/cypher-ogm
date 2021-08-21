@@ -24,7 +24,6 @@ import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.RelatedEntriesContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainRuntime;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.Result;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -36,16 +35,16 @@ public interface AssemblyLayers extends InternalBufferTypes {
 	@Chain(label = Chains.LOAD_CHAIN.ALL.LABEL, layers = { Chains.LOAD_CHAIN.ALL.ASSEMBLY_ENTITY_COLLECTION })
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.ASSEMBLY_ENTITY_COLLECTION })
 	@SuppressWarnings("unchecked")
-	public static <T> Collection<T> parse(ChainRuntime<?> runtime, Result<?> result, Archive archive, IBuffer buffer,
-			IDataRecord record) throws Exception {
+	public static <T> Collection<T> parse(ChainRuntime<?> runtime, Archive archive, IBuffer buffer, IDataRecord record)
+			throws Exception {
 		// type || vv
 		final Class<?> returnType;
 		IFilter primaryFilter = record.getPrimaryFilter();
-		if (result.getType() == null && primaryFilter != null && primaryFilter instanceof IPatternContainer) {
+		if (runtime.getResultType() == null && primaryFilter != null && primaryFilter instanceof IPatternContainer) {
 			IPattern primaryPattern = ((IPatternContainer) primaryFilter).getPattern();
 			returnType = primaryPattern.getType();
 		} else
-			returnType = result.getType();
+			returnType = runtime.getResultType();
 
 		List<DataMap<IFilter, IData, DataType>> dataRecords = new ArrayList<>();
 		Set<Object> loadedObjects = new HashSet<>();

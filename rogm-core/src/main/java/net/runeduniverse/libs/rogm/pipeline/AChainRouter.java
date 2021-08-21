@@ -20,6 +20,7 @@ import net.runeduniverse.libs.rogm.pipeline.chain.AssemblyLayers;
 import net.runeduniverse.libs.rogm.pipeline.chain.LookupLayers;
 import net.runeduniverse.libs.rogm.pipeline.chain.ReduceLayer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 import net.runeduniverse.libs.rogm.pattern.IQueryPattern;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -41,7 +42,8 @@ public abstract class AChainRouter {
 		this.manager = manager;
 	}
 
-	public abstract <E> E load(Class<E> entityType, IFilter filter, DepthContainer depth) throws Exception;
+	public abstract <E> E load(Class<E> entityType, IFilter filter, IdContainer id, DepthContainer depth)
+			throws Exception;
 
 	public abstract <E> Collection<E> loadAll(Class<E> entityType, IFilter filter, DepthContainer depth)
 			throws Exception;
@@ -69,23 +71,23 @@ public abstract class AChainRouter {
 
 	// Route Invocation from Session Wrapper
 	public <E> E load(IFilter filter) throws Exception {
-		return this.load(null, filter, new DepthContainer(1));
+		return this.load(null, filter, null, new DepthContainer(1));
 	}
 
 	public <E> Collection<E> loadAll(IFilter filter) throws Exception {
-		return this.load(null, filter, new DepthContainer(1));
+		return this.loadAll(null, filter, new DepthContainer(1));
 	}
 
 	public <E> E load(Class<E> entityType, int depth) throws Exception {
 		return load(entityType,
 				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(depth == 0)).getResult(),
-				new DepthContainer(depth));
+				null, new DepthContainer(depth));
 	}
 
 	public <E> E load(Class<E> entityType, Serializable id, int depth) throws Exception {
 		return load(entityType,
 				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(id, depth == 0)).getResult(),
-				new DepthContainer(depth));
+				new IdContainer(id), new DepthContainer(depth));
 	}
 
 	public <E> Collection<E> loadAll(Class<E> entityType, int depth) throws Exception {
@@ -101,13 +103,6 @@ public abstract class AChainRouter {
 	}
 
 	private <T, ID extends Serializable> T _load(Class<T> type, ID id, Integer depth) {
-		T o;
-		if (depth == 0)
-			o = this.buffer.getByEntityId(id, type);
-		else
-			o = this.buffer.getCompleteByEntityId(id, type);
-		if (o != null)
-			return o;
 
 		try {
 			Collection<T> all = this._loadAll(type, id, depth);

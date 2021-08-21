@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 
-import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;

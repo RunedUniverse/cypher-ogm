@@ -15,6 +15,7 @@ public interface Chains {
 		public interface ONE {
 			public static final String LABEL = "LOAD_CHAIN.ONE";
 
+			public static final int CHECK_BUFFERED_STATUS = 0;
 			public static final int BUILD_QUERY_MAPPER = 100;
 			public static final int QUERY_DATABASE_FOR_RAW_DATA_RECORD = 200;
 			public static final int CONVERT_RAW_DATA_RECORD_TO_DATA_RECORD = 300;

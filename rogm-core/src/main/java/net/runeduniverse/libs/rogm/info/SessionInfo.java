@@ -8,10 +8,10 @@ import net.runeduniverse.libs.rogm.pipeline.APipelineFactory;
 public class SessionInfo {
 	private final PackageInfo pkgInfo;
 	private final ConnectionInfo[] conInfos;
-	private final Class<? extends APipelineFactory> builderClass;
+	private final Class<? extends APipelineFactory<?>> builderClass;
 	private final Class<? extends IBuffer> bufferClass;
 
-	public SessionInfo(Class<? extends APipelineFactory> builderClass, Class<? extends IBuffer> bufferClass,
+	public SessionInfo(Class<? extends APipelineFactory<?>> builderClass, Class<? extends IBuffer> bufferClass,
 			PackageInfo pkgInfo, ConnectionInfo... conInfos) {
 		this.pkgInfo = pkgInfo;
 		this.conInfos = conInfos;
