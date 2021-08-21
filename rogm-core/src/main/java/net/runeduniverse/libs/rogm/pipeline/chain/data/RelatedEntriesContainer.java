@@ -21,6 +21,10 @@ public class RelatedEntriesContainer {
 		return this.lazyEntries.addAll(entries);
 	}
 
+	public boolean isEmpty() {
+		return this.lazyEntries.isEmpty();
+	}
+
 	public void clear() {
 		this.lazyEntries.clear();
 	}

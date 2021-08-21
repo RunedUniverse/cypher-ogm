@@ -34,6 +34,8 @@ public interface AssemblyLayers extends InternalBufferTypes {
 
 	@Chain(label = Chains.LOAD_CHAIN.ALL.LABEL, layers = { Chains.LOAD_CHAIN.ALL.ASSEMBLY_ENTITY_COLLECTION })
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.ASSEMBLY_ENTITY_COLLECTION })
+	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.SELECTED.LABEL, layers = {
+			Chains.LOAD_CHAIN.RESOLVE_LAZY.SELECTED.ASSEMBLY_ENTITY_COLLECTION })
 	@SuppressWarnings("unchecked")
 	public static <T> Collection<T> parse(ChainRuntime<?> runtime, Archive archive, IBuffer buffer, IDataRecord record)
 			throws Exception {

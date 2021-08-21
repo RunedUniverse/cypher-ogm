@@ -1,25 +1,32 @@
 package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
 
 @SuppressWarnings("deprecation")
 public class ChainRuntime<R> {
 
+	// runtime
 	@Getter
 	protected final ChainRuntime<?> root;
 	protected final ChainContainer container;
 	protected final Store store;
 	@Getter
+	@Setter
+	protected boolean canceled = false;
+	// result
+	@Getter
 	private final Class<R> resultType;
 	@Getter
 	private R result;
-
-	@Getter
-	@Setter
-	protected boolean canceled = false;
+	// execution
+	private final Iterator iterator = new Iterator(Integer.MIN_VALUE);
 
 	protected ChainRuntime(ChainContainer container, Class<R> resultType, Object[] args) {
 		this(null, container, resultType, null, args);
@@ -48,6 +55,34 @@ public class ChainRuntime<R> {
 				.callChain(label, resultType, this, this.store.getRuntimeDataMap(), args);
 	}
 
+	protected void executeOnChain(final Map<Integer, ILayer> chain, final int lowestId, final int highestId)
+			throws ExceptionSurpression {
+		Set<Exception> errors = new HashSet<>();
+		boolean noErrors = true;
+
+		for (this.iterator.setI(lowestId); this.iterator.getI() <= highestId; this.iterator.next()) {
+			ILayer layer = chain.get(this.iterator.getI());
+			if (layer != null)
+				try {
+					if ((noErrors || ChainLayer.ignoreErrors(layer))
+							&& (this.active() || ChainLayer.ignoreInActive(layer)))
+						layer.call(this);
+				} catch (Exception e) {
+					errors.add(e);
+					noErrors = false;
+				}
+		}
+
+		if (!noErrors)
+			throw new ExceptionSurpression(
+					"ChainRuntime[" + this.hashCode() + "] of Chain<" + this.container.getLabel() + "> errored out!")
+							.addSuppressed(errors);
+	}
+
+	public void jumpToLayer(int layerId) {
+		this.iterator.setI(layerId);
+	}
+
 	public void storeData(Class<?> type, Object entity) {
 		if (entity instanceof ChainRuntime<?> || entity instanceof Store)
 			return;
@@ -73,7 +108,7 @@ public class ChainRuntime<R> {
 	}
 
 	public boolean active() {
-		if (this.canceled || this.hasResult())
+		if (this.canceled || this.result != null)
 			return false;
 		return true;
 	}
@@ -98,4 +133,14 @@ public class ChainRuntime<R> {
 		return store.getData(this.resultType);
 	}
 
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	private static class Iterator {
+		private int i;
+
+		public void next() {
+			this.i = this.i + 1;
+		}
+	}
 }

@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
+import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
 import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.pattern.Archive;
@@ -48,12 +50,16 @@ public abstract class AChainRouter {
 	public abstract <E> Collection<E> loadAll(Class<E> entityType, IFilter filter, DepthContainer depth)
 			throws Exception;
 
+	public abstract void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth) throws Exception;
+
+	public abstract void unload(Object entity);
+
 	// internal helper
 	protected IBaseQueryPattern _getBaseQueryPattern(final Class<?> entityType) {
 		return this.archive.getPattern(entityType, IBaseQueryPattern.class);
 	}
 
-	protected <E> IQueryBuilder<?, ? extends IFilter> _loadFilterQueryPatter(final Class<E> entityType,
+	protected <E> IQueryBuilder<?, ? extends IFilter> _loadFilterQueryPattern(final Class<E> entityType,
 			final IQueryBuilder<?, ? extends IFilter> builder) throws Exception {
 		for (IQueryPattern pattern : this.archive.getPatterns(entityType, IQueryPattern.class))
 			pattern.search(builder);
@@ -80,118 +86,28 @@ public abstract class AChainRouter {
 
 	public <E> E load(Class<E> entityType, int depth) throws Exception {
 		return load(entityType,
-				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(depth == 0)).getResult(),
+				_loadFilterQueryPattern(entityType, _getBaseQueryPattern(entityType).search(depth == 0)).getResult(),
 				null, new DepthContainer(depth));
 	}
 
 	public <E> E load(Class<E> entityType, Serializable id, int depth) throws Exception {
 		return load(entityType,
-				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(id, depth == 0)).getResult(),
+				_loadFilterQueryPattern(entityType, _getBaseQueryPattern(entityType).search(id, depth == 0))
+						.getResult(),
 				new IdContainer(id), new DepthContainer(depth));
 	}
 
 	public <E> Collection<E> loadAll(Class<E> entityType, int depth) throws Exception {
 		return loadAll(entityType,
-				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(depth == 0)).getResult(),
+				_loadFilterQueryPattern(entityType, _getBaseQueryPattern(entityType).search(depth == 0)).getResult(),
 				new DepthContainer(depth));
 	}
 
 	public <E> Collection<E> loadAll(Class<E> entityType, Serializable id, int depth) throws Exception {
 		return loadAll(entityType,
-				_loadFilterQueryPatter(entityType, _getBaseQueryPattern(entityType).search(id, depth == 0)).getResult(),
+				_loadFilterQueryPattern(entityType, _getBaseQueryPattern(entityType).search(id, depth == 0))
+						.getResult(),
 				new DepthContainer(depth));
-	}
-
-	private <T, ID extends Serializable> T _load(Class<T> type, ID id, Integer depth) {
-
-		try {
-			Collection<T> all = this._loadAll(type, id, depth);
-			if (all.isEmpty())
-				return null;
-			else
-				for (T t : all)
-					return t;
-
-		} catch (Exception e) {
-			this.logger.log(Level.WARNING, "Loading of Class<" + type.getCanonicalName() + "> Entity with id=" + id
-					+ " (depth=" + depth + ") failed!", e);
-		}
-		return null;
-	}
-
-	private <T, ID extends Serializable> Collection<T> _loadAll(Class<T> type, ID id, Integer depth) {
-		try {
-			return this._loadAll(type, this.storage.search(type, id, depth == 0), depth);
-		} catch (Exception e) {
-			this.logger.log(Level.WARNING, "Loading of Class<" + type.getCanonicalName() + "> Entities with id=" + id
-					+ " (depth=" + depth + ") failed!", e);
-		}
-		return new ArrayList<T>();
-	}
-
-	private <T, ID extends Serializable> Collection<T> _loadAll(Class<T> type, Integer depth) {
-		try {
-			return this._loadAll(type, this.storage.search(type, depth == 0), depth);
-		} catch (Exception e) {
-			this.logger.log(Level.WARNING,
-					"Loading of Class<" + type.getCanonicalName() + "> Entities" + " (depth=" + depth + ") failed!", e);
-		}
-		return new ArrayList<T>();
-	}
-
-	private <T> Collection<T> _loadAll(Class<T> type, IFilter filter, Integer depth) {
-		if (depth < 2)
-			return _loadAllObjects(type, filter, null);
-
-		Set<Entry> stage = new HashSet<>();
-		Collection<T> coll = _loadAllObjects(type, filter, stage);
-
-		this._resolveAllLazyLoaded(stage, depth - 1);
-		return coll;
-	}
-
-	public void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth) {
-		Set<Entry> stage = new HashSet<>();
-		for (Object entity : entities) {
-			Entry entry = this.buffer.getEntry(entity);
-			if (entry == null || entry.getLoadState() == LoadState.COMPLETE)
-				continue;
-			stage.add(entry);
-		}
-
-		this._resolveAllLazyLoaded(stage, depth);
-	}
-
-	private void _resolveAllLazyLoaded(Set<Entry> stage, Integer depth) {
-		for (int i = 0; i < depth; i++) {
-			if (stage.isEmpty())
-				return;
-			this._resolveAllLazyLoaded(stage);
-		}
-	}
-
-	private void _resolveAllLazyLoaded(Set<Entry> stage) {
-		Set<Entry> next = new HashSet<>();
-		for (Entry entry : stage)
-			try {
-				_loadAllObjects(entry.getType(), this.storage.search(entry.getType(), entry.getId(), false), next);
-			} catch (Exception e) {
-				this.logger.log(Level.WARNING, "Resolving of lazy loaded Buffer-Entry failed!", e);
-			}
-		stage.clear();
-		stage.addAll(next);
-	}
-
-	private <T> Collection<T> _loadAllObjects(Class<T> type, IFilter filter, Set<Entry> lazyEntities) {
-		try {
-			Language.ILoadMapper m = lang.load(filter);
-			IPattern.IDataRecord record = m.parseDataRecord(this.module.queryObject(m.qry()));
-
-			return this.storage.parse(type, record, lazyEntities);
-		} catch (Exception e) {
-			this.logger.log(Level.WARNING, "Loading of Class<" + type.getCanonicalName() + "> Entities failed!", e);
-			return new ArrayList<T>();
-		}
 	}
 
 	// TODO FIX
@@ -273,9 +189,4 @@ public abstract class AChainRouter {
 					.getCanonicalName() + "> Entity failed!", e);
 		}
 	}
-
-	public void unload(Object entity) {
-		this.buffer.removeEntry(entity);
-	}
-
 }

@@ -10,6 +10,7 @@ public interface Chains {
 			public static final int QUERY_DATABASE_FOR_RAW_DATA_RECORD = 200;
 			public static final int CONVERT_RAW_DATA_RECORD_TO_DATA_RECORD = 300;
 			public static final int ASSEMBLY_ENTITY_COLLECTION = 400;
+			public static final int RESOLVE_DEPTH = 500;
 		}
 
 		public interface ONE {
@@ -21,6 +22,26 @@ public interface Chains {
 			public static final int CONVERT_RAW_DATA_RECORD_TO_DATA_RECORD = 300;
 			public static final int ASSEMBLY_ENTITY_COLLECTION = 400;
 			public static final int REDUCE_COLLECTION = 450;
+			public static final int RESOLVE_DEPTH = 500;
+		}
+
+		public interface RESOLVE_LAZY {
+			public interface ALL {
+				public static final String LABEL = "LOAD_CHAIN.RESOLVE_LAZY.ALL";
+
+				public static final int VALIDATE_LAZY_ENTRIES = 100;
+				public static final int CALL_RESOLVE_SELECTED = 200;
+				public static final int LOOP_LAZY_ENTRIES = 300;
+			}
+
+			public interface SELECTED {
+				public static final String LABEL = "LOAD_CHAIN.RESOLVE_LAZY.SELECTED";
+
+				public static final int BUILD_QUERY_MAPPER = 100;
+				public static final int QUERY_DATABASE_FOR_RAW_DATA_RECORD = 200;
+				public static final int CONVERT_RAW_DATA_RECORD_TO_DATA_RECORD = 300;
+				public static final int ASSEMBLY_ENTITY_COLLECTION = 400;
+			}
 		}
 	}
 

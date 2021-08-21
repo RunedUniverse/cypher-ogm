@@ -21,6 +21,14 @@ public class LazyEntriesContainer {
 		return this.lazyEntries.addAll(entries);
 	}
 
+	public boolean addEntries(LazyEntriesContainer container) {
+		return this.lazyEntries.addAll(container.getLazyEntries());
+	}
+
+	public boolean isEmpty() {
+		return this.lazyEntries.isEmpty();
+	}
+
 	public void clear() {
 		this.lazyEntries.clear();
 	}

@@ -1,10 +1,7 @@
 package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
 
@@ -14,7 +11,11 @@ public final class ChainContainer {
 	private final ChainManager manager;
 	@Getter
 	private final String label;
-	private final Map<Integer, ILayer> chain = new TreeMap<>();
+	private final Map<Integer, ILayer> chain = new HashMap<>();
+
+	private int lowestId = Integer.MAX_VALUE;
+	private int highestId = Integer.MIN_VALUE;
+	private boolean dirty = false;
 
 	protected ChainContainer(ChainManager manager, String label) {
 		this.manager = manager;
@@ -22,6 +23,7 @@ public final class ChainContainer {
 	}
 
 	protected void putAtLayers(final int[] ids, final ILayer layer) {
+		this.dirty = true;
 		for (int id : ids)
 			this.chain.put(id, layer);
 	}
@@ -46,21 +48,21 @@ public final class ChainContainer {
 	 * @throws <code>ExceptionSurpression</code>
 	 */
 	private <R> R _callChain(ChainRuntime<R> runtime) throws ExceptionSurpression {
-		Set<Exception> errors = new HashSet<>();
-		boolean noErrors = true;
-		for (ILayer layer : this.chain.values()) {
-			try {
-				if ((noErrors || ChainLayer.ignoreErrors(layer))
-						&& (runtime.active() || ChainLayer.ignoreInActive(layer)))
-					layer.call(runtime);
-			} catch (Exception e) {
-				errors.add(e);
-				noErrors = false;
-			}
-			if (!noErrors)
-				throw new ExceptionSurpression("Chain<" + this.label + "> errored out!").addSuppressed(errors);
-		}
+		if (this.dirty)
+			this.purify();
+		runtime.executeOnChain(this.chain, this.lowestId, this.highestId);
 		return runtime.getFinalResult();
+	}
+
+	private void purify() {
+		this.lowestId = Integer.MAX_VALUE;
+		this.highestId = Integer.MIN_VALUE;
+		for (int id : this.chain.keySet()) {
+			if (id < this.lowestId)
+				this.lowestId = id;
+			if (this.highestId < id)
+				this.highestId = id;
+		}
 	}
 
 }

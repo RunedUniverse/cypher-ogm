@@ -18,6 +18,6 @@ public class DepthContainer {
 	}
 
 	public void subtractOne() {
-		this.depth = depth - 1;
+		this.depth = this.depth - 1;
 	}
 }
