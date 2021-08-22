@@ -3,13 +3,10 @@ package net.runeduniverse.libs.rogm.pipeline.chain;
 import java.util.Collection;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
 import net.runeduniverse.libs.rogm.pattern.Archive;
-import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
-import net.runeduniverse.libs.rogm.pattern.IQueryPattern;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainRuntime;
-import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
 public interface ReduceLayer {
 
@@ -46,15 +43,10 @@ public interface ReduceLayer {
 			final LazyEntriesContainer lazyEntries) throws Exception {
 		LazyEntriesContainer nextLazyEntries = new LazyEntriesContainer();
 		for (Entry entry : lazyEntries.getLazyEntries()) {
-			Class<?> entityType = entry.getType();
-			IQueryBuilder<?, ?> builder = archive.getPattern(entityType, IBaseQueryPattern.class)
-					.search(entry.getId(), false);
-
-			for (IQueryPattern pattern : archive.getPatterns(entityType, IQueryPattern.class))
-				pattern.search(builder);
-
 			runtime.callSubChainWithSourceData(Chains.LOAD_CHAIN.RESOLVE_LAZY.SELECTED.LABEL, Collection.class,
-					builder.getResult(), nextLazyEntries);
+					archive.search(entry.getType(), entry.getId(), false)
+							.getResult(),
+					nextLazyEntries);
 		}
 		lazyEntries.clear();
 		lazyEntries.addEntries(nextLazyEntries);

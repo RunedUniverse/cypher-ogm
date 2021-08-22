@@ -25,7 +25,7 @@ import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
-public class NodePattern extends APattern implements INodePattern , InternalBufferTypes{
+public class NodePattern extends APattern implements INodePattern, InternalBufferTypes {
 
 	@Getter
 	private Set<String> labels = new HashSet<>();
@@ -105,7 +105,7 @@ public class NodePattern extends APattern implements INodePattern , InternalBuff
 				for (Object object : includedData.keySet())
 					if (object != null)
 						try {
-							archive.callMethod(object.getClass(), PostSave.class, object);
+							NodePattern.this.archive.callMethod(object.getClass(), PostSave.class, object);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

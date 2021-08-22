@@ -54,18 +54,6 @@ public abstract class AChainRouter {
 
 	public abstract void unload(Object entity);
 
-	// internal helper
-	protected IBaseQueryPattern _getBaseQueryPattern(final Class<?> entityType) {
-		return this.archive.getPattern(entityType, IBaseQueryPattern.class);
-	}
-
-	protected <E> IQueryBuilder<?, ? extends IFilter> _loadFilterQueryPattern(final Class<E> entityType,
-			final IQueryBuilder<?, ? extends IFilter> builder) throws Exception {
-		for (IQueryPattern pattern : this.archive.getPatterns(entityType, IQueryPattern.class))
-			pattern.search(builder);
-		return builder;
-	}
-
 	protected <R> R callChain(String label, Class<R> resultType, Object... args) throws Exception {
 		int size = this.baseChainParamPool.size();
 		Object[] arr = new Object[size + args.length];
@@ -85,29 +73,23 @@ public abstract class AChainRouter {
 	}
 
 	public <E> E load(Class<E> entityType, int depth) throws Exception {
-		return load(entityType,
-				_loadFilterQueryPattern(entityType, _getBaseQueryPattern(entityType).search(depth == 0)).getResult(),
-				null, new DepthContainer(depth));
+		return load(entityType, this.archive.search(entityType, depth == 0)
+				.getResult(), null, new DepthContainer(depth));
 	}
 
 	public <E> E load(Class<E> entityType, Serializable id, int depth) throws Exception {
-		return load(entityType,
-				_loadFilterQueryPattern(entityType, _getBaseQueryPattern(entityType).search(id, depth == 0))
-						.getResult(),
-				new IdContainer(id), new DepthContainer(depth));
+		return load(entityType, this.archive.search(entityType, id, depth == 0)
+				.getResult(), new IdContainer(id), new DepthContainer(depth));
 	}
 
 	public <E> Collection<E> loadAll(Class<E> entityType, int depth) throws Exception {
-		return loadAll(entityType,
-				_loadFilterQueryPattern(entityType, _getBaseQueryPattern(entityType).search(depth == 0)).getResult(),
-				new DepthContainer(depth));
+		return loadAll(entityType, this.archive.search(entityType, depth == 0)
+				.getResult(), new DepthContainer(depth));
 	}
 
 	public <E> Collection<E> loadAll(Class<E> entityType, Serializable id, int depth) throws Exception {
-		return loadAll(entityType,
-				_loadFilterQueryPattern(entityType, _getBaseQueryPattern(entityType).search(id, depth == 0))
-						.getResult(),
-				new DepthContainer(depth));
+		return loadAll(entityType, this.archive.search(entityType, id, depth == 0)
+				.getResult(), new DepthContainer(depth));
 	}
 
 	// TODO FIX
@@ -158,7 +140,7 @@ public abstract class AChainRouter {
 	}
 
 	// TODO FIX
-	public ISaveContainer save(Object entity, int depth) throws Exception {
+	public void save(Object entity, int depth) throws Exception {
 		if (entity == null)
 			return;
 
@@ -177,11 +159,10 @@ public abstract class AChainRouter {
 
 	// TODO FIX
 	public void delete(Object entity, int depth) throws Exception {
-		
+
 		IPattern.IDeleteContainer container = this.getPattern(entity.getClass())
 				.delete(entity);
-		Language.IDeleteMapper mapper = this.lang.delete(container.getDeleteFilter(),
-				container.getEffectedFilter());
+		Language.IDeleteMapper mapper = this.lang.delete(container.getDeleteFilter(), container.getEffectedFilter());
 		mapper.updateBuffer(this.buffer, container.getDeletedId(), this.module.query(mapper.effectedQry()));
 		this.module.execute(mapper.qry());
 	}

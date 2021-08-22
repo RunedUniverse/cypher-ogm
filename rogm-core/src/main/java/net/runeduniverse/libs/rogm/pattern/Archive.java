@@ -12,11 +12,16 @@ import java.util.logging.Logger;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.logging.Level;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
+import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
+import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.scanner.PackageScanner;
 
@@ -171,4 +176,42 @@ public final class Archive {
 				success = false;
 		return success;
 	}
+
+	public IQueryBuilder<?, ? extends IFilter> search(final Class<?> entityType, boolean lazy) throws Exception {
+		IQueryBuilder<?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
+				.search(lazy);
+		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
+			pattern.search(builder);
+		return builder;
+	}
+
+	// search exactly 1 node / querry deeper layers for node
+	public IQueryBuilder<?, ? extends IFilter> search(final Class<?> entityType, Serializable id, boolean lazy)
+			throws Exception {
+		IQueryBuilder<?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
+				.search(id, lazy);
+		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
+			pattern.search(builder);
+		return builder;
+	}
+
+	// TODO reduce to filter
+	public ISaveContainer save(final Class<?> entityType, final IBuffer buffer, Object entity, Integer depth)
+			throws Exception {
+		ISaveContainer container = this.getPattern(entityType, IBaseQueryPattern.class)
+				.save(buffer, entity, depth);
+		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
+			pattern.save(container);
+		return container;
+	}
+
+	// TODO reduce to filter
+	public IDeleteContainer delete(final Class<?> entityType, final IBuffer buffer, Object entity) throws Exception {
+		IDeleteContainer container = this.getPattern(entityType, IBaseQueryPattern.class)
+				.delete(buffer, entity);
+		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
+			pattern.delete(container);
+		return container;
+	}
+
 }
