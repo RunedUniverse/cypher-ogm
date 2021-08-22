@@ -54,6 +54,7 @@ public abstract class AChainRouter {
 
 	public abstract void unload(Object entity);
 
+	// internal Helper
 	protected <R> R callChain(String label, Class<R> resultType, Object... args) throws Exception {
 		int size = this.baseChainParamPool.size();
 		Object[] arr = new Object[size + args.length];
@@ -101,7 +102,12 @@ public abstract class AChainRouter {
 		for (Object entity : entities)
 			if (entity != null)
 				try {
-					this._reloadObject(entity, this.storage.search(entity, depth == 0), depth < 2 ? null : stage);
+					IBuffer buffer = null;
+					Entry entry = buffer.getEntry(entity);
+					IFilter filter = archive.search(entry.getType(), entry.getId(), depth == 0)
+							.getResult();
+
+					this._reloadObject(entity, filter, depth < 2 ? null : stage);
 				} catch (Exception e) {
 					this.logger.log(Level.WARNING, "Loading of Class<" + entity.getClass()
 							.getCanonicalName() + "> Entity" + " (depth=" + depth + ") failed!", e);
