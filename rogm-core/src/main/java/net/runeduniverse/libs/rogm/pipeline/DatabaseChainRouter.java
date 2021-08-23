@@ -9,6 +9,7 @@ import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityCollectionContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -56,6 +57,12 @@ public class DatabaseChainRouter extends AChainRouter {
 		}
 
 		super.callChain(Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL, Collection.class, lazyEntries,
+				new DepthContainer(depth));
+	}
+
+	@Override
+	public void reloadAll(Collection<Object> entities, int depth) throws Exception {
+		super.callChain(Chains.RELOAD_CHAIN.ALL.LABEL, Void.class, new EntityCollectionContainer(entities),
 				new DepthContainer(depth));
 	}
 

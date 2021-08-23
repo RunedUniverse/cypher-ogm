@@ -15,7 +15,6 @@ public final class ChainManager {
 	private final Map<String, ChainContainer> chains = new HashMap<>();
 
 	public void addChainLayers(Class<?> carrierClass) {
-
 		for (Method method : carrierClass.getMethods()) {
 			if (this.existingMethods.contains(method))
 				continue;
@@ -26,6 +25,23 @@ public final class ChainManager {
 			BaseChainLayer layer = new BaseChainLayer(method);
 			for (Chain anno : method.getAnnotationsByType(Chain.class)) {
 				if (isBlank(anno.label()) || anno.layers() == null)
+					continue;
+				_getChain(anno.label()).putAtLayers(anno.layers(), layer.asChainLayer(anno));
+			}
+		}
+	}
+
+	public void addChainLayersOfChain(Class<?> carrierClass, String chainLabel) {
+		for (Method method : carrierClass.getMethods()) {
+			if (this.existingMethods.contains(method))
+				continue;
+			this.existingMethods.add(method);
+			int mods = method.getModifiers();
+			if (Modifier.isAbstract(mods) || !Modifier.isStatic(mods) || !Modifier.isPublic(mods))
+				continue;
+			BaseChainLayer layer = new BaseChainLayer(method);
+			for (Chain anno : method.getAnnotationsByType(Chain.class)) {
+				if (isBlank(anno.label()) || anno.label() != chainLabel || anno.layers() == null)
 					continue;
 				_getChain(anno.label()).putAtLayers(anno.layers(), layer.asChainLayer(anno));
 			}

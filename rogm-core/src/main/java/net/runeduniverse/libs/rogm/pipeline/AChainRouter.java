@@ -19,10 +19,13 @@ import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.AssemblyLayers;
+import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
 import net.runeduniverse.libs.rogm.pipeline.chain.LookupLayers;
 import net.runeduniverse.libs.rogm.pipeline.chain.ReduceLayer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityCollectionContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.RelatedEntriesContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 import net.runeduniverse.libs.rogm.pattern.IQueryPattern;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -51,6 +54,8 @@ public abstract class AChainRouter {
 			throws Exception;
 
 	public abstract void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth) throws Exception;
+
+	public abstract void reloadAll(Collection<Object> entities, int depth) throws Exception;
 
 	public abstract void unload(Object entity);
 
@@ -91,58 +96,6 @@ public abstract class AChainRouter {
 	public <E> Collection<E> loadAll(Class<E> entityType, Serializable id, int depth) throws Exception {
 		return loadAll(entityType, this.archive.search(entityType, id, depth == 0)
 				.getResult(), new DepthContainer(depth));
-	}
-
-	// TODO FIX
-	public void reloadAll(Collection<Object> entities, int depth) {
-		// IBuffer.Entry entry = this.buffer.getEntry(entity);
-		// return entry.getPattern().search(entry.getId(), depth == 0).getResult();
-		Set<Entry> stage = new HashSet<>();
-
-		for (Object entity : entities)
-			if (entity != null)
-				try {
-					IBuffer buffer = null;
-					Entry entry = buffer.getEntry(entity);
-					IFilter filter = archive.search(entry.getType(), entry.getId(), depth == 0)
-							.getResult();
-
-					this._reloadObject(entity, filter, depth < 2 ? null : stage);
-				} catch (Exception e) {
-					this.logger.log(Level.WARNING, "Loading of Class<" + entity.getClass()
-							.getCanonicalName() + "> Entity" + " (depth=" + depth + ") failed!", e);
-				}
-
-		for (int i = 0; i < depth - 1; i++) {
-			if (stage.isEmpty())
-				return;
-			this._reloadRelatedObjects(stage);
-		}
-	}
-
-	private void _reloadRelatedObjects(Set<Entry> stage) {
-		Set<Entry> next = new HashSet<>();
-		for (Entry entry : stage)
-			if (entry != null)
-				try {
-					_reloadObject(entry.getEntity(), this.storage.search(entry.getType(), entry.getId(), false), next);
-				} catch (Exception e) {
-					this.logger.log(Level.WARNING, "Resolving of reloaded-related Buffer-Entry failed!", e);
-				}
-		stage.clear();
-		stage.addAll(next);
-	}
-
-	private void _reloadObject(Object entity, IFilter filter, Set<Entry> relatedEntities) {
-		try {
-			Language.ILoadMapper m = lang.load(filter);
-			IPattern.IDataRecord record = m.parseDataRecord(this.module.queryObject(m.qry()));
-
-			this.storage.update(entity, record, relatedEntities);
-		} catch (Exception e) {
-			this.logger.log(Level.WARNING, "Reloading of Class<" + entity.getClass()
-					.getCanonicalName() + "> Entity failed!", e);
-		}
 	}
 
 	// TODO FIX

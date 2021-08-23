@@ -49,6 +49,18 @@ public interface Chains {
 		public interface ALL {
 			public static final String LABEL = "RELOAD_CHAIN.ALL";
 
+			public static final int CALL_RELOAD_SELECTED = 100;
+			public static final int VALIDATE_RELATED_ENTRIES = 200;
+			public static final int CALL_RELOAD_SELECTED_FOR_RELATED = 300;
+			public static final int LOOP_RELATED_ENTRIES = 400;
+		}
+
+		public interface SELECTED {
+			public static final String LABEL = "RELOAD_CHAIN.SELECTED";
+
+			public static final int BUILD_QUERY_MAPPER = 100;
+			public static final int QUERY_DATABASE_FOR_RAW_DATA_RECORD = 200;
+			public static final int CONVERT_RAW_DATA_RECORD_TO_DATA_RECORD = 300;
 			public static final int UPDATE_ENTITY_COLLECTION = 400;
 		}
 	}

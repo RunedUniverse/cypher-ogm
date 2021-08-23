@@ -83,11 +83,16 @@ public class ChainRuntime<R> {
 		this.iterator.setI(layerId);
 	}
 
-	public void storeData(Class<?> type, Object entity) {
+	public <D extends Object> D storeData(D entity) {
+		return this.storeData(entity.getClass(), entity);
+	}
+
+	public <D extends Object> D storeData(Class<?> type, D entity) {
 		if (entity instanceof ChainRuntime<?> || entity instanceof Store)
-			return;
+			return entity;
 
 		this.store.putData(type, entity);
+		return entity;
 	}
 
 	public void setResult(R result) {
