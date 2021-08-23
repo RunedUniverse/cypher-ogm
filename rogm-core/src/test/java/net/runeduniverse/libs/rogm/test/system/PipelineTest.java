@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.Session;
-import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pipeline.DatabasePipelineFactory;
@@ -39,7 +38,7 @@ public class PipelineTest {
 
 	@Test
 	@Tag("system")
-	public void setupDatabasePipeline() throws ScannerException {
+	public void setupDatabasePipeline() throws Exception {
 		Pipeline pipeline = new Pipeline(this.databaseTransactionBuilder);
 
 		Session session = pipeline.buildSession();

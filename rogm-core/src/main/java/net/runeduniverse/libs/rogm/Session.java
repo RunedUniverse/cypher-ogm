@@ -74,6 +74,7 @@ public interface Session extends AutoCloseable {
 
 	QueryBuilder getQueryBuilder();
 
+	@SuppressWarnings("resource")
 	public static Session create(Configuration cnf) throws Exception {
 		return new Pipeline(new DatabasePipelineFactory(cnf)).buildSession();
 	}

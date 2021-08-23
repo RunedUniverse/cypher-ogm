@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.logging.DebugLogger;
+import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
@@ -49,8 +50,9 @@ public class QueryBuilderTest {
 		cnf.addPackage(MODEL_PKG_PATH);
 		cnf.addPackage(RELATIONS_PKG_PATH);
 
-		this.archive = new Archive(this.cnf.getPackageInfo());
-		this.archive.applyConfig();
+		this.archive = new Archive(this.cnf.getPackageInfo(), this.cnf.getModule());
+		for (PassiveModule module : this.cnf.getPassiveModules())
+			module.configure(archive);
 		this.builder = this.archive.getQueryBuilder();
 	}
 

@@ -36,7 +36,7 @@ public class ChainRuntime<R> {
 			Map<Class<?>, Object> sourceDataMap, Object[] args) {
 		this.root = root;
 		this.container = container;
-		this.store = new Store(sourceDataMap, args);
+		this.store = new Store(this, sourceDataMap, args);
 		this.resultType = resultType;
 	}
 

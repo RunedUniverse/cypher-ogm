@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.logging.DebugLogger;
+import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.test.ATest;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
@@ -31,13 +32,14 @@ public class ArchiveTest {
 		cnf.addPackage(MODEL_PKG_PATH);
 		cnf.addPackage(RELATIONS_PKG_PATH);
 
-		this.archive = new Archive(this.cnf);
+		this.archive = new Archive(this.cnf.getPackageInfo(), this.cnf.getModule());
 	}
 
 	@Test
 	@Tag("system")
 	public void scanModels() throws ScannerException {
-		this.archive.applyConfig();
+		for (PassiveModule module : this.cnf.getPassiveModules())
+			module.configure(archive);
 	}
 
 }

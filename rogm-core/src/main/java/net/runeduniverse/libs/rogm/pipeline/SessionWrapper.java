@@ -30,6 +30,12 @@ public final class SessionWrapper implements Session {
 	}
 
 	@Override
+	protected void finalize() throws Throwable {
+		this.close();
+		super.finalize();
+	}
+
+	@Override
 	public void close() throws Exception {
 		this.factory.closeConnections();
 	}
@@ -178,24 +184,42 @@ public final class SessionWrapper implements Session {
 	public void reload(Object entity) {
 		Set<Object> set = new HashSet<Object>();
 		set.add(entity);
-		this.router.reloadAll(set, 1);
+		try {
+			this.router.reloadAll(set, 1);
+		} catch (Exception e) {
+			this.logger.log(Level.WARNING, "Reloading of Class-Entity of Class<" + entity.getClass()
+					.getCanonicalName() + "> failed!", e);
+		}
 	}
 
 	@Override
 	public void reload(Object entity, Integer depth) {
 		Set<Object> set = new HashSet<Object>();
 		set.add(entity);
-		this.router.reloadAll(set, depth);
+		try {
+			this.router.reloadAll(set, depth);
+		} catch (Exception e) {
+			this.logger.log(Level.WARNING, "Reloading of Class-Entity of Class<" + entity.getClass()
+					.getCanonicalName() + "> failed!", e);
+		}
 	}
 
 	@Override
 	public void reloadAll(Collection<? extends Object> entities) {
-		this.router.reloadAll(new HashSet<Object>(entities), 1);
+		try {
+			this.router.reloadAll(new HashSet<Object>(entities), 1);
+		} catch (Exception e) {
+			this.logger.log(Level.WARNING, "Reloading of Class-Entities failed!", e);
+		}
 	}
 
 	@Override
 	public void reloadAll(Collection<? extends Object> entities, Integer depth) {
-		this.router.reloadAll(new HashSet<Object>(entities), depth);
+		try {
+			this.router.reloadAll(new HashSet<Object>(entities), depth);
+		} catch (Exception e) {
+			this.logger.log(Level.WARNING, "Reloading of Class-Entities failed!", e);
+		}
 	}
 
 	@Override

@@ -1,10 +1,13 @@
 package net.runeduniverse.libs.rogm.test.system;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainRuntime;
 import net.runeduniverse.libs.rogm.test.model.Player;
 
 public class ChainManagerTest {
@@ -13,29 +16,38 @@ public class ChainManagerTest {
 	public static final String COUNT_TEST_CHAIN_LABEL = "SYSTEM_TEST_COUNT";
 	public static final String PRINT_A_TEST_CHAIN_LABEL = "SYSTEM_TEST_PRINT_A";
 	public static final String PRINT_B_TEST_CHAIN_LABEL = "SYSTEM_TEST_PRINT_B";
+	public static final String CHECK_RUNTIME_LABEL = "SYSTEM_TEST_PRINT_B";
 
-	static {
-		ChainManager.addChainLayers(ChainManagerTest.class);
+	private ChainManager manager = new ChainManager();
+
+	public ChainManagerTest() {
+		this.manager.addChainLayers(ChainManagerTest.class);
 	}
 
 	@Test
 	@Tag("system")
 	public void test() throws Exception {
 		Class<?> type = Player.class;
-		ChainManager.callChain(TEST_CHAIN_LABEL, type, type);
+		this.manager.callChain(TEST_CHAIN_LABEL, type, type);
 	}
 
 	@Test
 	@Tag("system")
 	public void count() throws Exception {
-		ChainManager.callChain(COUNT_TEST_CHAIN_LABEL, null);
+		this.manager.callChain(COUNT_TEST_CHAIN_LABEL, Void.class);
 	}
 
 	@Test
 	@Tag("system")
 	public void print() throws Exception {
-		ChainManager.callChain(PRINT_A_TEST_CHAIN_LABEL, null, "A");
-		ChainManager.callChain(PRINT_B_TEST_CHAIN_LABEL, null, "B");
+		this.manager.callChain(PRINT_A_TEST_CHAIN_LABEL, Void.class, "A");
+		this.manager.callChain(PRINT_B_TEST_CHAIN_LABEL, Void.class, "B");
+	}
+
+	@Test
+	@Tag("system")
+	public void checkRuntime() throws Exception {
+		this.manager.callChain(CHECK_RUNTIME_LABEL, Void.class);
 	}
 
 	@Chain(label = TEST_CHAIN_LABEL, layers = { 100 })
@@ -58,4 +70,8 @@ public class ChainManagerTest {
 		System.out.println(str);
 	}
 
+	@Chain(label = CHECK_RUNTIME_LABEL, layers = { 0 })
+	public static void checkRuntimeEntity(final ChainRuntime<?> runtime) {
+		assertNotNull(runtime, "ChainRuntime<?> did not get passed to layer");
+	}
 }

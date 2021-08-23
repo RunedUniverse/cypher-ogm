@@ -141,8 +141,8 @@ public class OlSession {
 
 				this.storage.update(entity, record, relatedEntities);
 			} catch (Exception e) {
-				this.logger.log(Level.WARNING, "Reloading of Class<" + entity.getClass()
-						.getCanonicalName() + "> Entity failed!", e);
+				this.logger.log(Level.WARNING, "Reloading of Class-Entity of Class<" + entity.getClass()
+						.getCanonicalName() + "> failed!", e);
 			}
 		}
 
