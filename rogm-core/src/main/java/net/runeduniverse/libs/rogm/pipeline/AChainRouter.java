@@ -26,6 +26,7 @@ import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityCollectionContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.RelatedEntriesContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 import net.runeduniverse.libs.rogm.pattern.IQueryPattern;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -103,9 +104,8 @@ public abstract class AChainRouter {
 		if (entity == null)
 			return;
 
-		ISaveContainer container = this.getPattern(entity.getClass())
-				.save(entity, depth);
-		Language.ISaveMapper mapper = this.lang.save(container.getDataContainer(), container.getRelatedFilter());
+		SaveContainer container = this.archive.save(entity.getClass(), entity, depth);
+		Language.ISaveMapper mapper = this.lang.save(container.getDataContainer(), container.calculateEffectedFilter(this.archive, this.buffer));
 		mapper.updateObjectIds(this.buffer, this.module.execute(mapper.qry()), LoadState.get(depth == 0));
 		if (0 < depth) {
 			Collection<String> ids = mapper.reduceIds(this.buffer, this.module);

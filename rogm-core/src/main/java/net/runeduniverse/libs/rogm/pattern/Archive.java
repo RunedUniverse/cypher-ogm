@@ -18,8 +18,8 @@ import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.logging.Level;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
-import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
@@ -196,10 +196,9 @@ public final class Archive {
 	}
 
 	// TODO reduce to filter
-	public ISaveContainer save(final Class<?> entityType, final IBuffer buffer, Object entity, Integer depth)
-			throws Exception {
-		ISaveContainer container = this.getPattern(entityType, IBaseQueryPattern.class)
-				.save(buffer, entity, depth);
+	public SaveContainer save(final Class<?> entityType, Object entity, Integer depth) throws Exception {
+		SaveContainer container = this.getPattern(entityType, IBaseQueryPattern.class)
+				.save(entity, depth);
 		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
 			pattern.save(container);
 		return container;

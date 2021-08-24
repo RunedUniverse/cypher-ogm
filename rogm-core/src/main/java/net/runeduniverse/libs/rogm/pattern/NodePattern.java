@@ -5,7 +5,6 @@ import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -13,11 +12,11 @@ import java.util.Set;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
-import net.runeduniverse.libs.rogm.annotations.PostSave;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
@@ -90,44 +89,36 @@ public class NodePattern extends APattern implements INodePattern, InternalBuffe
 	}
 
 	@Override
-	public ISaveContainer save(final IBuffer buffer, Object entity, Integer depth) throws Exception {
-		Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData = new HashMap<>();
-		return new ISaveContainer() {
+	public SaveContainer save(Object entity, Integer depth) throws Exception {
+		return new SaveContainer(includedData -> (IDataContainer) this.save(entity, includedData, depth)
+				.getResult(), NodePattern::calcEffectedFilters);
+	}
 
-			@Override
-			public IDataContainer getDataContainer() throws Exception {
-				return (IDataContainer) NodePattern.this.save(entity, includedData, depth)
-						.getResult();
-			}
-
-			@Override
-			public void postSave() {
-				for (Object object : includedData.keySet())
-					if (object != null)
-						try {
-							NodePattern.this.archive.callMethod(object.getClass(), PostSave.class, object);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-			}
-
-			@Override
-			public Set<IFilter> getRelatedFilter() throws Exception {
-				Set<IFilter> set = new HashSet<>();
-				for (Object object : includedData.keySet()) {
-					if (!includedData.get(object)
-							.persist())
-						continue;
-					Entry entry = buffer.getEntry(object);
-					if (entry == null || entry.getLoadState() == LoadState.LAZY)
-						continue;
-					set.add(entry.getPattern()
-							.search(entry.getId(), false)
-							.getResult());
-				}
-				return set;
-			}
-		};
+	/***
+	 * implementation of FunctionalInterface
+	 * <code>SaveContainer.EffectedFilterCalculator</code>
+	 * 
+	 * @param archive
+	 * @param buffer
+	 * @param includedData
+	 * @return Set<IFilter> of IFilter Objects describing the effected Entities of
+	 *         the save procedure
+	 * @throws Exception
+	 */
+	private static final Set<IFilter> calcEffectedFilters(final Archive archive, final IBuffer buffer,
+			final Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData) throws Exception {
+		Set<IFilter> set = new HashSet<>();
+		for (Object object : includedData.keySet()) {
+			if (!includedData.get(object)
+					.persist())
+				continue;
+			Entry entry = buffer.getEntry(object);
+			if (entry == null || entry.getLoadState() == LoadState.LAZY)
+				continue;
+			set.add(archive.search(entry.getType(), entry.getId(), false)
+					.getResult());
+		}
+		return set;
 	}
 
 	public NodeQueryBuilder save(Object entity, Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData,

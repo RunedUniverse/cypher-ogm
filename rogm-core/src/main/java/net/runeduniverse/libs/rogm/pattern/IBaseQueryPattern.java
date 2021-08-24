@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
@@ -28,7 +29,7 @@ public interface IBaseQueryPattern extends IPattern {
 	// search exactly 1 node / querry deeper layers for node
 	IQueryBuilder<?, ? extends IFilter> search(Serializable id, boolean lazy) throws Exception;
 
-	ISaveContainer save(final IBuffer buffer, Object entity, Integer depth) throws Exception;
+	SaveContainer save(Object entity, Integer depth) throws Exception;
 
 	IDeleteContainer delete(final IBuffer buffer, Object entity) throws Exception;
 }

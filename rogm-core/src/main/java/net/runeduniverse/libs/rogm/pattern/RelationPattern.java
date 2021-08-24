@@ -5,18 +5,15 @@ import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.annotations.PostSave;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
@@ -134,30 +131,9 @@ public class RelationPattern extends APattern implements IRelationPattern {
 	}
 
 	@Override
-	public ISaveContainer save(IBuffer buffer, Object entity, Integer depth) throws Exception {
-		Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData = new HashMap<>();
-		return new ISaveContainer() {
-
-			@Override
-			public IDataContainer getDataContainer() throws Exception {
-				return (IDataContainer) save(entity, null, direction, includedData, depth).getResult();
-			}
-
-			@Override
-			public void postSave() {
-				for (Object object : includedData.keySet())
-					try {
-						RelationPattern.this.archive.callMethod(object.getClass(), PostSave.class, object);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-			}
-
-			@Override
-			public Set<IFilter> getRelatedFilter() {
-				return null;
-			}
-		};
+	public SaveContainer save(Object entity, Integer depth) throws Exception {
+		return new SaveContainer(
+				includedData -> (IDataContainer) save(entity, null, direction, includedData, depth).getResult());
 	}
 
 	@Override

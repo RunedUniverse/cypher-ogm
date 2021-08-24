@@ -5,8 +5,8 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
-import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
@@ -64,14 +64,6 @@ public interface IPattern {
 		Set<Serializable> getIds();
 
 		List<Set<IData>> getData();
-	}
-
-	public interface ISaveContainer {
-		IDataContainer getDataContainer() throws Exception;
-
-		Set<IFilter> getRelatedFilter() throws Exception;
-
-		void postSave();
 	}
 
 	public interface IDeleteContainer {
