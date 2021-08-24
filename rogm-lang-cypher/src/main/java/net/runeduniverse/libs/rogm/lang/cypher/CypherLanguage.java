@@ -438,10 +438,10 @@ public class CypherLanguage implements Language {
 		public Collection<String> reduceIds(IBuffer buffer, Module.Instance<?> module) throws Exception {
 			Collection<String> delIds = new HashSet<>();
 
-			for (IFilter qryFilter : effectedQrys) {
+			for (IFilter qryFilter : this.effectedQrys) {
 				DataMap<IFilter, String, FilterStatus> effectedMap = new DataHashMap<>();
 
-				for (Map<String, Object> ids : module.query(cypher._load(effectedMap, qryFilter, false)).getRawData()) {
+				for (Map<String, Object> ids : module.query(this.cypher._load(effectedMap, qryFilter, false)).getRawData()) {
 					effectedMap.forEach((filter, code) -> {
 						if (!(filter instanceof IFNode))
 							return;

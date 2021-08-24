@@ -145,23 +145,21 @@ public class NodePattern extends APattern implements INodePattern, InternalBuffe
 				return (NodeQueryBuilder) container;
 			else
 				nodeBuilder = (NodeQueryBuilder) container;
-		} else if (this.isIdSet(entity)) {
-			// update (id)
-			nodeBuilder = this.archive.getQueryBuilder()
-					.node()
-					.where(this.type)
-					.whereId(this.getId(entity))
-					.storeData(entity)
-					.setPersist(persist)
-					.asUpdate();
 		} else {
-			// create (!id)
 			nodeBuilder = this.archive.getQueryBuilder()
 					.node()
 					.where(this.type)
 					.storeData(entity)
-					.setPersist(persist)
-					.asWrite();
+					.setPersist(persist);
+
+			if (this.isIdSet(entity)) {
+				// update (id)
+				nodeBuilder.whereId(this.getId(entity))
+						.asUpdate();
+			} else {
+				// create (!id)
+				nodeBuilder.asWrite();
+			}
 		}
 
 		this.callMethod(PreSave.class, entity);

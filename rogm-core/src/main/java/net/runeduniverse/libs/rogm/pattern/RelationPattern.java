@@ -147,10 +147,7 @@ public class RelationPattern extends APattern implements IRelationPattern {
 			public void postSave() {
 				for (Object object : includedData.keySet())
 					try {
-						RelationPattern.this.archive
-								.getPattern(object.getClass(), NodePattern.class, RelationPattern.class)
-								.callMethod(PostSave.class, object);
-						// factory.getPattern(object.getClass()).callMethod(PostSave.class, object);
+						RelationPattern.this.archive.callMethod(object.getClass(), PostSave.class, object);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
