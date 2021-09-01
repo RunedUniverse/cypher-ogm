@@ -11,6 +11,7 @@ import net.runeduniverse.libs.rogm.annotations.PostDelete;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.INodePattern;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 
 public class BasicBuffer implements IBuffer {
 
@@ -72,21 +73,22 @@ public class BasicBuffer implements IBuffer {
 	}
 
 	@Override
-	public void updateEntry(Archive archive, Serializable id, Serializable entityId, Object entity, LoadState loadState)
-			throws Exception {
+	public void updateEntry(Archive archive, UpdatedEntryContainer container) {
+		Object entity = container.getEntity();
 		if (entity == null)
 			return;
 		Entry entry = entries.get(entity);
 
 		Class<?> type = entity.getClass();
 		IBaseQueryPattern pattern = archive.getPattern(type, IBaseQueryPattern.class);
-		entityId = pattern.prepareEntityId(id, entityId);
+		pattern.prepareEntityId(container);
 
 		if (entry == null)
-			addEntry(new Entry(id, entityId, entity, loadState, type, pattern));
+			addEntry(new Entry(container.getId(), container.getEntityId(), entity, container.getLoadState(), type,
+					pattern));
 		else
-			updateEntry(entry, id, entityId);
-		pattern.setId(entity, entityId);
+			updateEntry(entry, container.getId(), container.getEntityId());
+		pattern.setId(entity, container.getEntityId());
 	}
 
 	public void updateEntry(Entry entry, Serializable id, Serializable entityId) {

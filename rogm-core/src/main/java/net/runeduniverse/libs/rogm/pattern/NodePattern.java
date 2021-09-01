@@ -12,6 +12,7 @@ import java.util.Set;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
+import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
@@ -169,7 +170,7 @@ public class NodePattern extends APattern implements INodePattern, InternalBuffe
 
 	@Override
 	public IDeleteContainer delete(final Serializable id, Object entity) throws Exception {
-
+		this.archive.callMethod(entity.getClass(), PreDelete.class, entity);
 		QueryBuilder qryBuilder = this.archive.getQueryBuilder();
 		return new DeleteContainer(this, entity, id, qryBuilder.relation()
 				.setStart(qryBuilder.node()

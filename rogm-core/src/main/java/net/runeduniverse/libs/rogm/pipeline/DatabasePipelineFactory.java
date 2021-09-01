@@ -44,7 +44,7 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 		this.moduleInstance = this.module.build(this.cnf);
 		this.langInstance = this.lang.build(this.parserInstance, this.module);
 
-		this.router.initialize(this.buffer, this.parserInstance, this.langInstance, this.moduleInstance);
+		this.router.initialize(this.buffer, this.lang, this.parserInstance, this.langInstance, this.moduleInstance);
 	}
 
 	// SETUP / CONNECTION
@@ -69,6 +69,7 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 		chainManager.addChainLayers(BufferLayers.class);
 		chainManager.addChainLayers(LookupLayers.class);
 		chainManager.addChainLayers(ReduceLayer.class);
+		this.lang.setupChainManager(chainManager);
 	}
 
 	@Override

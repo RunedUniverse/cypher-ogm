@@ -1,12 +1,25 @@
 package net.runeduniverse.libs.rogm.pipeline.chain;
 
+import java.util.Collection;
+
+import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
+import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
+import net.runeduniverse.libs.rogm.lang.DatabaseCleaner;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.lang.Language.ILoadMapper;
 import net.runeduniverse.libs.rogm.lang.Language.IMapper;
+import net.runeduniverse.libs.rogm.lang.Language.ISaveMapper;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.IRawDataRecord;
+import net.runeduniverse.libs.rogm.modules.Module.IRawIdRecord;
+import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDataRecord;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
+import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainRuntime;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface LookupLayers {
@@ -20,6 +33,12 @@ public interface LookupLayers {
 		return lang.load(filter);
 	}
 
+	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.BUILD_QUERY_MAPPER })
+	public static ISaveMapper buildSaveMapper(final Archive archive, final IBuffer buffer, final Language.Instance lang,
+			SaveContainer container) throws Exception {
+		return lang.save(container.getDataContainer(), container.calculateEffectedFilter(archive, buffer));
+	}
+
 	@Chain(label = Chains.LOAD_CHAIN.ALL.LABEL, layers = { Chains.LOAD_CHAIN.ALL.QUERY_DATABASE_FOR_RAW_DATA_RECORD })
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.QUERY_DATABASE_FOR_RAW_DATA_RECORD })
 	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.SELECTED.LABEL, layers = {
@@ -28,6 +47,11 @@ public interface LookupLayers {
 			Chains.RELOAD_CHAIN.SELECTED.QUERY_DATABASE_FOR_RAW_DATA_RECORD })
 	public static IRawDataRecord queryDatabase(Module.Instance<?> db, IMapper mapper) {
 		return db.queryObject(mapper.qry());
+	}
+
+	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.QUERY_DATABASE_FOR_RAW_ID_RECORD })
+	public static IRawIdRecord executeQry(Module.Instance<?> db, IMapper mapper) {
+		return db.execute(mapper.qry());
 	}
 
 	@Chain(label = Chains.LOAD_CHAIN.ALL.LABEL, layers = {
@@ -42,4 +66,20 @@ public interface LookupLayers {
 		return mapper.parseDataRecord(rawDataRecord.getData());
 	}
 
+	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.COLLECT_UPDATED_ENTRIES })
+	public static Collection<UpdatedEntryContainer> collectUpdatedEntries(ISaveMapper mapper, IRawIdRecord record,
+			DepthContainer depth) {
+		return mapper.updateObjectIds(record.getIds(), LoadState.get(depth.getValue() == 0));
+	}
+
+	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.CALL_DATABASE_CLEANUP })
+	public static void callDatabaseCleanup(ChainRuntime<?> runtime, DatabaseCleaner cleaner) throws Exception {
+		runtime.callSubChainWithRuntimeData(cleaner.getChainLabel(), Void.class);
+	}
+
+	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.POST_SAVE_EVENT })
+	public static void triggerPostSaveEvent(final Archive archive, final SaveContainer container)
+			throws ExceptionSurpression {
+		container.postSave(archive);
+	}
 }

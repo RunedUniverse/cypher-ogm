@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
+import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
@@ -137,6 +138,7 @@ public class RelationPattern extends APattern implements IRelationPattern {
 
 	@Override
 	public IDeleteContainer delete(final Serializable id, Object entity) throws Exception {
+		this.archive.callMethod(entity.getClass(), PreDelete.class, entity);
 		return new DeleteContainer(this, entity, id, null, this.archive.getQueryBuilder()
 				.relation()
 				.whereDirection(Direction.BIDIRECTIONAL)

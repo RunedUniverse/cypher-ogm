@@ -23,7 +23,7 @@ public class PipelineTest {
 	}
 
 	protected final Configuration cnf;
-	protected final DatabasePipelineFactory databaseTransactionBuilder;
+	protected final DatabasePipelineFactory databasePipelineFactory;
 
 	public PipelineTest() {
 		this.cnf = new Configuration(null, null, new DummyModule(), null).addClassLoader(this.getClass()
@@ -33,13 +33,13 @@ public class PipelineTest {
 		cnf.addPackage(MODEL_PKG_PATH);
 		cnf.addPackage(RELATIONS_PKG_PATH);
 
-		this.databaseTransactionBuilder = new DatabasePipelineFactory(this.cnf);
+		this.databasePipelineFactory = new DatabasePipelineFactory(this.cnf);
 	}
 
 	@Test
 	@Tag("system")
 	public void setupDatabasePipeline() throws Exception {
-		Pipeline pipeline = new Pipeline(this.databaseTransactionBuilder);
+		Pipeline pipeline = new Pipeline(this.databasePipelineFactory);
 
 		Session session = pipeline.buildSession();
 

@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import net.runeduniverse.libs.rogm.pattern.Archive;
-import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;;
+import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;;
 
 public interface IBuffer extends InternalBufferTypes {
 
@@ -34,8 +35,7 @@ public interface IBuffer extends InternalBufferTypes {
 	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState,
 			IBaseQueryPattern pattern);
 
-	void updateEntry(Archive archive, Serializable id, Serializable entityId, Object entity, LoadState loadState)
-			throws Exception;
+	void updateEntry(Archive archive, UpdatedEntryContainer container) throws Exception;
 
 	void removeEntry(Entry entry);
 

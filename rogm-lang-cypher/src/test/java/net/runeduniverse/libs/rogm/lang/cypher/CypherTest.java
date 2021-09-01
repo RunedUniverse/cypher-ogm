@@ -39,16 +39,22 @@ public class CypherTest extends ATest {
 	public static void prepare() {
 		school = new FilterNode(10);
 
-		student = new FilterNode().addLabel("HTLStudent").addLabel("Maturant").addRelationTo(school);
+		student = new FilterNode().addLabel("HTLStudent")
+				.addLabel("Maturant")
+				.addRelationTo(school);
 
-		friends = new FilterNode().addLabel("Person").addRelation(new FilterRelation().addLabel("Friend"), student);
+		friends = new FilterNode().addLabel("Person")
+				.addRelation(new FilterRelation().addLabel("Friend"), student);
 
 		anyRelationToSchool = new FilterRelation(Direction.BIDIRECTIONAL).setStart(school);
 
 		Map<String, Object> infos = new HashMap<>();
 		infos.put("Hospital", "The Royal London Hospital");
 		infos.put("Parks", new String[] { "Hyde Park", "Greenwich Park", "Regent's Park" });
-		city.addLabel("City").addParam("name", "London").addParam("Citizens", 9787426).addParam("infos", infos);
+		city.addLabel("City")
+				.addParam("name", "London")
+				.addParam("Citizens", 9787426)
+				.addParam("infos", infos);
 	}
 
 	@Test
@@ -111,23 +117,24 @@ public class CypherTest extends ATest {
 	public void matchCity() throws Exception {
 		System.out.println("[CITY]\n" + iLanguage.load(city) + '\n');
 	}
+
 	@Test
 	@Tag("system")
 	public void deleteEnnio() throws Exception {
 		FilterNode ennio = new FilterNode(25L).setReturned(true);
-		System.out
-				.println(
-						"[ENNIO]\n"
-								+ iLanguage.delete(ennio,
-										new FilterRelation().setDirection(Direction.BIDIRECTIONAL).setStart(ennio)
-												.setTarget(new FilterNode().setReturned(true)).setReturned(true))
-								+ '\n');
+		System.out.println("[ENNIO]\n" + iLanguage.delete(ennio,
+				new FilterRelation().setDirection(Direction.BIDIRECTIONAL)
+						.setStart(ennio)
+						.setTarget(new FilterNode().setReturned(true))
+						.setReturned(true))
+				+ '\n');
 	}
 
 	@Test
 	@Tag("system")
 	public void deleteIDs() {
+		CypherInstance instance = (CypherInstance) iLanguage;
 		System.out
-				.println("[DELETE IDs]\n" + iLanguage.deleteRelations(Arrays.asList("10", "20", "514", "541", "5632")));
+				.println("[DELETE IDs]\n" + instance.deleteRelations(Arrays.asList("10", "20", "514", "541", "5632")));
 	}
 }

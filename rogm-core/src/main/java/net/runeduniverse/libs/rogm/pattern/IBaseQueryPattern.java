@@ -5,6 +5,7 @@ import java.io.Serializable;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
@@ -32,4 +33,8 @@ public interface IBaseQueryPattern extends IPattern {
 	SaveContainer save(Object entity, Integer depth) throws Exception;
 
 	IDeleteContainer delete(final Serializable id, Object entity) throws Exception;
+
+	default void prepareEntityId(final UpdatedEntryContainer container) {
+		container.setEntityId(this.prepareEntityId(container.getId(), container.getEntityId()));
+	}
 }

@@ -11,4 +11,9 @@ public class DummyLanguage implements Language {
 		return null;
 	}
 
+	@Override
+	public String getChainLabel() {
+		return null;
+	}
+
 }

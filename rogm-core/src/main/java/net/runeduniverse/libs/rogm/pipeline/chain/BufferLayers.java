@@ -1,14 +1,21 @@
 package net.runeduniverse.libs.rogm.pipeline.chain;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
+import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainRuntime;
 
@@ -101,5 +108,20 @@ public interface BufferLayers extends InternalBufferTypes {
 				.setId(entity, data.getEntityId());
 		runtime.setResult(entry);
 		return entry;
+	}
+
+	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.UPDATE_BUFFER_ENTRIES })
+	public static void updateBufferedEntries(final Archive archive, final IBuffer buffer,
+			Collection<UpdatedEntryContainer> collection) throws ExceptionSurpression {
+		List<Exception> errors = new ArrayList<>();
+		for (UpdatedEntryContainer updatedEntry : collection) {
+			try {
+				buffer.updateEntry(archive, updatedEntry);
+			} catch (Exception e) {
+				errors.add(e);
+			}
+		}
+		if (!errors.isEmpty())
+			throw new ExceptionSurpression("Surpressed Exceptions while updating buffered Ids").addSuppressed(errors);
 	}
 }

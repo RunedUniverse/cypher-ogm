@@ -2,10 +2,10 @@ package net.runeduniverse.libs.rogm.pipeline;
 
 import java.util.Collection;
 
-import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
+import net.runeduniverse.libs.rogm.lang.DatabaseCleaner;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -22,13 +22,16 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 public class DatabaseChainRouter extends AChainRouter {
 
 	protected IBuffer buffer;
+	protected DatabaseCleaner dbCleaner;
 	protected Parser.Instance parserInstance;
 	protected Language.Instance langInstance;
 	protected Module.Instance<?> moduleInstance;
 
-	public DatabaseChainRouter initialize(final IBuffer buffer, final Parser.Instance parserInstance,
-			final Language.Instance langInstance, final Module.Instance<?> moduleInstance) {
+	public DatabaseChainRouter initialize(final IBuffer buffer, final DatabaseCleaner dbCleaner,
+			final Parser.Instance parserInstance, final Language.Instance langInstance,
+			final Module.Instance<?> moduleInstance) {
 		this.buffer = buffer;
+		this.dbCleaner = dbCleaner;
 		this.parserInstance = parserInstance;
 		this.langInstance = langInstance;
 		this.moduleInstance = moduleInstance;
@@ -71,16 +74,7 @@ public class DatabaseChainRouter extends AChainRouter {
 
 	@Override
 	public void save(EntityContainer entity, SaveContainer container, DepthContainer depth) throws Exception {
-		Language.ISaveMapper mapper = this.langInstance.save(container.getDataContainer(),
-				container.calculateEffectedFilter(this.archive, this.buffer));
-		mapper.updateObjectIds(this.buffer, this.moduleInstance.execute(mapper.qry())
-				.getIds(), LoadState.get(depth.getValue() == 0));
-		if (0 < depth.getValue()) {
-			Collection<String> ids = mapper.reduceIds(this.buffer, this.moduleInstance);
-			if (!ids.isEmpty())
-				this.moduleInstance.execute(this.langInstance.deleteRelations(ids));
-		}
-		container.postSave(this.archive);
+		super.callChain(Chains.SAVE_CHAIN.ONE.LABEL, Void.class, this.dbCleaner, entity, container, depth);
 	}
 
 	@Override
@@ -90,8 +84,6 @@ public class DatabaseChainRouter extends AChainRouter {
 		if (entry == null)
 			throw new Exception("Entity of type<" + entity.getType()
 					.getName() + "> is not loaded!");
-
-		this.archive.callMethod(entity.getType(), PreDelete.class, entity.getEntity());
 
 		IDeleteContainer container = this.archive.delete(entity.getType(), entry.getId(), entity.getEntity());
 		Language.IDeleteMapper mapper = this.langInstance.delete(container.getDeleteFilter(),

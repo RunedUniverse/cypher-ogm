@@ -65,6 +65,19 @@ public interface Chains {
 		}
 	}
 
+	public interface SAVE_CHAIN {
+		public interface ONE {
+			public static final String LABEL = "SAVE_CHAIN.ONE";
+
+			public static final int BUILD_QUERY_MAPPER = 100;
+			public static final int QUERY_DATABASE_FOR_RAW_ID_RECORD = 200;
+			public static final int COLLECT_UPDATED_ENTRIES = 300;
+			public static final int UPDATE_BUFFER_ENTRIES = 400;
+			public static final int CALL_DATABASE_CLEANUP = 500;
+			public static final int POST_SAVE_EVENT = 550;
+		}
+	}
+
 	public interface BUFFER_CHAIN {
 
 		public interface LOAD {
@@ -85,5 +98,4 @@ public interface Chains {
 			public static final int UPDATE_BUFFERED_ENTRY = 40;
 		}
 	}
-
 }
