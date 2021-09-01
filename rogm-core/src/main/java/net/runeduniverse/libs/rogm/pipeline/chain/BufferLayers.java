@@ -17,7 +17,7 @@ public interface BufferLayers extends InternalBufferTypes {
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.CHECK_BUFFERED_STATUS })
 	public static <T> void ckeckBufferedStatus(final ChainRuntime<T> runtime, final IBuffer buffer, IdContainer id,
 			DepthContainer depth) {
-		if (id == null)
+		if (id == null || id.getId() == null)
 			return;
 		T o;
 		if (depth.getValue() == 0)
