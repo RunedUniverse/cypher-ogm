@@ -1,6 +1,8 @@
 package net.runeduniverse.libs.rogm.pipeline;
 
 import java.util.Collection;
+
+import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
@@ -84,7 +86,14 @@ public class DatabaseChainRouter extends AChainRouter {
 	@Override
 	public void delete(EntityContainer entity, /* IDeleteContainer container, */ DepthContainer depth)
 			throws Exception {
-		IDeleteContainer container = this.archive.delete(entity.getClass(), buffer, entity);
+		IBuffer.Entry entry = buffer.getEntry(entity.getEntity());
+		if (entry == null)
+			throw new Exception("Entity of type<" + entity.getType()
+					.getName() + "> is not loaded!");
+
+		this.archive.callMethod(entity.getType(), PreDelete.class, entity.getEntity());
+
+		IDeleteContainer container = this.archive.delete(entity.getType(), entry.getId(), entity.getEntity());
 		Language.IDeleteMapper mapper = this.langInstance.delete(container.getDeleteFilter(),
 				container.getEffectedFilter());
 		mapper.updateBuffer(this.buffer, container.getDeletedId(), this.moduleInstance.query(mapper.effectedQry())

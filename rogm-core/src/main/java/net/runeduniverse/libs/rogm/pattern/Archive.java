@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
-import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.logging.Level;
@@ -195,7 +194,6 @@ public final class Archive {
 		return builder;
 	}
 
-	// TODO reduce to filter
 	public SaveContainer save(final Class<?> entityType, Object entity, Integer depth) throws Exception {
 		SaveContainer container = this.getPattern(entityType, IBaseQueryPattern.class)
 				.save(entity, depth);
@@ -205,9 +203,9 @@ public final class Archive {
 	}
 
 	// TODO reduce to filter
-	public IDeleteContainer delete(final Class<?> entityType, final IBuffer buffer, Object entity) throws Exception {
+	public IDeleteContainer delete(final Class<?> entityType, final Serializable id, Object entity) throws Exception {
 		IDeleteContainer container = this.getPattern(entityType, IBaseQueryPattern.class)
-				.delete(buffer, entity);
+				.delete(id, entity);
 		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
 			pattern.delete(container);
 		return container;

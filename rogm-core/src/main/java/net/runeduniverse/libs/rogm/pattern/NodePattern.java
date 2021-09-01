@@ -12,7 +12,6 @@ import java.util.Set;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
-import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
@@ -169,24 +168,18 @@ public class NodePattern extends APattern implements INodePattern, InternalBuffe
 	}
 
 	@Override
-	public IDeleteContainer delete(final IBuffer buffer, Object entity) throws Exception {
-		IBuffer.Entry entry = buffer.getEntry(entity);
-		if (entry == null)
-			throw new Exception("Node-Entity of type<" + entity.getClass()
-					.getName() + "> is not loaded!");
-
-		this.callMethod(PreDelete.class, entity);
+	public IDeleteContainer delete(final Serializable id, Object entity) throws Exception {
 
 		QueryBuilder qryBuilder = this.archive.getQueryBuilder();
-		return new DeleteContainer(this, entity, entry.getId(), qryBuilder.relation()
+		return new DeleteContainer(this, entity, id, qryBuilder.relation()
 				.setStart(qryBuilder.node()
-						.whereId(entry.getId()))
+						.whereId(id))
 				.setTarget(qryBuilder.node()
 						.setReturned(true))
 				.setReturned(true)
 				.getResult(),
 				qryBuilder.node()
-						.whereId(entry.getId())
+						.whereId(id)
 						.setReturned(true)
 						.asDelete()
 						.getResult());

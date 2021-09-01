@@ -31,5 +31,5 @@ public interface IBaseQueryPattern extends IPattern {
 
 	SaveContainer save(Object entity, Integer depth) throws Exception;
 
-	IDeleteContainer delete(final IBuffer buffer, Object entity) throws Exception;
+	IDeleteContainer delete(final Serializable id, Object entity) throws Exception;
 }

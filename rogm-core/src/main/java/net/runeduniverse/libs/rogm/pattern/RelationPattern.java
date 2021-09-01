@@ -12,7 +12,6 @@ import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
-import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -137,16 +136,11 @@ public class RelationPattern extends APattern implements IRelationPattern {
 	}
 
 	@Override
-	public IDeleteContainer delete(final IBuffer buffer, Object entity) throws Exception {
-		IBuffer.Entry entry = buffer.getEntry(entity);
-		if (entry == null)
-			throw new Exception("Relation-Entity of type<" + entity.getClass()
-					.getName() + "> is not loaded!");
-
-		return new DeleteContainer(this, entity, entry.getId(), null, this.archive.getQueryBuilder()
+	public IDeleteContainer delete(final Serializable id, Object entity) throws Exception {
+		return new DeleteContainer(this, entity, id, null, this.archive.getQueryBuilder()
 				.relation()
 				.whereDirection(Direction.BIDIRECTIONAL)
-				.whereId(entry.getId())
+				.whereId(id)
 				.setReturned(true)
 				.getResult());
 	}
