@@ -1,36 +1,16 @@
 package net.runeduniverse.libs.rogm.pipeline;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-
-import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
-import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
-import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.pattern.Archive;
-import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
-import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
-import net.runeduniverse.libs.rogm.pattern.IPattern.ISaveContainer;
-import net.runeduniverse.libs.rogm.pipeline.chain.AssemblyLayers;
-import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
-import net.runeduniverse.libs.rogm.pipeline.chain.LookupLayers;
-import net.runeduniverse.libs.rogm.pipeline.chain.ReduceLayer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityCollectionContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.RelatedEntriesContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
-import net.runeduniverse.libs.rogm.pattern.IQueryPattern;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
 public abstract class AChainRouter {
 
@@ -54,9 +34,15 @@ public abstract class AChainRouter {
 	public abstract <E> Collection<E> loadAll(Class<E> entityType, IFilter filter, DepthContainer depth)
 			throws Exception;
 
-	public abstract void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth) throws Exception;
+	public abstract void resolveAllLazyLoaded(Collection<? extends Object> entities, DepthContainer depth)
+			throws Exception;
 
-	public abstract void reloadAll(Collection<Object> entities, int depth) throws Exception;
+	public abstract void reloadAll(Collection<Object> entities, DepthContainer depth) throws Exception;
+
+	public abstract void save(EntityContainer entity, SaveContainer container, DepthContainer depth) throws Exception;
+
+	public abstract void delete(EntityContainer entity, /* IDeleteContainer container, */ DepthContainer depth)
+			throws Exception;
 
 	public abstract void unload(Object entity);
 
@@ -99,30 +85,24 @@ public abstract class AChainRouter {
 				.getResult(), new DepthContainer(depth));
 	}
 
-	// TODO FIX
+	public void resolveAllLazyLoaded(Collection<? extends Object> entities, int depth) throws Exception {
+		resolveAllLazyLoaded(entities, new DepthContainer(depth));
+	}
+
+	public void reloadAll(Collection<Object> entities, int depth) throws Exception {
+		reloadAll(entities, new DepthContainer(depth));
+	}
+
 	public void save(Object entity, int depth) throws Exception {
 		if (entity == null)
 			return;
-
-		SaveContainer container = this.archive.save(entity.getClass(), entity, depth);
-		Language.ISaveMapper mapper = this.lang.save(container.getDataContainer(), container.calculateEffectedFilter(this.archive, this.buffer));
-		mapper.updateObjectIds(this.buffer, this.module.execute(mapper.qry()), LoadState.get(depth == 0));
-		if (0 < depth) {
-			Collection<String> ids = mapper.reduceIds(this.buffer, this.module);
-			if (!ids.isEmpty())
-				this.module.execute(this.lang.deleteRelations(ids));
-		}
-		container.postSave();
-
+		save(new EntityContainer(entity), this.archive.save(entity.getClass(), entity, depth),
+				new DepthContainer(depth));
 	}
 
-	// TODO FIX
 	public void delete(Object entity, int depth) throws Exception {
-
-		IPattern.IDeleteContainer container = this.getPattern(entity.getClass())
-				.delete(entity);
-		Language.IDeleteMapper mapper = this.lang.delete(container.getDeleteFilter(), container.getEffectedFilter());
-		mapper.updateBuffer(this.buffer, container.getDeletedId(), this.module.query(mapper.effectedQry()));
-		this.module.execute(mapper.qry());
+		if (entity == null)
+			return;
+		delete(new EntityContainer(entity), new DepthContainer(depth));
 	}
 }

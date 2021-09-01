@@ -20,7 +20,7 @@ public interface BufferLayers extends InternalBufferTypes {
 		if (id == null)
 			return;
 		T o;
-		if (depth.getDepth() == 0)
+		if (depth.getValue() == 0)
 			o = buffer.getByEntityId(id.getId(), runtime.getResultType());
 		else
 			o = buffer.getCompleteByEntityId(id.getId(), runtime.getResultType());

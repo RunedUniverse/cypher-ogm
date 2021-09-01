@@ -7,11 +7,14 @@ import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityCollectionContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public class DatabaseChainRouter extends AChainRouter {
@@ -47,7 +50,7 @@ public class DatabaseChainRouter extends AChainRouter {
 	}
 
 	@Override
-	public void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth) throws Exception {
+	public void resolveAllLazyLoaded(Collection<? extends Object> entities, DepthContainer depth) throws Exception {
 		LazyEntriesContainer lazyEntries = new LazyEntriesContainer();
 		for (Object entity : entities) {
 			Entry entry = this.buffer.getEntry(entity);
@@ -56,14 +59,37 @@ public class DatabaseChainRouter extends AChainRouter {
 			lazyEntries.addEntry(entry);
 		}
 
-		super.callChain(Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL, Collection.class, lazyEntries,
-				new DepthContainer(depth));
+		super.callChain(Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL, Collection.class, lazyEntries, depth);
 	}
 
 	@Override
-	public void reloadAll(Collection<Object> entities, int depth) throws Exception {
-		super.callChain(Chains.RELOAD_CHAIN.ALL.LABEL, Void.class, new EntityCollectionContainer(entities),
-				new DepthContainer(depth));
+	public void reloadAll(Collection<Object> entities, DepthContainer depth) throws Exception {
+		super.callChain(Chains.RELOAD_CHAIN.ALL.LABEL, Void.class, new EntityCollectionContainer(entities), depth);
+	}
+
+	@Override
+	public void save(EntityContainer entity, SaveContainer container, DepthContainer depth) throws Exception {
+		Language.ISaveMapper mapper = this.langInstance.save(container.getDataContainer(),
+				container.calculateEffectedFilter(this.archive, this.buffer));
+		mapper.updateObjectIds(this.buffer, this.moduleInstance.execute(mapper.qry())
+				.getIds(), LoadState.get(depth.getValue() == 0));
+		if (0 < depth.getValue()) {
+			Collection<String> ids = mapper.reduceIds(this.buffer, this.moduleInstance);
+			if (!ids.isEmpty())
+				this.moduleInstance.execute(this.langInstance.deleteRelations(ids));
+		}
+		container.postSave(this.archive);
+	}
+
+	@Override
+	public void delete(EntityContainer entity, /* IDeleteContainer container, */ DepthContainer depth)
+			throws Exception {
+		IDeleteContainer container = this.archive.delete(entity.getClass(), buffer, entity);
+		Language.IDeleteMapper mapper = this.langInstance.delete(container.getDeleteFilter(),
+				container.getEffectedFilter());
+		mapper.updateBuffer(this.buffer, container.getDeletedId(), this.moduleInstance.query(mapper.effectedQry())
+				.getRawData());
+		this.moduleInstance.execute(mapper.qry());
 	}
 
 	@Override

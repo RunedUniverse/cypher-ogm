@@ -12,4 +12,8 @@ import lombok.Setter;
 public class EntityContainer {
 
 	private Object entity = null;
+
+	public Class<?> getType() {
+		return this.entity.getClass();
+	}
 }

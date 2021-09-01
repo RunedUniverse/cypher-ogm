@@ -27,7 +27,7 @@ public interface ReduceLayer {
 	@Chain(label = Chains.LOAD_CHAIN.ALL.LABEL, layers = { Chains.LOAD_CHAIN.ALL.RESOLVE_DEPTH }, ignoreResult = true)
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.RESOLVE_DEPTH }, ignoreResult = true)
 	public static void resolveDepth(final ChainRuntime<?> runtime, DepthContainer depth) throws Exception {
-		if (depth.getDepth() < 2)
+		if (depth.getValue() < 2)
 			return;
 		depth.subtractOne();
 		runtime.callSubChainWithSourceData(Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL, null);
@@ -37,7 +37,7 @@ public interface ReduceLayer {
 			Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.VALIDATE_LAZY_ENTRIES })
 	public static void validateLazyEntries(final ChainRuntime<?> runtime, final LazyEntriesContainer lazyEntries,
 			final DepthContainer depth) {
-		if (lazyEntries.isEmpty() || depth == null || depth.getDepth() <= 0)
+		if (lazyEntries.isEmpty() || depth == null || depth.getValue() <= 0)
 			runtime.setCanceled(true);
 	}
 
@@ -60,7 +60,7 @@ public interface ReduceLayer {
 			Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LOOP_LAZY_ENTRIES })
 	public static void loopLazyEntries(final ChainRuntime<?> runtime, final DepthContainer depth) {
 		depth.subtractOne();
-		if (0 < depth.getDepth())
+		if (0 < depth.getValue())
 			runtime.jumpToLayer(Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.VALIDATE_LAZY_ENTRIES);
 	}
 
@@ -72,7 +72,7 @@ public interface ReduceLayer {
 			Entry entry = buffer.getEntry(entity);
 			if (entry != null)
 				runtime.callSubChainWithSourceData(Chains.RELOAD_CHAIN.SELECTED.LABEL, Void.class, relatedEntries,
-						archive.search(entry.getType(), entry.getId(), depth.getDepth() == 0)
+						archive.search(entry.getType(), entry.getId(), depth.getValue() == 0)
 								.getResult());
 		}
 		depth.subtractOne();
@@ -81,7 +81,7 @@ public interface ReduceLayer {
 	@Chain(label = Chains.RELOAD_CHAIN.ALL.LABEL, layers = { Chains.RELOAD_CHAIN.ALL.VALIDATE_RELATED_ENTRIES })
 	public static void validateRelatedEntries(final ChainRuntime<?> runtime, final DepthContainer depth,
 			RelatedEntriesContainer relatedEntries) {
-		if (relatedEntries.isEmpty() || depth == null || depth.getDepth() <= 0)
+		if (relatedEntries.isEmpty() || depth == null || depth.getValue() <= 0)
 			runtime.setCanceled(true);
 	}
 
@@ -92,7 +92,7 @@ public interface ReduceLayer {
 		for (Entry entry : relatedEntries.getRelatedEntries()) {
 			if (entry != null)
 				runtime.callSubChainWithSourceData(Chains.RELOAD_CHAIN.SELECTED.LABEL, Void.class, nextRelatedEntries,
-						archive.search(entry.getType(), entry.getId(), depth.getDepth() == 0)
+						archive.search(entry.getType(), entry.getId(), depth.getValue() == 0)
 								.getResult());
 		}
 		relatedEntries.clear();
@@ -102,7 +102,7 @@ public interface ReduceLayer {
 	@Chain(label = Chains.RELOAD_CHAIN.ALL.LABEL, layers = { Chains.RELOAD_CHAIN.ALL.LOOP_RELATED_ENTRIES })
 	public static void loopRelatedEntries(final ChainRuntime<?> runtime, final DepthContainer depth) {
 		depth.subtractOne();
-		if (0 < depth.getDepth())
+		if (0 < depth.getValue())
 			runtime.jumpToLayer(Chains.RELOAD_CHAIN.ALL.VALIDATE_RELATED_ENTRIES);
 	}
 }

@@ -1,13 +1,14 @@
 package net.runeduniverse.libs.rogm.pipeline.chain.data;
 
-import lombok.Getter;
-
 public class DepthContainer {
-	@Getter
 	private int depth;
 
 	public DepthContainer(int depth) {
 		this.set(depth);
+	}
+
+	public int getValue() {
+		return this.depth;
 	}
 
 	public void set(int value) {
