@@ -8,6 +8,7 @@ import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
 import net.runeduniverse.libs.rogm.lang.DatabaseCleaner;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.modules.Module.IRawRecord;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
@@ -78,8 +79,7 @@ public class DatabaseChainRouter extends AChainRouter {
 	}
 
 	@Override
-	public void delete(EntityContainer entity, /* IDeleteContainer container, */ DepthContainer depth)
-			throws Exception {
+	public void delete(EntityContainer entity, DepthContainer depth) throws Exception {
 		IBuffer.Entry entry = buffer.getEntry(entity.getEntity());
 		if (entry == null)
 			throw new Exception("Entity of type<" + entity.getType()
@@ -88,8 +88,8 @@ public class DatabaseChainRouter extends AChainRouter {
 		IDeleteContainer container = this.archive.delete(entity.getType(), entry.getId(), entity.getEntity());
 		Language.IDeleteMapper mapper = this.langInstance.delete(container.getDeleteFilter(),
 				container.getEffectedFilter());
-		mapper.updateBuffer(this.buffer, container.getDeletedId(), this.moduleInstance.query(mapper.effectedQry())
-				.getRawData());
+		IRawRecord record = this.moduleInstance.query(mapper.effectedQry());
+		mapper.updateBuffer(this.buffer, container.getDeletedId(), record.getRawData());
 		this.moduleInstance.execute(mapper.qry());
 	}
 

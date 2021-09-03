@@ -41,8 +41,7 @@ public abstract class AChainRouter {
 
 	public abstract void save(EntityContainer entity, SaveContainer container, DepthContainer depth) throws Exception;
 
-	public abstract void delete(EntityContainer entity, /* IDeleteContainer container, */ DepthContainer depth)
-			throws Exception;
+	public abstract void delete(EntityContainer entity, DepthContainer depth) throws Exception;
 
 	public abstract void unload(Object entity);
 
