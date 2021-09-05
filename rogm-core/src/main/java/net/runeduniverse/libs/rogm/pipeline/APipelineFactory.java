@@ -1,6 +1,7 @@
 package net.runeduniverse.libs.rogm.pipeline;
 
 import lombok.Getter;
+import net.runeduniverse.libs.rogm.Session;
 import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.info.SessionInfo;
@@ -16,6 +17,7 @@ public abstract class APipelineFactory<ROUTER extends AChainRouter> {
 	protected final ROUTER router;
 	protected final UniversalLogger logger;
 
+	protected Pipeline pipeline = null;
 	protected ChainManager chainManager = null;
 
 	protected APipelineFactory(PackageInfo pkgInfo, IdTypeResolver idTypeResolver, ROUTER router,
@@ -28,7 +30,8 @@ public abstract class APipelineFactory<ROUTER extends AChainRouter> {
 
 	// SETUP / CONNECTION
 
-	public void setup(final ChainManager chainManager) throws Exception {
+	public void setup(final Pipeline pipeline, final ChainManager chainManager) throws Exception {
+		this.pipeline = pipeline;
 		this.chainManager = chainManager;
 		this.setupCallOrder();
 	}
@@ -43,11 +46,17 @@ public abstract class APipelineFactory<ROUTER extends AChainRouter> {
 
 	protected abstract void setupChainManager(ChainManager chainManager) throws Exception;
 
+	@SuppressWarnings("deprecation")
+	public Session buildSession() {
+		SessionWrapper wrapper = new SessionWrapper(this.pipeline, this, this.pipeline.getLogger(),
+				this.getSessionInfo());
+		this.pipeline.registerActiveSession(wrapper);
+		return wrapper;
+	}
+
 	public abstract boolean isConnected();
 
 	public abstract void closeConnections();
-
-	public abstract void closePipeline(Pipeline closingPipeline);
 
 	@Override
 	protected void finalize() throws Throwable {

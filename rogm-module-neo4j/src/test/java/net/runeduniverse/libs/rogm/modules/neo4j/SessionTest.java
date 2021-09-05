@@ -13,11 +13,11 @@ import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.modules.neo4j.SessionTest;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
-import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.model.*;
 import net.runeduniverse.libs.rogm.test.model.relations.*;
 
-public class SessionTest extends ATest {
+public class SessionTest extends AConfigTest {
 
 	public static String DB_HOST = System.getProperty("dbhost", "127.0.0.1");
 	public static String DB_USER = System.getProperty("dbuser", "neo4j");

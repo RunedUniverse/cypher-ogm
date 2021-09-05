@@ -20,7 +20,7 @@ import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
-import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 import net.runeduniverse.libs.rogm.test.model.Company;
 import net.runeduniverse.libs.rogm.test.model.Inventory;
@@ -29,8 +29,8 @@ import net.runeduniverse.libs.rogm.test.model.relations.Slot;
 
 public class QueryBuilderTest {
 
-	public static final String MODEL_PKG_PATH = ATest.MODEL_PKG_PATH;
-	public static final String RELATIONS_PKG_PATH = ATest.RELATIONS_PKG_PATH;
+	public static final String MODEL_PKG_PATH = AConfigTest.MODEL_PKG_PATH;
+	public static final String RELATIONS_PKG_PATH = AConfigTest.RELATIONS_PKG_PATH;
 
 	static {
 		Archive.PACKAGE_SCANNER_DEBUG_MODE = true;

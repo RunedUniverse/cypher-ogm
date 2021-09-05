@@ -18,12 +18,14 @@ import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 
 public final class SessionWrapper implements Session {
 
+	private final Pipeline pipeline;
 	private final APipelineFactory<?> factory;
 	private final AChainRouter router;
 	private final SessionLogger logger;
 
-	protected SessionWrapper(final APipelineFactory<?> factory, final PipelineLogger pipelineLogger,
-			final SessionInfo info) {
+	protected SessionWrapper(final Pipeline pipeline, final APipelineFactory<?> factory,
+			final PipelineLogger pipelineLogger, final SessionInfo info) {
+		this.pipeline = pipeline;
 		this.factory = factory;
 		this.router = this.factory.getRouter();
 		this.logger = new SessionLogger(SessionWrapper.class, pipelineLogger, info).logConfig();
@@ -37,7 +39,7 @@ public final class SessionWrapper implements Session {
 
 	@Override
 	public void close() throws Exception {
-		this.factory.closeConnections();
+		this.pipeline.closeConnections(this);
 	}
 
 	@Override

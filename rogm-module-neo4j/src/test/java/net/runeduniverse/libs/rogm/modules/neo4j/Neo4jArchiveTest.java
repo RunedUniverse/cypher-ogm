@@ -1,32 +1,21 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.pattern.Archive;
-import net.runeduniverse.libs.rogm.pattern.EntitiyFactory;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
-import net.runeduniverse.libs.rogm.test.ATest;
-import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.model.*;
+import net.runeduniverse.libs.rogm.test.system.ArchiveTest;
 
-public class PatternStorageTest extends ATest {
+public class Neo4jArchiveTest extends ArchiveTest {
 
 	static Configuration config = new Neo4jConfiguration("runeduniverse.net");
-	static {
-		config.addPackage(MODEL_PKG_PATH);
-		config.addPackage(RELATIONS_PKG_PATH);
 
-		Archive.PACKAGE_SCANNER_DEBUG_MODE = true;
-	}
-
-	public PatternStorageTest() {
+	public Neo4jArchiveTest() {
 		super(config);
 	}
 
-	private EntitiyFactory processor = null;
 	private QueryBuilder qryBuilder = null;
 
 	private static final Person testi;
@@ -43,13 +32,6 @@ public class PatternStorageTest extends ATest {
 				.add(s);
 		ennio.getPlayed()
 				.add(s);
-	}
-
-	@BeforeEach
-	public void before() throws Exception {
-		this.processor = new EntitiyFactory(config, iParser);
-		this.qryBuilder = this.processor.getArchive()
-				.getQueryBuilder();
 	}
 
 	@Test
@@ -89,20 +71,13 @@ public class PatternStorageTest extends ATest {
 	}
 
 	private String _query(Class<?> clazz) throws Exception {
-		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.qryBuilder.node()
+		return super.printQuery(clazz, this.qryBuilder.node()
 				.where(clazz)
 				.setLazy(false)
-				.getResult()) + '\n';
+				.getResult());
 	}
 
 	private String _save(Object entity) throws Exception {
-		this.processor.getArchive()
-				.logPatterns(new ConsoleLogger());
-		return "[SAVE][" + entity.getClass()
-				.getSimpleName() + "]\n"
-				+ iLanguage.save(this.processor.save(entity, 1)
-						.getDataContainer(), null)
-						.qry()
-				+ '\n';
+		return super.printSave(entity, 1);
 	}
 }

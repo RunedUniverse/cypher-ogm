@@ -1,10 +1,12 @@
 package net.runeduniverse.libs.rogm.parser;
 
-import net.runeduniverse.libs.rogm.Configuration;
+import java.util.logging.Logger;
+
+import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 
 public interface Parser {
 
-	Instance build(Configuration cnf);
+	Instance build(final Logger logger, IdTypeResolver resolver);
 
 	public interface Instance {
 		String serialize(Object object) throws Exception;

@@ -1,5 +1,7 @@
 package net.runeduniverse.libs.rogm.test.system;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Tag;
@@ -11,12 +13,12 @@ import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pipeline.DatabasePipelineFactory;
 import net.runeduniverse.libs.rogm.pipeline.Pipeline;
-import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 
 public class PipelineTest {
-	public static final String MODEL_PKG_PATH = ATest.MODEL_PKG_PATH;
-	public static final String RELATIONS_PKG_PATH = ATest.RELATIONS_PKG_PATH;
+	public static final String MODEL_PKG_PATH = AConfigTest.MODEL_PKG_PATH;
+	public static final String RELATIONS_PKG_PATH = AConfigTest.RELATIONS_PKG_PATH;
 
 	static {
 		Archive.PACKAGE_SCANNER_DEBUG_MODE = true;
@@ -39,9 +41,9 @@ public class PipelineTest {
 	@Test
 	@Tag("system")
 	public void setupDatabasePipeline() throws Exception {
+		@SuppressWarnings("resource")
 		Pipeline pipeline = new Pipeline(this.databasePipelineFactory);
-
 		Session session = pipeline.buildSession();
-
+		assertNotNull(session, "Database Session wasn't built!");
 	}
 }

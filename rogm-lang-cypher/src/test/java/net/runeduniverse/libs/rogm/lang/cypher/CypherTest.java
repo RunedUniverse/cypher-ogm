@@ -15,10 +15,10 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.parser.json.JSONParser;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
-import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 
-public class CypherTest extends ATest {
+public class CypherTest extends AConfigTest {
 
 	/*
 	 * ASSERTS NOT VIABLE BECAUSE IT SOMEWHAT CHANGES THE DIRECTIONS INSIDE THE

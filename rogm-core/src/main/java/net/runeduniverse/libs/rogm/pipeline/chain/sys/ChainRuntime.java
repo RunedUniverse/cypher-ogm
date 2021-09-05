@@ -20,6 +20,8 @@ public class ChainRuntime<R> {
 	@Getter
 	@Setter
 	protected boolean canceled = false;
+	@Getter
+	protected boolean interrupted = false;
 	// result
 	@Getter
 	private final Class<R> resultType;
@@ -60,7 +62,8 @@ public class ChainRuntime<R> {
 		Set<Exception> errors = new HashSet<>();
 		boolean noErrors = true;
 
-		for (this.iterator.setI(lowestId); this.iterator.getI() <= highestId; this.iterator.next()) {
+		for (this.iterator.setI(lowestId); !this.interrupted && this.iterator.getI() <= highestId; this.iterator
+				.next()) {
 			ILayer layer = chain.get(this.iterator.getI());
 			if (layer != null)
 				try {
@@ -81,6 +84,10 @@ public class ChainRuntime<R> {
 
 	public void jumpToLayer(int layerId) {
 		this.iterator.setI(layerId);
+	}
+
+	public void interrupt() {
+		this.interrupted = true;
 	}
 
 	public <D extends Object> D storeData(D entity) {

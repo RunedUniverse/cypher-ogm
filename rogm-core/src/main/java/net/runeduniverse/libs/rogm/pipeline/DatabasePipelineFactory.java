@@ -20,9 +20,11 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 
 	protected final Configuration cnf;
 	protected final IBuffer buffer;
+
 	protected final Parser parser;
 	protected final Language lang;
 	protected final Module module;
+
 	protected final Parser.Instance parserInstance;
 	protected final Language.Instance langInstance;
 	protected final Module.Instance<?> moduleInstance;
@@ -40,9 +42,9 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 		this.lang = this.cnf.getLang();
 		this.module = this.cnf.getModule();
 
-		this.parserInstance = this.parser.build(this.cnf);
-		this.moduleInstance = this.module.build(this.cnf);
-		this.langInstance = this.lang.build(this.parserInstance, this.module);
+		this.parserInstance = this.parser.build(this.logger, this.module);
+		this.langInstance = this.lang.build(this.logger, this.module, this.parserInstance);
+		this.moduleInstance = this.module.build(this.logger, this.parserInstance);
 
 		this.router.initialize(this.buffer, this.lang, this.parserInstance, this.langInstance, this.moduleInstance);
 	}
@@ -74,19 +76,12 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 
 	@Override
 	public boolean isConnected() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.moduleInstance.isConnected();
 	}
 
 	@Override
 	public void closeConnections() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void closePipeline(Pipeline closingPipeline) {
-		this.closeConnections();
+		this.moduleInstance.disconnect();
 	}
 
 	// GETTER

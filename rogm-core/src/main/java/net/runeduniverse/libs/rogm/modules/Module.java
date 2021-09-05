@@ -4,15 +4,16 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
-import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.info.ConnectionInfo;
+import net.runeduniverse.libs.rogm.parser.Parser;
 
 public interface Module extends PassiveModule, IdTypeResolver {
 
-	// cnf might not get used from every module
-	// but is provided if needed
-	Instance<?> build(Configuration cnf);
+	// params might not get used from every module
+	// but are provided if needed
+	Instance<?> build(final Logger logger, final Parser.Instance parser);
 
 	public interface Instance<ID extends Serializable> {
 		boolean connect(ConnectionInfo info);

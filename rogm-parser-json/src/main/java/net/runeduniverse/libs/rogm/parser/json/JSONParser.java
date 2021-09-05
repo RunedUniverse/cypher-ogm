@@ -1,5 +1,7 @@
 package net.runeduniverse.libs.rogm.parser.json;
 
+import java.util.logging.Logger;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -11,7 +13,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 
-import net.runeduniverse.libs.rogm.Configuration;
+import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.parser.Parser;
 
 @SuppressWarnings("deprecation")
@@ -77,14 +79,15 @@ public class JSONParser implements Parser {
 	}
 
 	@Override
-	public Instance build(Configuration cnf) {
-		JsonAnnotationIntrospector introspector = new JsonAnnotationIntrospector(cnf.getModule());
+	public Instance build(Logger logger, IdTypeResolver resolver) {
+		JsonAnnotationIntrospector introspector = new JsonAnnotationIntrospector(resolver);
 
-		AnnotationIntrospector serial = new AnnotationIntrospectorPair(introspector,
-				mapper.getSerializationConfig().getAnnotationIntrospector());
-		AnnotationIntrospector deserial = new AnnotationIntrospectorPair(introspector,
-				mapper.getDeserializationConfig().getAnnotationIntrospector());
-		return new JSONParserInstance(mapper.copy().setAnnotationIntrospectors(serial, deserial));
+		AnnotationIntrospector serial = new AnnotationIntrospectorPair(introspector, mapper.getSerializationConfig()
+				.getAnnotationIntrospector());
+		AnnotationIntrospector deserial = new AnnotationIntrospectorPair(introspector, mapper.getDeserializationConfig()
+				.getAnnotationIntrospector());
+		return new JSONParserInstance(mapper.copy()
+				.setAnnotationIntrospectors(serial, deserial));
 	}
 
 }

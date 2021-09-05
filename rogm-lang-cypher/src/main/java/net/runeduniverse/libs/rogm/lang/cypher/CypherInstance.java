@@ -7,7 +7,7 @@ import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.lang.Language.*;
-import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.*;
 import net.runeduniverse.libs.utils.DataHashMap;
@@ -16,8 +16,8 @@ import net.runeduniverse.libs.utils.StringVariableGenerator;
 
 @RequiredArgsConstructor
 public class CypherInstance implements Instance {
+	private final IdTypeResolver resolver;
 	private final Parser.Instance parser;
-	private final Module module;
 
 	@Override
 	public ILoadMapper load(IFilter filter) throws Exception {
@@ -118,7 +118,7 @@ public class CypherInstance implements Instance {
 	}
 
 	private String _returnId(String code) {
-		return "id(" + code + ") AS id_" + code + ',' + code + ".`" + this.module.getIdAlias() + "` AS eid_" + code;
+		return "id(" + code + ") AS id_" + code + ',' + code + ".`" + this.resolver.getIdAlias() + "` AS eid_" + code;
 	}
 
 	private String _returnLabel(String code, boolean isNode) {
@@ -218,7 +218,7 @@ public class CypherInstance implements Instance {
 			if (filter instanceof IFRelation)
 				return 0;
 			if (filter instanceof IParameterized && ((IParameterized) filter).getParams()
-					.containsKey(this.module.getIdAlias()))
+					.containsKey(this.resolver.getIdAlias()))
 				return 1;
 		default:
 			return -1;
@@ -242,7 +242,7 @@ public class CypherInstance implements Instance {
 
 	private void _checkIdType(IFilter filter) throws Exception {
 		Class<?> clazz = IIdentified.getIdType(filter);
-		if (clazz != null && !this.module.checkIdType(clazz))
+		if (clazz != null && !this.resolver.checkIdType(clazz))
 			throw new Exception("IFilter ID <" + clazz + "> not supported");
 	}
 

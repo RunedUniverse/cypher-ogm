@@ -27,6 +27,8 @@ import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainRuntime;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
+import static net.runeduniverse.libs.utils.StringUtils.isBlank;
+
 public interface LookupLayers {
 
 	@Chain(label = Chains.DELETE_CHAIN.ONE.LABEL, layers = { Chains.DELETE_CHAIN.ONE.PACKAGE_CONTAINER })
@@ -97,7 +99,8 @@ public interface LookupLayers {
 
 	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.CALL_DATABASE_CLEANUP })
 	public static void callDatabaseCleanup(ChainRuntime<?> runtime, DatabaseCleaner cleaner) throws Exception {
-		runtime.callSubChainWithRuntimeData(cleaner.getChainLabel(), Void.class);
+		if (!isBlank(cleaner.getChainLabel()))
+			runtime.callSubChainWithRuntimeData(cleaner.getChainLabel(), Void.class);
 	}
 
 	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.POST_SAVE_EVENT })

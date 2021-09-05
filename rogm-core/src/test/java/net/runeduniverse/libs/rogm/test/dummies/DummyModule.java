@@ -1,12 +1,14 @@
 package net.runeduniverse.libs.rogm.test.dummies;
 
-import net.runeduniverse.libs.rogm.Configuration;
+import java.util.logging.Logger;
+
 import net.runeduniverse.libs.rogm.modules.AModule;
+import net.runeduniverse.libs.rogm.parser.Parser;
 
 public class DummyModule extends AModule {
 
 	@Override
-	public Instance<?> build(Configuration cnf) {
+	public Instance<?> build(Logger logger, Parser.Instance parser) {
 		return null;
 	}
 

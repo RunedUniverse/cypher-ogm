@@ -29,7 +29,6 @@ public class Configuration {
 
 	@Setter
 	protected String uri;
-	@Setter
 	protected Logger logger = null;
 	@Setter
 	protected Level loggingLevel = null;
@@ -74,6 +73,11 @@ public class Configuration {
 
 	public Configuration addPassiveModule(PassiveModule passivemodule) {
 		this.passiveModules.add(passivemodule);
+		return this;
+	}
+
+	public Configuration setLogger(Logger logger) {
+		this.logger = logger;
 		return this;
 	}
 

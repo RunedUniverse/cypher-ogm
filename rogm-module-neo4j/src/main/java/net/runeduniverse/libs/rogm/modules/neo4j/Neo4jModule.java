@@ -1,6 +1,5 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,7 +19,6 @@ import org.neo4j.driver.TransactionWork;
 import org.neo4j.driver.Value;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.info.ConnectionInfo;
 import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.AModule;
@@ -32,8 +30,8 @@ public class Neo4jModule extends AModule {
 	private static final String ID_ALIAS = "_id";
 
 	@Override
-	public Instance<Long> build(Configuration cnf) {
-		return new Neo4jModuleInstance(cnf.buildParserInstance(), cnf.getLogger());
+	public Instance<Long> build(final Logger logger, final Parser.Instance parser) {
+		return new Neo4jModuleInstance(parser, logger);
 	}
 
 	protected String _buildUri(ConnectionInfo info) {
