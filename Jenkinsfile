@@ -112,12 +112,6 @@ pipeline {
 		}
 	}
 	post {
-		success {
-			sh 'rm -R "${WORKSPACE}-failure"'
-		}
-		failure {
-			sh 'mv $WORKSPACE "${WORKSPACE}-failure"'
-		}
 		cleanup {
 			cleanWs()
 		}
