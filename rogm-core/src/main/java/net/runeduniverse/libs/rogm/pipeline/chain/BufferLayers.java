@@ -7,10 +7,13 @@ import java.util.List;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
 import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
+import net.runeduniverse.libs.rogm.lang.Language.IDeleteMapper;
+import net.runeduniverse.libs.rogm.modules.Module.IRawRecord;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
@@ -78,6 +81,16 @@ public interface BufferLayers extends InternalBufferTypes {
 		return entity;
 	}
 
+	@Chain(label = Chains.DELETE_CHAIN.ONE.LABEL, layers = { Chains.DELETE_CHAIN.ONE.GET_BUFFERED_ENTRY })
+	public static Entry getBufferedEntry(final ChainRuntime<?> runtime, final IBuffer buffer,
+			final EntityContainer entity) throws Exception {
+		Entry entry = buffer.getEntry(entity.getEntity());
+		if (entry == null)
+			throw new Exception("Entity of type<" + entity.getType()
+					.getName() + "> is not loaded!");
+		return entry;
+	}
+
 	@Chain(label = Chains.BUFFER_CHAIN.UPDATE.LABEL, layers = { Chains.BUFFER_CHAIN.UPDATE.PREPARE_DATA })
 	public static EntityContainer prepareDataReloadForBuffer(final IBuffer buffer, IBaseQueryPattern pattern,
 			IData data) {
@@ -123,5 +136,11 @@ public interface BufferLayers extends InternalBufferTypes {
 		}
 		if (!errors.isEmpty())
 			throw new ExceptionSurpression("Surpressed Exceptions while updating buffered Ids").addSuppressed(errors);
+	}
+
+	@Chain(label = Chains.DELETE_CHAIN.ONE.LABEL, layers = { Chains.DELETE_CHAIN.ONE.UPDATE_BUFFER })
+	public static void updateBuffer(final IBuffer buffer, IDeleteMapper mapper, IDeleteContainer container,
+			IRawRecord record) {
+		mapper.updateBuffer(buffer, container.getDeletedId(), record.getRawData());
 	}
 }

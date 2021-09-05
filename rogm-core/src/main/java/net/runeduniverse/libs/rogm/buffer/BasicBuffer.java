@@ -159,7 +159,7 @@ public class BasicBuffer implements IBuffer {
 			((INodePattern) entry.getPattern()).deleteRelations(entry.getEntity(), deletedEntities);
 
 		for (Entry entry : deletedEntries) {
-			removeEntry(entry);
+			this.removeEntry(entry);
 			entry.getPattern()
 					.callMethod(PostDelete.class, entry.getEntity());
 		}

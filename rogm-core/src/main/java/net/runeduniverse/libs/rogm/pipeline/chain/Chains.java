@@ -78,6 +78,19 @@ public interface Chains {
 		}
 	}
 
+	public interface DELETE_CHAIN {
+		public interface ONE {
+			public static final String LABEL = "DELETE_CHAIN.ONE";
+
+			public static final int GET_BUFFERED_ENTRY = 100;
+			public static final int PACKAGE_CONTAINER = 200;
+			public static final int BUILD_QUERY_MAPPER = 300;
+			public static final int QUERY_DATABASE_FOR_RAW_RECORD = 400;
+			public static final int UPDATE_BUFFER = 500;
+			public static final int EXECUTE_DELETION_ON_DATABASE = 600;
+		}
+	}
+
 	public interface BUFFER_CHAIN {
 
 		public interface LOAD {
