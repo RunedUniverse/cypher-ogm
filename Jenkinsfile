@@ -1,5 +1,9 @@
 pipeline {
 	agent any
+	tools {
+		maven 'Maven 3.6.3'
+		jdk 'OpenJDK 8'
+	}
 	stages {
 		stage('Update Maven Repo') {
 			steps {
@@ -106,11 +110,16 @@ pipeline {
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
-
 	}
-	tools {
-		git 'git'
-		maven 'Maven 3.6.3'
-		jdk 'OpenJDK 8'
+	post {
+		success {
+			sh 'rm -R "${WORKSPACE}-failure"'
+		}
+		failure {
+			sh 'mv $WORKSPACE "${WORKSPACE}-failure"'
+		}
+		cleanup {
+			cleanWs()
+		}
 	}
 }
