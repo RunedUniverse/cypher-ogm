@@ -109,6 +109,7 @@ pipeline {
 
 	}
 	tools {
+		git 'git'
 		maven 'Maven 3.6.3'
 		jdk 'OpenJDK 8'
 	}
