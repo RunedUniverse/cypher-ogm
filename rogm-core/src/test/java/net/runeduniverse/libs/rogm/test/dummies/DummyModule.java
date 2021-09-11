@@ -9,7 +9,7 @@ public class DummyModule extends AModule {
 
 	@Override
 	public Instance<?> build(Logger logger, Parser.Instance parser) {
-		return null;
+		return new DummyModuleInstance();
 	}
 
 	@Override

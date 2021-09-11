@@ -21,7 +21,9 @@ import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 import net.runeduniverse.libs.rogm.test.AConfigTest;
+import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
+import net.runeduniverse.libs.rogm.test.dummies.DummyParser;
 import net.runeduniverse.libs.rogm.test.model.Company;
 import net.runeduniverse.libs.rogm.test.model.Inventory;
 import net.runeduniverse.libs.rogm.test.model.Item;
@@ -43,8 +45,9 @@ public class QueryBuilderTest {
 	protected final QueryBuilder builder;
 
 	public QueryBuilderTest() throws ScannerException {
-		this.cnf = new Configuration(null, null, new DummyModule(), null).addClassLoader(this.getClass()
-				.getClassLoader());
+		this.cnf = new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost")
+				.addClassLoader(this.getClass()
+						.getClassLoader());
 		cnf.setLogger(new DebugLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
 
 		cnf.addPackage(MODEL_PKG_PATH);

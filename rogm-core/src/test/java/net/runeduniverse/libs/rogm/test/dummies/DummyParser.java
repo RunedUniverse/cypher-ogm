@@ -9,7 +9,7 @@ public class DummyParser implements Parser {
 
 	@Override
 	public Instance build(Logger logger, IdTypeResolver resolver) {
-		return null;
+		return new DummyParserInstance();
 	}
 
 }

@@ -14,7 +14,9 @@ import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pipeline.DatabasePipelineFactory;
 import net.runeduniverse.libs.rogm.pipeline.Pipeline;
 import net.runeduniverse.libs.rogm.test.AConfigTest;
+import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
+import net.runeduniverse.libs.rogm.test.dummies.DummyParser;
 
 public class PipelineTest {
 	public static final String MODEL_PKG_PATH = AConfigTest.MODEL_PKG_PATH;
@@ -28,8 +30,9 @@ public class PipelineTest {
 	protected final DatabasePipelineFactory databasePipelineFactory;
 
 	public PipelineTest() {
-		this.cnf = new Configuration(null, null, new DummyModule(), null).addClassLoader(this.getClass()
-				.getClassLoader());
+		this.cnf = new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), null)
+				.addClassLoader(this.getClass()
+						.getClassLoader());
 		cnf.setLogger(new DebugLogger(Logger.getLogger(PipelineTest.class.getName())));
 
 		cnf.addPackage(MODEL_PKG_PATH);

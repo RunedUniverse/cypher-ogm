@@ -4,14 +4,14 @@ import java.util.logging.Logger;
 
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
+import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 
 public class DummyLanguage implements Language {
 
 	@Override
-	public Instance build(Logger logger, IdTypeResolver resolver,
-			net.runeduniverse.libs.rogm.parser.Parser.Instance parser) {
-		return null;
+	public Instance build(Logger logger, IdTypeResolver resolver, Parser.Instance parser) {
+		return new DummyLanguageInstance();
 	}
 
 	@Override
