@@ -1,6 +1,6 @@
 package net.runeduniverse.libs.rogm.error;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,9 +16,12 @@ public class ExceptionSurpression extends Exception {
 		if (!trunk)
 			return;
 
-		List<StackTraceElement> trace = Arrays.asList(this.getStackTrace());
+		List<StackTraceElement> trace = new ArrayList<>();
+		for (StackTraceElement element : this.getStackTrace())
+			trace.add(element);
 		this.trunkStackTrace(trace);
 		this.setStackTrace(trace.toArray(new StackTraceElement[trace.size()]));
+		this.printStackTrace();
 	}
 
 	public ExceptionSurpression addSuppressed(Collection<Exception> errors) {
@@ -36,9 +39,7 @@ public class ExceptionSurpression extends Exception {
 	}
 
 	protected static boolean pathStartsWith(StackTraceElement element, String prefix) {
-		return element.getClass()
-				.getPackage()
-				.getName()
+		return element.getClassName()
 				.startsWith(prefix);
 	}
 }
