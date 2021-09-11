@@ -2,7 +2,7 @@ package net.runeduniverse.libs.rogm.test.system;
 
 import java.util.logging.Logger;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.error.ScannerException;
@@ -37,7 +37,7 @@ public class ArchiveTest extends AConfigTest {
 				.addPackage(RELATIONS_PKG_PATH));
 	}
 
-	@BeforeAll
+	@BeforeEach
 	@Tag("system")
 	public void scanModels() throws ScannerException {
 		for (PassiveModule module : this.cnf.getPassiveModules())
