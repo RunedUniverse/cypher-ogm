@@ -25,12 +25,14 @@ public class SessionTest extends AConfigTest {
 
 	private static Configuration config;
 
-	public SessionTest() {
-		super(config);
-	}
-
 	private Session session = null;
 	private QueryBuilder qryBuilder = null;
+
+	public SessionTest() throws Exception {
+		super(config);
+		this.session = Session.create(config);
+		this.qryBuilder = this.session.getQueryBuilder();
+	}
 
 	@BeforeAll
 	public static void prepare() {
@@ -55,10 +57,8 @@ public class SessionTest extends AConfigTest {
 	}
 
 	@BeforeEach
-	public void connectionTest() throws Exception {
-		this.session = Session.create(config);
+	public void connectionTest() {
 		assertTrue(session.isConnected(), "Session is NOT connected");
-		this.qryBuilder = this.session.getQueryBuilder();
 	}
 
 	@AfterEach
