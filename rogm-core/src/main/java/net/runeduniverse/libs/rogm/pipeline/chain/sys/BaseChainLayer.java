@@ -39,10 +39,10 @@ public class BaseChainLayer implements ILayer {
 		msg.append(": " + this.returnType.getSimpleName() + ' ' + this.method.getName());
 		List<String> params = new ArrayList<>();
 		for (int i = 0; i < paramTypes.length; i++)
-			msg.append(paramTypes[i].getName() + " » " + (passedParams[i] == null ? null
+			msg.append(paramTypes[i].getName() + " » " + (passedParams[i] == null ? "null"
 					: passedParams[i].getClass()
 							.getName()));
-		msg.append('(' + String.join(", ", params) + ')');
+		msg.append(" (" + String.join(", ", params) + ")");
 		return new ChainLayerCallException(msg.toString(), e);
 	}
 }
