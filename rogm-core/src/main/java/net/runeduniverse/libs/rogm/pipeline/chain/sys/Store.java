@@ -30,7 +30,7 @@ public final class Store {
 		if (data == null) {
 			if (dataType == null)
 				return;
-			this.runtimeDataMap.put(dataType, data);
+			this.runtimeDataMap.put(dataType, null);
 		} else
 			this.runtimeDataMap.put(data.getClass(), data);
 		this.last = data;
@@ -55,7 +55,7 @@ public final class Store {
 	public Object[] getData(Class<?>[] paramTypes) {
 		Object[] arr = new Object[paramTypes.length];
 		for (int i = 0; i < paramTypes.length; i++)
-			arr[0] = this.getData(paramTypes[i]);
+			arr[i] = this.getData(paramTypes[i]);
 		return arr;
 	}
 
