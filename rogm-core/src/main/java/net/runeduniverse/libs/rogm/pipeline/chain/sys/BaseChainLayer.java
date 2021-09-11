@@ -1,6 +1,5 @@
 package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class BaseChainLayer implements ILayer {
 		try {
 			params = runtime.getParameters(this.paramTypes);
 			runtime.storeData(this.returnType, this.method.invoke(null, params));
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (Exception e) {
 			throw this.packageException(e, params);
 		}
 	}
