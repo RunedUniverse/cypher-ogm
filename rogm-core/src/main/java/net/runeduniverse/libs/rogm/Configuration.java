@@ -43,12 +43,23 @@ public class Configuration {
 	@Setter
 	protected IBuffer buffer = new BasicBuffer();
 
-	public Configuration(Parser parser, Language lang, Module module, String uri) {
+	public Configuration(Parser parser, Language lang, Module module, String uri) throws NullPointerException {
 		this.parser = parser;
 		this.lang = lang;
 		this.module = module;
 		this.passiveModules.add(this.module);
 		this.uri = uri;
+
+		this.validate();
+	}
+
+	public void validate() {
+		if (this.parser == null)
+			throw new NullPointerException("Instance of net.runeduniverse.libs.rogm.parser.Parser is missing!");
+		if (this.lang == null)
+			throw new NullPointerException("Instance of net.runeduniverse.libs.rogm.lang.Language is missing!");
+		if (this.module == null)
+			throw new NullPointerException("Instance of net.runeduniverse.libs.rogm.modules.Module is missing!");
 	}
 
 	public Configuration addPackage(String pkg) {
