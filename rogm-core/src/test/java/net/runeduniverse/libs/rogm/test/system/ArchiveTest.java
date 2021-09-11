@@ -13,7 +13,9 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.ConsoleLogger;
+import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
+import net.runeduniverse.libs.rogm.test.dummies.DummyParser;
 
 public class ArchiveTest extends AConfigTest {
 
@@ -31,7 +33,8 @@ public class ArchiveTest extends AConfigTest {
 	}
 
 	public ArchiveTest() {
-		this(new Configuration(null, null, new DummyModule(), null).addClassLoader(ArchiveTest.class.getClassLoader())
+		this(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost")
+				.addClassLoader(ArchiveTest.class.getClassLoader())
 				.setLogger(new DebugLogger(Logger.getLogger(ArchiveTest.class.getName())))
 				.addPackage(MODEL_PKG_PATH)
 				.addPackage(RELATIONS_PKG_PATH));

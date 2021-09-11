@@ -1,10 +1,10 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.rogm.test.model.*;
 import net.runeduniverse.libs.rogm.test.system.ArchiveTest;
 
@@ -16,12 +16,16 @@ public class Neo4jArchiveTest extends ArchiveTest {
 		super(config);
 	}
 
-	private QueryBuilder qryBuilder = null;
+	private static Person testi;
+	private static Artist ennio;
 
-	private static final Person testi;
-	private static final Artist ennio;
+	@BeforeAll
+	public static void setup() {
+		// set model packages
+		config.addPackage(MODEL_PKG_PATH)
+				.addPackage(RELATIONS_PKG_PATH);
 
-	static {
+		// define test objects
 		testi = new Person("Testi", "West", true);
 
 		ennio = new Artist();
