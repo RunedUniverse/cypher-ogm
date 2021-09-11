@@ -135,7 +135,8 @@ public interface BufferLayers extends InternalBufferTypes {
 			}
 		}
 		if (!errors.isEmpty())
-			throw new ExceptionSurpression("Surpressed Exceptions while updating buffered Ids").addSuppressed(errors);
+			throw new ExceptionSurpression("Surpressed Exceptions while updating buffered Ids", true)
+					.addSuppressed(errors);
 	}
 
 	@Chain(label = Chains.DELETE_CHAIN.ONE.LABEL, layers = { Chains.DELETE_CHAIN.ONE.UPDATE_BUFFER })

@@ -78,8 +78,8 @@ public class ChainRuntime<R> {
 
 		if (!noErrors)
 			throw new ExceptionSurpression(
-					"ChainRuntime[" + this.hashCode() + "] of Chain<" + this.container.getLabel() + "> errored out!")
-							.addSuppressed(errors);
+					"ChainRuntime[" + this.hashCode() + "] of Chain<" + this.container.getLabel() + "> errored out!",
+					true).addSuppressed(errors);
 	}
 
 	public void jumpToLayer(int layerId) {

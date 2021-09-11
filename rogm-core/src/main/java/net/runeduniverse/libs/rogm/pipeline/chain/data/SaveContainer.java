@@ -51,7 +51,7 @@ public class SaveContainer {
 					errors.add(e);
 				}
 		if (!errors.isEmpty())
-			throw new ExceptionSurpression("Surpressed Exceptions for @PostSave Event").addSuppressed(errors);
+			throw new ExceptionSurpression("Surpressed Exceptions for @PostSave Event", true).addSuppressed(errors);
 	}
 
 	public void setDataContainer(IDataContainer container) {
