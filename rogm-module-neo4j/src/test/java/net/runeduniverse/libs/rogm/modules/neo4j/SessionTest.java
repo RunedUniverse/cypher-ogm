@@ -76,7 +76,7 @@ public class SessionTest extends AConfigTest {
 			return;
 		}
 		for (Person person : people) {
-			System.out.println(person.toString());
+			System.out.println(person);
 		}
 	}
 
@@ -89,7 +89,7 @@ public class SessionTest extends AConfigTest {
 			return;
 		}
 		for (Artist artist : people) {
-			System.out.println(artist.toString());
+			System.out.println(artist);
 		}
 	}
 
@@ -109,16 +109,16 @@ public class SessionTest extends AConfigTest {
 		shawn.setLastName("James");
 		shawn.setFictional(false);
 		session.save(shawn);
-		System.out.println(shawn.toString());
+		System.out.println(shawn);
 	}
 
 	@Test
 	@Tag("db-neo4j")
 	public void createPerson() {
 		Person james = new Person("James", "North", true);
-		System.out.println(james.toString());
+		System.out.println(james);
 		session.save(james);
-		System.out.println(james.toString());
+		System.out.println(james);
 	}
 
 	@Test
@@ -132,20 +132,20 @@ public class SessionTest extends AConfigTest {
 				.add(s);
 		ennio.getPlayed()
 				.add(s);
-		System.out.println(ennio.toString());
+		System.out.println(ennio);
 		session.save(ennio);
-		System.out.println(ennio.toString());
+		System.out.println(ennio);
 	}
 
 	@Test
 	@Tag("db-neo4j")
 	public void saveAndLoadPlayer_UUID_Id() {
 		Player player = new Player(UUID.randomUUID(), "Testi", new Inventory());
-		System.out.println(player.toString());
+		System.out.println(player);
 		session.save(player);
 		session.unload(player);
 		Player player2 = session.load(Player.class, player.getUuid());
-		System.out.println(player2.toString());
+		System.out.println(player2);
 		assertNotNull(player2, "NO Entries in DB found");
 		assertTrue(player.getUuid()
 				.equals(player2.getUuid()), "Player UUID doesn't match");
