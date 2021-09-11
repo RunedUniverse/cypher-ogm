@@ -7,8 +7,13 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.libs.rogm.pattern.Archive;
 
 public abstract class AConfigTest {
+
+	static {
+		Archive.PACKAGE_SCANNER_DEBUG_MODE = true;
+	}
 
 	public static final String MODEL_PKG_PATH = "net.runeduniverse.libs.rogm.test.model";
 	public static final String RELATIONS_PKG_PATH = "net.runeduniverse.libs.rogm.test.model.relations";
