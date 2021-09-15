@@ -59,7 +59,7 @@ public interface IPattern {
 	}
 
 	public interface IDataRecord {
-		IPatternContainer getPrimaryFilter();
+		IFilter getPrimaryFilter();
 
 		Set<Serializable> getIds();
 

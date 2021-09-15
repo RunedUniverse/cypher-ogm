@@ -16,7 +16,6 @@ import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
@@ -112,8 +111,8 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 		}
 
 		return new IPattern.IDataRecord() {
-			public IPattern.IPatternContainer getPrimaryFilter() {
-				return (IPatternContainer) primary;
+			public IFilter getPrimaryFilter() {
+				return primary;
 			}
 
 			@Override
