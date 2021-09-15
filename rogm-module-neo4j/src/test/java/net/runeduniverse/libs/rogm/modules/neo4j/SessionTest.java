@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.*;
@@ -43,7 +44,9 @@ public class SessionTest extends AConfigTest {
 				.addClassLoader(Thread.currentThread()
 						.getContextClassLoader());
 
-		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
+		Logger root = Logger.getLogger(SessionTest.class.getName());
+		root.setLevel(Level.ALL);
+		config.setLogger(new DebugLogger(root));
 
 		config.addPackage(MODEL_PKG_PATH);
 		config.addPackage(RELATIONS_PKG_PATH);
