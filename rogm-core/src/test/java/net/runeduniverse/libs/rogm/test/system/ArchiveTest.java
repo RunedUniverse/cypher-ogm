@@ -19,10 +19,6 @@ import net.runeduniverse.libs.rogm.test.dummies.DummyParser;
 
 public class ArchiveTest extends AConfigTest {
 
-	static {
-		Archive.PACKAGE_SCANNER_DEBUG_MODE = true;
-	}
-
 	protected final Archive archive;
 	protected final QueryBuilder qryBuilder;
 
