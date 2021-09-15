@@ -108,7 +108,8 @@ public interface AssemblyLayers extends InternalBufferTypes {
 		return nodes;
 	}
 
-	@Chain(label = Chains.RELOAD_CHAIN.SELECTED.LABEL, layers = { Chains.RELOAD_CHAIN.SELECTED.UPDATE_ENTITY_COLLECTION })
+	@Chain(label = Chains.RELOAD_CHAIN.SELECTED.LABEL, layers = {
+			Chains.RELOAD_CHAIN.SELECTED.UPDATE_ENTITY_COLLECTION })
 	public static void update(ChainRuntime<?> runtime, Archive archive, IBuffer buffer, EntityContainer entityContainer,
 			RelatedEntriesContainer relatedEntities, IDataRecord record) throws Exception {
 		Object entity = entityContainer.getEntity();

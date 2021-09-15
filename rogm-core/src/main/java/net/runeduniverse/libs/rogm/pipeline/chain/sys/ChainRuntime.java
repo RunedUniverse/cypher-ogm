@@ -108,6 +108,8 @@ public class ChainRuntime<R> {
 
 	@SuppressWarnings("unchecked")
 	public boolean setPossibleResult(Object entity) {
+		if (this.resultType == null || entity == null)
+			return false;
 		if (this.resultType.isAssignableFrom(entity.getClass())) {
 			this.result = (R) entity;
 			return true;
