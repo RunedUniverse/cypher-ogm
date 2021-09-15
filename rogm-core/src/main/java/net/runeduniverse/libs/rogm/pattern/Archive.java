@@ -61,6 +61,9 @@ public final class Archive {
 					.scan()
 					.throwSurpressions(new ScannerException("Pattern parsing failed! See surpressed Exceptions!"));
 		} catch (ScannerException e) {
+			for (Throwable t : e.getSuppressed()) {
+				t.printStackTrace();
+			}
 			if (e.hasSuppressions())
 				throw e;
 		}
