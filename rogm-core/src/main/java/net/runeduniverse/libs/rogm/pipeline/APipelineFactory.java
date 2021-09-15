@@ -42,7 +42,7 @@ public abstract class APipelineFactory<ROUTER extends AChainRouter> {
 		this.setupArchive(this.archive);
 	}
 
-	protected abstract void setupArchive(Archive archive) throws ScannerException;
+	protected abstract void setupArchive(Archive archive) throws ScannerException, Exception;
 
 	protected abstract void setupChainManager(ChainManager chainManager) throws Exception;
 

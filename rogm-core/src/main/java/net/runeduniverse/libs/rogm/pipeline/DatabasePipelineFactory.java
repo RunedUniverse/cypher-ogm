@@ -60,7 +60,7 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 	}
 
 	@Override
-	protected void setupArchive(Archive archive) throws ScannerException {
+	protected void setupArchive(Archive archive) throws ScannerException, Exception {
 		for (PassiveModule module : this.cnf.getPassiveModules())
 			module.configure(archive);
 	}
