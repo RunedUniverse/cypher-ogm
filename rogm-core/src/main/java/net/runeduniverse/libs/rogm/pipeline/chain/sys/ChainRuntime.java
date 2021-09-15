@@ -7,7 +7,7 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
+import net.runeduniverse.libs.rogm.error.ExceptionSuppressions;
 
 @SuppressWarnings("deprecation")
 public class ChainRuntime<R> {
@@ -58,7 +58,7 @@ public class ChainRuntime<R> {
 	}
 
 	protected void executeOnChain(final Map<Integer, ILayer> chain, final int lowestId, final int highestId)
-			throws ExceptionSurpression {
+			throws ExceptionSuppressions {
 		Set<Exception> errors = new HashSet<>();
 		boolean noErrors = true;
 
@@ -77,7 +77,7 @@ public class ChainRuntime<R> {
 		}
 
 		if (!noErrors)
-			throw new ExceptionSurpression(
+			throw new ExceptionSuppressions(
 					"ChainRuntime[" + this.hashCode() + "] of Chain<" + this.container.getLabel() + "> errored out!",
 					true).addSuppressed(errors);
 	}

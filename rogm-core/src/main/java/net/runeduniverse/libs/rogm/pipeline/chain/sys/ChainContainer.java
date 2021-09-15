@@ -3,7 +3,7 @@ package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
-import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
+import net.runeduniverse.libs.rogm.error.ExceptionSuppressions;
 
 public final class ChainContainer {
 
@@ -28,12 +28,12 @@ public final class ChainContainer {
 			this.chain.put(id, layer);
 	}
 
-	public <R> R callChain(Class<R> resultType, Object[] args) throws ExceptionSurpression {
+	public <R> R callChain(Class<R> resultType, Object[] args) throws ExceptionSuppressions {
 		return this._callChain(new ChainRuntime<>(this, resultType, args));
 	}
 
 	public <R> R callChain(Class<R> resultType, ChainRuntime<?> rootRuntime, Map<Class<?>, Object> sourceDataMap,
-			Object[] args) throws ExceptionSurpression {
+			Object[] args) throws ExceptionSuppressions {
 		return this._callChain(new ChainRuntime<>(rootRuntime, this, resultType, sourceDataMap, args));
 	}
 
@@ -45,9 +45,9 @@ public final class ChainContainer {
 	 *         the resultType is null the last returned (!null) value in the chain;
 	 *         returns <code>null</code> if the chain got canceled or no castable
 	 *         Entity for the resultType got returned/stored
-	 * @throws <code>ExceptionSurpression</code>
+	 * @throws <code>ExceptionSuppressions</code>
 	 */
-	private <R> R _callChain(ChainRuntime<R> runtime) throws ExceptionSurpression {
+	private <R> R _callChain(ChainRuntime<R> runtime) throws ExceptionSuppressions {
 		if (this.dirty)
 			this.purify();
 		runtime.executeOnChain(this.chain, this.lowestId, this.highestId);

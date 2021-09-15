@@ -40,11 +40,11 @@ public abstract class ATrunkableException extends Exception {
 	}
 
 	protected void trunkStackTrace(List<StackTraceElement> trace) {
-		trace.removeIf(ExceptionSurpression::removeJUnitStackTrace);
+		trace.removeIf(ExceptionSuppressions::removeJUnitStackTrace);
 	}
 
 	protected static boolean removeJUnitStackTrace(StackTraceElement element) {
-		return ExceptionSurpression.pathStartsWith(element, "org.junit.");
+		return ExceptionSuppressions.pathStartsWith(element, "org.junit.");
 	}
 
 	protected static boolean pathStartsWith(StackTraceElement element, String prefix) {

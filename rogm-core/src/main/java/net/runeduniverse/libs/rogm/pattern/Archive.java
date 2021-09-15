@@ -53,11 +53,17 @@ public final class Archive {
 	}
 
 	public void scan(TypeScanner... scanner) throws ScannerException {
-		new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), this.validator)
-				.enableDebugMode(PACKAGE_SCANNER_DEBUG_MODE || info.getLoggingLevel() != null && info.getLoggingLevel()
-						.intValue() < Level.INFO.intValue())
-				.scan()
-				.throwSurpressions(new ScannerException("Pattern parsing failed! See surpressed Exceptions!"));
+		try {
+			new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), this.validator)
+					.enableDebugMode(
+							PACKAGE_SCANNER_DEBUG_MODE || info.getLoggingLevel() != null && info.getLoggingLevel()
+									.intValue() < Level.INFO.intValue())
+					.scan()
+					.throwSurpressions(new ScannerException("Pattern parsing failed! See surpressed Exceptions!"));
+		} catch (ScannerException e) {
+			if (e.hasSuppressions())
+				throw e;
+		}
 	}
 
 	public void addEntry(Class<?> type, IPattern pattern) {

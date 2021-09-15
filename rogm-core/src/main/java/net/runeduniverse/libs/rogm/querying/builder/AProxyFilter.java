@@ -11,7 +11,7 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
+import net.runeduniverse.libs.rogm.error.ExceptionSuppressions;
 import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.ILabeled;
@@ -93,7 +93,7 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 		for (Method m : instance.methodHandlerMapper.keySet())
 			msg += "\n  - " + m + "\n    '-> " + instance.methodHandlerMapper.get(m);
 
-		ExceptionSurpression surpression = new ExceptionSurpression(msg);
+		ExceptionSuppressions surpression = new ExceptionSuppressions(msg);
 		surpression.addSuppressed(throwable);
 		return surpression;
 	}

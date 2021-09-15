@@ -6,7 +6,7 @@ import java.util.List;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
-import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
+import net.runeduniverse.libs.rogm.error.ExceptionSuppressions;
 import net.runeduniverse.libs.rogm.lang.Language.IDeleteMapper;
 import net.runeduniverse.libs.rogm.modules.Module.IRawRecord;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -125,7 +125,7 @@ public interface BufferLayers extends InternalBufferTypes {
 
 	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.UPDATE_BUFFER_ENTRIES })
 	public static void updateBufferedEntries(final Archive archive, final IBuffer buffer,
-			Collection<UpdatedEntryContainer> collection) throws ExceptionSurpression {
+			Collection<UpdatedEntryContainer> collection) throws ExceptionSuppressions {
 		List<Exception> errors = new ArrayList<>();
 		for (UpdatedEntryContainer updatedEntry : collection) {
 			try {
@@ -135,7 +135,7 @@ public interface BufferLayers extends InternalBufferTypes {
 			}
 		}
 		if (!errors.isEmpty())
-			throw new ExceptionSurpression("Surpressed Exceptions while updating buffered Ids", true)
+			throw new ExceptionSuppressions("Surpressed Exceptions while updating buffered Ids", true)
 					.addSuppressed(errors);
 	}
 

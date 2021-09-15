@@ -10,7 +10,7 @@ import java.util.Set;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.PostSave;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
+import net.runeduniverse.libs.rogm.error.ExceptionSuppressions;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -41,7 +41,7 @@ public class SaveContainer {
 		return this.calculator.calculate(archive, buffer, this.includedData);
 	}
 
-	public void postSave(final Archive archive) throws ExceptionSurpression {
+	public void postSave(final Archive archive) throws ExceptionSuppressions {
 		List<Exception> errors = new ArrayList<>();
 		for (Object object : includedData.keySet())
 			if (object != null)
@@ -51,7 +51,7 @@ public class SaveContainer {
 					errors.add(e);
 				}
 		if (!errors.isEmpty())
-			throw new ExceptionSurpression("Surpressed Exceptions for @PostSave Event", true).addSuppressed(errors);
+			throw new ExceptionSuppressions("Surpressed Exceptions for @PostSave Event", true).addSuppressed(errors);
 	}
 
 	public void setDataContainer(IDataContainer container) {

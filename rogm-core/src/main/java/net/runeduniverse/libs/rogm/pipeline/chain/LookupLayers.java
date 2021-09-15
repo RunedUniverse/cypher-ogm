@@ -5,7 +5,7 @@ import java.util.Collection;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
-import net.runeduniverse.libs.rogm.error.ExceptionSurpression;
+import net.runeduniverse.libs.rogm.error.ExceptionSuppressions;
 import net.runeduniverse.libs.rogm.lang.DatabaseCleaner;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.lang.Language.IDeleteMapper;
@@ -105,7 +105,7 @@ public interface LookupLayers {
 
 	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.POST_SAVE_EVENT })
 	public static void triggerPostSaveEvent(final Archive archive, final SaveContainer container)
-			throws ExceptionSurpression {
+			throws ExceptionSuppressions {
 		container.postSave(archive);
 	}
 }
