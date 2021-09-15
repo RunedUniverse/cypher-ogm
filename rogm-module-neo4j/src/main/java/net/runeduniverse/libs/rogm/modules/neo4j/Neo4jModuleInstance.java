@@ -56,7 +56,7 @@ public class Neo4jModuleInstance implements Module.Instance<Long> {
 		try {
 			this.driver.verifyConnectivity();
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.burying("isConnected()", e);
 			return false;
 		}
 		return true;
@@ -74,7 +74,7 @@ public class Neo4jModuleInstance implements Module.Instance<Long> {
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.burying("_query(String)", e);
 		}
 		return new ArrayList<Record>();
 	}
@@ -102,7 +102,7 @@ public class Neo4jModuleInstance implements Module.Instance<Long> {
 				dataRecord.addEntry(data);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.logger.burying("queryObject(String)", e);
 		}
 
 		return dataRecord;
@@ -131,7 +131,7 @@ public class Neo4jModuleInstance implements Module.Instance<Long> {
 						try {
 							t.join();
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							Neo4jModuleInstance.this.logger.burying("execute(String)", e);
 						}
 					return idRecord;
 				}
