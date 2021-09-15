@@ -48,6 +48,7 @@ public class SessionTest extends AConfigTest {
 		classLogger = new ConsoleLogger(Logger.getLogger(SessionTest.class.getName()));
 		classLogger.setLevel(Level.ALL);
 		config.setLogger(new DebugLogger(classLogger));
+		config.setLoggingLevel(Level.ALL);
 
 		config.addPackage(MODEL_PKG_PATH);
 		config.addPackage(RELATIONS_PKG_PATH);
