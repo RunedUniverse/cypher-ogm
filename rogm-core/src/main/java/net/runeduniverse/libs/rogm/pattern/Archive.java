@@ -52,13 +52,17 @@ public final class Archive {
 		this.queryBuilder = new QueryBuilder(this);
 	}
 
-	public void scan(TypeScanner... scanner) throws ScannerException, Exception {
-		new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), this.validator)
-				.enableDebugMode(PACKAGE_SCANNER_DEBUG_MODE || info.getLoggingLevel() != null && info.getLoggingLevel()
-						.intValue() < Level.INFO.intValue())
-				.scan()
-				.throwSurpressions();
-		// .throwSurpressions(new ScannerException("Pattern parsing failed! See surpressed Exceptions!"));
+	public void scan(TypeScanner... scanner) throws ScannerException {
+		try {
+			new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), this.validator)
+					.enableDebugMode(
+							PACKAGE_SCANNER_DEBUG_MODE || info.getLoggingLevel() != null && info.getLoggingLevel()
+									.intValue() < Level.INFO.intValue())
+					.scan()
+					.throwSurpressions();
+		} catch (Exception e) {
+			throw new ScannerException("Pattern parsing failed! See surpressed Exceptions!", e);
+		}
 	}
 
 	public void addEntry(Class<?> type, IPattern pattern) {

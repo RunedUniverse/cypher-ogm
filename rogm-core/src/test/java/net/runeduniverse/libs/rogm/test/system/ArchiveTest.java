@@ -42,7 +42,7 @@ public class ArchiveTest extends AConfigTest {
 
 	@BeforeEach
 	@Tag("system")
-	public void scanModels() throws ScannerException, Exception {
+	public void scanModels() throws ScannerException {
 		for (PassiveModule module : this.cnf.getPassiveModules())
 			module.configure(archive);
 	}

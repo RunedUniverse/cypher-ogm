@@ -44,7 +44,7 @@ public class QueryBuilderTest {
 	protected final Archive archive;
 	protected final QueryBuilder builder;
 
-	public QueryBuilderTest() throws ScannerException, Exception {
+	public QueryBuilderTest() throws ScannerException {
 		this.cnf = new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost")
 				.addClassLoader(this.getClass()
 						.getClassLoader());

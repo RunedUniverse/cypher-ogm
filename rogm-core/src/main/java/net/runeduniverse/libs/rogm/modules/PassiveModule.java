@@ -5,7 +5,7 @@ import net.runeduniverse.libs.rogm.pattern.Archive;
 
 public interface PassiveModule {
 
-	default void configure(Archive archive) throws ScannerException, Exception {
+	default void configure(Archive archive) throws ScannerException {
 
 	}
 

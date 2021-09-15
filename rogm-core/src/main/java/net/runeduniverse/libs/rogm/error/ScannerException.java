@@ -6,4 +6,11 @@ public class ScannerException extends ExceptionSuppressions {
 	public ScannerException(String message) {
 		super(message, true);
 	}
+
+	public ScannerException(String message, Exception exSuppression) {
+		super(message, true);
+		this.initCause(exSuppression);
+		for (Throwable t : exSuppression.getSuppressed())
+			this.addSuppressed(t);
+	}
 }
