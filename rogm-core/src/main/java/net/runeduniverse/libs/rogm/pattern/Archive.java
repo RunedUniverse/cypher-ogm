@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
+import net.runeduniverse.libs.rogm.error.ScannerException;
 import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.logging.Level;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
@@ -51,7 +52,7 @@ public final class Archive {
 		this.queryBuilder = new QueryBuilder(this);
 	}
 
-	public void scan(TypeScanner... scanner) throws Exception {
+	public void scan(TypeScanner... scanner) throws ScannerException, Exception {
 		new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), this.validator)
 				.enableDebugMode(PACKAGE_SCANNER_DEBUG_MODE || info.getLoggingLevel() != null && info.getLoggingLevel()
 						.intValue() < Level.INFO.intValue())
