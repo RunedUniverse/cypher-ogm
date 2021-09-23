@@ -9,6 +9,7 @@ import java.util.Set;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
 import net.runeduniverse.libs.rogm.querying.builder.AProxyFilter;
 import net.runeduniverse.libs.rogm.querying.builder.DataContainerHandler;
@@ -194,8 +195,9 @@ public final class QueryBuilder {
 
 		public BUILDER where(Class<?> type) {
 			this.type = type;
-			for (IPattern p : this.archive.getPatterns(type))
+			for (IPattern p : this.archive.getPatterns(this.type))
 				proxyFilter.addLabels(p.getLabels());
+			this.storePattern(this.archive.getPattern(this.type, IBaseQueryPattern.class));
 			return this.instance;
 		}
 
@@ -213,7 +215,10 @@ public final class QueryBuilder {
 
 		@Override
 		public BUILDER storePattern(IPattern pattern) {
-			this.handler.put(IPattern.IPatternContainer.class, new PatternContainerHandler(pattern));
+			if (pattern == null)
+				this.handler.remove(IPattern.IPatternContainer.class);
+			else
+				this.handler.put(IPattern.IPatternContainer.class, new PatternContainerHandler(pattern));
 			return this.instance;
 		}
 

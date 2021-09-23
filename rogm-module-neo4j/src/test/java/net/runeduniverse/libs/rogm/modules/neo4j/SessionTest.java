@@ -210,13 +210,13 @@ public class SessionTest extends AConfigTest {
 	public void loadCompany() throws Exception {
 		try (Session session = this.pipeline.buildSession()) {
 			connectionCheck(session);
-			IFNode gameFilter = session.getQueryBuilder()
+			IFNode companyFilter = session.getQueryBuilder()
 					.node()
 					.where(Company.class)
 					.whereParam("name", "Naughty Dog")
 					.getResult();
 
-			Company company = session.load(gameFilter);
+			Company company = session.load(companyFilter);
 			Game game = new Game();
 			game.setName("just another USELESS title");
 			company.getGames()
