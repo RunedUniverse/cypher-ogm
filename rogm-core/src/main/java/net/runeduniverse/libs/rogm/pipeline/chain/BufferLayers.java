@@ -39,14 +39,14 @@ public interface BufferLayers extends InternalBufferTypes {
 	}
 
 	@Chain(label = Chains.BUFFER_CHAIN.LOAD.LABEL, layers = { Chains.BUFFER_CHAIN.LOAD.PREPARE_DATA })
-	public static void prepareDataForBuffer(IBaseQueryPattern pattern, IData data) {
+	public static void prepareDataForBuffer(IBaseQueryPattern<?> pattern, IData data) {
 		pattern.prepareEntityId(data);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Chain(label = Chains.BUFFER_CHAIN.LOAD.LABEL, layers = { Chains.BUFFER_CHAIN.LOAD.ACQUIRE_BUFFERED_ENTITY })
-	public static Object acquireBuffered(final ChainRuntime<?> runtime, final IBuffer buffer, IBaseQueryPattern pattern,
-			IData data, LazyEntriesContainer lazyEntries) throws Exception {
+	public static Object acquireBuffered(final ChainRuntime<?> runtime, final IBuffer buffer,
+			IBaseQueryPattern<?> pattern, IData data, LazyEntriesContainer lazyEntries) throws Exception {
 		LoadState loadState = data.getLoadState();
 		TypeEntry te = buffer.getTypeEntry(pattern.getType());
 		if (te != null) {
@@ -61,13 +61,13 @@ public interface BufferLayers extends InternalBufferTypes {
 	}
 
 	@Chain(label = Chains.BUFFER_CHAIN.LOAD.LABEL, layers = { Chains.BUFFER_CHAIN.LOAD.DESERIALIZE_DATA })
-	public static EntityContainer parseData(final Parser.Instance parser, IBaseQueryPattern pattern, IData data)
+	public static EntityContainer parseData(final Parser.Instance parser, IBaseQueryPattern<?> pattern, IData data)
 			throws Exception {
 		return new EntityContainer(parser.deserialize(pattern.getType(), data.getData()));
 	}
 
 	@Chain(label = Chains.BUFFER_CHAIN.LOAD.LABEL, layers = { Chains.BUFFER_CHAIN.LOAD.ACQUIRE_NEW_ENTITY })
-	public static Object acquireNew(final ChainRuntime<?> runtime, final IBuffer buffer, IBaseQueryPattern pattern,
+	public static Object acquireNew(final ChainRuntime<?> runtime, final IBuffer buffer, IBaseQueryPattern<?> pattern,
 			IData data, LazyEntriesContainer lazyEntries, EntityContainer container) throws Exception {
 		Object entity = container.getEntity();
 		LoadState loadState = data.getLoadState();
@@ -92,7 +92,7 @@ public interface BufferLayers extends InternalBufferTypes {
 	}
 
 	@Chain(label = Chains.BUFFER_CHAIN.UPDATE.LABEL, layers = { Chains.BUFFER_CHAIN.UPDATE.PREPARE_DATA })
-	public static EntityContainer prepareDataReloadForBuffer(final IBuffer buffer, IBaseQueryPattern pattern,
+	public static EntityContainer prepareDataReloadForBuffer(final IBuffer buffer, IBaseQueryPattern<?> pattern,
 			IData data) {
 		return new EntityContainer(pattern.prepareEntityUpdate(buffer, data));
 	}

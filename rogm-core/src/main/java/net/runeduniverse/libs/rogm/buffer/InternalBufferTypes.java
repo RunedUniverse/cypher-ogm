@@ -37,9 +37,9 @@ public interface InternalBufferTypes {
 		private Object entity;
 		private LoadState loadState;
 		private Class<?> type;
-		private IBaseQueryPattern pattern;
+		private IBaseQueryPattern<?> pattern;
 
-		public Entry(IData data, Object entity, LoadState loadState, IBaseQueryPattern pattern) {
+		public Entry(IData data, Object entity, LoadState loadState, IBaseQueryPattern<?> pattern) {
 			this.id = data.getId();
 			this.entityId = data.getEntityId();
 			this.entity = entity;

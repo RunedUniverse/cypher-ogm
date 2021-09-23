@@ -27,12 +27,12 @@ import net.runeduniverse.libs.scanner.MethodPattern;
 import net.runeduniverse.libs.scanner.ScanOrder;
 import net.runeduniverse.libs.scanner.TypeAnnotationScanner;
 
-public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPattern, APattern> {
+public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPattern, APattern<?>> {
 
 	protected final Archive archive;
 
-	public TypeScanner(Archive archive, PatternCreator<FieldPattern, MethodPattern, APattern> creator,
-			Class<? extends Annotation> anno, ResultConsumer<FieldPattern, MethodPattern, APattern> consumer) {
+	public TypeScanner(Archive archive, PatternCreator<FieldPattern, MethodPattern, APattern<?>> creator,
+			Class<? extends Annotation> anno, ResultConsumer<FieldPattern, MethodPattern, APattern<?>> consumer) {
 		super(anno, creator, consumer);
 		this.archive = archive;
 
@@ -58,7 +58,7 @@ public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPatte
 
 	public static class NodeScanner extends TypeScanner {
 
-		public NodeScanner(Archive archive, ResultConsumer<FieldPattern, MethodPattern, APattern> consumer) {
+		public NodeScanner(Archive archive, ResultConsumer<FieldPattern, MethodPattern, APattern<?>> consumer) {
 			super(archive, (type, loader, pkg) -> new NodePattern(archive, pkg, loader, type), NodeEntity.class,
 					consumer);
 			// Fields
@@ -68,7 +68,7 @@ public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPatte
 
 	public static class RelationScanner extends TypeScanner {
 
-		public RelationScanner(Archive archive, ResultConsumer<FieldPattern, MethodPattern, APattern> consumer) {
+		public RelationScanner(Archive archive, ResultConsumer<FieldPattern, MethodPattern, APattern<?>> consumer) {
 			super(archive, (type, loader, pkg) -> new RelationPattern(archive, pkg, loader, type),
 					RelationshipEntity.class, consumer);
 			// Fields

@@ -33,7 +33,7 @@ public interface IBuffer extends InternalBufferTypes {
 	void addEntry(Entry entry);
 
 	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState,
-			IBaseQueryPattern pattern);
+			IBaseQueryPattern<?> pattern);
 
 	void updateEntry(Archive archive, UpdatedEntryContainer container) throws Exception;
 

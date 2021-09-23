@@ -9,7 +9,7 @@ import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 
-public interface IBaseQueryPattern extends IPattern {
+public interface IBaseQueryPattern<B extends IQueryBuilder<?, ?, ? extends IFilter>> extends IPattern {
 
 	boolean isIdSet(Object entity);
 
@@ -25,10 +25,12 @@ public interface IBaseQueryPattern extends IPattern {
 
 	Object prepareEntityUpdate(final IBuffer buffer, IData data);
 
-	IQueryBuilder<?, ? extends IFilter> search(boolean lazy) throws Exception;
+	B search(boolean lazy) throws Exception;
 
 	// search exactly 1 node / querry deeper layers for node
-	IQueryBuilder<?, ? extends IFilter> search(Serializable id, boolean lazy) throws Exception;
+	B search(Serializable id, boolean lazy) throws Exception;
+
+	B completeSearch(B builder) throws Exception;
 
 	SaveContainer save(Object entity, Integer depth) throws Exception;
 

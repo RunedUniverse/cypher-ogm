@@ -68,7 +68,7 @@ public class BasicBuffer implements IBuffer {
 
 	@Override
 	public void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState,
-			IBaseQueryPattern pattern) {
+			IBaseQueryPattern<?> pattern) {
 		addEntry(new Entry(id, entityId, entity, loadState, entity.getClass(), pattern));
 	}
 
@@ -80,7 +80,7 @@ public class BasicBuffer implements IBuffer {
 		Entry entry = entries.get(entity);
 
 		Class<?> type = entity.getClass();
-		IBaseQueryPattern pattern = archive.getPattern(type, IBaseQueryPattern.class);
+		IBaseQueryPattern<?> pattern = archive.getPattern(type, IBaseQueryPattern.class);
 		pattern.prepareEntityId(container);
 
 		if (entry == null)
@@ -156,7 +156,7 @@ public class BasicBuffer implements IBuffer {
 				nodes.add(entry);
 
 		for (Entry entry : nodes)
-			((INodePattern) entry.getPattern()).deleteRelations(entry.getEntity(), deletedEntities);
+			((INodePattern<?>) entry.getPattern()).deleteRelations(entry.getEntity(), deletedEntities);
 
 		for (Entry entry : deletedEntries) {
 			this.removeEntry(entry);

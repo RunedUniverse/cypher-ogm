@@ -10,11 +10,12 @@ import net.runeduniverse.libs.rogm.annotations.PreReload;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 import net.runeduniverse.libs.scanner.MethodPattern;
 import net.runeduniverse.libs.scanner.TypePattern;
 
-public abstract class APattern extends TypePattern<FieldPattern, MethodPattern>
-		implements IBaseQueryPattern, IValidatable {
+public abstract class APattern<B extends IQueryBuilder<?, ?, ? extends IFilter>>
+		extends TypePattern<FieldPattern, MethodPattern> implements IBaseQueryPattern<B>, IValidatable {
 
 	protected final Archive archive;
 	protected FieldPattern idFieldPattern;

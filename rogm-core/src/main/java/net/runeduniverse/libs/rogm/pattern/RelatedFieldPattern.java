@@ -70,14 +70,14 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 	}
 
 	private NodeQueryBuilder _getNode(Class<?> type, RelationQueryBuilder relation) throws Exception {
-		INodePattern node = this.archive.getPattern(type, NodePattern.class);
+		INodePattern<?> node = this.archive.getPattern(type, NodePattern.class);
 		if (node == null)
 			throw new Exception("Unsupported Class<" + type.getName() + "> as @Relation found!");
 		return node.search(relation, true);
 	}
 
 	public void saveRelation(Object entity, NodeQueryBuilder nodeBuilder,
-			Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData, Integer depth) throws Exception {
+			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 		if (entity == null)
 			return;
 		if (this.collection)
@@ -91,7 +91,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 
 	@SuppressWarnings("deprecation")
 	private void _addRelation(NodeQueryBuilder nodeBuilder, Object relEntity,
-			Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData, Integer depth) throws Exception {
+			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 		if (relEntity == null)
 			return;
 
@@ -111,12 +111,6 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 					.setStart(nodeBuilder)
 					.setTarget(this.archive.getPattern(clazz, NodePattern.class)
 							.save(relEntity, includedData, depth));
-			// relationBuilder =
-			// this.factory.getFactory().createDataRelation(this.direction, null);
-			// relationBuilder.setFilterType(FilterType.UPDATE);
-			// relationBuilder.setStart(node);
-			// relationBuilder.setTarget(this.factory.getNode(clazz).save(relEntity,
-			// includedData, depth));
 		}
 
 		if (relationBuilder.getLabels()

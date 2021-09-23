@@ -181,8 +181,8 @@ public final class Archive {
 		return success;
 	}
 
-	public IQueryBuilder<?, ? extends IFilter> search(final Class<?> entityType, boolean lazy) throws Exception {
-		IQueryBuilder<?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
+	public IQueryBuilder<?, ?, ? extends IFilter> search(final Class<?> entityType, boolean lazy) throws Exception {
+		IQueryBuilder<?, ?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
 				.search(lazy);
 		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
 			pattern.search(builder);
@@ -190,9 +190,9 @@ public final class Archive {
 	}
 
 	// search exactly 1 node / querry deeper layers for node
-	public IQueryBuilder<?, ? extends IFilter> search(final Class<?> entityType, Serializable id, boolean lazy)
+	public IQueryBuilder<?, ?, ? extends IFilter> search(final Class<?> entityType, Serializable id, boolean lazy)
 			throws Exception {
-		IQueryBuilder<?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
+		IQueryBuilder<?, ?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
 				.search(id, lazy);
 		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
 			pattern.search(builder);

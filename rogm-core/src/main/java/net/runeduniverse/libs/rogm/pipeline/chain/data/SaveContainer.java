@@ -19,7 +19,7 @@ import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 public class SaveContainer {
 
 	@Getter
-	protected final Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData = new HashMap<>();
+	protected final Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData = new HashMap<>();
 
 	protected IDataContainer container;
 	protected EffectedFilterCalculator calculator = (a, b, i) -> new HashSet<>();
@@ -66,12 +66,12 @@ public class SaveContainer {
 
 	@FunctionalInterface
 	public static interface DataContainerCreator {
-		IDataContainer create(final Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData) throws Exception;
+		IDataContainer create(final Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData) throws Exception;
 	}
 
 	@FunctionalInterface
 	public static interface EffectedFilterCalculator {
 		Set<IFilter> calculate(final Archive archive, final IBuffer buffer,
-				final Map<Object, IQueryBuilder<?, ? extends IFilter>> includedData) throws Exception;
+				final Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData) throws Exception;
 	}
 }

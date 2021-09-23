@@ -33,7 +33,7 @@ public interface IPattern {
 	}
 
 	public interface IPatternContainer extends IFilter {
-		IPattern getPattern();
+		IBaseQueryPattern<?> getPattern();
 
 		public static boolean identify(IFilter filter) {
 			return filter instanceof IPatternContainer && ((IPatternContainer) filter).getPattern() != null;

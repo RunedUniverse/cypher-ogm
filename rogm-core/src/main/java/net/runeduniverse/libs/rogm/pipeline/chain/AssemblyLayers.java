@@ -59,10 +59,9 @@ public interface AssemblyLayers extends InternalBufferTypes {
 				IFilter dataFilter = data.getFilter();
 				map.put(dataFilter, data, DataType.fromFilter(dataFilter));
 				if (IPatternContainer.identify(dataFilter)) {
-					IPattern dataPattern = ((IPatternContainer) dataFilter).getPattern();
-					if (dataPattern instanceof IBaseQueryPattern)
-						loadedObjects.add(runtime.callSubChainWithRuntimeData(Chains.BUFFER_CHAIN.LOAD.LABEL,
-								dataPattern.getType(), data, dataPattern));
+					IBaseQueryPattern<?> dataPattern = ((IPatternContainer) dataFilter).getPattern();
+					loadedObjects.add(runtime.callSubChainWithRuntimeData(Chains.BUFFER_CHAIN.LOAD.LABEL,
+							dataPattern.getType(), data, dataPattern));
 				}
 			}
 		}
@@ -125,14 +124,12 @@ public interface AssemblyLayers extends InternalBufferTypes {
 				map.put(data.getFilter(), data, dtype);
 
 				if (IPatternContainer.identify(dataFilter) && LoadState.get(dataFilter) == LoadState.LAZY) {
-					IPattern dataPattern = ((IPatternContainer) dataFilter).getPattern();
-					if (dataPattern instanceof IBaseQueryPattern) {
-						Entry entry = runtime.callSubChainWithSourceData(Chains.BUFFER_CHAIN.UPDATE.LABEL, Entry.class,
-								data, dataPattern);
+					IBaseQueryPattern<?> dataPattern = ((IPatternContainer) dataFilter).getPattern();
+					Entry entry = runtime.callSubChainWithSourceData(Chains.BUFFER_CHAIN.UPDATE.LABEL, Entry.class,
+							data, dataPattern);
 
-						if (entry.getEntity() != entity && dtype != DataType.RELATION)
-							relatedEntities.addEntry(entry);
-					}
+					if (entry.getEntity() != entity && dtype != DataType.RELATION)
+						relatedEntities.addEntry(entry);
 				}
 			}
 		}
