@@ -42,7 +42,8 @@ public interface AssemblyLayers extends InternalBufferTypes {
 		// type || vv
 		final Class<?> returnType;
 		IFilter primaryFilter = record.getPrimaryFilter();
-		if (runtime.getResultType() == null && primaryFilter != null && primaryFilter instanceof IPatternContainer) {
+		if (runtime.getResultType() == Object.class && primaryFilter != null
+				&& primaryFilter instanceof IPatternContainer) {
 			IPattern primaryPattern = ((IPatternContainer) primaryFilter).getPattern();
 			returnType = primaryPattern.getType();
 		} else
@@ -98,9 +99,11 @@ public interface AssemblyLayers extends InternalBufferTypes {
 			});
 
 		Set<T> nodes = new HashSet<>();
-		for (Serializable primId : record.getIds())
-			nodes.add((T) buffer.getById(primId, returnType));
-		runtime.setPossibleResult(nodes);
+		if (returnType != null) {
+			for (Serializable primId : record.getIds())
+				nodes.add((T) buffer.getById(primId, returnType));
+			runtime.setPossibleResult(nodes);
+		}
 
 		for (Object object : loadedObjects)
 			archive.callMethod(object.getClass(), PostLoad.class, object);

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
@@ -56,8 +57,9 @@ public abstract class AChainRouter {
 	}
 
 	// Route Invocation from Session Wrapper
+	@SuppressWarnings("unchecked")
 	public <E> E load(IFilter filter) throws Exception {
-		return this.load(null, filter, null, new DepthContainer(1));
+		return (E) this.load(getEntityOrObjectType(filter), filter, null, new DepthContainer(1));
 	}
 
 	public <E> Collection<E> loadAll(IFilter filter) throws Exception {
@@ -103,5 +105,12 @@ public abstract class AChainRouter {
 		if (entity == null)
 			return;
 		delete(new EntityContainer(entity), new DepthContainer(depth));
+	}
+
+	protected static Class<?> getEntityOrObjectType(IFilter filter) {
+		if (filter instanceof IPatternContainer)
+			return ((IPatternContainer) filter).getPattern()
+					.getType();
+		return Object.class;
 	}
 }
