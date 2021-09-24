@@ -236,12 +236,19 @@ public class SessionTest extends AConfigTest {
 			connectionCheck(session);
 			Collection<Actor> actors = session.loadAllLazy(Actor.class);
 			session.resolveAllLazyLoaded(actors, 3);
-			for (Actor actor : actors)
-				for (ActorPlaysPersonRelation rel : actor.getPlays())
+			for (Actor actor : actors) {
+				assertNotNull(actor, "NULL as List Element where Object of Actor is supposed to be!");
+				assertNotNull(actor.getPlays(),
+						"Actor.getPlays() = NULL, session.resolveAllLazyLoaded(actors, 3); probably failed!");
+				for (ActorPlaysPersonRelation rel : actor.getPlays()) {
+					assertNotNull(rel,
+							"NULL as List Element where Object of ActorPlaysPersonRelation is supposed to be!");
 					System.out.println("Actor: " + rel.getActor()
 							.getFirstName() + " plays "
 							+ rel.getPerson()
 									.getFirstName());
+				}
+			}
 		}
 	}
 
