@@ -19,7 +19,7 @@ public final class ConsoleLogger extends Logger {
 
 	@Override
 	public void log(LogRecord record) {
-		System.out.println("[TRACING-OVERRIDE][" + record.getLevel()
+		System.out.println("[LOGGING-CHAIN-OVERRIDE][" + record.getLevel()
 				.getName() + "]\n" + record.getMessage());
 		super.log(record);
 	}

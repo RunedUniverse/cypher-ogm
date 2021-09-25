@@ -18,8 +18,8 @@ public final class Pipeline implements AutoCloseable {
 
 	public Pipeline(APipelineFactory<?> pipelineFactory) {
 		this.factory = pipelineFactory;
-		this.chain = new ChainManager();
 		this.logger = new PipelineLogger(Pipeline.class, this.factory.getLogger());
+		this.chain = new ChainManager(this.logger);
 	}
 
 	public Session buildSession() throws Exception {

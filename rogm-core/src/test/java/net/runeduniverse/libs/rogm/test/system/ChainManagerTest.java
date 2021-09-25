@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainRuntime;
@@ -18,7 +19,7 @@ public class ChainManagerTest {
 	public static final String PRINT_B_TEST_CHAIN_LABEL = "SYSTEM_TEST_PRINT_B";
 	public static final String CHECK_RUNTIME_LABEL = "SYSTEM_TEST_PRINT_B";
 
-	private ChainManager manager = new ChainManager();
+	private ChainManager manager = new ChainManager(new DebugLogger());
 
 	public ChainManagerTest() {
 		this.manager.addChainLayers(ChainManagerTest.class);

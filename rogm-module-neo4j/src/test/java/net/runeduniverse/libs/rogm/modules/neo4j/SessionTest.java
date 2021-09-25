@@ -31,11 +31,6 @@ public class SessionTest extends AConfigTest {
 
 	private Pipeline pipeline = null;
 
-	public SessionTest() throws Exception {
-		super(config);
-		this.pipeline = new Pipeline(new DatabasePipelineFactory(config));
-	}
-
 	@BeforeAll
 	public static void prepare() {
 		config = new Neo4jConfiguration(DB_HOST);
@@ -48,7 +43,6 @@ public class SessionTest extends AConfigTest {
 		classLogger = new ConsoleLogger(Logger.getLogger(SessionTest.class.getName()));
 		classLogger.setLevel(Level.ALL);
 		config.setLogger(new DebugLogger(classLogger));
-		config.setLoggingLevel(Level.ALL);
 
 		config.addPackage(MODEL_PKG_PATH);
 		config.addPackage(RELATIONS_PKG_PATH);
@@ -59,6 +53,11 @@ public class SessionTest extends AConfigTest {
 		assertEquals("bolt", config.getProtocol());
 		assertEquals(7687, config.getPort());
 		assertEquals(DB_HOST, config.getUri());
+	}
+
+	public SessionTest() throws Exception {
+		super(config);
+		this.pipeline = new Pipeline(new DatabasePipelineFactory(config));
 	}
 
 	@Test
@@ -235,6 +234,7 @@ public class SessionTest extends AConfigTest {
 		try (Session session = this.pipeline.buildSession()) {
 			connectionCheck(session);
 			Collection<Actor> actors = session.loadAllLazy(Actor.class);
+			assertEquals(2, actors.size(), "wrong amount of Actors loaded!");
 			session.resolveAllLazyLoaded(actors, 3);
 			for (Actor actor : actors) {
 				assertNotNull(actor, "NULL as List Element where Object of Actor is supposed to be!");

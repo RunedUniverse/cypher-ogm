@@ -7,6 +7,7 @@ import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.lang.Language.*;
+import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.*;
@@ -18,6 +19,7 @@ import net.runeduniverse.libs.utils.StringVariableGenerator;
 public class CypherInstance implements Instance {
 	private final IdTypeResolver resolver;
 	private final Parser.Instance parser;
+	private final UniversalLogger logger;
 
 	@Override
 	public ILoadMapper load(IFilter filter) throws Exception {
@@ -75,7 +77,7 @@ public class CypherInstance implements Instance {
 					if (d.getData() != null)
 						st.add(c + '=' + parser.serialize(d.getData()));
 				} catch (Exception e) {
-					e.printStackTrace();
+					CypherInstance.this.logger.burying("save(IDataContainer, Set<IFilter>).map.forEach", e);
 				}
 		});
 
@@ -151,7 +153,9 @@ public class CypherInstance implements Instance {
 			_parse(map, ((IFRelation) filter).getStart(), gen, true);
 			_parse(map, ((IFRelation) filter).getTarget(), gen, true);
 		} else
-			throw new Exception("IFilter<" + filter.toString() + "> not supported");
+			throw this.logger.throwing(
+					"_parse(DataMap<IFilter, String, FilterStatus>, IFilter, StringVariableGenerator, boolean",
+					new Exception("IFilter<" + filter.toString() + "> not supported"));
 	}
 
 	private StringBuilder _select(DataMap<IFilter, String, FilterStatus> map) throws Exception {
@@ -243,7 +247,8 @@ public class CypherInstance implements Instance {
 	private void _checkIdType(IFilter filter) throws Exception {
 		Class<?> clazz = IIdentified.getIdType(filter);
 		if (clazz != null && !this.resolver.checkIdType(clazz))
-			throw new Exception("IFilter ID <" + clazz + "> not supported");
+			throw this.logger.throwing("_checkIdType(IFilter)",
+					new Exception("IFilter ID <" + clazz + "> not supported"));
 	}
 
 	private void _where(DataMap<IFilter, String, FilterStatus> map, List<String> where, IFilter f, String code,

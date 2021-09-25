@@ -28,7 +28,7 @@ public final class SessionWrapper implements Session {
 		this.pipeline = pipeline;
 		this.factory = factory;
 		this.router = this.factory.getRouter();
-		this.logger = new SessionLogger(SessionWrapper.class, pipelineLogger, info).logConfig();
+		this.logger = new SessionLogger(SessionWrapper.class, pipelineLogger).logSessionInfo(info);
 	}
 
 	@Override

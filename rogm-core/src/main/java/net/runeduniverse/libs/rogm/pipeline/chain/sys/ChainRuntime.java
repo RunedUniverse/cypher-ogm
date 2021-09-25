@@ -17,6 +17,7 @@ public class ChainRuntime<R> {
 	protected final ChainRuntime<?> root;
 	protected final ChainContainer container;
 	protected final Store store;
+	protected final ChainLogger logger;
 	@Getter
 	@Setter
 	protected boolean canceled = false;
@@ -30,14 +31,15 @@ public class ChainRuntime<R> {
 	// execution
 	private final Iterator iterator = new Iterator(Integer.MIN_VALUE);
 
-	protected ChainRuntime(ChainContainer container, Class<R> resultType, Object[] args) {
-		this(null, container, resultType, null, args);
+	protected ChainRuntime(ChainContainer container, ChainLogger logger, Class<R> resultType, Object[] args) {
+		this(null, container, logger, resultType, null, args);
 	}
 
-	protected ChainRuntime(ChainRuntime<?> root, ChainContainer container, Class<R> resultType,
+	protected ChainRuntime(ChainRuntime<?> root, ChainContainer container, ChainLogger logger, Class<R> resultType,
 			Map<Class<?>, Object> sourceDataMap, Object[] args) {
 		this.root = root;
 		this.container = container;
+		this.logger = logger;
 		this.store = new Store(this, sourceDataMap, args);
 		this.resultType = resultType;
 	}
@@ -77,9 +79,9 @@ public class ChainRuntime<R> {
 		}
 
 		if (!noErrors)
-			throw new ExceptionSuppressions(
-					"ChainRuntime[" + this.hashCode() + "] of Chain<" + this.container.getLabel() + "> errored out!",
-					true).addSuppressed(errors);
+			throw this.logger.throwing(ChainRuntime.class, "executeOnChain(final Map<Integer, ILayer>, int, int)",
+					new ExceptionSuppressions("ChainRuntime[" + this.hashCode() + "] of Chain<"
+							+ this.container.getLabel() + "> errored out!", true).addSuppressed(errors));
 	}
 
 	public void jumpToLayer(int layerId) {

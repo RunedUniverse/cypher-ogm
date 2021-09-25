@@ -9,6 +9,7 @@ public final class ChainContainer {
 
 	@Getter
 	private final ChainManager manager;
+	private final ChainLogger logger;
 	@Getter
 	private final String label;
 	private final Map<Integer, ILayer> chain = new HashMap<>();
@@ -17,8 +18,9 @@ public final class ChainContainer {
 	private int highestId = Integer.MIN_VALUE;
 	private boolean dirty = false;
 
-	protected ChainContainer(ChainManager manager, String label) {
+	protected ChainContainer(ChainManager manager, ChainLogger logger, String label) {
 		this.manager = manager;
+		this.logger = logger;
 		this.label = label;
 	}
 
@@ -29,12 +31,12 @@ public final class ChainContainer {
 	}
 
 	public <R> R callChain(Class<R> resultType, Object[] args) throws ExceptionSuppressions {
-		return this._callChain(new ChainRuntime<>(this, resultType, args));
+		return this._callChain(new ChainRuntime<>(this, this.logger, resultType, args));
 	}
 
 	public <R> R callChain(Class<R> resultType, ChainRuntime<?> rootRuntime, Map<Class<?>, Object> sourceDataMap,
 			Object[] args) throws ExceptionSuppressions {
-		return this._callChain(new ChainRuntime<>(rootRuntime, this, resultType, sourceDataMap, args));
+		return this._callChain(new ChainRuntime<>(rootRuntime, this, this.logger, resultType, sourceDataMap, args));
 	}
 
 	/***

@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.lang.cypher.pipeline.chains.CleanupLayers;
 import net.runeduniverse.libs.rogm.lang.cypher.pipeline.chains.CypherChains;
+import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
@@ -13,7 +14,7 @@ public class CypherLanguage implements Language {
 
 	@Override
 	public Instance build(final Logger logger, final IdTypeResolver resolver, final Parser.Instance parser) {
-		return new CypherInstance(resolver, parser);
+		return new CypherInstance(resolver, parser, new UniversalLogger(CypherInstance.class, logger));
 	}
 
 	public String getChainLabel() {

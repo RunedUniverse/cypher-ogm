@@ -11,7 +11,7 @@ public class UniversalLogger extends ALogger {
 		this.clazz = clazz;
 	}
 
-	public Exception throwing(String sourceMethod, Exception thrown) {
+	public <E extends Exception> E throwing(String sourceMethod, E thrown) {
 		super.throwing(clazz.getName(), sourceMethod, thrown);
 		return thrown;
 	}

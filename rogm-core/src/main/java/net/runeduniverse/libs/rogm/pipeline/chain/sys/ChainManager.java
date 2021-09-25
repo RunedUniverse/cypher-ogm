@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 
@@ -13,6 +14,11 @@ public final class ChainManager {
 
 	private final Set<Method> existingMethods = new HashSet<>();
 	private final Map<String, ChainContainer> chains = new HashMap<>();
+	private final ChainLogger logger;
+
+	public ChainManager(Logger logger) {
+		this.logger = new ChainLogger(logger);
+	}
 
 	public void addChainLayers(Class<?> carrierClass) {
 		for (Method method : carrierClass.getMethods()) {
@@ -22,7 +28,7 @@ public final class ChainManager {
 			int mods = method.getModifiers();
 			if (Modifier.isAbstract(mods) || !Modifier.isStatic(mods) || !Modifier.isPublic(mods))
 				continue;
-			BaseChainLayer layer = new BaseChainLayer(method);
+			BaseChainLayer layer = new BaseChainLayer(method, this.logger);
 			for (Chain anno : method.getAnnotationsByType(Chain.class)) {
 				if (isBlank(anno.label()) || anno.layers() == null)
 					continue;
@@ -39,7 +45,7 @@ public final class ChainManager {
 			int mods = method.getModifiers();
 			if (Modifier.isAbstract(mods) || !Modifier.isStatic(mods) || !Modifier.isPublic(mods))
 				continue;
-			BaseChainLayer layer = new BaseChainLayer(method);
+			BaseChainLayer layer = new BaseChainLayer(method, this.logger);
 			for (Chain anno : method.getAnnotationsByType(Chain.class)) {
 				if (isBlank(anno.label()) || anno.label() != chainLabel || anno.layers() == null)
 					continue;
@@ -67,7 +73,7 @@ public final class ChainManager {
 		ChainContainer c = this.chains.get(label);
 		if (c != null)
 			return c;
-		c = new ChainContainer(this, label);
+		c = new ChainContainer(this, this.logger, label);
 		this.chains.put(label, c);
 		return c;
 	}
