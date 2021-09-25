@@ -101,6 +101,9 @@ pipeline {
 				always {
 					junit '*/target/surefire-reports/*.xml'
 				}
+				failure {
+				    archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
+				}
 			}
 		}
 
