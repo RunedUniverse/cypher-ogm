@@ -12,15 +12,15 @@ public final class DebugLogger extends Logger {
 	}
 
 	public DebugLogger(Logger parent) {
-		super("ROGM-DEBUG", null);
-		super.setLevel(Level.ALL);
+		this();
 		super.setParent(parent);
 	}
 
 	@Override
 	public void log(LogRecord record) {
 		if (!isLoggable(record.getLevel())) {
-			record.setMessage("[TRACING-OVERRIDE][" + record.getLevel().getName() + "]\n" + record.getMessage());
+			record.setMessage("[TRACING-OVERRIDE][" + record.getLevel()
+					.getName() + "]\n" + record.getMessage());
 			record.setLevel(Level.INFO);
 		}
 		super.log(record);

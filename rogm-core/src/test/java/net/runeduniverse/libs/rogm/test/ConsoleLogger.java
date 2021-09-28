@@ -1,5 +1,6 @@
 package net.runeduniverse.libs.rogm.test;
 
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -8,12 +9,12 @@ public final class ConsoleLogger extends Logger {
 
 	public ConsoleLogger() {
 		super("ROGM-DEBUG-CONSOLE", null);
-		this.setLevel(Level.ALL);
+		super.setLevel(Level.ALL);
+		super.addHandler(new ConsoleHandler());
 	}
 
 	public ConsoleLogger(Logger parent) {
-		super("ROGM-DEBUG-CONSOLE", null);
-		super.setLevel(Level.ALL);
+		this();
 		super.setParent(parent);
 	}
 
