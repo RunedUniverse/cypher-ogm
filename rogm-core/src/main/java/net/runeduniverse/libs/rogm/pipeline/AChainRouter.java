@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
@@ -15,9 +17,19 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public abstract class AChainRouter {
 
-	protected Set<Object> baseChainParamPool = new HashSet<>();
+	protected final Set<Object> baseChainParamPool = new HashSet<>();
+	protected final UniversalLogger logger;
 	protected Archive archive;
 	protected ChainManager manager;
+
+	protected AChainRouter() {
+		this(new UniversalLogger(AChainRouter.class, null));
+	}
+
+	protected AChainRouter(UniversalLogger logger) {
+		this.logger = logger;
+		this.baseChainParamPool.add(logger);
+	}
 
 	public AChainRouter initialize(final Archive archive) {
 		this.archive = archive;

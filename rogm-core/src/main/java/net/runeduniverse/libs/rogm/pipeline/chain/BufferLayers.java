@@ -8,6 +8,7 @@ import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
 import net.runeduniverse.libs.rogm.error.ExceptionSuppressions;
 import net.runeduniverse.libs.rogm.lang.Language.IDeleteMapper;
+import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.Module.IRawRecord;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.Archive;
@@ -67,8 +68,10 @@ public interface BufferLayers extends InternalBufferTypes {
 	}
 
 	@Chain(label = Chains.BUFFER_CHAIN.LOAD.LABEL, layers = { Chains.BUFFER_CHAIN.LOAD.ACQUIRE_NEW_ENTITY })
-	public static Object acquireNew(final ChainRuntime<?> runtime, final IBuffer buffer, IBaseQueryPattern<?> pattern,
-			IData data, LazyEntriesContainer lazyEntries, EntityContainer container) throws Exception {
+	public static Object acquireNew(final ChainRuntime<?> runtime, final IBuffer buffer, final UniversalLogger logger,
+			IBaseQueryPattern<?> pattern, IData data, LazyEntriesContainer lazyEntries, EntityContainer container)
+			throws Exception {
+		logger.finest("acquireNewObject for " + data);
 		Object entity = container.getEntity();
 		LoadState loadState = data.getLoadState();
 		pattern.setId(entity, data.getEntityId());

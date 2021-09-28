@@ -56,6 +56,12 @@ public interface IPattern {
 		default LoadState getLoadState() {
 			return LoadState.get(this.getFilter());
 		}
+
+		default String valuesToString() {
+			return "IData[" + this.hashCode() + "]\nid:        " + this.getId() + "\nentity_id: " + this.getEntityId()
+					+ "\nlables:    [" + String.join(", ", this.getLabels()) + "]\ndata:      " + this.getData()
+					+ "\nfilter:    " + this.getFilter();
+		}
 	}
 
 	public interface IDataRecord {

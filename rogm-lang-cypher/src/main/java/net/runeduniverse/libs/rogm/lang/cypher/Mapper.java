@@ -166,9 +166,7 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 
 		@Override
 		public String toString() {
-			return "PDATA filter:<" + filter.getClass()
-					.getSimpleName() + "> id<" + id + "> eid<" + entityId + "> labels<" + labels + "> data<" + data
-					+ ">";
+			return this.valuesToString();
 		}
 	}
 }

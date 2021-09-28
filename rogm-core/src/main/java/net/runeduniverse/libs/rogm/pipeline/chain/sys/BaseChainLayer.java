@@ -45,7 +45,7 @@ public class BaseChainLayer implements ILayer {
 			params.add(paramTypes[i].getName() + " » " + (passedParams[i] == null ? "null"
 					: passedParams[i].getClass()
 							.getName()));
-		msg.append(" (" + String.join(", ", params) + ")");
+		msg.append(" (\n" + String.join(", \n", params) + ")");
 		return new ChainLayerCallException(msg.toString(), e);
 	}
 }

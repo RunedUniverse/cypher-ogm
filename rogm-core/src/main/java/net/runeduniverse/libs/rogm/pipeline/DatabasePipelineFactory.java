@@ -34,7 +34,7 @@ public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRoute
 	}
 
 	public DatabasePipelineFactory(Configuration config, UniversalLogger logger) {
-		super(config.getPackageInfo(), config.getModule(), new DatabaseChainRouter(), logger);
+		super(config.getPackageInfo(), config.getModule(), new DatabaseChainRouter(logger), logger);
 		this.cnf = config;
 
 		this.buffer = this.cnf.getBuffer();

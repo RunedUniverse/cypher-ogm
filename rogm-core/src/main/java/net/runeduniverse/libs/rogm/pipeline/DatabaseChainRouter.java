@@ -1,12 +1,14 @@
 package net.runeduniverse.libs.rogm.pipeline;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
 import net.runeduniverse.libs.rogm.lang.DatabaseCleaner;
 import net.runeduniverse.libs.rogm.lang.Language;
+import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
@@ -25,6 +27,14 @@ public class DatabaseChainRouter extends AChainRouter {
 	protected Parser.Instance parserInstance;
 	protected Language.Instance langInstance;
 	protected Module.Instance<?> moduleInstance;
+
+	public DatabaseChainRouter() {
+		this(null);
+	}
+
+	public DatabaseChainRouter(Logger parent) {
+		super(new UniversalLogger(DatabaseChainRouter.class, null));
+	}
 
 	public DatabaseChainRouter initialize(final IBuffer buffer, final DatabaseCleaner dbCleaner,
 			final Parser.Instance parserInstance, final Language.Instance langInstance,
