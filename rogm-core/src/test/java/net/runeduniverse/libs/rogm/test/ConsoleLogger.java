@@ -7,10 +7,16 @@ import java.util.logging.Logger;
 
 public final class ConsoleLogger extends Logger {
 
+	private static final ConsoleHandler CONSOLE_HANDLER = new ConsoleHandler();
+
+	static {
+		CONSOLE_HANDLER.setLevel(Level.ALL);
+	}
+
 	public ConsoleLogger() {
 		super("ROGM-DEBUG-CONSOLE", null);
 		super.setLevel(Level.ALL);
-		super.addHandler(new ConsoleHandler());
+		super.addHandler(CONSOLE_HANDLER);
 	}
 
 	public ConsoleLogger(Logger parent) {
