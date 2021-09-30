@@ -77,8 +77,6 @@ public abstract class APattern<B extends IQueryBuilder<?, ?, ? extends IFilter>>
 		Object entity = buffer.getById(data.getId(), this.type);
 		this.callMethod(PreReload.class, entity);
 		return entity;
-		// TODO FIX
-		// return buffer.update(entity, data);
 	}
 
 	@RequiredArgsConstructor

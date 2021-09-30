@@ -240,9 +240,11 @@ public class SessionTest extends AConfigTest {
 				assertNotNull(actor, "NULL as List Element where Object of Actor is supposed to be!");
 				assertNotNull(actor.getPlays(),
 						"Actor.getPlays() = NULL, session.resolveAllLazyLoaded(actors, 3); probably failed!");
+				assertNotNull(actor.getMyid(), "AEntity.myid of Class<Actor> is null");
 				for (ActorPlaysPersonRelation rel : actor.getPlays()) {
 					assertNotNull(rel,
-							"NULL as List Element where Object of ActorPlaysPersonRelation is supposed to be!");
+							"NULL as List Element where Object of Class<ActorPlaysPersonRelation> is supposed to be!");
+					assertNotNull(rel.getPerson(), "Person of Class<ActorPlaysPersonRelation> is null");
 					System.out.println("Actor: " + rel.getActor()
 							.getFirstName() + " plays "
 							+ rel.getPerson()
