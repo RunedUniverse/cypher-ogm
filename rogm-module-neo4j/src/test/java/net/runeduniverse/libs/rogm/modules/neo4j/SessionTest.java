@@ -19,6 +19,8 @@ import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.model.*;
 import net.runeduniverse.libs.rogm.test.model.relations.*;
+import net.runeduniverse.libs.rogm.test.system.TestModelEntity;
+import net.runeduniverse.libs.rogm.test.system.TestModelNode;
 
 public class SessionTest extends AConfigTest {
 
@@ -76,12 +78,11 @@ public class SessionTest extends AConfigTest {
 		try (Session session = this.pipeline.buildSession()) {
 			connectionCheck(session);
 			Collection<Person> people = session.loadAll(Person.class);
-			if (people.isEmpty()) {
-				System.out.println("NO PEOPLE FOUND");
-				return;
-			}
+			assertNotEquals(0, people.size(), "no Artists loaded!");
 			for (Person person : people) {
-				System.out.println(person);
+				TestModelEntity.infoTesting(classLogger, person);
+				TestModelEntity.assertEntity(Person.class, person);
+				TestModelNode.assertId(person);
 			}
 		}
 	}
@@ -92,12 +93,11 @@ public class SessionTest extends AConfigTest {
 		try (Session session = this.pipeline.buildSession()) {
 			connectionCheck(session);
 			Collection<Artist> people = session.loadAll(Artist.class);
-			if (people.isEmpty()) {
-				System.out.println("NO ARTIST FOUND");
-				return;
-			}
-			for (Artist artist : people) {
-				System.out.println(artist);
+			assertNotEquals(0, people.size(), "no Artists loaded!");
+			for (Artist person : people) {
+				TestModelEntity.infoTesting(classLogger, person);
+				TestModelEntity.assertEntity(Artist.class, person);
+				TestModelNode.assertId(person);
 			}
 		}
 	}
@@ -230,20 +230,20 @@ public class SessionTest extends AConfigTest {
 
 	@Test
 	@Tag("db-neo4j")
-	public void loadActors() throws Exception {
+	public void loadActorsAndResolveAllLazyLoaded() throws Exception {
 		try (Session session = this.pipeline.buildSession()) {
 			connectionCheck(session);
 			Collection<Actor> actors = session.loadAllLazy(Actor.class);
 			assertEquals(2, actors.size(), "wrong amount of Actors loaded!");
 			session.resolveAllLazyLoaded(actors, 3);
 			for (Actor actor : actors) {
-				assertNotNull(actor, "NULL as List Element where Object of Actor is supposed to be!");
+				TestModelEntity.infoTesting(classLogger, actor);
+				TestModelEntity.assertEntity(Actor.class, actor);
 				assertNotNull(actor.getPlays(),
 						"Actor.getPlays() = NULL, session.resolveAllLazyLoaded(actors, 3); probably failed!");
 				assertNotNull(actor.getMyid(), "AEntity.myid of Class<Actor> is null");
 				for (ActorPlaysPersonRelation rel : actor.getPlays()) {
-					assertNotNull(rel,
-							"NULL as List Element where Object of Class<ActorPlaysPersonRelation> is supposed to be!");
+					TestModelEntity.assertEntity(ActorPlaysPersonRelation.class, rel);
 					assertNotNull(rel.getPerson(), "Person of Class<ActorPlaysPersonRelation> is null");
 					System.out.println("Actor: " + rel.getActor()
 							.getFirstName() + " plays "

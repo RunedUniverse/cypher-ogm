@@ -5,11 +5,12 @@ import lombok.ToString;
 import net.runeduniverse.libs.rogm.annotations.GeneratedValue;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
+import net.runeduniverse.libs.rogm.test.system.TestModelRelation;
 
 @RelationshipEntity
 @ToString
 @Getter
-public abstract class ARelationEntity {
+public abstract class ARelationEntity implements TestModelRelation {
 
 	@Id
 	@GeneratedValue
