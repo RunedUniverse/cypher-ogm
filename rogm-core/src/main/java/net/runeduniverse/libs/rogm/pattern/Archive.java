@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import lombok.Getter;
+import net.runeduniverse.libs.logging.logs.CompoundTree;
 import net.runeduniverse.libs.rogm.annotations.IConverter;
 import net.runeduniverse.libs.rogm.annotations.Id;
 import net.runeduniverse.libs.rogm.error.ScannerException;
@@ -22,7 +23,10 @@ import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
+import net.runeduniverse.libs.scanner.FieldPattern;
+import net.runeduniverse.libs.scanner.MethodPattern;
 import net.runeduniverse.libs.scanner.PackageScanner;
+import net.runeduniverse.libs.scanner.TypePattern;
 
 public final class Archive {
 	public static boolean PACKAGE_SCANNER_DEBUG_MODE = false;
@@ -73,22 +77,72 @@ public final class Archive {
 	}
 
 	public void logPatterns(Logger logger) {
-		StringBuilder msg = new StringBuilder("Archive Pattern Dump");
+		CompoundTree tree = new CompoundTree("Archive Pattern Dump");
+
 		this.patterns.forEach((c, patterns) -> {
-			msg.append("\n [" + c.getSimpleName() + "] " + c.getCanonicalName());
-			msg.append("\n   Pattern:");
-			this.appendSetContent(msg, patterns);
+			CompoundTree clazz = new CompoundTree("CLASS", c.getCanonicalName());
+			patterns.forEach(p -> {
+				if (p == null)
+					return;
+				CompoundTree pattern = new CompoundTree(p.getPatternType()
+						.toString(),
+						p.getClass()
+								.getCanonicalName());
+				if (p instanceof TypePattern<?, ?>) {
+					TypePattern<?, ?> tp = (TypePattern<?, ?>) p;
+					pattern.append("PKG", tp.getPkg());
+					pattern.append("TYPE", tp.getType()
+							.getCanonicalName());
+					pattern.append("SUPER TYPE", tp.getSuperType()
+							.getCanonicalName());
+
+					collectFields(tp).forEach((f, s) -> {
+						CompoundTree annos = new CompoundTree("FIELD", f.getField()
+								.getName());
+						s.forEach(a -> {
+							annos.append("ANNO", '@' + a.getSimpleName());
+						});
+						pattern.append(annos);
+					});
+					collectMethods(tp).forEach((m, s) -> {
+						CompoundTree annos = new CompoundTree("METHOD", m.getMethod()
+								.getName());
+						s.forEach(a -> {
+							annos.append("ANNO", '@' + a.getSimpleName());
+						});
+						pattern.append(annos);
+					});
+				}
+				clazz.append(pattern);
+			});
+			tree.append(clazz);
 		});
-		logger.finer(msg.toString());
+
+		logger.finer(tree.toString());
 	}
 
-	private void appendSetContent(StringBuilder builder, Set<?> set) {
-		for (Object obj : set) {
-			if (obj == null)
-				continue;
-			Class<?> clazz = obj.getClass();
-			builder.append("\n   - [" + clazz.getSimpleName() + "] " + clazz.getCanonicalName());
-		}
+	private static Map<FieldPattern, Set<Class<? extends Annotation>>> collectFields(TypePattern<?, ?> tp) {
+		final Map<FieldPattern, Set<Class<? extends Annotation>>> fields = new HashMap<>();
+		tp.getFields()
+				.forEach((a, f) -> {
+					Set<Class<? extends Annotation>> s = fields.get(f);
+					if (s == null)
+						fields.put(f, s = new HashSet<>());
+					s.add(a);
+				});
+		return fields;
+	}
+
+	private static Map<MethodPattern, Set<Class<? extends Annotation>>> collectMethods(TypePattern<?, ?> tp) {
+		final Map<MethodPattern, Set<Class<? extends Annotation>>> methods = new HashMap<>();
+		tp.getMethods()
+				.forEach((a, m) -> {
+					Set<Class<? extends Annotation>> s = methods.get(m);
+					if (s == null)
+						methods.put(m, s = new HashSet<>());
+					s.add(a);
+				});
+		return methods;
 	}
 
 	// QUERRYING

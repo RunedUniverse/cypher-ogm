@@ -21,6 +21,10 @@
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs</groupId>
+			<artifactId>logging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs</groupId>
 			<artifactId>scanner</artifactId>
 		</dependency>
 		<dependency>
