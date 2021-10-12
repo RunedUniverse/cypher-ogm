@@ -12,9 +12,9 @@ public class ChainRuntimeExecutionTrace {
 	public static CharSequence LAST_ELEMENT_PREFIX = " └ ";
 
 	public static String HEAD_TXT = "CHAIN EXECUTION TRACE >> %s%s";
-	public static String METHOD_ENTRY_TXT = "[%i] ENTRY >> %s.%s";
-	public static String JUMP_TXT = "[%i] JUMP  >> [%i]";
-	public static String REPORT_TXT = "[%i] CHAIN >> %s%s";
+	public static String METHOD_ENTRY_TXT = "[%d] ENTRY >> %s.%s";
+	public static String JUMP_TXT = "[%d] JUMP  >> [%d]";
+	public static String REPORT_TXT = "[%d] CHAIN >> %s%s";
 
 	private final ChainRuntimeExecutionTrace root;
 	@Getter
