@@ -55,7 +55,7 @@ public class ChainRuntimeExecutionTrace {
 
 	private void appendReport(String chainName, String report) {
 		this.dirty = true;
-		this.entries.add(String.format(REPORT_TXT, this.activeExecutionLevel, report));
+		this.entries.add(String.format(REPORT_TXT, this.activeExecutionLevel, chainName, report));
 	}
 
 	private String buildReport() {
