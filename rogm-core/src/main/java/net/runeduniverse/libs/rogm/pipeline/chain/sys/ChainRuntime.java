@@ -15,6 +15,8 @@ public class ChainRuntime<R> {
 	// runtime
 	@Getter
 	protected final ChainRuntime<?> root;
+	@Getter(onMethod_ = { @Deprecated })
+	protected final ChainRuntimeExecutionTrace trace;
 	protected final ChainContainer container;
 	protected final Store store;
 	protected final ChainLogger logger;
@@ -39,6 +41,7 @@ public class ChainRuntime<R> {
 			Map<Class<?>, Object> sourceDataMap, Object[] args) {
 		this.root = root;
 		this.container = container;
+		this.trace = new ChainRuntimeExecutionTrace(root, this.container.getLabel());
 		this.logger = logger;
 		this.store = new Store(this, sourceDataMap, args);
 		this.resultType = resultType;
@@ -70,22 +73,28 @@ public class ChainRuntime<R> {
 			if (layer != null)
 				try {
 					if ((noErrors || ChainLayer.ignoreErrors(layer))
-							&& (this.active() || ChainLayer.ignoreInActive(layer)))
+							&& (this.active() || ChainLayer.ignoreInActive(layer))) {
+						this.trace.setCurrentLayer(this.iterator.getI());
 						layer.call(this);
+					}
 				} catch (Exception e) {
 					errors.add(e);
 					noErrors = false;
 				}
 		}
 
+		this.trace.report(this.logger);
+
 		if (!noErrors)
 			throw this.logger.throwing(ChainRuntime.class, "executeOnChain(final Map<Integer, ILayer>, int, int)",
 					new ExceptionSuppressions("ChainRuntime[" + this.hashCode() + "] of Chain<"
-							+ this.container.getLabel() + "> errored out!", true).addSuppressed(errors));
+							+ this.container.getLabel() + "> errored out!\n" + this.trace.toString(), true)
+									.addSuppressed(errors));
 	}
 
 	public void jumpToLayer(int layerId) {
 		this.iterator.setI(layerId);
+		this.trace.jumpToLayer(layerId);
 	}
 
 	public void interrupt() {
