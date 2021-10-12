@@ -1,13 +1,14 @@
 package net.runeduniverse.libs.rogm.pipeline.chain.sys;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import lombok.Getter;
 
 public class ChainRuntimeExecutionTrace {
 
-	public static CharSequence OFFSET = "\t";
+	public static CharSequence OFFSET = "    ";
 	public static CharSequence ELEMENT_PREFIX = " ├ ";
 	public static CharSequence LAST_ELEMENT_PREFIX = " └ ";
 
@@ -64,7 +65,14 @@ public class ChainRuntimeExecutionTrace {
 		String effectiveOffset = "\n";
 		for (int i = 0; i < this.traceLevel; i++)
 			effectiveOffset = effectiveOffset + OFFSET;
-		this.report = effectiveOffset + String.join(effectiveOffset, this.entries);
+		StringBuilder builder = new StringBuilder();
+		for (Iterator<String> iterator = this.entries.iterator(); iterator.hasNext();) {
+			String line = iterator.next();
+			builder.append(effectiveOffset)
+					.append(iterator.hasNext() ? ELEMENT_PREFIX : LAST_ELEMENT_PREFIX)
+					.append(line);
+		}
+		this.report = builder.toString();
 		this.dirty = false;
 		return this.report;
 	}
