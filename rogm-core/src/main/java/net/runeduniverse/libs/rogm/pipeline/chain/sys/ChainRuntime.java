@@ -88,8 +88,7 @@ public class ChainRuntime<R> {
 		if (!noErrors)
 			throw this.logger.throwing(ChainRuntime.class, "executeOnChain(final Map<Integer, ILayer>, int, int)",
 					new ExceptionSuppressions("ChainRuntime[" + this.hashCode() + "] of Chain<"
-							+ this.container.getLabel() + "> errored out!\n" + this.trace.toString(), true)
-									.addSuppressed(errors));
+							+ this.container.getLabel() + "> errored out!", true).addSuppressed(errors));
 	}
 
 	public void jumpToLayer(int layerId) {
