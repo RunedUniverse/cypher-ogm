@@ -13,8 +13,8 @@ public interface TestModelEntity {
 	}
 
 	static <E extends Exception> void assertEntity(Class<?> expectedClass, Object entity) throws E {
-		Assertions.assertNotNull(entity,
-				String.format(TestModelEntity_ERROR_ExpectedClassObject, expectedClass.getSimpleName()));
+		Assertions.assertTrue(expectedClass.isInstance(entity),
+				String.format(TestModelEntity_ERROR_ExpectedClassObject, expectedClass.getSimpleName(), entity));
 	}
 
 	static String getSimpleClassName(Object entity) {

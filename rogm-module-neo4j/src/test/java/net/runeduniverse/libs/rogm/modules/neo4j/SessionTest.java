@@ -116,6 +116,8 @@ public class SessionTest extends AConfigTest {
 					.getResult();
 
 			Person shawn = session.load(personFilter);
+			TestModelEntity.assertEntity(Person.class, shawn);
+			TestModelNode.assertId(shawn);
 			System.out.println("[Shawn]\n" + iLanguage.load(personFilter) + '\n');
 			shawn.setFirstName("Shawn");
 			shawn.setLastName("James");
@@ -134,6 +136,7 @@ public class SessionTest extends AConfigTest {
 			System.out.println(james);
 			session.save(james);
 			System.out.println(james);
+			TestModelNode.assertId(james);
 		}
 	}
 
@@ -153,6 +156,7 @@ public class SessionTest extends AConfigTest {
 			System.out.println(ennio);
 			session.save(ennio);
 			System.out.println(ennio);
+			TestModelNode.assertId(ennio);
 		}
 	}
 
@@ -199,6 +203,7 @@ public class SessionTest extends AConfigTest {
 			ennio.getPlayed()
 					.add(s);
 			session.save(ennio);
+			TestModelNode.assertId(ennio);
 			session.delete(ennio);
 		}
 	}
@@ -216,6 +221,7 @@ public class SessionTest extends AConfigTest {
 					.getResult();
 
 			Company company = session.load(companyFilter);
+			TestModelEntity.assertEntity(Company.class, company);
 			Game game = new Game();
 			game.setName("just another USELESS title");
 			company.getGames()
@@ -224,6 +230,7 @@ public class SessionTest extends AConfigTest {
 			company.getGames()
 					.remove(game);
 			session.save(company, 4);
+			TestModelNode.assertId(game);
 			session.delete(game);
 		}
 	}
@@ -241,10 +248,9 @@ public class SessionTest extends AConfigTest {
 				TestModelEntity.assertEntity(Actor.class, actor);
 				assertNotNull(actor.getPlays(),
 						"Actor.getPlays() = NULL, session.resolveAllLazyLoaded(actors, 3); probably failed!");
-				assertNotNull(actor.getMyid(), "AEntity.myid of Class<Actor> is null");
+				TestModelNode.assertId(actor);
 				for (ActorPlaysPersonRelation rel : actor.getPlays()) {
 					TestModelEntity.assertEntity(ActorPlaysPersonRelation.class, rel);
-					assertNotNull(rel.getPerson(), "Person of Class<ActorPlaysPersonRelation> is null");
 					System.out.println("Actor: " + rel.getActor()
 							.getFirstName() + " plays "
 							+ rel.getPerson()
