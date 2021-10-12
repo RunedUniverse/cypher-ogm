@@ -66,7 +66,7 @@ public abstract class APattern<B extends IQueryBuilder<?, ?, ? extends IFilter>>
 
 	@Override
 	public void prepareEntityId(IData data) {
-		if (this.idFieldPattern != null)
+		//if (this.idFieldPattern != null)
 			data.setEntityId(prepareEntityId(data.getId(), data.getEntityId()));
 	}
 
