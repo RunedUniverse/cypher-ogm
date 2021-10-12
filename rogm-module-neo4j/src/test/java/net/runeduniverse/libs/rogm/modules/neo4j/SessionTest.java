@@ -226,11 +226,11 @@ public class SessionTest extends AConfigTest {
 			game.setName("just another USELESS title");
 			company.getGames()
 					.add(game);
-			session.save(company);
+			session.save(company, 2);
+			TestModelNode.assertId(game);
 			company.getGames()
 					.remove(game);
 			session.save(company, 4);
-			TestModelNode.assertId(game);
 			session.delete(game);
 		}
 	}
