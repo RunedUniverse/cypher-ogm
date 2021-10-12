@@ -125,6 +125,8 @@ public final class Archive {
 		final Map<FieldPattern, Set<Class<? extends Annotation>>> fields = new HashMap<>();
 		tp.getFields()
 				.forEach((a, f) -> {
+					if (a == null)
+						return;
 					Set<Class<? extends Annotation>> s = fields.get(f);
 					if (s == null)
 						fields.put(f, s = new HashSet<>());
@@ -137,6 +139,8 @@ public final class Archive {
 		final Map<MethodPattern, Set<Class<? extends Annotation>>> methods = new HashMap<>();
 		tp.getMethods()
 				.forEach((a, m) -> {
+					if (a == null)
+						return;
 					Set<Class<? extends Annotation>> s = methods.get(m);
 					if (s == null)
 						methods.put(m, s = new HashSet<>());
