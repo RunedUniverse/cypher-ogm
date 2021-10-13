@@ -12,7 +12,6 @@ import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.Session;
 import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.modules.neo4j.SessionTest;
-import net.runeduniverse.libs.rogm.pipeline.DatabasePipelineFactory;
 import net.runeduniverse.libs.rogm.pipeline.Pipeline;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.test.AConfigTest;
@@ -59,7 +58,7 @@ public class SessionTest extends AConfigTest {
 
 	public SessionTest() throws Exception {
 		super(config);
-		this.pipeline = new Pipeline(new DatabasePipelineFactory(config));
+		this.pipeline = new Pipeline(new DebugDatabasePipelineFactory(config));
 	}
 
 	@Test

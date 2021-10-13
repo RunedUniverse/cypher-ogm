@@ -127,13 +127,12 @@ public interface BufferLayers extends InternalBufferTypes {
 	}
 
 	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.UPDATE_BUFFER_ENTRIES })
-	public static void updateBufferedEntries(final Archive archive, final IBuffer buffer, final UniversalLogger logger,
+	public static void updateBufferedEntries(final Archive archive, final IBuffer buffer,
 			Collection<UpdatedEntryContainer> collection) throws ExceptionSuppressions {
 		List<Exception> errors = new ArrayList<>();
 		for (UpdatedEntryContainer updatedEntry : collection) {
 			try {
 				buffer.updateEntry(archive, updatedEntry);
-				logger.finer(updatedEntry.toString());
 			} catch (Exception e) {
 				errors.add(e);
 			}
