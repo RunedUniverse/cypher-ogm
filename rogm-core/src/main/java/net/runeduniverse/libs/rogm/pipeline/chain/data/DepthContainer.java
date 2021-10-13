@@ -1,5 +1,8 @@
 package net.runeduniverse.libs.rogm.pipeline.chain.data;
 
+import lombok.ToString;
+
+@ToString
 public class DepthContainer {
 	private int depth;
 

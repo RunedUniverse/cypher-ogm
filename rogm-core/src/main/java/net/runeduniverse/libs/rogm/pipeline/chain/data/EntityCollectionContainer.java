@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 public class EntityCollectionContainer {
 
 	@Getter

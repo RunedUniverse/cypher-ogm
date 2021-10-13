@@ -6,9 +6,11 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
 
 @NoArgsConstructor
+@ToString
 public class RelatedEntriesContainer {
 	@Getter
 	private final Set<Entry> relatedEntries = new HashSet<>();
