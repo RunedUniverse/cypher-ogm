@@ -79,6 +79,9 @@ public final class Archive {
 	public void logPatterns(Logger logger) {
 		CompoundTree tree = new CompoundTree("Archive Pattern Dump");
 
+		this.loader.forEach(l -> tree.append("LOADER", l.getClass()
+				.getCanonicalName()));
+
 		this.patterns.forEach((c, patterns) -> {
 			CompoundTree clazz = new CompoundTree("CLASS", c.getCanonicalName());
 			patterns.forEach(p -> {
@@ -118,7 +121,7 @@ public final class Archive {
 			tree.append(clazz);
 		});
 
-		logger.finer(tree.toString());
+		logger.config(tree.toString());
 	}
 
 	private static Map<FieldPattern, Set<Class<? extends Annotation>>> collectFields(TypePattern<?, ?> tp) {
