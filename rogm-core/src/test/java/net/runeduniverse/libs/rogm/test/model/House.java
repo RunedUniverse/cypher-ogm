@@ -12,7 +12,7 @@ import net.runeduniverse.libs.rogm.annotations.Transient;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class House extends AEntity {
 	Address address;
 	List<Person> people = new ArrayList<>();
