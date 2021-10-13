@@ -491,7 +491,7 @@ public final class QueryBuilder {
 				localTree.append("TYPE", this.type.getCanonicalName());
 			if (this.id != null)
 				localTree.append("ID", this.id.toString());
-			tree.append("STATUS", this.lazy ? "LAZY" : "COMPLETE");
+			localTree.append("STATUS", this.lazy ? "LAZY" : "COMPLETE");
 			for (Object handler : this.handler.values())
 				ITraceable.toRecord(localTree, handler);
 		}
