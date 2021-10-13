@@ -21,6 +21,8 @@ public abstract class APattern<B extends IQueryBuilder<?, ?, ? extends IFilter>>
 	protected FieldPattern idFieldPattern;
 	@Getter
 	protected IConverter<?> idConverter = null;
+	@Getter
+	private boolean valid = false;
 
 	public APattern(Archive archive, String pkg, ClassLoader loader, Class<?> type) {
 		super(pkg, loader, type);
@@ -33,6 +35,7 @@ public abstract class APattern<B extends IQueryBuilder<?, ?, ? extends IFilter>>
 			this.idConverter = this.idFieldPattern.getConverter();
 		for (Map.Entry<?, FieldPattern> entry : this.fields.entrySet())
 			IValidatable.validate(entry.getValue());
+		this.valid = true;
 	}
 
 	@Override

@@ -40,14 +40,14 @@ public class ArchiveTest extends AConfigTest {
 	@Tag("system")
 	public void scanModels() throws ScannerException {
 		for (PassiveModule module : this.cnf.getPassiveModules())
-			module.configure(archive);
+			module.configure(this.archive);
 	}
 
-	public String printQuery(Class<?> clazz, IFilter filter) throws Exception {
+	protected String printQuery(Class<?> clazz, IFilter filter) throws Exception {
 		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(filter) + '\n';
 	}
 
-	public String printSave(Object entity, int depth) throws Exception {
+	protected String printSave(Object entity, int depth) throws Exception {
 		this.archive.logPatterns(new ConsoleLogger());
 		return "[SAVE][" + entity.getClass()
 				.getSimpleName() + "]\n"
