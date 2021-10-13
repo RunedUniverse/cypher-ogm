@@ -118,12 +118,12 @@ public class SessionTest extends AConfigTest {
 			Person shawn = session.load(personFilter);
 			TestModelEntity.assertEntity(Person.class, shawn);
 			TestModelNode.assertId(shawn);
-			System.out.println("[Shawn]\n" + iLanguage.load(personFilter) + '\n');
+			info("[Shawn]\n" + iLanguage.load(personFilter) + '\n');
 			shawn.setFirstName("Shawn");
 			shawn.setLastName("James");
 			shawn.setFictional(false);
 			session.save(shawn);
-			System.out.println(shawn);
+			info(shawn);
 		}
 	}
 
@@ -133,9 +133,9 @@ public class SessionTest extends AConfigTest {
 		try (Session session = this.pipeline.buildSession()) {
 			connectionCheck(session);
 			Person james = new Person("James", "North", true);
-			System.out.println(james);
+			info(james);
 			session.save(james);
-			System.out.println(james);
+			info(james);
 			TestModelNode.assertId(james);
 		}
 	}
@@ -153,9 +153,9 @@ public class SessionTest extends AConfigTest {
 					.add(s);
 			ennio.getPlayed()
 					.add(s);
-			System.out.println(ennio);
+			info(ennio);
 			session.save(ennio);
-			System.out.println(ennio);
+			info(ennio);
 			TestModelNode.assertId(ennio);
 		}
 	}
@@ -166,11 +166,11 @@ public class SessionTest extends AConfigTest {
 		try (Session session = this.pipeline.buildSession()) {
 			connectionCheck(session);
 			Player player = new Player(UUID.randomUUID(), "Testi", new Inventory());
-			System.out.println(player);
+			info(player);
 			session.save(player);
 			session.unload(player);
 			Player player2 = session.load(Player.class, player.getUuid());
-			System.out.println(player2);
+			info(player2);
 			assertNotNull(player2, "NO Entries in DB found");
 			assertTrue(player.getUuid()
 					.equals(player2.getUuid()), "Player UUID doesn't match");
@@ -222,6 +222,7 @@ public class SessionTest extends AConfigTest {
 
 			Company company = session.load(companyFilter);
 			TestModelEntity.assertEntity(Company.class, company);
+			TestModelNode.assertId(company);
 			Game game = new Game();
 			game.setName("just another USELESS title");
 			company.getGames()
@@ -251,7 +252,7 @@ public class SessionTest extends AConfigTest {
 				TestModelNode.assertId(actor);
 				for (ActorPlaysPersonRelation rel : actor.getPlays()) {
 					TestModelEntity.assertEntity(ActorPlaysPersonRelation.class, rel);
-					System.out.println("Actor: " + rel.getActor()
+					info("Actor: " + rel.getActor()
 							.getFirstName() + " plays "
 							+ rel.getPerson()
 									.getFirstName());
@@ -289,4 +290,8 @@ public class SessionTest extends AConfigTest {
 	 * 11L); Person ashley1 = session.load(Person.class, 11L); assertEquals(ashley1,
 	 * ashley0); assertTrue(ashley0 == ashley1); }
 	 */
+
+	protected static void info(Object o) {
+		classLogger.info(o == null ? "null" : o.toString());
+	}
 }
