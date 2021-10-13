@@ -12,7 +12,7 @@ public final class SessionLogger extends ALogger {
 
 	public SessionLogger(Class<?> clazz, PipelineLogger pipelineLogger) {
 		super("ROGM", null, pipelineLogger);
-		prefix = "> [" + clazz.getSimpleName() + '|' + id.getAndIncrement() + "] ";
+		prefix = "[" + clazz.getSimpleName() + '|' + id.getAndIncrement() + "] ";
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public final class SessionLogger extends ALogger {
 	}
 
 	public SessionLogger logSessionInfo(final SessionInfo info) {
-		super.config(info.toString());
+		super.log(Level.CONFIG, this.prefix + '\n' + info.toString());
 		return this;
 	}
 }
