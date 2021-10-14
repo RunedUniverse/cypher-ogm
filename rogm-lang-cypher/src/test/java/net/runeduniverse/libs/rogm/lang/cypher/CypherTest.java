@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.Direction;
+import net.runeduniverse.libs.rogm.parser.json.Feature;
 import net.runeduniverse.libs.rogm.parser.json.JSONParser;
 import net.runeduniverse.libs.rogm.querying.FilterNode;
 import net.runeduniverse.libs.rogm.querying.FilterRelation;
@@ -26,7 +27,11 @@ public class CypherTest extends AConfigTest {
 	 */
 
 	public CypherTest() {
-		super(new Configuration(new JSONParser(), new CypherLanguage(), new DummyModule(), null));
+		super(new Configuration(new JSONParser().configure(Feature.SERIALIZER_QUOTE_FIELD_NAMES, false)
+				.configure(Feature.DESERIALIZER_ALLOW_UNQUOTED_FIELD_NAMES, true)
+				.configure(Feature.MAPPER_AUTO_DETECT_GETTERS, false)
+				.configure(Feature.MAPPER_AUTO_DETECT_IS_GETTERS, false), new CypherLanguage(), new DummyModule(),
+				"localhost"));
 	}
 
 	static FilterNode school;
