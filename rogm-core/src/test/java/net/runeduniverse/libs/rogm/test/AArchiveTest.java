@@ -1,4 +1,4 @@
-package net.runeduniverse.libs.rogm.test.system;
+package net.runeduniverse.libs.rogm.test;
 
 import java.util.logging.Logger;
 
@@ -10,33 +10,31 @@ import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
-import net.runeduniverse.libs.rogm.test.AConfigTest;
-import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 import net.runeduniverse.libs.rogm.test.dummies.DummyParser;
 
-public class ArchiveTest extends AConfigTest {
+public abstract class AArchiveTest extends AConfigTest {
 
 	protected final Archive archive;
 	protected final QueryBuilder qryBuilder;
 
-	public ArchiveTest(Configuration cnf) {
+	public AArchiveTest(Configuration cnf) {
 		super(cnf);
 		this.archive = new Archive(this.cnf.getPackageInfo(), this.cnf.getModule());
 		this.qryBuilder = this.archive.getQueryBuilder();
 	}
 
-	public ArchiveTest(Configuration cnf, Logger logger) {
+	public AArchiveTest(Configuration cnf, Logger logger) {
 		this(cnf.setLogger(logger)
-				.addClassLoader(ArchiveTest.class.getClassLoader())
+				.addClassLoader(AArchiveTest.class.getClassLoader())
 				.addPackage(MODEL_PKG_PATH)
 				.addPackage(RELATIONS_PKG_PATH));
 	}
 
-	public ArchiveTest() {
+	public AArchiveTest() {
 		this(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost"),
-				new ConsoleLogger(Logger.getLogger(ArchiveTest.class.getName())));
+				new ConsoleLogger(Logger.getLogger(AArchiveTest.class.getName())));
 	}
 
 	@BeforeEach
@@ -51,7 +49,7 @@ public class ArchiveTest extends AConfigTest {
 	}
 
 	protected String printSave(Object entity, int depth) throws Exception {
-		this.archive.logPatterns(new ConsoleLogger());
+		this.archive.logPatterns(this.logger);
 		return "[SAVE][" + entity.getClass()
 				.getSimpleName() + "]\n"
 				+ iLanguage.save(this.archive.save(entity.getClass(), entity, depth)

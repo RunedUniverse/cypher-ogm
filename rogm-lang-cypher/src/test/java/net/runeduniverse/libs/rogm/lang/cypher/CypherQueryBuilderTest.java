@@ -17,14 +17,14 @@ import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
+import net.runeduniverse.libs.rogm.test.AQueryBuilderTest;
 import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 import net.runeduniverse.libs.rogm.test.model.Artist;
 import net.runeduniverse.libs.rogm.test.model.Song;
-import net.runeduniverse.libs.rogm.test.system.QueryBuilderTest;
 import net.runeduniverse.libs.rogm.test.system.TestEntity;
 
-public class CypherQueryBuilderTest extends QueryBuilderTest {
+public class CypherQueryBuilderTest extends AQueryBuilderTest {
 
 	public CypherQueryBuilderTest() throws ScannerException {
 		super(new Configuration(new JSONParser(), new CypherLanguage(), new DummyModule(), "localhost"),

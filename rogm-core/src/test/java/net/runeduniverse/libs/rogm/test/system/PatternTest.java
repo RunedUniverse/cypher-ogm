@@ -14,11 +14,12 @@ import lombok.NoArgsConstructor;
 import net.runeduniverse.libs.rogm.pattern.APattern;
 import net.runeduniverse.libs.rogm.pattern.FieldPattern;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
+import net.runeduniverse.libs.rogm.test.AArchiveTest;
 import net.runeduniverse.libs.rogm.test.model.Artist;
 import net.runeduniverse.libs.rogm.test.model.Game;
 
 @NoArgsConstructor
-public class PatternTest extends ArchiveTest {
+public class PatternTest extends AArchiveTest {
 
 	@SuppressWarnings("rawtypes")
 	public static Class<APattern> UNLOCKED_APATTERN_CLASS = APattern.class;

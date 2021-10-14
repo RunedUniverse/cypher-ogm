@@ -4,19 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
-import net.runeduniverse.libs.rogm.querying.QueryBuilder;
-import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
-import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
+import net.runeduniverse.libs.rogm.test.AQueryBuilderTest;
 import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
@@ -26,20 +22,11 @@ import net.runeduniverse.libs.rogm.test.model.Inventory;
 import net.runeduniverse.libs.rogm.test.model.Item;
 import net.runeduniverse.libs.rogm.test.model.relations.Slot;
 
-public class QueryBuilderTest extends ArchiveTest {
-
-	static {
-		QueryBuilder.CREATOR_NODE_BUILDER = a -> new DebugNodeQueryBuilder(a);
-		QueryBuilder.CREATOR_REALATION_BUILDER = a -> new DebugRelationQueryBuilder(a);
-	}
+public class QueryBuilderTest extends AQueryBuilderTest {
 
 	public QueryBuilderTest() {
 		super(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost"),
 				new ConsoleLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
-	}
-
-	public QueryBuilderTest(Configuration cnf, Logger logger) {
-		super(cnf, logger);
 	}
 
 	@Test
@@ -103,29 +90,5 @@ public class QueryBuilderTest extends ArchiveTest {
 		assertTrue(inventory == slot.getStart(), "Slot.start != inventory");
 		assertNotNull(slot.getTarget(), "Slot.target == null");
 		assertTrue(item == slot.getTarget(), "Slot.target != item");
-	}
-
-	private static class DebugNodeQueryBuilder extends NodeQueryBuilder {
-		public DebugNodeQueryBuilder(Archive archive) {
-			super(archive);
-		}
-
-		public Set<RelationQueryBuilder> getRelationBuilders() {
-			return super.relationBuilders;
-		}
-	}
-
-	private static class DebugRelationQueryBuilder extends RelationQueryBuilder {
-		public DebugRelationQueryBuilder(Archive archive) {
-			super(archive);
-		}
-
-		public NodeQueryBuilder getStart() {
-			return super.startNodeBuilder;
-		}
-
-		public NodeQueryBuilder getTarget() {
-			return super.targetNodeBuilder;
-		}
 	}
 }

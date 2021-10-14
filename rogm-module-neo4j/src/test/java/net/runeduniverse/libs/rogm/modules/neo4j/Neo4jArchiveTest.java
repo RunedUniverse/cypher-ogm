@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
+import net.runeduniverse.libs.rogm.test.AArchiveTest;
 import net.runeduniverse.libs.rogm.test.model.*;
-import net.runeduniverse.libs.rogm.test.system.ArchiveTest;
 
-public class Neo4jArchiveTest extends ArchiveTest {
+public class Neo4jArchiveTest extends AArchiveTest {
 
 	static Configuration config = new Neo4jConfiguration("runeduniverse.net");
 
