@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.error.ScannerException;
-import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -28,12 +27,16 @@ public class ArchiveTest extends AConfigTest {
 		this.qryBuilder = this.archive.getQueryBuilder();
 	}
 
-	public ArchiveTest() {
-		this(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost")
+	public ArchiveTest(Configuration cnf, Logger logger) {
+		this(cnf.setLogger(logger)
 				.addClassLoader(ArchiveTest.class.getClassLoader())
-				.setLogger(new DebugLogger(Logger.getLogger(ArchiveTest.class.getName())))
 				.addPackage(MODEL_PKG_PATH)
 				.addPackage(RELATIONS_PKG_PATH));
+	}
+
+	public ArchiveTest() {
+		this(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost"),
+				new ConsoleLogger(Logger.getLogger(ArchiveTest.class.getName())));
 	}
 
 	@BeforeEach

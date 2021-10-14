@@ -11,15 +11,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.error.ScannerException;
-import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
-import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
@@ -29,39 +26,26 @@ import net.runeduniverse.libs.rogm.test.model.Inventory;
 import net.runeduniverse.libs.rogm.test.model.Item;
 import net.runeduniverse.libs.rogm.test.model.relations.Slot;
 
-public class QueryBuilderTest extends AConfigTest {
-
-	public static final String MODEL_PKG_PATH = AConfigTest.MODEL_PKG_PATH;
-	public static final String RELATIONS_PKG_PATH = AConfigTest.RELATIONS_PKG_PATH;
+public class QueryBuilderTest extends ArchiveTest {
 
 	static {
 		QueryBuilder.CREATOR_NODE_BUILDER = a -> new DebugNodeQueryBuilder(a);
 		QueryBuilder.CREATOR_REALATION_BUILDER = a -> new DebugRelationQueryBuilder(a);
 	}
 
-	protected final Archive archive;
-	protected final QueryBuilder builder;
-
-	public QueryBuilderTest(Configuration config, ConsoleLogger logger) throws ScannerException {
-		super(config.setLogger(logger)
-				.addPackage(MODEL_PKG_PATH)
-				.addPackage(RELATIONS_PKG_PATH));
-
-		this.archive = new Archive(this.cnf.getPackageInfo(), this.cnf.getModule());
-		for (PassiveModule module : this.cnf.getPassiveModules())
-			module.configure(archive);
-		this.builder = this.archive.getQueryBuilder();
+	public QueryBuilderTest() {
+		super(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost"),
+				new ConsoleLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
 	}
 
-	public QueryBuilderTest() throws ScannerException {
-		this(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost"),
-				new ConsoleLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
+	public QueryBuilderTest(Configuration cnf, Logger logger) {
+		super(cnf, logger);
 	}
 
 	@Test
 	@Tag("system")
 	public void test() {
-		builder.node()
+		this.qryBuilder.node()
 				.where(Company.class);
 	}
 
@@ -69,12 +53,12 @@ public class QueryBuilderTest extends AConfigTest {
 	@Tag("system")
 	public void nodeToNode() {
 		// build with QueryBuilder
-		DebugRelationQueryBuilder slotRelQryBuilder = (DebugRelationQueryBuilder) builder.relation()
+		DebugRelationQueryBuilder slotRelQryBuilder = (DebugRelationQueryBuilder) qryBuilder.relation()
 				.where(Slot.class)
 				.whereParam("slot", 0);
-		DebugNodeQueryBuilder itemNodeQryBuilder = (DebugNodeQueryBuilder) builder.node()
+		DebugNodeQueryBuilder itemNodeQryBuilder = (DebugNodeQueryBuilder) qryBuilder.node()
 				.where(Item.class);
-		DebugNodeQueryBuilder inventoryNodeQryBuilder = (DebugNodeQueryBuilder) builder.node()
+		DebugNodeQueryBuilder inventoryNodeQryBuilder = (DebugNodeQueryBuilder) qryBuilder.node()
 				.where(Inventory.class)
 				.addRelationTo(/* relation: */
 						slotRelQryBuilder,

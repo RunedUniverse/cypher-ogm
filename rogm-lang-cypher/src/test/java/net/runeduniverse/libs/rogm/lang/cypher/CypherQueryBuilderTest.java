@@ -44,7 +44,7 @@ public class CypherQueryBuilderTest extends QueryBuilderTest {
 		ennio.getPlayed()
 				.add(s);
 
-		NodeQueryBuilder ennioBuilder = this.builder.node()
+		NodeQueryBuilder ennioBuilder = this.qryBuilder.node()
 				.setReturned(true)
 				.where(Artist.class)
 				.storeData(ennio)
@@ -57,14 +57,14 @@ public class CypherQueryBuilderTest extends QueryBuilderTest {
 	@Test
 	@Tag("system")
 	public void deleteEnnio() throws Exception {
-		NodeQueryBuilder ennioBuilder = this.builder.node()
+		NodeQueryBuilder ennioBuilder = this.qryBuilder.node()
 				.whereId(25L)
 				.setReturned(true)
 				.asDelete();
-		RelationQueryBuilder relBuilder = this.builder.relation()
+		RelationQueryBuilder relBuilder = this.qryBuilder.relation()
 				.whereDirection(Direction.BIDIRECTIONAL)
 				.setStart(ennioBuilder)
-				.setTarget(this.builder.node()
+				.setTarget(this.qryBuilder.node()
 						.setReturned(true));
 		IFilter ennioFilter = ennioBuilder.getResult();
 		IFRelation relFilter = relBuilder.getResult();
