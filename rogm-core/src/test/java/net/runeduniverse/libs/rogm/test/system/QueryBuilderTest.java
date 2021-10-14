@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.error.ScannerException;
-import net.runeduniverse.libs.rogm.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.querying.IFNode;
@@ -21,6 +20,7 @@ import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 import net.runeduniverse.libs.rogm.test.AConfigTest;
+import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 import net.runeduniverse.libs.rogm.test.dummies.DummyParser;
@@ -43,12 +43,13 @@ public class QueryBuilderTest {
 	protected final Configuration cnf;
 	protected final Archive archive;
 	protected final QueryBuilder builder;
+	protected final ConsoleLogger logger;
 
 	public QueryBuilderTest() throws ScannerException {
 		this.cnf = new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost")
 				.addClassLoader(this.getClass()
 						.getClassLoader());
-		cnf.setLogger(new DebugLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
+		cnf.setLogger(logger = new ConsoleLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
 
 		cnf.addPackage(MODEL_PKG_PATH);
 		cnf.addPackage(RELATIONS_PKG_PATH);
@@ -83,6 +84,7 @@ public class QueryBuilderTest {
 						itemNodeQryBuilder)
 				.asRead();
 		// check Builder
+		TestEntity.infoTesting(this.logger, inventoryNodeQryBuilder);
 		// assert connected Object-References
 		assertFalse(inventoryNodeQryBuilder.getRelationBuilders()
 				.isEmpty(), "NodeQueryBuilder: Inventory.relations is empty");

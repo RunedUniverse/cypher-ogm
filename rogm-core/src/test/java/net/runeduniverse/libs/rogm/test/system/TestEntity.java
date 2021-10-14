@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 
 import static net.runeduniverse.libs.rogm.test.system.TestMsgTemplates.*;
 
-public interface TestModelEntity {
+public interface TestEntity {
 
 	static void infoTesting(Logger logger, Object entity) {
 		logger.info(String.format(TestModelEntity_INFO_Testing, getSimpleClassName(entity), entity));

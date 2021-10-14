@@ -18,7 +18,7 @@ import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.model.*;
 import net.runeduniverse.libs.rogm.test.model.relations.*;
-import net.runeduniverse.libs.rogm.test.system.TestModelEntity;
+import net.runeduniverse.libs.rogm.test.system.TestEntity;
 import net.runeduniverse.libs.rogm.test.system.TestModelNode;
 
 public class SessionTest extends AConfigTest {
@@ -79,8 +79,8 @@ public class SessionTest extends AConfigTest {
 			Collection<Person> people = session.loadAll(Person.class);
 			assertNotEquals(0, people.size(), "no Artists loaded!");
 			for (Person person : people) {
-				TestModelEntity.infoTesting(classLogger, person);
-				TestModelEntity.assertEntity(Person.class, person);
+				TestEntity.infoTesting(classLogger, person);
+				TestEntity.assertEntity(Person.class, person);
 				TestModelNode.assertId(person);
 			}
 		}
@@ -94,8 +94,8 @@ public class SessionTest extends AConfigTest {
 			Collection<Artist> people = session.loadAll(Artist.class);
 			assertNotEquals(0, people.size(), "no Artists loaded!");
 			for (Artist person : people) {
-				TestModelEntity.infoTesting(classLogger, person);
-				TestModelEntity.assertEntity(Artist.class, person);
+				TestEntity.infoTesting(classLogger, person);
+				TestEntity.assertEntity(Artist.class, person);
 				TestModelNode.assertId(person);
 			}
 		}
@@ -115,7 +115,7 @@ public class SessionTest extends AConfigTest {
 					.getResult();
 
 			Person shawn = session.load(personFilter);
-			TestModelEntity.assertEntity(Person.class, shawn);
+			TestEntity.assertEntity(Person.class, shawn);
 			TestModelNode.assertId(shawn);
 			info("[Shawn]\n" + iLanguage.load(personFilter) + '\n');
 			shawn.setFirstName("Shawn");
@@ -220,7 +220,7 @@ public class SessionTest extends AConfigTest {
 					.getResult();
 
 			Company company = session.load(companyFilter);
-			TestModelEntity.assertEntity(Company.class, company);
+			TestEntity.assertEntity(Company.class, company);
 			TestModelNode.assertId(company);
 			Game game = new Game();
 			game.setName("just another USELESS title");
@@ -244,13 +244,13 @@ public class SessionTest extends AConfigTest {
 			assertEquals(2, actors.size(), "wrong amount of Actors loaded!");
 			session.resolveAllLazyLoaded(actors, 3);
 			for (Actor actor : actors) {
-				TestModelEntity.infoTesting(classLogger, actor);
-				TestModelEntity.assertEntity(Actor.class, actor);
+				TestEntity.infoTesting(classLogger, actor);
+				TestEntity.assertEntity(Actor.class, actor);
 				assertNotNull(actor.getPlays(),
 						"Actor.getPlays() = NULL, session.resolveAllLazyLoaded(actors, 3); probably failed!");
 				TestModelNode.assertId(actor);
 				for (ActorPlaysPersonRelation rel : actor.getPlays()) {
-					TestModelEntity.assertEntity(ActorPlaysPersonRelation.class, rel);
+					TestEntity.assertEntity(ActorPlaysPersonRelation.class, rel);
 					info("Actor: " + rel.getActor()
 							.getFirstName() + " plays "
 							+ rel.getPerson()
