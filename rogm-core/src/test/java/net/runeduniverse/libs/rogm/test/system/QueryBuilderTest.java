@@ -42,12 +42,7 @@ public class QueryBuilderTest extends AConfigTest {
 	protected final Archive archive;
 	protected final QueryBuilder builder;
 
-	public QueryBuilderTest() throws ScannerException {
-		this(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost"),
-				new ConsoleLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
-	}
-
-	protected QueryBuilderTest(Configuration config, ConsoleLogger logger) throws ScannerException {
+	public QueryBuilderTest(Configuration config, ConsoleLogger logger) throws ScannerException {
 		super(config.setLogger(logger)
 				.addPackage(MODEL_PKG_PATH)
 				.addPackage(RELATIONS_PKG_PATH));
@@ -56,6 +51,11 @@ public class QueryBuilderTest extends AConfigTest {
 		for (PassiveModule module : this.cnf.getPassiveModules())
 			module.configure(archive);
 		this.builder = this.archive.getQueryBuilder();
+	}
+
+	public QueryBuilderTest() throws ScannerException {
+		this(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost"),
+				new ConsoleLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
 	}
 
 	@Test
