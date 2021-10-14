@@ -47,7 +47,7 @@ public class QueryBuilderTest extends AConfigTest {
 				new ConsoleLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
 	}
 
-	public QueryBuilderTest(Configuration config, ConsoleLogger logger) throws ScannerException {
+	protected QueryBuilderTest(Configuration config, ConsoleLogger logger) throws ScannerException {
 		super(config.setLogger(logger)
 				.addPackage(MODEL_PKG_PATH)
 				.addPackage(RELATIONS_PKG_PATH));
