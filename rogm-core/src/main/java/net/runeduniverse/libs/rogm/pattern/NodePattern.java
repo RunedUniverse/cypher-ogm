@@ -46,6 +46,14 @@ public class NodePattern extends APattern<NodeQueryBuilder>
 			this.labels.add(label);
 	}
 
+	@Override
+	public void validate() throws Exception {
+		for (FieldPattern fieldPattern : this.fields.values())
+			if (fieldPattern instanceof RelatedFieldPattern)
+				this.relFields.add((RelatedFieldPattern) fieldPattern);
+		super.validate();
+	}
+
 	public PatternType getPatternType() {
 		return PatternType.NODE;
 	}
