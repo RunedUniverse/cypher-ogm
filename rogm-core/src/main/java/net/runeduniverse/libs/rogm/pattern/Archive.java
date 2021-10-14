@@ -100,8 +100,9 @@ public final class Archive {
 							.getCanonicalName());
 
 					collectFields(tp).forEach((f, s) -> {
-						CompoundTree annos = new CompoundTree("FIELD", f.getField()
-								.getName());
+						CompoundTree annos = new CompoundTree("FIELD", f.getType()
+								.getCanonicalName()).append("NAME", f.getField()
+										.getName());
 						s.forEach(a -> {
 							annos.append("ANNO", '@' + a.getSimpleName());
 						});
