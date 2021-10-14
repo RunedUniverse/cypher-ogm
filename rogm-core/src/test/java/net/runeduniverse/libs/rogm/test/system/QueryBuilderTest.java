@@ -29,30 +29,28 @@ import net.runeduniverse.libs.rogm.test.model.Inventory;
 import net.runeduniverse.libs.rogm.test.model.Item;
 import net.runeduniverse.libs.rogm.test.model.relations.Slot;
 
-public class QueryBuilderTest {
+public class QueryBuilderTest extends AConfigTest {
 
 	public static final String MODEL_PKG_PATH = AConfigTest.MODEL_PKG_PATH;
 	public static final String RELATIONS_PKG_PATH = AConfigTest.RELATIONS_PKG_PATH;
 
 	static {
-		Archive.PACKAGE_SCANNER_DEBUG_MODE = true;
 		QueryBuilder.CREATOR_NODE_BUILDER = a -> new DebugNodeQueryBuilder(a);
 		QueryBuilder.CREATOR_REALATION_BUILDER = a -> new DebugRelationQueryBuilder(a);
 	}
 
-	protected final Configuration cnf;
 	protected final Archive archive;
 	protected final QueryBuilder builder;
-	protected final ConsoleLogger logger;
 
 	public QueryBuilderTest() throws ScannerException {
-		this.cnf = new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost")
-				.addClassLoader(this.getClass()
-						.getClassLoader());
-		cnf.setLogger(logger = new ConsoleLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
+		this(new Configuration(new DummyParser(), new DummyLanguage(), new DummyModule(), "localhost"),
+				new ConsoleLogger(Logger.getLogger(QueryBuilderTest.class.getName())));
+	}
 
-		cnf.addPackage(MODEL_PKG_PATH);
-		cnf.addPackage(RELATIONS_PKG_PATH);
+	public QueryBuilderTest(Configuration config, ConsoleLogger logger) throws ScannerException {
+		super(config.setLogger(logger)
+				.addPackage(MODEL_PKG_PATH)
+				.addPackage(RELATIONS_PKG_PATH));
 
 		this.archive = new Archive(this.cnf.getPackageInfo(), this.cnf.getModule());
 		for (PassiveModule module : this.cnf.getPassiveModules())
