@@ -1,5 +1,7 @@
 package net.runeduniverse.libs.rogm.lang.cypher;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collections;
 import java.util.logging.Logger;
 
@@ -52,6 +54,7 @@ public class CypherQueryBuilderTest extends AQueryBuilderTest {
 		IFilter ennioFilter = ennioBuilder.getResult();
 		TestEntity.infoTesting(this.logger, ennioBuilder);
 		System.out.println("[ENNIO]\n" + iLanguage.save((IDataContainer) ennioFilter, Collections.EMPTY_SET) + '\n');
+		assertTrue(false);
 	}
 
 	@Test
