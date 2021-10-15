@@ -109,6 +109,11 @@ public final class Archive {
 										.getName())
 										.append("TYPE", f.getType()
 												.getCanonicalName());
+						if (f instanceof RelatedFieldPattern) {
+							String label = ((RelatedFieldPattern) f).getLabel();
+							if (label != null)
+								pattern.append("LABEL", label);
+						}
 						s.forEach(a -> {
 							annos.append("ANNO", '@' + a.getSimpleName());
 						});
