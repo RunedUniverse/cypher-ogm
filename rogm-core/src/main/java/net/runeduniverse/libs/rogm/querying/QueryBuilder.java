@@ -279,7 +279,7 @@ public final class QueryBuilder {
 		public BUILDER where(Class<?> type) {
 			this.type = type;
 			for (IPattern p : this.archive.getPatterns(this.type)) {
-				proxyFilter.addLabels(p.getLabels());
+				this.proxyFilter.addLabels(p.getLabels());
 				if (p instanceof IBaseQueryPattern<?>)
 					this.storePattern((PATTERN) p);
 			}
@@ -493,6 +493,9 @@ public final class QueryBuilder {
 			if (this.id != null)
 				localTree.append("ID", this.id.toString());
 			localTree.append("STATUS", this.lazy ? "LAZY" : "COMPLETE");
+			if (!this.proxyFilter.getLabels()
+					.isEmpty())
+				localTree.append("LABELS", String.join(", ", this.proxyFilter.getLabels()));
 			toRecord(tree, gen, registry, localTree);
 			for (Object handler : this.handler.values())
 				ITraceable.toRecord(localTree, handler);
