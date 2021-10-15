@@ -24,7 +24,7 @@ public class DataContainerHandler implements IDataContainer, NoFilterType, ITrac
 
 	@Override
 	public void toRecord(CompoundTree tree) {
-		tree.append("DATA", data.toString())
+		tree.append("DATA", data == null ? "null" : data.toString())
 				.append("PERSIST", this.persist ? "TRUE" : "FALSE")
 				.append("READONLY", this.readonly ? "TRUE" : "FALSE");
 	}

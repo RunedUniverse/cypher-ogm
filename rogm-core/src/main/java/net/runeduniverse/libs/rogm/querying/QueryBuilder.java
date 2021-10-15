@@ -219,8 +219,22 @@ public final class QueryBuilder {
 					e.printStackTrace();
 				}
 
-			this.startNodeBuilder.validateStructure();
-			this.targetNodeBuilder.validateStructure();
+			FilterType thisType = this.proxyFilter.getFilterType();
+
+			if (this.startNodeBuilder != null) {
+				this.startNodeBuilder.validateStructure();
+				if (this.startNodeBuilder.proxyFilter.getFilterType() == FilterType.CREATE
+						&& thisType != FilterType.CREATE)
+					this.asUpdate();
+			}
+
+			if (this.targetNodeBuilder != null) {
+				this.targetNodeBuilder.validateStructure();
+				if (this.targetNodeBuilder.proxyFilter.getFilterType() == FilterType.CREATE
+						&& thisType != FilterType.CREATE)
+					this.asUpdate();
+			}
+
 		}
 
 		@Override
