@@ -29,12 +29,14 @@ public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, Invocat
 	protected Set<String> labels = new HashSet<>();
 
 	public FILTER addLabel(String label) {
-		this.labels.add(label);
+		if (label != null)
+			this.labels.add(label);
 		return this.instance;
 	}
 
 	public FILTER addLabels(Collection<String> labels) {
-		this.labels.addAll(labels);
+		for (String label : labels)
+			this.addLabel(label);
 		return this.instance;
 	}
 
