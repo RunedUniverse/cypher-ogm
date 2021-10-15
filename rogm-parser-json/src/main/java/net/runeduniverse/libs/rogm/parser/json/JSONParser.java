@@ -19,6 +19,7 @@ import net.runeduniverse.libs.rogm.parser.Parser;
 @SuppressWarnings("deprecation")
 public class JSONParser implements Parser {
 	private final ObjectMapper mapper = new ObjectMapper();
+	private boolean serializeNullAsEmptyObject = Feature.SERIALIZE_NULL_AS_EMPTY_OBJECT.getDefaultValue();
 
 	public JSONParser() {
 		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
@@ -28,6 +29,9 @@ public class JSONParser implements Parser {
 
 	public JSONParser configure(Feature feature, boolean value) {
 		switch (feature) {
+		case SERIALIZE_NULL_AS_EMPTY_OBJECT:
+			this.serializeNullAsEmptyObject = value;
+			break;
 		case SERIALIZER_QUOTE_FIELD_NAMES:
 			mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, value);
 			break;
@@ -52,6 +56,9 @@ public class JSONParser implements Parser {
 
 	public void resetFeature(Feature feature) {
 		switch (feature) {
+		case SERIALIZE_NULL_AS_EMPTY_OBJECT:
+			this.serializeNullAsEmptyObject = feature.getDefaultValue();
+			break;
 		case SERIALIZER_QUOTE_FIELD_NAMES:
 			mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, feature.getDefaultValue());
 			break;
@@ -87,7 +94,7 @@ public class JSONParser implements Parser {
 		AnnotationIntrospector deserial = new AnnotationIntrospectorPair(introspector, mapper.getDeserializationConfig()
 				.getAnnotationIntrospector());
 		return new JSONParserInstance(mapper.copy()
-				.setAnnotationIntrospectors(serial, deserial));
+				.setAnnotationIntrospectors(serial, deserial), this.serializeNullAsEmptyObject);
 	}
 
 }

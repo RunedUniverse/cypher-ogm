@@ -10,9 +10,12 @@ import net.runeduniverse.libs.rogm.parser.Parser.Instance;
 @RequiredArgsConstructor
 class JSONParserInstance implements Instance {
 	private final ObjectMapper mapper;
+	private final boolean serializeNullAsEmptyObject;
 
 	@Override
 	public String serialize(Object object) throws JsonProcessingException {
+		if (object == null && this.serializeNullAsEmptyObject)
+			return "{}";
 		return mapper.writeValueAsString(object);
 	}
 

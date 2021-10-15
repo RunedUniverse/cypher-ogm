@@ -1,7 +1,5 @@
 package net.runeduniverse.libs.rogm.lang.cypher;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import java.util.Collections;
 import java.util.logging.Logger;
 
@@ -30,19 +28,12 @@ import net.runeduniverse.libs.rogm.test.system.TestEntity;
 public class CypherQueryBuilderTest extends AQueryBuilderTest {
 
 	public CypherQueryBuilderTest() throws ScannerException {
-		super(new Configuration(new JSONParser().configure(Feature.SERIALIZER_QUOTE_FIELD_NAMES, false)
+		super(new Configuration(new JSONParser().configure(Feature.SERIALIZE_NULL_AS_EMPTY_OBJECT, true)
+				.configure(Feature.SERIALIZER_QUOTE_FIELD_NAMES, false)
 				.configure(Feature.DESERIALIZER_ALLOW_UNQUOTED_FIELD_NAMES, true)
 				.configure(Feature.MAPPER_AUTO_DETECT_GETTERS, false)
 				.configure(Feature.MAPPER_AUTO_DETECT_IS_GETTERS, false), new CypherLanguage(), new DummyModule(),
 				"localhost"), new ConsoleLogger(Logger.getLogger(CypherQueryBuilderTest.class.getName())));
-	}
-
-	@Test
-	@Tag("system")
-	public void testParserWithCypherConfig() throws Exception {
-		this.archive.logPatterns(this.logger);
-		String serial = iParser.serialize(null);
-		assertFalse(serial.contains("null"), "null serialized as » " + serial + " « instead of » {} « or » «");
 	}
 
 	@SuppressWarnings("unchecked")
