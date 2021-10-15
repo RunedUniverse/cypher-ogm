@@ -45,6 +45,7 @@ public abstract class AArchiveTest extends AConfigTest {
 	}
 
 	protected String printQuery(Class<?> clazz, IFilter filter) throws Exception {
+		this.archive.logPatterns(this.logger);
 		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(filter) + '\n';
 	}
 

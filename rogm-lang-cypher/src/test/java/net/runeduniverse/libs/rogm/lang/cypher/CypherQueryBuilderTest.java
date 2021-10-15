@@ -40,6 +40,7 @@ public class CypherQueryBuilderTest extends AQueryBuilderTest {
 	@Test
 	@Tag("system")
 	public void testParserWithCypherConfig() throws Exception {
+		this.archive.logPatterns(this.logger);
 		String serial = iParser.serialize(null);
 		assertFalse(serial.contains("null"), "null serialized as » " + serial + " « instead of » {} « or » «");
 	}
