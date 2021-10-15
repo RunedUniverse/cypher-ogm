@@ -1,11 +1,14 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
+import java.util.logging.Logger;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.test.AArchiveTest;
+import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.model.*;
 
 public class Neo4jArchiveTest extends AArchiveTest {
@@ -13,7 +16,7 @@ public class Neo4jArchiveTest extends AArchiveTest {
 	static Configuration config = new Neo4jConfiguration("runeduniverse.net");
 
 	public Neo4jArchiveTest() {
-		super(config);
+		super(config, new ConsoleLogger(Logger.getLogger(Neo4jArchiveTest.class.getName())));
 	}
 
 	private static Person testi;
