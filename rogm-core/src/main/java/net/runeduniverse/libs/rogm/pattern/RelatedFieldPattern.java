@@ -116,7 +116,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 		}
 
 		if (relationBuilder.getLabels()
-				.isEmpty() && this.label != null)
+				.isEmpty())
 			relationBuilder.getLabels()
 					.add(this.label);
 
