@@ -91,13 +91,17 @@ public final class Archive {
 						.toString(),
 						p.getClass()
 								.getCanonicalName());
+
 				if (p instanceof TypePattern<?, ?>) {
 					TypePattern<?, ?> tp = (TypePattern<?, ?>) p;
-					pattern.append("PKG", tp.getPkg());
-					pattern.append("TYPE", tp.getType()
-							.getCanonicalName());
-					pattern.append("SUPER TYPE", tp.getSuperType()
-							.getCanonicalName());
+					pattern.append("PKG", tp.getPkg())
+							.append("TYPE", tp.getType()
+									.getCanonicalName())
+							.append("SUPER TYPE", tp.getSuperType()
+									.getCanonicalName());
+					if (!p.getLabels()
+							.isEmpty())
+						pattern.append("LABELS", String.join(", ", p.getLabels()));
 
 					collectFields(tp).forEach((f, s) -> {
 						CompoundTree annos = new CompoundTree("FIELD", f.getClass()
