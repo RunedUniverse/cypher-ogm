@@ -2,24 +2,12 @@ package net.runeduniverse.libs.rogm.buffer;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Set;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
-import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
-import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.querying.ILazyLoading;;
+import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;;
 
-public interface IBuffer {
-
-	IBuffer initialize(IStorage storage);
-
-	<T> T acquire(IPattern pattern, IData data, Class<T> type, LoadState loadState, Set<Entry> lazyEntries)
-			throws Exception;
-
-	Entry update(Object entity, IData data) throws Exception;
+public interface IBuffer extends InternalBufferTypes {
 
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
@@ -44,9 +32,10 @@ public interface IBuffer {
 
 	void addEntry(Entry entry);
 
-	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState, IPattern pattern);
+	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState,
+			IBaseQueryPattern<?> pattern);
 
-	void updateEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState) throws Exception;
+	void updateEntry(Archive archive, UpdatedEntryContainer container) throws Exception;
 
 	void removeEntry(Entry entry);
 
@@ -58,48 +47,11 @@ public interface IBuffer {
 
 	Collection<Entry> getAllEntries();
 
-	@Data
-	@AllArgsConstructor
-	public class Entry {
-		private Serializable id;
-		private Serializable entityId;
-		private Object entity;
-		private LoadState loadState;
-		private Class<?> type;
-		private IPattern pattern;
+	// INTERNAL USE //
+	@Deprecated
+	void updateEntry(Entry entry, Serializable id, Serializable entityId);
 
-		public Entry(IData data, Object entity, LoadState loadState, IPattern pattern) {
-			this.id = data.getId();
-			this.entityId = data.getEntityId();
-			this.entity = entity;
-			this.loadState = loadState;
-			this.type = entity.getClass();
-			this.pattern = pattern;
-		}
-	}
+	@Deprecated
+	TypeEntry getTypeEntry(Class<?> type);
 
-	public enum LoadState {
-		COMPLETE, LAZY;
-
-		public static LoadState get(boolean lazy) {
-			if (lazy)
-				return LAZY;
-			return COMPLETE;
-		}
-
-		public static LoadState get(IFilter filter) {
-			return get(filter instanceof ILazyLoading && ((ILazyLoading) filter).isLazy());
-		}
-
-		protected static Object merge(Entry entry, LoadState state, Set<Entry> lazyEntries) {
-			if (entry.getLoadState() == COMPLETE || state == COMPLETE)
-				entry.setLoadState(COMPLETE);
-			else {
-				entry.setLoadState(LAZY);
-				if (lazyEntries != null)
-					lazyEntries.add(entry);
-			}
-			return entry.getEntity();
-		}
-	}
 }

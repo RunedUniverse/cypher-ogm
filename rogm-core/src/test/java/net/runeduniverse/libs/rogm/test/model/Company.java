@@ -10,7 +10,7 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class Company extends AEntity {
 
 	private String name;

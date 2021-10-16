@@ -1,13 +1,11 @@
 package net.runeduniverse.libs.rogm.logging;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
-import net.runeduniverse.libs.rogm.Configuration;
+import net.runeduniverse.libs.logging.ALogger;
+import net.runeduniverse.libs.rogm.info.SessionInfo;
 
 public final class SessionLogger extends ALogger {
 
@@ -15,14 +13,9 @@ public final class SessionLogger extends ALogger {
 
 	private final String prefix;
 
-	public SessionLogger(Class<?> clazz, Logger parent, Level level) {
-		super("ROGM", null, parent);
+	public SessionLogger(Class<?> clazz, PipelineLogger pipelineLogger) {
+		super("ROGM", null, pipelineLogger);
 		prefix = "[" + clazz.getSimpleName() + '|' + id.getAndIncrement() + "] ";
-
-		if (level == null)
-			super.setLevel(Level.CONFIG);
-		else
-			super.setLevel(level);
 	}
 
 	@Override
@@ -31,19 +24,8 @@ public final class SessionLogger extends ALogger {
 		super.log(record);
 	}
 
-	public void config(Configuration cnf) {
-		List<String> msg = new ArrayList<String>();
-		msg.add("Initializing Session");
-		msg.add("Database Module: " + cnf.getModule().getClass().getSimpleName());
-		msg.add("Uri: " + cnf.getUri());
-		msg.add("Protocol: " + cnf.getProtocol());
-		msg.add("Port: " + cnf.getPort());
-		msg.add("User: " + cnf.getUser());
-		msg.add("Buffer: " + cnf.getBuffer().getClass().getSimpleName());
-		msg.add("Model Packages:");
-		for (String pkg : cnf.getPkgs())
-			msg.add(" - " + pkg);
-
-		this.log(Level.CONFIG, String.join("\n\t", msg));
+	public SessionLogger logSessionInfo(final SessionInfo info) {
+		super.log(Level.CONFIG, this.prefix + '\n' + info.toString());
+		return this;
 	}
 }

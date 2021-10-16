@@ -8,56 +8,15 @@ import java.util.Map;
 import java.util.Set;
 
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
+import net.runeduniverse.libs.rogm.pattern.Archive;
+import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.INodePattern;
-import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pattern.IStorage;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 
 public class BasicBuffer implements IBuffer {
 
-	protected IStorage storage = null;
 	private Map<Object, Entry> entries = new HashMap<>();
 	private Map<Class<?>, TypeEntry> typeMap = new HashMap<>();
-
-	@Override
-	public IBuffer initialize(IStorage storage) {
-		this.storage = storage;
-		return this;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T acquire(IPattern pattern, IPattern.IData data, Class<T> type, LoadState loadState,
-			Set<Entry> lazyEntries) throws Exception {
-		TypeEntry te = this.typeMap.get(type);
-		if (te != null) {
-			Entry entry = te.idMap.get(data.getId());
-			if (entry != null)
-				return (T) LoadState.merge(entry, loadState, lazyEntries);
-		}
-
-		T entity = this.storage.getParser()
-				.deserialize(type, data.getData());
-		pattern.setId(entity, data.getEntityId());
-		Entry entry = new Entry(data, entity, loadState, pattern);
-		if (lazyEntries != null && loadState == LoadState.LAZY)
-			lazyEntries.add(entry);
-		addEntry(entry);
-		return entity;
-	}
-
-	@Override
-	public Entry update(Object entity, IPattern.IData data) throws Exception {
-		if (entity == null)
-			return null;
-		Entry entry = entries.get(entity);
-
-		this.storage.getParser()
-				.deserialize(entity, data.getData());
-		updateEntry(entry, data.getId(), data.getEntityId());
-		entry.getPattern()
-				.setId(entity, data.getEntityId());
-		return entry;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -108,29 +67,31 @@ public class BasicBuffer implements IBuffer {
 	}
 
 	@Override
-	public void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState, IPattern pattern) {
+	public void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState,
+			IBaseQueryPattern<?> pattern) {
 		addEntry(new Entry(id, entityId, entity, loadState, entity.getClass(), pattern));
 	}
 
 	@Override
-	public void updateEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState)
-			throws Exception {
+	public void updateEntry(Archive archive, UpdatedEntryContainer container) {
+		Object entity = container.getEntity();
 		if (entity == null)
 			return;
 		Entry entry = entries.get(entity);
 
 		Class<?> type = entity.getClass();
-		IPattern pattern = this.storage.getPattern(type);
-		entityId = pattern.prepareEntityId(id, entityId);
+		IBaseQueryPattern<?> pattern = archive.getPattern(type, IBaseQueryPattern.class);
+		pattern.prepareEntityId(container);
 
 		if (entry == null)
-			addEntry(new Entry(id, entityId, entity, loadState, type, pattern));
+			addEntry(new Entry(container.getId(), container.getEntityId(), entity, container.getLoadState(), type,
+					pattern));
 		else
-			updateEntry(entry, id, entityId);
-		pattern.setId(entity, entityId);
+			updateEntry(entry, container.getId(), container.getEntityId());
+		pattern.setId(entity, container.getEntityId());
 	}
 
-	protected void updateEntry(Entry entry, Serializable id, Serializable entityId) {
+	public void updateEntry(Entry entry, Serializable id, Serializable entityId) {
 		TypeEntry te = this.typeMap.get(entry.getType());
 
 		if (id != entry.getId()) {
@@ -167,9 +128,9 @@ public class BasicBuffer implements IBuffer {
 		return this.entries.values();
 	}
 
-	protected class TypeEntry {
-		protected Map<Serializable, Entry> idMap = new HashMap<>();
-		protected Map<Serializable, Entry> entityIdMap = new HashMap<>();
+	@Override
+	public TypeEntry getTypeEntry(Class<?> type) {
+		return this.typeMap.get(type);
 	}
 
 	@Override
@@ -195,10 +156,10 @@ public class BasicBuffer implements IBuffer {
 				nodes.add(entry);
 
 		for (Entry entry : nodes)
-			((INodePattern) entry.getPattern()).deleteRelations(entry.getEntity(), deletedEntities);
+			((INodePattern<?>) entry.getPattern()).deleteRelations(entry.getEntity(), deletedEntities);
 
 		for (Entry entry : deletedEntries) {
-			removeEntry(entry);
+			this.removeEntry(entry);
 			entry.getPattern()
 					.callMethod(PostDelete.class, entry.getEntity());
 		}

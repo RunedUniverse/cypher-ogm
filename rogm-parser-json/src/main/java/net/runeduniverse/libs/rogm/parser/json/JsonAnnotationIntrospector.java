@@ -15,12 +15,12 @@ import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.StartNode;
 import net.runeduniverse.libs.rogm.annotations.TargetNode;
 import net.runeduniverse.libs.rogm.annotations.Transient;
-import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 
 @RequiredArgsConstructor
 public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 	private static final long serialVersionUID = 1L;
-	private final Module module;
+	private final IdTypeResolver resolver;
 
 	@Override
 	public Value findPropertyInclusion(Annotated a) {
@@ -35,7 +35,7 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 	@Override
 	public PropertyName findNameForSerialization(Annotated a) {
 		if (1 == _isId(a)) {
-			return PropertyName.construct(module.getIdAlias());
+			return PropertyName.construct(resolver.getIdAlias());
 		}
 		return null;
 	}
@@ -43,7 +43,7 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 	@Override
 	public PropertyName findNameForDeserialization(Annotated a) {
 		if (1 == _isId(a))
-			return PropertyName.construct(module.getIdAlias());
+			return PropertyName.construct(resolver.getIdAlias());
 		return null;
 	}
 
@@ -51,8 +51,11 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 		Property anno = _findAnnotation(a, Property.class);
 		if (anno == null)
 			return JsonInclude.Value.empty();
-		return JsonInclude.Value.empty().withValueInclusion(Include.ALWAYS).withContentInclusion(Include.ALWAYS)
-				.withValueFilter(Void.class).withContentFilter(Void.class);
+		return JsonInclude.Value.empty()
+				.withValueInclusion(Include.ALWAYS)
+				.withContentInclusion(Include.ALWAYS)
+				.withValueFilter(Void.class)
+				.withContentFilter(Void.class);
 	}
 
 	private boolean _isTransient(Annotated a) {
@@ -66,7 +69,7 @@ public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {
 		Id anno = _findAnnotation(a, Id.class);
 		if (anno == null)
 			return 0;
-		if (module.checkIdType(a.getRawType()))
+		if (resolver.checkIdType(a.getRawType()))
 			return 2;
 		return 1;
 	}

@@ -12,13 +12,10 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataNode;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.IDataRelation;
-import net.runeduniverse.libs.rogm.pattern.FilterFactory.Relation;
-import net.runeduniverse.libs.rogm.querying.FilterType;
-import net.runeduniverse.libs.rogm.querying.IDataContainer;
-import net.runeduniverse.libs.rogm.querying.IFNode;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
+import net.runeduniverse.libs.rogm.querying.IFilter;
+import net.runeduniverse.libs.rogm.querying.IQueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
+import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
 @Getter
 @Setter
@@ -28,8 +25,8 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 	private Direction direction;
 	private boolean definedRelation;
 
-	public RelatedFieldPattern(IStorage factory, Field field) throws Exception {
-		super(factory, field);
+	public RelatedFieldPattern(Archive archive, Field field) throws Exception {
+		super(archive, field);
 	}
 
 	@Override
@@ -40,7 +37,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 		if (this.type.isAnnotationPresent(NodeEntity.class))
 			this.definedRelation = false;
 		else if (this.type.isAnnotationPresent(RelationshipEntity.class)) {
-			this.label = this.factory.getRelation(this.type)
+			this.label = this.archive.getPattern(this.type, IRelationPattern.class)
 					.getLabel();
 			this.definedRelation = true;
 		} else
@@ -49,78 +46,81 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 			this.label = isBlank(fieldAnno.label()) ? this.field.getName() : fieldAnno.label();
 	}
 
-	public IFRelation queryRelation(IFNode origin) throws Exception {
-		Relation relation = null;
+	public RelationQueryBuilder queryRelation(NodeQueryBuilder origin) throws Exception {
+		RelationQueryBuilder relationBuilder = null;
 		if (this.definedRelation)
-			relation = this.factory.getRelation(this.type)
-					.createFilter(origin, this.direction);
+			relationBuilder = this.archive.getPattern(this.type, IRelationPattern.class)
+					.createFilter(origin, direction);
 		else {
-			relation = this.factory.getFactory()
-					.createRelation(this.direction);
-			relation.setStart(origin);
-			relation.setTarget(this._getNode(this.type, relation));
+			relationBuilder = this.archive.getQueryBuilder()
+					.relation()
+					.whereDirection(this.direction);
+			relationBuilder.setStart(origin);
+			relationBuilder.setTarget(this._getNode(this.type, relationBuilder));
 		}
 
-		if (relation.getLabels()
+		if (relationBuilder.getLabels()
 				.isEmpty())
-			relation.getLabels()
+			relationBuilder.getLabels()
 					.add(this.label);
 
-		relation.setReturned(true);
-		relation.setOptional(true);
-		return relation;
+		relationBuilder.setReturned(true);
+		relationBuilder.setOptional(true);
+		return relationBuilder;
 	}
 
-	private IFNode _getNode(Class<?> type, IFRelation relation) throws Exception {
-		INodePattern node = this.factory.getNode(type);
+	private NodeQueryBuilder _getNode(Class<?> type, RelationQueryBuilder relation) throws Exception {
+		INodePattern<?> node = this.archive.getPattern(type, INodePattern.class);
 		if (node == null)
 			throw new Exception("Unsupported Class<" + type.getName() + "> as @Relation found!");
 		return node.search(relation, true);
 	}
 
-	public void saveRelation(Object entity, IDataNode node, Map<Object, IDataContainer> includedData, Integer depth)
-			throws Exception {
+	public void saveRelation(Object entity, NodeQueryBuilder nodeBuilder,
+			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 		if (entity == null)
 			return;
 		if (this.collection)
 			// Collection
 			for (Object relNode : (Collection<?>) this.field.get(entity))
-				_addRelation(node, relNode, includedData, depth);
+				_addRelation(nodeBuilder, relNode, includedData, depth);
 		else
 			// Variable
-			_addRelation(node, this.field.get(entity), includedData, depth);
+			_addRelation(nodeBuilder, this.field.get(entity), includedData, depth);
 	}
 
-	private void _addRelation(IDataNode node, Object relEntity, Map<Object, IDataContainer> includedData, Integer depth)
-			throws Exception {
+	@SuppressWarnings({ "deprecation", "unchecked" })
+	private void _addRelation(NodeQueryBuilder nodeBuilder, Object relEntity,
+			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 		if (relEntity == null)
 			return;
 
-		IDataRelation relation = null;
+		RelationQueryBuilder relationBuilder = null;
 		// clazz could be substituted with this.type but isn't in case the entities type
 		// is a child of this.type
 		Class<?> clazz = relEntity.getClass();
 		if (clazz.isAnnotationPresent(RelationshipEntity.class)) {
-			relation = this.factory.getRelation(clazz)
-					.save(relEntity, node, this.direction, includedData, depth);
-			if (relation == null)
+			relationBuilder = this.archive.getPattern(clazz, IRelationPattern.class)
+					.save(relEntity, nodeBuilder, this.direction, includedData, depth);
+			if (relationBuilder == null)
 				return;
 		} else {
-			relation = this.factory.getFactory()
-					.createDataRelation(this.direction, null);
-			relation.setFilterType(FilterType.UPDATE);
-			relation.setStart(node);
-			relation.setTarget(this.factory.getNode(clazz)
-					.save(relEntity, includedData, depth));
+			relationBuilder = this.archive.getQueryBuilder()
+					.relation()
+					.setAutoGenerated(true)
+					.whereDirection(this.direction)
+					.setStart(nodeBuilder)
+					.setTarget(this.archive.getPattern(clazz, INodePattern.class)
+							.save(relEntity, includedData, depth))
+					.asUpdate();
 		}
 
-		if (relation.getLabels()
+		if (relationBuilder.getLabels()
 				.isEmpty())
-			relation.getLabels()
+			relationBuilder.getLabels()
 					.add(this.label);
 
-		node.getRelations()
-				.add(relation);
+		nodeBuilder.addRelation(relationBuilder);
 	}
 
 }

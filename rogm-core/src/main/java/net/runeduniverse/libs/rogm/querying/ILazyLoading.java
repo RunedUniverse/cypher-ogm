@@ -1,6 +1,6 @@
 package net.runeduniverse.libs.rogm.querying;
 
-public interface ILazyLoading extends IFNode {
+public interface ILazyLoading extends IFilter {
 
 	boolean isLazy();
 }

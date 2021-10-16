@@ -1,7 +1,16 @@
 pipeline {
 	agent any
+	tools {
+		maven 'Maven 3.6.3'
+		jdk 'OpenJDK 8'
+	}
 	stages {
-
+		stage('Update Maven Repo') {
+			steps {
+				sh 'mvn dependency:resolve'
+				sh 'mvn install --non-recursive'
+			}
+		}
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
@@ -49,15 +58,23 @@ pipeline {
 				}
 			}
 		}
-
-		stage('Test') {
-			parallel {
-				stage('System') {
-					steps {
-						sh 'mvn -P jenkins-test-system'
-					}
+		
+		stage('System Test') {
+			steps {
+				sh 'mvn -P jenkins-test-system'
+			}
+			post {
+				always {
+					junit '*/target/surefire-reports/*.xml'
 				}
-				stage('Database Neo4J') {
+				failure {
+				    archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
+				}
+			}
+		}
+		stage('Database Test') {
+			parallel {
+				stage('Neo4J') {
 					environment {
 						BUILD_TAG_CAPS= sh(returnStdout: true, script: 'echo $BUILD_TAG | tr "[a-z]" "[A-Z]"').trim()
 						// start Neo4J
@@ -92,19 +109,22 @@ pipeline {
 				always {
 					junit '*/target/surefire-reports/*.xml'
 				}
+				failure {
+				    archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
+				}
 			}
 		}
 
 		stage('Deploy') {
 			steps {
-				sh '''mvn -P jenkins-deploy'''
+				sh 'mvn -P jenkins-deploy'
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
-
 	}
-	tools {
-		maven 'Maven 3.6.3'
-		jdk 'OpenJDK 8'
+	post {
+		cleanup {
+			cleanWs()
+		}
 	}
 }

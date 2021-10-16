@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.runeduniverse.libs</groupId>
 	<artifactId>rogm</artifactId>
-	<version>2.0</version>
+	<version>2.1</version>
 	<packaging>pom</packaging>
 	<name>ROGM</name>
 
@@ -19,11 +19,11 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- VERSIONS -->
-		<core.version>13</core.version>
-		<parser.json.version>12</parser.json.version>
-		<lang.cypher.version>11</lang.cypher.version>
+		<core.version>1</core.version>
+		<parser.json.version>1</parser.json.version>
+		<lang.cypher.version>1</lang.cypher.version>
 		<module.decorator.version>1</module.decorator.version>
-		<module.neo4j.version>12</module.neo4j.version>
+		<module.neo4j.version>1</module.neo4j.version>
 	</properties>
 
 	<repositories>
@@ -42,11 +42,37 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- CORE -->
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm</groupId>
 				<artifactId>core</artifactId>
 				<version>${project.parent.version}.${core.version}</version>
 			</dependency>
+			<!-- PARSER -->
+			<dependency>
+				<groupId>net.runeduniverse.libs.rogm.parser</groupId>
+				<artifactId>json</artifactId>
+				<version>${project.parent.version}.${parser.json.version}</version>
+			</dependency>
+			<!-- LANGUAGES -->
+			<dependency>
+				<groupId>net.runeduniverse.libs.rogm.lang</groupId>
+				<artifactId>cypher</artifactId>
+				<version>${project.parent.version}.${lang.cypher.version}</version>
+			</dependency>
+			<!-- MODULES -->
+			<dependency>
+				<groupId>net.runeduniverse.libs.rogm.modules</groupId>
+				<artifactId>neo4j</artifactId>
+				<version>${project.parent.version}.${module.neo4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.runeduniverse.libs.rogm.modules</groupId>
+				<artifactId>decorator</artifactId>
+				<version>${project.parent.version}.${module.decorator.version}</version>
+			</dependency>
+
+			<!-- UTILS -->
 			<dependency>
 				<groupId>net.runeduniverse.libs</groupId>
 				<artifactId>utils</artifactId>
@@ -54,8 +80,23 @@
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.libs</groupId>
+				<artifactId>logging</artifactId>
+				<version>0.0.2</version>
+			</dependency>
+			<dependency>
+				<groupId>net.runeduniverse.libs</groupId>
+				<artifactId>errors</artifactId>
+				<version>0.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.runeduniverse.libs</groupId>
+				<artifactId>chain</artifactId>
+				<version>0.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.runeduniverse.libs</groupId>
 				<artifactId>scanner</artifactId>
-				<version>1.0.2</version>
+				<version>1.0.5</version>
 			</dependency>
 
 			<!-- OBJECT MAPPER -->
@@ -212,6 +253,9 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.22.0</version>
+					<configuration>
+						<trimStackTrace>false</trimStackTrace>
+					</configuration>
 					<dependencies>
 						<dependency>
 							<groupId>org.junit.jupiter</groupId>

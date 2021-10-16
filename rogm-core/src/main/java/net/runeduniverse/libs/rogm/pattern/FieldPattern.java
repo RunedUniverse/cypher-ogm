@@ -11,14 +11,14 @@ import net.runeduniverse.libs.rogm.annotations.Id;
 @ToString(callSuper = true)
 public class FieldPattern extends net.runeduniverse.libs.scanner.FieldPattern {
 
-	protected final IStorage factory;
+	protected final Archive archive;
 	@Getter
 	@Setter
 	protected IConverter<?> converter = null;
 
-	public FieldPattern(IStorage factory, Field field) throws Exception {
+	public FieldPattern(Archive archive, Field field) throws Exception {
 		super(field);
-		this.factory = factory;
+		this.archive = archive;
 		Converter converterAnno = this.field.getAnnotation(Converter.class);
 		if (converterAnno == null) {
 			if (this.field.isAnnotationPresent(Id.class))

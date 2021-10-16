@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
 import net.runeduniverse.libs.rogm.test.model.*;
 
-public class UnquotedJsonParserTest extends ATest {
+public class UnquotedJsonParserTest extends AConfigTest {
 
 	public UnquotedJsonParserTest() {
 		super(new Configuration(new JSONParser().configure(Feature.SERIALIZER_QUOTE_FIELD_NAMES, false)

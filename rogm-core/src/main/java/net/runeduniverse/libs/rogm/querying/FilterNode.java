@@ -1,8 +1,8 @@
 package net.runeduniverse.libs.rogm.querying;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import lombok.Getter;
 import net.runeduniverse.libs.rogm.annotations.Direction;
@@ -10,7 +10,7 @@ import net.runeduniverse.libs.rogm.annotations.Direction;
 public class FilterNode extends AParamFilter<FilterNode> implements IFNode, IIdentified<Serializable> {
 
 	@Getter
-	List<IFRelation> relations = new ArrayList<>();
+	Set<IFRelation> relations = new HashSet<>();
 	@Getter
 	private Serializable id;
 

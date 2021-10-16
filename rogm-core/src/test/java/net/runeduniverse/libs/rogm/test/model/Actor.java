@@ -11,7 +11,7 @@ import net.runeduniverse.libs.rogm.test.model.relations.ActorPlaysPersonRelation
 
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class Actor extends Person {
 
 	@Relationship

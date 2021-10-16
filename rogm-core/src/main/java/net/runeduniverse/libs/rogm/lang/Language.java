@@ -5,20 +5,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
-import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
+import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.pattern.IPattern;
+import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
-public interface Language {
+public interface Language extends DatabaseCleaner {
 
-	Instance build(Parser.Instance parser, Module module);
+	Instance build(final Logger logger, final IdTypeResolver resolver, final Parser.Instance parser);
 
 	public interface Instance {
 		ILoadMapper load(IFilter filter) throws Exception;
@@ -26,8 +28,6 @@ public interface Language {
 		ISaveMapper save(IDataContainer container, Set<IFilter> filter) throws Exception;
 
 		IDeleteMapper delete(IFilter filter, IFRelation relation) throws Exception;
-
-		String deleteRelations(Collection<String> ids);
 	}
 
 	public interface IMapper {
@@ -39,9 +39,8 @@ public interface Language {
 	}
 
 	public interface ISaveMapper extends IMapper {
-		<ID extends Serializable> void updateObjectIds(IBuffer buffer, Map<String, ID> ids, LoadState loadState);
-
-		Collection<String> reduceIds(IBuffer buffer, Module.Instance<?> module) throws Exception;
+		<ID extends Serializable> Collection<UpdatedEntryContainer> updateObjectIds(Map<String, ID> ids,
+				LoadState loadState);
 	}
 
 	public interface IDeleteMapper extends IMapper {

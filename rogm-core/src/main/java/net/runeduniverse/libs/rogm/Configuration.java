@@ -10,25 +10,25 @@ import lombok.Getter;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.BasicBuffer;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
+import net.runeduniverse.libs.rogm.info.ConnectionInfo;
+import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 
 @Getter
 public class Configuration {
 
 	protected final Set<String> pkgs = new HashSet<>();
 	protected final Set<ClassLoader> loader = new HashSet<>();
-	protected final Set<TypeScanner> scanner = new HashSet<>();
-	private final Parser parser;
+	protected final Set<PassiveModule> passiveModules = new HashSet<>();
+	protected final Parser parser;
 	protected final Language lang;
 	protected final Module module;
 
 	@Setter
 	protected String uri;
-	@Setter
 	protected Logger logger = null;
 	@Setter
 	protected Level loggingLevel = null;
@@ -43,11 +43,23 @@ public class Configuration {
 	@Setter
 	protected IBuffer buffer = new BasicBuffer();
 
-	public Configuration(Parser parser, Language lang, Module module, String uri) {
+	public Configuration(Parser parser, Language lang, Module module, String uri) throws NullPointerException {
 		this.parser = parser;
 		this.lang = lang;
 		this.module = module;
+		this.passiveModules.add(this.module);
 		this.uri = uri;
+
+		this.validate();
+	}
+
+	public void validate() {
+		if (this.parser == null)
+			throw new NullPointerException("Instance of net.runeduniverse.libs.rogm.parser.Parser is missing!");
+		if (this.lang == null)
+			throw new NullPointerException("Instance of net.runeduniverse.libs.rogm.lang.Language is missing!");
+		if (this.module == null)
+			throw new NullPointerException("Instance of net.runeduniverse.libs.rogm.modules.Module is missing!");
 	}
 
 	public Configuration addPackage(String pkg) {
@@ -70,27 +82,27 @@ public class Configuration {
 		return this;
 	}
 
-	public Configuration configure(PassiveModule passivemodule) {
-		if (passivemodule.getPatternScanner() != null)
-			this.scanner.addAll(passivemodule.getPatternScanner());
+	public Configuration addPassiveModule(PassiveModule passivemodule) {
+		this.passiveModules.add(passivemodule);
 		return this;
 	}
 
-	public Parser.Instance buildParserInstance() {
-		return this.parser.build(this);
-	}
-
-	public Module.Instance<?> buildModuleInstance() {
-		return this.module.build(this);
-	}
-
-	public Language.Instance buildLanguageInstance(Parser.Instance parser) {
-		return this.lang.build(parser, this.module);
+	public Configuration setLogger(Logger logger) {
+		this.logger = logger;
+		return this;
 	}
 
 	public Level getLoggingLevel() {
 		if (this.loggingLevel != null)
 			return this.loggingLevel;
 		return this.logger == null ? Level.INFO : this.logger.getLevel();
+	}
+
+	public PackageInfo getPackageInfo() {
+		return new PackageInfo(this);
+	}
+
+	public ConnectionInfo getConnectionInfo() {
+		return new ConnectionInfo(this);
 	}
 }

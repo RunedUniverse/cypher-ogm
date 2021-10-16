@@ -25,11 +25,11 @@ import net.runeduniverse.libs.rogm.querying.FilterRelation;
 import net.runeduniverse.libs.rogm.querying.IFNode;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.test.AConfigTest;
 import net.runeduniverse.libs.rogm.test.model.*;
 import net.runeduniverse.libs.rogm.test.model.relations.*;
 
-public class RelationshipTests extends ATest {
+public class RelationshipTests extends AConfigTest {
 
 	public RelationshipTests() {
 		super(new Neo4jConfiguration(""));

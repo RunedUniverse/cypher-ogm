@@ -2,6 +2,9 @@ package net.runeduniverse.libs.rogm.parser.json;
 
 public enum Feature {
 
+	// PARSER FEATURES
+	SERIALIZE_NULL_AS_EMPTY_OBJECT(false),
+
 	// SERIALIZER FEATURES
 	SERIALIZER_QUOTE_FIELD_NAMES(true),
 

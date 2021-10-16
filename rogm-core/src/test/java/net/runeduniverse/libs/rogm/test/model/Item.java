@@ -9,9 +9,9 @@ import net.runeduniverse.libs.rogm.annotations.Property;
 import net.runeduniverse.libs.rogm.annotations.Relationship;
 import net.runeduniverse.libs.rogm.annotations.Transient;
 
-@ToString
 @Getter
 @Setter
+@ToString(callSuper = true)
 public class Item extends AEntity {
 	@Relationship(label = "CONTAINS_INVENTORY", direction = Direction.OUTGOING)
 	private Inventory containingInventory;

@@ -1,32 +1,34 @@
 package net.runeduniverse.libs.rogm.modules.neo4j;
 
-import org.junit.jupiter.api.BeforeEach;
+import java.util.logging.Logger;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.pattern.EntitiyFactory;
-import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.test.AArchiveTest;
+import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.model.*;
 
-public class PatternStorageTest extends ATest {
+public class Neo4jArchiveTest extends AArchiveTest {
 
 	static Configuration config = new Neo4jConfiguration("runeduniverse.net");
-	static {
-		config.addPackage(MODEL_PKG_PATH);
-		config.addPackage(RELATIONS_PKG_PATH);
+
+	public Neo4jArchiveTest() {
+		super(config, new ConsoleLogger(Logger.getLogger(Neo4jArchiveTest.class.getName())));
 	}
 
-	public PatternStorageTest() {
-		super(config);
-	}
+	private static Person testi;
+	private static Artist ennio;
 
-	private EntitiyFactory processor = null;
+	@BeforeAll
+	public static void setup() {
+		// set model packages
+		config.addPackage(MODEL_PKG_PATH)
+				.addPackage(RELATIONS_PKG_PATH);
 
-	private static final Person testi;
-	private static final Artist ennio;
-
-	static {
+		// define test objects
 		testi = new Person("Testi", "West", true);
 
 		ennio = new Artist();
@@ -37,11 +39,6 @@ public class PatternStorageTest extends ATest {
 				.add(s);
 		ennio.getPlayed()
 				.add(s);
-	}
-
-	@BeforeEach
-	public void before() throws Exception {
-		processor = new EntitiyFactory(config, iParser);
 	}
 
 	@Test
@@ -81,16 +78,13 @@ public class PatternStorageTest extends ATest {
 	}
 
 	private String _query(Class<?> clazz) throws Exception {
-		return "[QUERY][" + clazz.getSimpleName() + "]\n" + iLanguage.load(this.processor.getNode(clazz)
-				.search(false)) + '\n';
+		return super.printQuery(clazz, this.qryBuilder.node()
+				.where(clazz)
+				.setLazy(false)
+				.getResult());
 	}
 
 	private String _save(Object entity) throws Exception {
-		return "[SAVE][" + entity.getClass()
-				.getSimpleName() + "]\n"
-				+ iLanguage.save(this.processor.save(entity, 1)
-						.getDataContainer(), null)
-						.qry()
-				+ '\n';
+		return super.printSave(entity, 1);
 	}
 }

@@ -5,42 +5,19 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import net.runeduniverse.libs.rogm.annotations.IConverter;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.Entry;
-import net.runeduniverse.libs.rogm.buffer.IBuffer.LoadState;
-import net.runeduniverse.libs.rogm.querying.IDataContainer;
+
+import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
 public interface IPattern {
 	PatternType getPatternType();
 
-	boolean isIdSet(Object entity);
-
-	Serializable getId(Object entity);
-
 	Class<?> getType();
 
 	Collection<String> getLabels();
 
-	IConverter<?> getIdConverter();
-
-	IFilter search(boolean lazy) throws Exception;
-
-	// search exactly 1 node / querry deeper layers for node
-	IFilter search(Serializable id, boolean lazy) throws Exception;
-
-	ISaveContainer save(Object entity, Integer depth) throws Exception;
-
-	IDeleteContainer delete(Object entity) throws Exception;
-
-	Object setId(Object entity, Serializable id) throws IllegalArgumentException;
-
-	Serializable prepareEntityId(Serializable id, Serializable entityId);
-
-	Object parse(IData data, LoadState loadState, Set<Entry> lazyEntries) throws Exception;
-
-	Entry update(IData data) throws Exception;
+	FieldPattern getField(Class<? extends Annotation> anno);
 
 	/**
 	 * Used to call parsed Methods
@@ -56,14 +33,14 @@ public interface IPattern {
 	}
 
 	public interface IPatternContainer extends IFilter {
-		IPattern getPattern();
+		IBaseQueryPattern<?> getPattern();
 
 		public static boolean identify(IFilter filter) {
 			return filter instanceof IPatternContainer && ((IPatternContainer) filter).getPattern() != null;
 		}
 	}
 
-	public interface IData {
+	public interface IData extends InternalBufferTypes {
 		Serializable getId();
 
 		Serializable getEntityId();
@@ -75,22 +52,24 @@ public interface IPattern {
 		String getData();
 
 		IFilter getFilter();
+
+		default LoadState getLoadState() {
+			return LoadState.get(this.getFilter());
+		}
+
+		default String valuesToString() {
+			return "IData[" + this.hashCode() + "]\nid:        " + this.getId() + "\nentity_id: " + this.getEntityId()
+					+ "\nlables:    [" + String.join(", ", this.getLabels()) + "]\ndata:      " + this.getData()
+					+ "\nfilter:    " + this.getFilter();
+		}
 	}
 
 	public interface IDataRecord {
-		IPatternContainer getPrimaryFilter();
+		IFilter getPrimaryFilter();
 
 		Set<Serializable> getIds();
 
 		List<Set<IData>> getData();
-	}
-
-	public interface ISaveContainer {
-		IDataContainer getDataContainer() throws Exception;
-
-		Set<IFilter> getRelatedFilter() throws Exception;
-
-		void postSave();
 	}
 
 	public interface IDeleteContainer {

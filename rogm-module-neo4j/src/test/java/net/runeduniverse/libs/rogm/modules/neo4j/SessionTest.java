@@ -4,31 +4,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.*;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.Session;
-import net.runeduniverse.libs.rogm.logging.DebugLogger;
+import net.runeduniverse.libs.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.modules.neo4j.SessionTest;
-import net.runeduniverse.libs.rogm.querying.IParameterized;
-import net.runeduniverse.libs.rogm.test.ATest;
+import net.runeduniverse.libs.rogm.pipeline.Pipeline;
+import net.runeduniverse.libs.rogm.querying.IFNode;
+import net.runeduniverse.libs.rogm.test.AConfigTest;
+import net.runeduniverse.libs.rogm.test.ConsoleLogger;
 import net.runeduniverse.libs.rogm.test.model.*;
 import net.runeduniverse.libs.rogm.test.model.relations.*;
+import net.runeduniverse.libs.rogm.test.system.TestEntity;
+import net.runeduniverse.libs.rogm.test.system.TestModelNode;
 
-public class SessionTest extends ATest {
+public class SessionTest extends AConfigTest {
 
 	public static String DB_HOST = System.getProperty("dbhost", "127.0.0.1");
 	public static String DB_USER = System.getProperty("dbuser", "neo4j");
 	public static String DB_PW = System.getProperty("dbpw", "Qwerty!");
 
 	private static Configuration config;
+	private static Logger classLogger;
 
-	public SessionTest() {
-		super(config);
-	}
-
-	private Session session = null;
+	private Pipeline pipeline = null;
 
 	@BeforeAll
 	public static void prepare() {
@@ -39,7 +41,9 @@ public class SessionTest extends ATest {
 				.addClassLoader(Thread.currentThread()
 						.getContextClassLoader());
 
-		config.setLogger(new DebugLogger(Logger.getLogger(SessionTest.class.getName())));
+		classLogger = new ConsoleLogger(Logger.getLogger(SessionTest.class.getName()));
+		classLogger.setLevel(Level.ALL);
+		config.setLogger(new DebugLogger(classLogger));
 
 		config.addPackage(MODEL_PKG_PATH);
 		config.addPackage(RELATIONS_PKG_PATH);
@@ -52,41 +56,48 @@ public class SessionTest extends ATest {
 		assertEquals(DB_HOST, config.getUri());
 	}
 
-	@BeforeEach
-	public void connectionTest() throws Exception {
-		this.session = Session.create(config);
+	public SessionTest() throws Exception {
+		super(config);
+		this.pipeline = new Pipeline(new DebugDatabasePipelineFactory(config));
+	}
+
+	@Test
+	@Tag("system")
+	public void debugLogTest() {
+		classLogger.log(Level.ALL, "=== DEBUG LOG TEST ===");
+	}
+
+	private static void connectionCheck(Session session) {
 		assertTrue(session.isConnected(), "Session is NOT connected");
 	}
 
-	@AfterEach
-	public void close() throws Exception {
-		if (this.session != null)
-			this.session.close();
+	@Test
+	@Tag("db-neo4j")
+	public void loadAllPeople() throws Exception {
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			Collection<Person> people = session.loadAll(Person.class);
+			assertNotEquals(0, people.size(), "no Artists loaded!");
+			for (Person person : people) {
+				TestEntity.infoTesting(classLogger, person);
+				TestEntity.assertEntity(Person.class, person);
+				TestModelNode.assertId(person);
+			}
+		}
 	}
 
 	@Test
 	@Tag("db-neo4j")
-	public void loadAllPeople() {
-		Collection<Person> people = session.loadAll(Person.class);
-		if (people.isEmpty()) {
-			System.out.println("NO PEOPLE FOUND");
-			return;
-		}
-		for (Person person : people) {
-			System.out.println(person.toString());
-		}
-	}
-
-	@Test
-	@Tag("db-neo4j")
-	public void loadAllArtists() {
-		Collection<Artist> people = session.loadAll(Artist.class);
-		if (people.isEmpty()) {
-			System.out.println("NO ARTIST FOUND");
-			return;
-		}
-		for (Artist artist : people) {
-			System.out.println(artist.toString());
+	public void loadAllArtists() throws Exception {
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			Collection<Artist> people = session.loadAll(Artist.class);
+			assertNotEquals(0, people.size(), "no Artists loaded!");
+			for (Artist person : people) {
+				TestEntity.infoTesting(classLogger, person);
+				TestEntity.assertEntity(Artist.class, person);
+				TestModelNode.assertId(person);
+			}
 		}
 	}
 
@@ -94,136 +105,181 @@ public class SessionTest extends ATest {
 	@Test
 	@Tag("db-neo4j")
 	public void updatePerson() throws Exception {
-		IParameterized personFilter = (IParameterized) session.getPattern(Person.class)
-				.search(false);
-		personFilter.getParams()
-				.put("firstName", "Shawn");
-		personFilter.getParams()
-				.put("lastName", "James");
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			IFNode personFilter = session.getQueryBuilder()
+					.node()
+					.where(Person.class)
+					.whereParam("firstName", "Shawn")
+					.whereParam("lastName", "James")
+					.getResult();
 
-		Person shawn = session.load(Person.class, personFilter);
-		System.out.println(shawn.toString());
-		shawn.setFirstName("Shawn");
-		shawn.setLastName("James");
-		shawn.setFictional(false);
-		session.save(shawn);
-		System.out.println(shawn.toString());
+			Person shawn = session.load(personFilter);
+			TestEntity.assertEntity(Person.class, shawn);
+			TestModelNode.assertId(shawn);
+			info("[Shawn]\n" + iLanguage.load(personFilter) + '\n');
+			shawn.setFirstName("Shawn");
+			shawn.setLastName("James");
+			shawn.setFictional(false);
+			session.save(shawn);
+			info(shawn);
+		}
 	}
 
 	@Test
 	@Tag("db-neo4j")
-	public void createPerson() {
-		Person james = new Person("James", "North", true);
-		System.out.println(james.toString());
-		session.save(james);
-		System.out.println(james.toString());
+	public void createPerson() throws Exception {
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			Person james = new Person("James", "North", true);
+			info(james);
+			session.save(james);
+			info(james);
+			TestModelNode.assertId(james);
+		}
 	}
 
 	@Test
 	@Tag("db-neo4j")
-	public void createArtist() {
-		Artist ennio = new Artist();
-		ennio.setFirstName("Ennio");
-		ennio.setLastName("Morricone");
-		Song s = new Song("C’era una volta il West");
-		ennio.getCreated()
-				.add(s);
-		ennio.getPlayed()
-				.add(s);
-		System.out.println(ennio.toString());
-		session.save(ennio);
-		System.out.println(ennio.toString());
+	public void createArtist() throws Exception {
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			Artist ennio = new Artist();
+			ennio.setFirstName("Ennio");
+			ennio.setLastName("Morricone");
+			Song s = new Song("C’era una volta il West");
+			ennio.getCreated()
+					.add(s);
+			ennio.getPlayed()
+					.add(s);
+			info(ennio);
+			session.save(ennio);
+			info(ennio);
+			TestModelNode.assertId(ennio);
+		}
 	}
 
 	@Test
 	@Tag("db-neo4j")
-	public void saveAndLoadPlayer_UUID_Id() {
-		Player player = new Player(UUID.randomUUID(), "Testi", new Inventory());
-		System.out.println(player.toString());
-		session.save(player);
-		session.unload(player);
-		Player player2 = session.load(Player.class, player.getUuid());
-		System.out.println(player2.toString());
-		assertNotNull(player2, "NO Entries in DB found");
-		assertTrue(player.getUuid()
-				.equals(player2.getUuid()), "Player UUID doesn't match");
-		assertFalse(player == player2, "Player did not get unloaded");
+	public void saveAndLoadPlayer_UUID_Id() throws Exception {
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			Player player = new Player(UUID.randomUUID(), "Testi", new Inventory());
+			info(player);
+			session.save(player);
+			session.unload(player);
+			Player player2 = session.load(Player.class, player.getUuid());
+			info(player2);
+			assertNotNull(player2, "NO Entries in DB found");
+			assertTrue(player.getUuid()
+					.equals(player2.getUuid()), "Player UUID doesn't match");
+			assertFalse(player == player2, "Player did not get unloaded");
+		}
 	}
 
 	@Test
 	@Tag("db-neo4j")
-	public void createAndDeletePlayer() {
-		Player player = new Player(UUID.randomUUID(), "DUMMY PLAYER", new Inventory());
-		session.save(player);
-		session.delete(player);
+	public void createAndDeletePlayer() throws Exception {
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			Player player = new Player(UUID.randomUUID(), "DUMMY PLAYER", new Inventory());
+			session.save(player);
+			session.delete(player);
+		}
 	}
 
 	@Test
 	@Tag("db-neo4j")
-	public void createAndDeleteEnnio() {
-		Artist ennio = new Artist();
-		ennio.setFirstName("Ennio");
-		ennio.setLastName("Morricone");
-		Song s = new Song("C’era una volta il West");
-		ennio.getCreated()
-				.add(s);
-		ennio.getPlayed()
-				.add(s);
-		session.save(ennio);
-		session.delete(ennio);
+	public void createAndDeleteEnnio() throws Exception {
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			Artist ennio = new Artist();
+			ennio.setFirstName("Ennio");
+			ennio.setLastName("Morricone");
+			Song s = new Song("C’era una volta il West");
+			ennio.getCreated()
+					.add(s);
+			ennio.getPlayed()
+					.add(s);
+			session.save(ennio);
+			TestModelNode.assertId(ennio);
+			session.delete(ennio);
+		}
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
 	@Tag("db-neo4j")
 	public void loadCompany() throws Exception {
-		IParameterized gameFilter = (IParameterized) session.getPattern(Company.class)
-				.search(false);
-		gameFilter.getParams()
-				.put("name", "Naughty Dog");
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			IFNode companyFilter = session.getQueryBuilder()
+					.node()
+					.where(Company.class)
+					.whereParam("name", "Naughty Dog")
+					.getResult();
 
-		Company company = session.load(Company.class, gameFilter);
-		Game game = new Game();
-		game.setName("just another USELESS title");
-		company.getGames()
-				.add(game);
-		session.save(company);
-		company.getGames()
-				.remove(game);
-		session.save(company, 4);
-		session.delete(game);
+			Company company = session.load(companyFilter);
+			TestEntity.assertEntity(Company.class, company);
+			TestModelNode.assertId(company);
+			Game game = new Game();
+			game.setName("just another USELESS title");
+			company.getGames()
+					.add(game);
+			session.save(company, 2);
+			TestModelNode.assertId(game);
+			company.getGames()
+					.remove(game);
+			session.save(company, 4);
+			session.delete(game);
+		}
 	}
 
 	@Test
 	@Tag("db-neo4j")
-	public void loadActors() {
-		Collection<Actor> actors = session.loadAllLazy(Actor.class);
-		session.resolveAllLazyLoaded(actors, 3);
-		for (Actor actor : actors)
-			for (ActorPlaysPersonRelation rel : actor.getPlays())
-				System.out.println("Actor: " + rel.getActor()
-						.getFirstName() + " plays "
-						+ rel.getPerson()
-								.getFirstName());
+	public void loadActorsAndResolveAllLazyLoaded() throws Exception {
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			Collection<Actor> actors = session.loadAllLazy(Actor.class);
+			assertEquals(2, actors.size(), "wrong amount of Actors loaded!");
+			session.resolveAllLazyLoaded(actors, 3);
+			for (Actor actor : actors) {
+				TestEntity.infoTesting(classLogger, actor);
+				TestEntity.assertEntity(Actor.class, actor);
+				assertNotNull(actor.getPlays(),
+						"Actor.getPlays() = NULL, session.resolveAllLazyLoaded(actors, 3); probably failed!");
+				TestModelNode.assertId(actor);
+				for (ActorPlaysPersonRelation rel : actor.getPlays()) {
+					TestEntity.assertEntity(ActorPlaysPersonRelation.class, rel);
+					info("Actor: " + rel.getActor()
+							.getFirstName() + " plays "
+							+ rel.getPerson()
+									.getFirstName());
+				}
+			}
+		}
 	}
 
 	@Test
 	@Tag("db-neo4j")
-	public void savePlayer() {
-		Player player = new Player();
-		player.setName("INV TEST PLAYER");
-		player.setUuid(UUID.randomUUID());
+	public void savePlayer() throws Exception {
+		try (Session session = this.pipeline.buildSession()) {
+			connectionCheck(session);
+			Player player = new Player();
+			player.setName("INV TEST PLAYER");
+			player.setUuid(UUID.randomUUID());
 
-		Inventory inv = new Inventory();
-		inv.setSize(27);
-		player.setInventory(inv);
+			Inventory inv = new Inventory();
+			inv.setSize(27);
+			player.setInventory(inv);
 
-		Item item = new Item();
-		item.setItemStack("SAND");
-		inv.getSlots()
-				.add(new Slot(22, inv, item));
+			Item item = new Item();
+			item.setItemStack("SAND");
+			inv.getSlots()
+					.add(new Slot(22, inv, item));
 
-		session.save(player, 3);
+			session.save(player, 3);
+		}
 	}
 
 	/*
@@ -233,4 +289,8 @@ public class SessionTest extends ATest {
 	 * 11L); Person ashley1 = session.load(Person.class, 11L); assertEquals(ashley1,
 	 * ashley0); assertTrue(ashley0 == ashley1); }
 	 */
+
+	protected static void info(Object o) {
+		classLogger.info(o == null ? "null" : o.toString());
+	}
 }
