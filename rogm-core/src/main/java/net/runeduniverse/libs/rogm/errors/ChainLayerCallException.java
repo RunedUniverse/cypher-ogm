@@ -1,4 +1,6 @@
-package net.runeduniverse.libs.rogm.error;
+package net.runeduniverse.libs.rogm.errors;
+
+import net.runeduniverse.libs.errors.ATrunkableException;
 
 public class ChainLayerCallException extends ATrunkableException {
 	private static final long serialVersionUID = -6315371891932847527L;

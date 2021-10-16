@@ -4,9 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Getter;
+import net.runeduniverse.libs.chain.ChainManager;
 import net.runeduniverse.libs.rogm.Session;
 import net.runeduniverse.libs.rogm.logging.PipelineLogger;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 
 public final class Pipeline implements AutoCloseable {
 	private final APipelineFactory<?> factory;

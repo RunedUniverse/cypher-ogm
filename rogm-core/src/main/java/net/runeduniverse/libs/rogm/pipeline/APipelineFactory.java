@@ -1,14 +1,14 @@
 package net.runeduniverse.libs.rogm.pipeline;
 
 import lombok.Getter;
+import net.runeduniverse.libs.chain.ChainManager;
+import net.runeduniverse.libs.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.Session;
-import net.runeduniverse.libs.rogm.error.ScannerException;
+import net.runeduniverse.libs.rogm.errors.ScannerException;
 import net.runeduniverse.libs.rogm.info.PackageInfo;
 import net.runeduniverse.libs.rogm.info.SessionInfo;
-import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.pattern.Archive;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 import net.runeduniverse.libs.rogm.querying.QueryBuilder;
 
 public abstract class APipelineFactory<ROUTER extends AChainRouter> {

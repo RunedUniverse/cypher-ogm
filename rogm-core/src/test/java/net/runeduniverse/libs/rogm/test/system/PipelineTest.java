@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.Session;
-import net.runeduniverse.libs.rogm.logging.DebugLogger;
+import net.runeduniverse.libs.logging.DebugLogger;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pipeline.DatabasePipelineFactory;
 import net.runeduniverse.libs.rogm.pipeline.Pipeline;

@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.error.ScannerException;
+import net.runeduniverse.libs.rogm.errors.ScannerException;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.querying.IFilter;

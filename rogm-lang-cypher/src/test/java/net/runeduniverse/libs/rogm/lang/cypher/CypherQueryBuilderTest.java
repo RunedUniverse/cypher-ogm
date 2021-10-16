@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.error.ScannerException;
+import net.runeduniverse.libs.rogm.errors.ScannerException;
 import net.runeduniverse.libs.rogm.parser.json.Feature;
 import net.runeduniverse.libs.rogm.parser.json.JSONParser;
 import net.runeduniverse.libs.rogm.querying.FilterNode;

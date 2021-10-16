@@ -7,7 +7,7 @@ import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.lang.Language.*;
-import net.runeduniverse.libs.rogm.logging.UniversalLogger;
+import net.runeduniverse.libs.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.parser.Parser;
 import net.runeduniverse.libs.rogm.querying.*;

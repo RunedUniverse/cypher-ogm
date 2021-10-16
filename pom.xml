@@ -81,6 +81,16 @@
 			<dependency>
 				<groupId>net.runeduniverse.libs</groupId>
 				<artifactId>logging</artifactId>
+				<version>0.0.2</version>
+			</dependency>
+			<dependency>
+				<groupId>net.runeduniverse.libs</groupId>
+				<artifactId>errors</artifactId>
+				<version>0.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.runeduniverse.libs</groupId>
+				<artifactId>chain</artifactId>
 				<version>0.0.1</version>
 			</dependency>
 			<dependency>

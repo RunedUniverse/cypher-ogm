@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.ToString;
 import net.runeduniverse.libs.rogm.annotations.PostSave;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.error.ExceptionSuppressions;
+import net.runeduniverse.libs.errors.ExceptionSuppressions;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;

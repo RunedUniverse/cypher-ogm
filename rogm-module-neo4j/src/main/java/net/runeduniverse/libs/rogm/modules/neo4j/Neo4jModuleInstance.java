@@ -18,7 +18,7 @@ import org.neo4j.driver.Value;
 
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.libs.rogm.info.ConnectionInfo;
-import net.runeduniverse.libs.rogm.logging.UniversalLogger;
+import net.runeduniverse.libs.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.IRawDataRecord;
 import net.runeduniverse.libs.rogm.modules.Module.IRawIdRecord;

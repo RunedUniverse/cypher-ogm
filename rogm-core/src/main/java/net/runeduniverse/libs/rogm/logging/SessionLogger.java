@@ -1,7 +1,10 @@
 package net.runeduniverse.libs.rogm.logging;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
+
+import net.runeduniverse.libs.logging.ALogger;
 import net.runeduniverse.libs.rogm.info.SessionInfo;
 
 public final class SessionLogger extends ALogger {

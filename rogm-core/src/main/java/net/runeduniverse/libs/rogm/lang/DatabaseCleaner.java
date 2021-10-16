@@ -1,6 +1,6 @@
 package net.runeduniverse.libs.rogm.lang;
 
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
+import net.runeduniverse.libs.chain.ChainManager;
 
 public interface DatabaseCleaner {
 

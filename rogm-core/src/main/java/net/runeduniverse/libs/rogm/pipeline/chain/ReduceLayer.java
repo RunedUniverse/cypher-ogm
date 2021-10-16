@@ -2,6 +2,8 @@ package net.runeduniverse.libs.rogm.pipeline.chain;
 
 import java.util.Collection;
 
+import net.runeduniverse.libs.chain.Chain;
+import net.runeduniverse.libs.chain.ChainRuntime;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
 import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
 import net.runeduniverse.libs.rogm.pattern.Archive;
@@ -9,8 +11,6 @@ import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityCollectionContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.RelatedEntriesContainer;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.Chain;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainRuntime;
 
 public interface ReduceLayer {
 

@@ -1,11 +1,12 @@
 package net.runeduniverse.libs.rogm.pipeline;
 
+import net.runeduniverse.libs.chain.ChainManager;
+import net.runeduniverse.libs.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.Configuration;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.error.ScannerException;
+import net.runeduniverse.libs.rogm.errors.ScannerException;
 import net.runeduniverse.libs.rogm.info.SessionInfo;
 import net.runeduniverse.libs.rogm.lang.Language;
-import net.runeduniverse.libs.rogm.logging.UniversalLogger;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.PassiveModule;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -14,7 +15,6 @@ import net.runeduniverse.libs.rogm.pipeline.chain.AssemblyLayers;
 import net.runeduniverse.libs.rogm.pipeline.chain.BufferLayers;
 import net.runeduniverse.libs.rogm.pipeline.chain.LookupLayers;
 import net.runeduniverse.libs.rogm.pipeline.chain.ReduceLayer;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 
 public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRouter> {
 

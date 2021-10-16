@@ -25,6 +25,14 @@
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs</groupId>
+			<artifactId>errors</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs</groupId>
+			<artifactId>chain</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.libs</groupId>
 			<artifactId>scanner</artifactId>
 		</dependency>
 		<dependency>

@@ -11,7 +11,7 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.libs.rogm.error.ExceptionSuppressions;
+import net.runeduniverse.libs.errors.ExceptionSuppressions;
 import net.runeduniverse.libs.rogm.querying.FilterType;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.rogm.querying.ILabeled;

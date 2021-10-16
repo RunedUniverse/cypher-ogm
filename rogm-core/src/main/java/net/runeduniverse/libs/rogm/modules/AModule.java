@@ -1,6 +1,6 @@
 package net.runeduniverse.libs.rogm.modules;
 
-import net.runeduniverse.libs.rogm.error.ScannerException;
+import net.runeduniverse.libs.rogm.errors.ScannerException;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.scanner.TypeScanner;
 

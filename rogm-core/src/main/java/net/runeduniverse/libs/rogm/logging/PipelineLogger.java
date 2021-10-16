@@ -4,6 +4,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import net.runeduniverse.libs.logging.ALogger;
+
 public final class PipelineLogger extends ALogger {
 
 	private static final AtomicLong id = new AtomicLong(0);

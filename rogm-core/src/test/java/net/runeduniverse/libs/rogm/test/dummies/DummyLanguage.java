@@ -2,10 +2,10 @@ package net.runeduniverse.libs.rogm.test.dummies;
 
 import java.util.logging.Logger;
 
+import net.runeduniverse.libs.chain.ChainManager;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.pipeline.chain.sys.ChainManager;
 
 public class DummyLanguage implements Language {
 
