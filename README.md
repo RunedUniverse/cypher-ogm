@@ -21,21 +21,24 @@ and implement the Modules only in the actual programm!
   <artifactId>core</artifactId>
   <version>2.1.1</version>
 </dependency>
-
+```
+```xml
 <!-- Parser: JSON -->
 <dependency>
   <groupId>net.runeduniverse.libs.rogm.parser</groupId>
   <artifactId>json</artifactId>
   <version>2.1.1</version>
 </dependency>
-
+```
+```xml
 <!-- Language: Cypher -->
 <dependency>
   <groupId>net.runeduniverse.libs.rogm.lang</groupId>
   <artifactId>cypher</artifactId>
   <version>2.1.1</version>
 </dependency>
-
+```
+```xml
 <!-- Module: Neo4j -->
 <dependency>
   <groupId>net.runeduniverse.libs.rogm.modules</groupId>
