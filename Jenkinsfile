@@ -49,13 +49,13 @@ pipeline {
 						}
 					}
 				}
-				stage('Decorator') {
-					steps {
-						dir(path: 'rogm-module-decorator') {
-							sh 'mvn -P jenkins-install'
-						}
-					}
-				}
+				//stage('Decorator') {
+				//	steps {
+				//		dir(path: 'rogm-module-decorator') {
+				//			sh 'mvn -P jenkins-install'
+				//		}
+				//	}
+				//}
 			}
 		}
 		
