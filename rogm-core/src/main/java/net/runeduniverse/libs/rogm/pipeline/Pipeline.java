@@ -51,9 +51,4 @@ public final class Pipeline implements AutoCloseable {
 		if (this.activeSessions.isEmpty())
 			this.close();
 	}
-
-	// FLOW
-	// factory.setup();
-	// factory.isConnected();
-	// factory.stop();
 }
