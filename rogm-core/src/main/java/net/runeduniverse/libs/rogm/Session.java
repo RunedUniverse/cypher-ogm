@@ -92,18 +92,105 @@ public interface Session extends AutoCloseable {
 	@Deprecated
 	<T> T load(IFilter filter);
 
+	/**
+	 * Loads all Objects of Class<{@link T}> matching the provided id. In case an
+	 * Object is still buffered the reference will be returned. Returns an empty
+	 * Collection in case no Objects could be loaded.
+	 * 
+	 * @param <T>  Model-Class provided through the Config
+	 * @param <ID> {@link Serializable} Object
+	 * @param type requested Type
+	 * @param id   requested entity-id
+	 * @return Collection with none, new or buffered Objects of the defined type
+	 */
 	<T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id);
 
+	/**
+	 * Loads all Objects of Class<{@link T}> matching the provided id. In case an
+	 * Object is still buffered the reference will be returned. Returns an empty
+	 * Collection in case no Objects could be loaded.
+	 * <p>
+	 * Depth defines how often the requested Objects Relations will be loaded
+	 * recursively. <code>0</code> will load the Object without any Relations
+	 * (LAZY).
+	 * 
+	 * @param <T>   Model-Class provided through the Config
+	 * @param <ID>  {@link Serializable} Object
+	 * @param type  requested Type
+	 * @param id    requested entity-id
+	 * @param depth requested load depth
+	 * @return Collection with none, new or buffered Objects of the defined type
+	 */
 	<T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id, Integer depth);
 
+	/**
+	 * Lazy-Loads all Objects of Class<{@link T}> matching the provided id. Except
+	 * the Object is still buffered the buffered reference (LAZY or not) will be
+	 * returned. Returns an empty Collection in case no Objects could be loaded.
+	 * 
+	 * @see Session#loadAll(Class, Serializable, Integer)
+	 * 
+	 * @param <T>  Model-Class provided through the Config
+	 * @param <ID> {@link Serializable} Object
+	 * @param type requested Type
+	 * @param id   requested entity-id
+	 * @return Collection with none, new or buffered Objects of the defined type
+	 */
 	<T, ID extends Serializable> Collection<T> loadAllLazy(Class<T> type, ID id);
 
+	/**
+	 * Loads all Objects of Class<{@link T}>. In case an Object is still buffered
+	 * the reference will be returned. Returns an empty Collection in case no
+	 * Objects could be loaded.
+	 * 
+	 * @param <T>  Model-Class provided through the Config
+	 * @param type requested Type
+	 * @return Collection with none, new or buffered Objects of the defined type
+	 */
 	<T> Collection<T> loadAll(Class<T> type);
 
+	/**
+	 * Loads all Objects of Class<{@link T}>. In case an Object is still buffered
+	 * the reference will be returned. Returns an empty Collection in case no
+	 * Objects could be loaded.
+	 * <p>
+	 * Depth defines how often the requested Objects Relations will be loaded
+	 * recursively. <code>0</code> will load the Object without any Relations
+	 * (LAZY).
+	 * 
+	 * @param <T>   Model-Class provided through the Config
+	 * @param type  requested Type
+	 * @param depth requested load depth
+	 * @return Collection with none, new or buffered Objects of the defined type
+	 */
 	<T> Collection<T> loadAll(Class<T> type, Integer depth);
 
+	/**
+	 * Lazy-Loads all Objects of Class<{@link T}>. Except the Object is still
+	 * buffered the buffered reference (LAZY or not) will be returned. Returns an
+	 * empty Collection in case no Objects could be loaded.
+	 * 
+	 * @see Session#loadAll(Class, Integer)
+	 * 
+	 * @param <T>  Model-Class provided through the Config
+	 * @param type requested Type
+	 * @return Collection with none, new or buffered Objects of the defined type
+	 */
 	<T> Collection<T> loadAllLazy(Class<T> type);
 
+	/**
+	 * Loads all Objects defined through the {@link IFilter} Object. Returns an
+	 * empty Collection in case no Objects could be loaded.
+	 * <p>
+	 * In case of use it is recommended to build the Filter with the
+	 * {@link QueryBuilder} acquirable through {@link Session#getQueryBuilder()}.
+	 * 
+	 * @deprecated because it may not return the Object of the correct Class
+	 * @param <T>    Model-Class provided through the Config
+	 * @param filter Custom-Filter
+	 * @return Collection with none, new or buffered Objects defined through the
+	 *         {@link IFilter} Object
+	 */
 	@Deprecated
 	<T> Collection<T> loadAll(IFilter filter);
 
