@@ -367,8 +367,25 @@ public interface Session extends AutoCloseable {
 	 */
 	void unloadAll(Collection<? extends Object> entities);
 
+	/**
+	 * Provides the configured {@link QueryBuilder} for the use in custom queries
+	 * 
+	 * @return configured {@link QueryBuilder} instance
+	 */
 	QueryBuilder getQueryBuilder();
 
+	/**
+	 * Creates a simple {@link Session} for direct interaction with a database.
+	 * <p>
+	 * The {@link Configuration} {@link cnf} should be use the Configuration
+	 * provided with the Database-Module you wish to use (usually prefixed with the
+	 * Database-Name).
+	 * 
+	 * @param cnf {@link Configuration} of the database
+	 * @return {@link Session} for direct interaction with a database
+	 * @throws Exception re-throws any Exception that might accure during
+	 *                   {@link Pipeline} creation.
+	 */
 	@SuppressWarnings("resource")
 	public static Session create(Configuration cnf) throws Exception {
 		return new Pipeline(new DatabasePipelineFactory(cnf)).buildSession();
