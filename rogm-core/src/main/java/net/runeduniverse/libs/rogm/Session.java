@@ -143,6 +143,7 @@ public interface Session extends AutoCloseable {
 	 * the reference will be returned. Returns an empty Collection in case no
 	 * Objects could be loaded.
 	 * 
+	 * @deprecated discouraged from using - needlessly fills up RAM
 	 * @param <T>  Model-Class provided through the Config
 	 * @param type requested Type
 	 * @return Collection with none, new or buffered Objects of the defined type
@@ -158,6 +159,7 @@ public interface Session extends AutoCloseable {
 	 * recursively. <code>0</code> will load the Object without any Relations
 	 * (LAZY).
 	 * 
+	 * @deprecated discouraged from using - needlessly fills up RAM
 	 * @param <T>   Model-Class provided through the Config
 	 * @param type  requested Type
 	 * @param depth requested load depth
@@ -170,6 +172,7 @@ public interface Session extends AutoCloseable {
 	 * buffered the buffered reference (LAZY or not) will be returned. Returns an
 	 * empty Collection in case no Objects could be loaded.
 	 * 
+	 * @deprecated discouraged from using - needlessly fills up RAM
 	 * @see Session#loadAll(Class, Integer)
 	 * 
 	 * @param <T>  Model-Class provided through the Config
