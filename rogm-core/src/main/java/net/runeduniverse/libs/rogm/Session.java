@@ -32,7 +32,8 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Loads the Object of Class<{@link T}> matching the provided id. In case the
-	 * Object is still buffered the reference will be returned.
+	 * Object is still buffered the reference will be returned. Returns
+	 * <code>null</code> in case no Object could be loaded.
 	 * 
 	 * @param <T>  Model-Class provided through the Config
 	 * @param <ID> {@link Serializable} Object
@@ -44,7 +45,8 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Loads the Object of Class<{@link T}> matching the provided id. In case the
-	 * Object is still buffered the reference will be returned.
+	 * Object is still buffered the reference will be returned. Returns
+	 * <code>null</code> in case no Object could be loaded.
 	 * <p>
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
@@ -62,7 +64,7 @@ public interface Session extends AutoCloseable {
 	/**
 	 * Lazy-Loads the Object of Class<{@link T}> matching the provided id. Except
 	 * the Object is still buffered the buffered reference (LAZY or not) will be
-	 * returned.
+	 * returned. Returns <code>null</code> in case no Object could be loaded.
 	 * 
 	 * @see Session#load(Class, Serializable, Integer)
 	 * 
@@ -75,7 +77,8 @@ public interface Session extends AutoCloseable {
 	<T, ID extends Serializable> T loadLazy(Class<T> type, ID id);
 
 	/**
-	 * Loads the first Object defined through the {@link IFilter} Object.
+	 * Loads the first Object defined through the {@link IFilter} Object. Returns
+	 * <code>null</code> in case the Filter had no loadedable results.
 	 * <p>
 	 * In case of use it is recommended to build the Filter with the
 	 * {@link QueryBuilder} acquirable through {@link Session#getQueryBuilder()}.
