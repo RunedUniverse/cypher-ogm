@@ -195,12 +195,44 @@ public interface Session extends AutoCloseable {
 	 */
 	<T> Collection<T> loadAll(IFilter filter);
 
+	/**
+	 * Loads all Relations provided by {@link entity}.
+	 * 
+	 * @param entity Object of Model-Class provided through the Config
+	 */
 	void resolveLazyLoaded(Object entity);
 
+	/**
+	 * Loads all Relations provided by {@link entity}.
+	 * <p>
+	 * Depth defines how often the requested Objects Relations will be loaded
+	 * recursively. <code>0</code> will load the Object without any Relations
+	 * (LAZY).
+	 * 
+	 * @param entity Object of Model-Class provided through the Config
+	 * @param depth  requested load depth
+	 */
 	void resolveLazyLoaded(Object entity, Integer depth);
 
+	/**
+	 * Loads all Relations provided by values of Collection{@link entities}.
+	 * 
+	 * @param Collection{@link entities} with Objects of Model-Classes provided
+	 *                         through the Config
+	 */
 	void resolveAllLazyLoaded(Collection<? extends Object> entities);
 
+	/**
+	 * Loads all Relations provided by values of Collection{@link entities}.
+	 * <p>
+	 * Depth defines how often the requested Objects Relations will be loaded
+	 * recursively. <code>0</code> will load the Object without any Relations
+	 * (LAZY).
+	 * 
+	 * @param Collection{@link entities} with Objects of Model-Classes provided
+	 *                         through the Config
+	 * @param depth            requested load depth
+	 */
 	void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth);
 
 	void reload(Object entity);
