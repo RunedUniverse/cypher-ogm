@@ -229,18 +229,49 @@ public interface Session extends AutoCloseable {
 	 * recursively. <code>0</code> will load the Object without any Relations
 	 * (LAZY).
 	 * 
-	 * @param Collection{@link entities} with Objects of Model-Classes provided
-	 *                         through the Config
-	 * @param depth            requested load depth
+	 * @param Collection {@link entities} with Objects of Model-Classes provided
+	 *                   through the Config
+	 * @param depth      requested load depth
 	 */
 	void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth);
 
+	/**
+	 * Reloads the Values and Relations of {@link entity}.
+	 * 
+	 * @param entity entity Object of Model-Class provided through the Config
+	 */
 	void reload(Object entity);
 
+	/**
+	 * Reloads the Values and Relations of {@link entity}.
+	 * <p>
+	 * Depth defines how often the requested Objects Relations will be loaded
+	 * recursively. <code>0</code> will only reload the Values and skip reloading
+	 * any Relations.
+	 * 
+	 * @param entity entity Object of Model-Class provided through the Config
+	 * @param depth  requested reload depth
+	 */
 	void reload(Object entity, Integer depth);
 
+	/**
+	 * Reloads the Values and Relations of Collection{@link entities}.
+	 * 
+	 * @param entities Collection of Model-Classes provided through the Config
+	 */
 	void reloadAll(Collection<? extends Object> entities);
 
+	/**
+	 * Reloads the Values and Relations of Collection{@link entities}.
+	 * <p>
+	 * Depth defines how often the requested Objects Relations will be loaded
+	 * recursively. <code>0</code> will only reload the Values and skip reloading
+	 * any Relations.
+	 * 
+	 * @param Collection {@link entities} with Collection of Model-Classes provided
+	 *                   through the Config
+	 * @param depth      requested reload depth
+	 */
 	void reloadAll(Collection<? extends Object> entities, Integer depth);
 
 	void save(Object entity);
