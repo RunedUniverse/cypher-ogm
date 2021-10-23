@@ -87,7 +87,7 @@ public interface Session extends AutoCloseable {
 	 *         Object
 	 */
 	@Deprecated
-	<T, ID extends Serializable> T load(IFilter filter);
+	<T> T load(IFilter filter);
 
 	<T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id);
 

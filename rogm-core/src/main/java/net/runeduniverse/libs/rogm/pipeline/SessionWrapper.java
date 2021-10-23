@@ -105,7 +105,7 @@ public final class SessionWrapper implements Session {
 	}
 
 	@Override
-	public <T, ID extends Serializable> T load(IFilter filter) {
+	public <T> T load(IFilter filter) {
 		try {
 			return this.router.load(filter);
 		} catch (Exception e) {
