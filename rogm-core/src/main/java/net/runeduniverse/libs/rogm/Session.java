@@ -215,15 +215,15 @@ public interface Session extends AutoCloseable {
 	void resolveLazyLoaded(Object entity, Integer depth);
 
 	/**
-	 * Loads all Relations provided by values of Collection{@link entities}.
+	 * Loads all Relations provided by values of Collection {@link entities}.
 	 * 
-	 * @param Collection{@link entities} with Objects of Model-Classes provided
-	 *                         through the Config
+	 * @param Collection {@link entities} with Objects of Model-Classes provided
+	 *                   through the Config
 	 */
 	void resolveAllLazyLoaded(Collection<? extends Object> entities);
 
 	/**
-	 * Loads all Relations provided by values of Collection{@link entities}.
+	 * Loads all Relations provided by values of Collection {@link entities}.
 	 * <p>
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
@@ -255,14 +255,14 @@ public interface Session extends AutoCloseable {
 	void reload(Object entity, Integer depth);
 
 	/**
-	 * Reloads the Values and Relations of Collection{@link entities}.
+	 * Reloads the Values and Relations of Collection {@link entities}.
 	 * 
 	 * @param entities Collection of Model-Classes provided through the Config
 	 */
 	void reloadAll(Collection<? extends Object> entities);
 
 	/**
-	 * Reloads the Values and Relations of Collection{@link entities}.
+	 * Reloads the Values and Relations of Collection {@link entities}.
 	 * <p>
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will only reload the Values and skip reloading
@@ -274,24 +274,97 @@ public interface Session extends AutoCloseable {
 	 */
 	void reloadAll(Collection<? extends Object> entities, Integer depth);
 
+	/**
+	 * Saves the provided Object.
+	 * 
+	 * @param entity Object of Model-Class provided through the Config
+	 */
 	void save(Object entity);
 
+	/**
+	 * Saves the provided Object.
+	 * <p>
+	 * Depth defines how many of the Object's Relations will be saved recursively.
+	 * <code>0</code> will save the Object without saving any Relations.
+	 * 
+	 * @param entity Object of Model-Class provided through the Config
+	 * @param depth  requested load depth
+	 */
 	void save(Object entity, Integer depth);
 
+	/**
+	 * Saves the provided Object without any Relations.
+	 * 
+	 * @see Session#save(Object, Integer)
+	 * 
+	 * @param entity Object of Model-Class provided through the Config
+	 */
 	void saveLazy(Object entity);
 
+	/**
+	 * Saves all provided values of Collection {@link entities}.
+	 * 
+	 * @param Collection entities of Objects of Model-Classes provided through the
+	 *                   Config
+	 */
 	void saveAll(Collection<? extends Object> entities);
 
+	/**
+	 * Saves the provided values of Collection {@link entities}.
+	 * <p>
+	 * Depth defines how many of the Object's Relations will be saved recursively.
+	 * <code>0</code> will save the Object without saving any Relations.
+	 * 
+	 * @param Collection entities of Objects of Model-Classes provided through the
+	 *                   Config
+	 * @param depth      requested load depth
+	 */
 	void saveAll(Collection<? extends Object> entities, Integer depth);
 
+	/**
+	 * Saves the provided values of Collection {@link entities} without saving any
+	 * Relations.
+	 * 
+	 * @see Session#saveAll(Collection, Integer)
+	 * 
+	 * @param Collection entities of Objects of Model-Classes provided through the
+	 *                   Config
+	 */
 	void saveAllLazy(Collection<? extends Object> entities);
 
+	/**
+	 * Deletes the provided Object.
+	 * 
+	 * @param entity Object of Model-Class provided through the Config
+	 */
 	void delete(Object entity);
 
+	/**
+	 * Deletes all provided values of Collection {@link entities}.
+	 * 
+	 * @param Collection entities of Objects of Model-Classes provided through the
+	 *                   Config
+	 */
 	void deleteAll(Collection<? extends Object> entities);
 
+	/**
+	 * Unloades the provided Object.
+	 * <p>
+	 * (Removes the provided Object and all Relations from the Buffer)
+	 * 
+	 * @param entity Object of Model-Class provided through the Config
+	 */
 	void unload(Object entity);
 
+	/**
+	 * Unloades all provided values of Collection {@link entities}.
+	 * <p>
+	 * (Removes all provided values of Collection {@link entities} and all fo their
+	 * Relations from the Buffer)
+	 * 
+	 * @param Collection entities of Objects of Model-Classes provided through the
+	 *                   Config
+	 */
 	void unloadAll(Collection<? extends Object> entities);
 
 	QueryBuilder getQueryBuilder();
