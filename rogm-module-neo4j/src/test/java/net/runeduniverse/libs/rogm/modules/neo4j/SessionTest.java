@@ -71,6 +71,7 @@ public class SessionTest extends AConfigTest {
 		assertTrue(session.isConnected(), "Session is NOT connected");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	@Tag("db-neo4j")
 	public void loadAllPeople() throws Exception {
@@ -86,6 +87,7 @@ public class SessionTest extends AConfigTest {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	@Tag("db-neo4j")
 	public void loadAllArtists() throws Exception {
@@ -235,6 +237,7 @@ public class SessionTest extends AConfigTest {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	@Tag("db-neo4j")
 	public void loadActorsAndResolveAllLazyLoaded() throws Exception {

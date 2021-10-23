@@ -83,13 +83,12 @@ public interface Session extends AutoCloseable {
 	 * In case of use it is recommended to build the Filter with the
 	 * {@link QueryBuilder} acquirable through {@link Session#getQueryBuilder()}.
 	 * 
-	 * @deprecated because it may not return the Object of the correct Class
+	 * @deprecated may not return the Object of the correct Class
 	 * @param <T>    Model-Class provided through the Config
 	 * @param filter Custom-Filter
 	 * @return null, new or buffered Object defined through the {@link IFilter}
 	 *         Object
 	 */
-	@Deprecated
 	<T> T load(IFilter filter);
 
 	/**
@@ -188,13 +187,12 @@ public interface Session extends AutoCloseable {
 	 * In case of use it is recommended to build the Filter with the
 	 * {@link QueryBuilder} acquirable through {@link Session#getQueryBuilder()}.
 	 * 
-	 * @deprecated because it may not return the Object of the correct Class
+	 * @deprecated may not return the Object of the correct Class
 	 * @param <T>    Model-Class provided through the Config
 	 * @param filter Custom-Filter
 	 * @return Collection with none, new or buffered Objects defined through the
 	 *         {@link IFilter} Object
 	 */
-	@Deprecated
 	<T> Collection<T> loadAll(IFilter filter);
 
 	void resolveLazyLoaded(Object entity);
