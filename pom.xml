@@ -52,6 +52,7 @@
 	</scm>
 
 	<properties>
+		<root-dir>${project.basedir}</root-dir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- VERSIONS -->
 		<core.version>1</core.version>
@@ -294,12 +295,13 @@
 						</properties>
 						<licenseSets>
 							<licenseSet>
-								<header>${project.basedir}/src/license/</header>
+								<header>${root-dir}/src/license/</header>
 								<excludes>
 									<exclude>**/README.md</exclude>
 									<exclude>**/pom.xml</exclude>
 									<exclude>**/Jenkinsfile</exclude>
 									<exclude>**/resources/**</exclude>
+									<exclude>**/license/**</exclude>
 								</excludes>
 							</licenseSet>
 						</licenseSets>
