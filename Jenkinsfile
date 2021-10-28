@@ -11,6 +11,11 @@ pipeline {
 				sh 'mvn install --non-recursive'
 			}
 		}
+		stage('License Check') {
+			steps {
+				sh 'mvn -P license-check'
+			}
+		}
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
