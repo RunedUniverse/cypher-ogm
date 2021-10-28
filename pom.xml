@@ -292,7 +292,9 @@
 							<licenseSet>
 								<header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
 								<excludes>
-									<exclude>**/README</exclude>
+									<exclude>**/README.md</exclude>
+									<exclude>**/pom.xml</exclude>
+									<exclude>**/Jenkinsfile</exclude>
 									<exclude>**/resources/**</exclude>
 								</excludes>
 							</licenseSet>
