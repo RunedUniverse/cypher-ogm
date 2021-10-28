@@ -9,6 +9,7 @@ pipeline {
 			steps {
 				sh 'mvn dependency:resolve'
 				sh 'mvn install --non-recursive'
+				sh 'mvn -P license'
 			}
 		}
 		stage('Build CORE') {
