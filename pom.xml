@@ -284,6 +284,12 @@
 					<artifactId>license-maven-plugin</artifactId>
 					<version>4.1</version>
 					<configuration>
+						<mapping>
+							<java>SLASHSTAR_STYLE</java>
+						</mapping>
+						<properties>
+							<year>2021</year>
+						</properties>
 						<properties>
 							<owner>Pl4yingNight</owner>
 							<email>pl4yingnight@gmail.com</email>
