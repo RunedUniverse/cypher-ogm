@@ -195,9 +195,15 @@
 
 	<profiles>
 		<profile>
-			<id>license</id>
+			<id>license-update</id>
 			<build>
 				<defaultGoal>license:format</defaultGoal>
+			</build>
+		</profile>
+		<profile>
+			<id>license-check</id>
+			<build>
+				<defaultGoal>license:check</defaultGoal>
 			</build>
 		</profile>
 		<profile>
@@ -206,7 +212,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<build>
-				<defaultGoal>clean compile install</defaultGoal>
+				<defaultGoal>clean license:format compile install</defaultGoal>
 			</build>
 		</profile>
 		<profile>
@@ -293,7 +299,7 @@
 				<plugin>
 					<groupId>com.mycila</groupId>
 					<artifactId>license-maven-plugin</artifactId>
-					<version>4.1</version>
+					<version>4.2.rc1</version>
 					<configuration>
 						<mapping>
 							<java>SLASHSTAR_STYLE</java>
@@ -307,14 +313,40 @@
 							<licenseSet>
 								<header>${root-dir}/src/license/header.txt</header>
 								<excludes>
-									<exclude>**/README.md</exclude>
 									<exclude>**/pom.xml</exclude>
-									<exclude>**/Jenkinsfile</exclude>
 									<exclude>**/resources/**</exclude>
 									<exclude>**/license/**</exclude>
 								</excludes>
 							</licenseSet>
 						</licenseSets>
+						<dependencyEnforce>true</dependencyEnforce>
+						<dependencyExceptionMessage>1 or more dependencies got rejected
+							doe to invalid licenses!
+							Contact the Maintainer for a solution!</dependencyExceptionMessage>
+						<dependencyPolicies>
+							<!-- accept - RunedUniverse Utils Packages -->
+							<dependencyPolicy>
+								<type>ARTIFACT_PATTERN</type>
+								<rule>APPROVE</rule>
+								<value>net.runeduniverse.libs</value>
+							</dependencyPolicy>
+							<!-- accept - Apache 2 -->
+							<dependencyPolicy>
+								<type>LICENSE_NAME</type>
+								<rule>APPROVE</rule>
+								<value>Apache License, Version 2</value>
+							</dependencyPolicy>
+							<dependencyPolicy>
+								<type>LICENSE_NAME</type>
+								<rule>APPROVE</rule>
+								<value>The Apache Software License, Version 2.0</value>
+							</dependencyPolicy>
+							<dependencyPolicy>
+								<type>LICENSE_URL</type>
+								<rule>APPROVE</rule>
+								<value>https://www.apache.org/licenses/LICENSE-2.0</value>
+							</dependencyPolicy>
+						</dependencyPolicies>
 					</configuration>
 				</plugin>
 				<plugin>

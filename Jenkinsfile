@@ -9,7 +9,11 @@ pipeline {
 			steps {
 				sh 'mvn dependency:resolve'
 				sh 'mvn install --non-recursive'
-				sh 'mvn -P license'
+			}
+		}
+		stage('License Check') {
+			steps {
+				sh 'mvn -P license-check'
 			}
 		}
 		stage('Build CORE') {
