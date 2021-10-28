@@ -295,7 +295,7 @@
 						</properties>
 						<licenseSets>
 							<licenseSet>
-								<header>${root-dir}/src/license/</header>
+								<header>${root-dir}/src/license/header.txt</header>
 								<excludes>
 									<exclude>**/README.md</exclude>
 									<exclude>**/pom.xml</exclude>
