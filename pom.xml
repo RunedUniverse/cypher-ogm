@@ -289,14 +289,12 @@
 						</mapping>
 						<properties>
 							<year>2021</year>
-						</properties>
-						<properties>
 							<owner>Pl4yingNight</owner>
 							<email>pl4yingnight@gmail.com</email>
 						</properties>
 						<licenseSets>
 							<licenseSet>
-								<header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+								<header>${project.basedir}/src/license/</header>
 								<excludes>
 									<exclude>**/README.md</exclude>
 									<exclude>**/pom.xml</exclude>
