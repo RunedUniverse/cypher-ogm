@@ -120,24 +120,28 @@ pipeline {
 			}
 		}
 
-		stage('Deploy Release') {
-			when {
-			    branch 'master'
-			}
-			steps {
-				sh 'mvn -P repo-releases,jenkins-deploy'
-				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
-			}
-		}
-		stage('Deploy Snapshot') {
-			when {
-			    not {
-			        branch 'master'
+		stage('Deploy') {
+			stages {
+			    stage('Release') {
+					when {
+			    		branch 'master'
+					}
+					steps {
+						sh 'mvn -P repo-releases,jenkins-deploy'
+						archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
+					}        
 			    }
-			}
-			steps {
-				sh 'mvn -P repo-snapshots,jenkins-deploy'
-				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
+			    stage('Snapshot') {
+					when {
+						not {
+				    		branch 'master'					    
+						}
+					}
+					steps {
+						sh 'mvn -P repo-snapshots,jenkins-deploy'
+						archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
+					}        
+			    }
 			}
 		}
 	}
