@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
+import net.runeduniverse.libs.rogm.buffer.BufferTypes.LoadState;
 
 @AllArgsConstructor
 @Getter

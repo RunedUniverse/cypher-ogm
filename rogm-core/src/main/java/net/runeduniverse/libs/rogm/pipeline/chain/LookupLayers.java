@@ -6,8 +6,8 @@ import net.runeduniverse.libs.chain.Chain;
 import net.runeduniverse.libs.chain.ChainRuntime;
 import net.runeduniverse.libs.errors.ExceptionSuppressions;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
+import net.runeduniverse.libs.rogm.buffer.BufferTypes.IEntry;
+import net.runeduniverse.libs.rogm.buffer.BufferTypes.LoadState;
 import net.runeduniverse.libs.rogm.lang.DatabaseCleaner;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.lang.Language.IDeleteMapper;
@@ -32,7 +32,7 @@ import static net.runeduniverse.libs.utils.StringUtils.isBlank;
 public interface LookupLayers {
 
 	@Chain(label = Chains.DELETE_CHAIN.ONE.LABEL, layers = { Chains.DELETE_CHAIN.ONE.PACKAGE_CONTAINER })
-	public static IDeleteContainer packageContainer(final Archive archive, EntityContainer entity, Entry entry)
+	public static IDeleteContainer packageContainer(final Archive archive, EntityContainer entity, IEntry entry)
 			throws Exception {
 		return archive.delete(entity.getType(), entry.getId(), entity.getEntity());
 	}

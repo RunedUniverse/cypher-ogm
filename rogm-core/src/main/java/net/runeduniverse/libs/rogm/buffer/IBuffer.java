@@ -8,7 +8,7 @@ import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pipeline.chain.ChainConfigurator;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;;
 
-public interface IBuffer extends InternalBufferTypes, ChainConfigurator {
+public interface IBuffer extends BufferTypes, ChainConfigurator {
 
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
@@ -31,28 +31,21 @@ public interface IBuffer extends InternalBufferTypes, ChainConfigurator {
 
 	<T> T getCompleteByEntityId(Serializable entityId, Class<T> type);
 
-	void addEntry(Entry entry);
+	void addEntry(IEntry entry);
 
 	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState,
 			IBaseQueryPattern<?> pattern);
 
 	void updateEntry(Archive archive, UpdatedEntryContainer container) throws Exception;
 
-	void removeEntry(Entry entry);
+	void removeEntry(IEntry entry);
 
 	void removeEntry(Object entity);
 
 	void eraseRelations(Serializable deletedId, Serializable relationId, Serializable nodeId);
 
-	Entry getEntry(Object entity);
+	IEntry getEntry(Object entity);
 
-	Collection<Entry> getAllEntries();
-
-	// INTERNAL USE //
-	@Deprecated
-	void updateEntry(Entry entry, Serializable id, Serializable entityId);
-
-	@Deprecated
-	TypeEntry getTypeEntry(Class<?> type);
+	Collection<IEntry> getAllEntries();
 
 }

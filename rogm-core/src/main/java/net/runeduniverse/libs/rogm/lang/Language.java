@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.LoadState;
+import net.runeduniverse.libs.rogm.buffer.BufferTypes.LoadState;
 import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
 import net.runeduniverse.libs.rogm.parser.Parser;

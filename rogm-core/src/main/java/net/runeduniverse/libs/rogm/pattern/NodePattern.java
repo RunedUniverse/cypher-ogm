@@ -15,7 +15,7 @@ import net.runeduniverse.libs.rogm.annotations.NodeEntity;
 import net.runeduniverse.libs.rogm.annotations.PreDelete;
 import net.runeduniverse.libs.rogm.annotations.PreSave;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
+import net.runeduniverse.libs.rogm.buffer.BufferTypes;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.libs.rogm.querying.IDataContainer;
 import net.runeduniverse.libs.rogm.querying.IFilter;
@@ -27,7 +27,7 @@ import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
 // deprecation = internal use
 @SuppressWarnings("deprecation")
 public class NodePattern extends APattern<NodeQueryBuilder>
-		implements INodePattern<NodeQueryBuilder>, InternalBufferTypes {
+		implements INodePattern<NodeQueryBuilder>, BufferTypes {
 
 	@Getter
 	private Set<String> labels = new HashSet<>();
@@ -128,7 +128,7 @@ public class NodePattern extends APattern<NodeQueryBuilder>
 			if (!includedData.get(object)
 					.persist())
 				continue;
-			Entry entry = buffer.getEntry(object);
+			IEntry entry = buffer.getEntry(object);
 			if (entry == null || entry.getLoadState() == LoadState.LAZY)
 				continue;
 			set.add(archive.search(entry.getType(), entry.getId(), false)
