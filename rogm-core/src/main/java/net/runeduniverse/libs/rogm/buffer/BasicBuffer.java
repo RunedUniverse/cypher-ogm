@@ -22,16 +22,22 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.runeduniverse.libs.chain.ChainManager;
 import net.runeduniverse.libs.rogm.annotations.PostDelete;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.INodePattern;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 
-public class BasicBuffer implements IBuffer {
+public class BasicBuffer implements IBuffer, InternalBufferTypes {
 
 	private Map<Object, Entry> entries = new HashMap<>();
 	private Map<Class<?>, TypeEntry> typeMap = new HashMap<>();
+
+	@Override
+	public void setupChainManager(ChainManager chainManager) throws Exception {
+		chainManager.addChainLayers(BasicBufferLayers.class);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -69,7 +75,8 @@ public class BasicBuffer implements IBuffer {
 	}
 
 	@Override
-	public void addEntry(Entry entry) {
+	public void addEntry(IEntry iEntry) {
+		Entry entry = Entry.from(iEntry);
 		TypeEntry te = this.typeMap.get(entry.getType());
 		if (te == null) {
 			te = new TypeEntry();
@@ -106,6 +113,8 @@ public class BasicBuffer implements IBuffer {
 		pattern.setId(entity, container.getEntityId());
 	}
 
+	// INTERNAL USE
+	@Deprecated
 	public void updateEntry(Entry entry, Serializable id, Serializable entityId) {
 		TypeEntry te = this.typeMap.get(entry.getType());
 
@@ -122,7 +131,8 @@ public class BasicBuffer implements IBuffer {
 	}
 
 	@Override
-	public void removeEntry(Entry entry) {
+	public void removeEntry(IEntry iEntry) {
+		Entry entry = Entry.from(iEntry);
 		if (entry == null)
 			return;
 		TypeEntry te = this.typeMap.get(entry.getType());
@@ -139,11 +149,15 @@ public class BasicBuffer implements IBuffer {
 	}
 
 	@Override
-	public Collection<Entry> getAllEntries() {
-		return this.entries.values();
+	public Collection<IEntry> getAllEntries() {
+		Collection<IEntry> values = new HashSet<>();
+		for (Entry entry : this.entries.values())
+			values.add(entry);
+		return values;
 	}
 
-	@Override
+	// INTERNAL USE
+	@Deprecated
 	public TypeEntry getTypeEntry(Class<?> type) {
 		return this.typeMap.get(type);
 	}

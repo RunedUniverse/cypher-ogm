@@ -20,7 +20,7 @@ import java.util.Collection;
 import net.runeduniverse.libs.chain.Chain;
 import net.runeduniverse.libs.chain.ChainRuntime;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes.Entry;
+import net.runeduniverse.libs.rogm.buffer.BufferTypes.IEntry;
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityCollectionContainer;
@@ -61,7 +61,7 @@ public interface ReduceLayer {
 	public static void resolveLazyEntries(final ChainRuntime<?> runtime, final Archive archive,
 			final LazyEntriesContainer lazyEntries) throws Exception {
 		LazyEntriesContainer nextLazyEntries = new LazyEntriesContainer();
-		for (Entry entry : lazyEntries.getLazyEntries()) {
+		for (IEntry entry : lazyEntries.getLazyEntries()) {
 			runtime.callSubChainWithSourceData(Chains.LOAD_CHAIN.RESOLVE_LAZY.SELECTED.LABEL, Collection.class,
 					archive.search(entry.getType(), entry.getId(), false)
 							.getResult(),
@@ -84,7 +84,7 @@ public interface ReduceLayer {
 			EntityCollectionContainer entityCollection, DepthContainer depth) throws Exception {
 		RelatedEntriesContainer relatedEntries = runtime.storeData(new RelatedEntriesContainer());
 		for (Object entity : entityCollection.getEntityCollection()) {
-			Entry entry = buffer.getEntry(entity);
+			IEntry entry = buffer.getEntry(entity);
 			if (entry != null)
 				runtime.callSubChainWithSourceData(Chains.RELOAD_CHAIN.SELECTED.LABEL, Void.class, relatedEntries,
 						archive.search(entry.getType(), entry.getId(), depth.getValue() == 0)
@@ -104,7 +104,7 @@ public interface ReduceLayer {
 	public static void reloadRelatedEntries(final ChainRuntime<?> runtime, final Archive archive, final IBuffer buffer,
 			RelatedEntriesContainer relatedEntries, DepthContainer depth) throws Exception {
 		RelatedEntriesContainer nextRelatedEntries = new RelatedEntriesContainer();
-		for (Entry entry : relatedEntries.getRelatedEntries()) {
+		for (IEntry entry : relatedEntries.getRelatedEntries()) {
 			if (entry != null)
 				runtime.callSubChainWithSourceData(Chains.RELOAD_CHAIN.SELECTED.LABEL, Void.class, nextRelatedEntries,
 						archive.search(entry.getType(), entry.getId(), depth.getValue() == 0)

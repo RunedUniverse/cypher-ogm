@@ -15,11 +15,9 @@
  */
 package net.runeduniverse.libs.rogm.lang;
 
-import net.runeduniverse.libs.chain.ChainManager;
+import net.runeduniverse.libs.rogm.pipeline.chain.ChainConfigurator;
 
-public interface DatabaseCleaner {
+public interface DatabaseCleaner extends ChainConfigurator {
 
 	String getChainLabel();
-
-	void setupChainManager(ChainManager chainManager) throws Exception;
 }

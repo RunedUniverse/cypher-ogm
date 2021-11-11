@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
+import net.runeduniverse.libs.rogm.buffer.BufferTypes;
 import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 
@@ -55,7 +55,7 @@ public interface IPattern {
 		}
 	}
 
-	public interface IData extends InternalBufferTypes {
+	public interface IData extends BufferTypes {
 		Serializable getId();
 
 		Serializable getEntityId();

@@ -1,19 +1,5 @@
-/*
- * Copyright © 2021 Pl4yingNight (pl4yingnight@gmail.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package net.runeduniverse.libs.rogm.pipeline.chain;
+
+package net.runeduniverse.libs.rogm.buffer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,8 +9,6 @@ import net.runeduniverse.libs.chain.Chain;
 import net.runeduniverse.libs.chain.ChainRuntime;
 import net.runeduniverse.libs.errors.ExceptionSuppressions;
 import net.runeduniverse.libs.logging.UniversalLogger;
-import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
 import net.runeduniverse.libs.rogm.lang.Language.IDeleteMapper;
 import net.runeduniverse.libs.rogm.modules.Module.IRawRecord;
 import net.runeduniverse.libs.rogm.parser.Parser;
@@ -32,13 +16,14 @@ import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IDeleteContainer;
+import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
 
-public interface BufferLayers extends InternalBufferTypes {
+public interface BasicBufferLayers extends InternalBufferTypes {
 
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.CHECK_BUFFERED_STATUS })
 	public static <T> void ckeckBufferedStatus(final ChainRuntime<T> runtime, final IBuffer buffer, IdContainer id,
@@ -61,7 +46,7 @@ public interface BufferLayers extends InternalBufferTypes {
 
 	@SuppressWarnings("deprecation")
 	@Chain(label = Chains.BUFFER_CHAIN.LOAD.LABEL, layers = { Chains.BUFFER_CHAIN.LOAD.ACQUIRE_BUFFERED_ENTITY })
-	public static Object acquireBuffered(final ChainRuntime<?> runtime, final IBuffer buffer,
+	public static Object acquireBuffered(final ChainRuntime<?> runtime, final BasicBuffer buffer,
 			IBaseQueryPattern<?> pattern, IData data, LazyEntriesContainer lazyEntries) throws Exception {
 		LoadState loadState = data.getLoadState();
 		TypeEntry te = buffer.getTypeEntry(pattern.getType());
@@ -100,9 +85,9 @@ public interface BufferLayers extends InternalBufferTypes {
 	}
 
 	@Chain(label = Chains.DELETE_CHAIN.ONE.LABEL, layers = { Chains.DELETE_CHAIN.ONE.GET_BUFFERED_ENTRY })
-	public static Entry getBufferedEntry(final ChainRuntime<?> runtime, final IBuffer buffer,
+	public static IEntry getBufferedEntry(final ChainRuntime<?> runtime, final IBuffer buffer,
 			final EntityContainer entity) throws Exception {
-		Entry entry = buffer.getEntry(entity.getEntity());
+		IEntry entry = buffer.getEntry(entity.getEntity());
 		if (entry == null)
 			throw new Exception("Entity of type<" + entity.getType()
 					.getName() + "> is not loaded!");
@@ -129,7 +114,7 @@ public interface BufferLayers extends InternalBufferTypes {
 
 	@SuppressWarnings("deprecation")
 	@Chain(label = Chains.BUFFER_CHAIN.UPDATE.LABEL, layers = { Chains.BUFFER_CHAIN.UPDATE.UPDATE_BUFFERED_ENTRY })
-	public static Entry updateBufferedEntry(final ChainRuntime<Entry> runtime, final IBuffer buffer,
+	public static Entry updateBufferedEntry(final ChainRuntime<Entry> runtime, final BasicBuffer buffer,
 			EntityContainer entityContainer, IData data) throws Exception {
 		Object entity = entityContainer.getEntity();
 		Entry entry = buffer.getEntry(entity);
@@ -162,4 +147,5 @@ public interface BufferLayers extends InternalBufferTypes {
 			IRawRecord record) {
 		mapper.updateBuffer(buffer, container.getDeletedId(), record.getRawData());
 	}
+
 }

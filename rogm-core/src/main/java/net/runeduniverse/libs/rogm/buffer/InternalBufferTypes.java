@@ -21,16 +21,14 @@ import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.libs.rogm.pattern.IPattern.IData;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.LazyEntriesContainer;
-import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.querying.ILazyLoading;
 
-public interface InternalBufferTypes {
+public interface InternalBufferTypes extends BufferTypes {
+
+	@NoArgsConstructor
 	public class TypeEntry {
-		protected TypeEntry() {
-		}
 
 		protected Map<Serializable, Entry> idMap = new HashMap<>();
 		protected Map<Serializable, Entry> entityIdMap = new HashMap<>();
@@ -46,7 +44,8 @@ public interface InternalBufferTypes {
 
 	@Data
 	@AllArgsConstructor
-	public class Entry {
+	public class Entry implements IEntry {
+
 		private Serializable id;
 		private Serializable entityId;
 		private Object entity;
@@ -62,30 +61,12 @@ public interface InternalBufferTypes {
 			this.type = entity.getClass();
 			this.pattern = pattern;
 		}
-	}
 
-	public enum LoadState {
-		COMPLETE, LAZY;
-
-		public static LoadState get(boolean lazy) {
-			if (lazy)
-				return LAZY;
-			return COMPLETE;
-		}
-
-		public static LoadState get(IFilter filter) {
-			return get(filter instanceof ILazyLoading && ((ILazyLoading) filter).isLazy());
-		}
-
-		public static Object merge(Entry entry, LoadState state, LazyEntriesContainer lazyEntries) {
-			if (entry.getLoadState() == COMPLETE || state == COMPLETE)
-				entry.setLoadState(COMPLETE);
-			else {
-				entry.setLoadState(LAZY);
-				if (lazyEntries != null)
-					lazyEntries.addEntry(entry);
-			}
-			return entry.getEntity();
+		public static Entry from(IEntry iEntry) {
+			if (iEntry instanceof Entry)
+				return (Entry) iEntry;
+			return new Entry(iEntry.getId(), iEntry.getEntityId(), iEntry.getEntity(), iEntry.getLoadState(),
+					iEntry.getType(), iEntry.getPattern());
 		}
 	}
 }
