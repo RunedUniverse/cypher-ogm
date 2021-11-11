@@ -121,27 +121,16 @@ pipeline {
 		}
 
 		stage('Deploy') {
-			parallel {
-			    stage('Release') {
-					when {
-			    		branch 'master'
-					}
-					steps {
-						sh 'mvn -P repo-releases,jenkins-deploy'
-						archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
-					}        
+			steps {
+			    switch(GIT_BRANCH) {
+			        case 'master':
+			        	sh 'mvn -P repo-releases,jenkins-deploy'
+			        	break
+			        default:
+			        	sh 'mvn -P repo-development,jenkins-deploy'
+			        	break
 			    }
-			    stage('Development') {
-					when {
-						not {
-				    		branch 'master'					    
-						}
-					}
-					steps {
-						sh 'mvn -P repo-development,jenkins-deploy'
-						archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
-					}        
-			    }
+				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
 	}
