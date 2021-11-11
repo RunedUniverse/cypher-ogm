@@ -131,7 +131,7 @@ pipeline {
 						archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 					}        
 			    }
-			    stage('Snapshot') {
+			    stage('Development') {
 					when {
 						not {
 				    		branch 'master'					    
