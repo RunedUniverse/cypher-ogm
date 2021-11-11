@@ -138,7 +138,7 @@ pipeline {
 						}
 					}
 					steps {
-						sh 'mvn -P repo-snapshots,jenkins-deploy'
+						sh 'mvn -P repo-development,jenkins-deploy'
 						archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 					}        
 			    }

@@ -274,11 +274,11 @@
 			</distributionManagement>
 		</profile>
 		<profile>
-			<id>repo-snapshots</id>
+			<id>repo-development</id>
 			<distributionManagement>
 				<repository>
-					<id>runeduniverse-snapshots</id>
-					<url>https://nexus.runeduniverse.net/repository/maven-snapshots/</url>
+					<id>runeduniverse-development</id>
+					<url>https://nexus.runeduniverse.net/repository/maven-development/</url>
 				</repository>
 			</distributionManagement>
 		</profile>
