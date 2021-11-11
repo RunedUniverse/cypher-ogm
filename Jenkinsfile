@@ -122,13 +122,15 @@ pipeline {
 
 		stage('Deploy') {
 			steps {
-			    switch(GIT_BRANCH) {
-			        case 'master':
-			        	sh 'mvn -P repo-releases,jenkins-deploy'
-			        	break
-			        default:
-			        	sh 'mvn -P repo-development,jenkins-deploy'
-			        	break
+			    script {
+			        switch(GIT_BRANCH) {
+			        	case 'master':
+			        		sh 'mvn -P repo-releases,jenkins-deploy'
+			        		break
+			        	default:
+			        		sh 'mvn -P repo-development,jenkins-deploy'
+			        		break
+			    	}
 			    }
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
