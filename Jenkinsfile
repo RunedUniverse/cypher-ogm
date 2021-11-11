@@ -121,7 +121,7 @@ pipeline {
 		}
 
 		stage('Deploy') {
-			stages {
+			parallel {
 			    stage('Release') {
 					when {
 			    		branch 'master'
