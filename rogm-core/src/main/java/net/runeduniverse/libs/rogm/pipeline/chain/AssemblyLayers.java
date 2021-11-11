@@ -12,8 +12,8 @@ import net.runeduniverse.libs.chain.ChainRuntime;
 import net.runeduniverse.libs.rogm.annotations.Direction;
 import net.runeduniverse.libs.rogm.annotations.PostLoad;
 import net.runeduniverse.libs.rogm.annotations.PostReload;
+import net.runeduniverse.libs.rogm.buffer.BufferTypes;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
 import net.runeduniverse.libs.rogm.pattern.NodePattern;
 import net.runeduniverse.libs.rogm.pattern.RelationPattern;
 import net.runeduniverse.libs.rogm.pattern.Archive;
@@ -30,7 +30,7 @@ import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.utils.DataHashMap;
 import net.runeduniverse.libs.utils.DataMap;
 
-public interface AssemblyLayers extends InternalBufferTypes {
+public interface AssemblyLayers extends BufferTypes {
 
 	@Chain(label = Chains.LOAD_CHAIN.ALL.LABEL, layers = { Chains.LOAD_CHAIN.ALL.ASSEMBLY_ENTITY_COLLECTION })
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.ASSEMBLY_ENTITY_COLLECTION })
@@ -131,7 +131,7 @@ public interface AssemblyLayers extends InternalBufferTypes {
 
 				if (IPatternContainer.identify(dataFilter) && LoadState.get(dataFilter) == LoadState.LAZY) {
 					IBaseQueryPattern<?> dataPattern = ((IPatternContainer) dataFilter).getPattern();
-					Entry entry = runtime.callSubChainWithSourceData(Chains.BUFFER_CHAIN.UPDATE.LABEL, Entry.class,
+					IEntry entry = runtime.callSubChainWithSourceData(Chains.BUFFER_CHAIN.UPDATE.LABEL, IEntry.class,
 							data, dataPattern);
 
 					if (entry.getEntity() != entity && dtype != DataType.RELATION)

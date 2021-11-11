@@ -11,7 +11,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.InternalBufferTypes;
+import net.runeduniverse.libs.rogm.buffer.BufferTypes;
 import net.runeduniverse.libs.rogm.lang.Language;
 import net.runeduniverse.libs.rogm.modules.Module;
 import net.runeduniverse.libs.rogm.modules.Module.Data;
@@ -22,7 +22,7 @@ import net.runeduniverse.libs.rogm.querying.IFRelation;
 import net.runeduniverse.libs.rogm.querying.IFilter;
 import net.runeduniverse.libs.utils.DataMap;
 
-public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper, InternalBufferTypes {
+public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper, BufferTypes {
 
 	private IFilter primary;
 	private String qry;
