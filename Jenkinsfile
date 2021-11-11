@@ -120,9 +120,23 @@ pipeline {
 			}
 		}
 
-		stage('Deploy') {
+		stage('Deploy Release') {
+			when {
+			    branch 'master'
+			}
 			steps {
-				sh 'mvn -P jenkins-deploy'
+				sh 'mvn -P repo-releases,jenkins-deploy'
+				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
+			}
+		}
+		stage('Deploy Snapshot') {
+			when {
+			    not {
+			        branch 'master'
+			    }
+			}
+			steps {
+				sh 'mvn -P repo-snapshots,jenkins-deploy'
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
