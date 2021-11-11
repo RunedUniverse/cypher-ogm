@@ -5,9 +5,10 @@ import java.util.Collection;
 
 import net.runeduniverse.libs.rogm.pattern.Archive;
 import net.runeduniverse.libs.rogm.pattern.IBaseQueryPattern;
+import net.runeduniverse.libs.rogm.pipeline.chain.ChainConfigurator;
 import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;;
 
-public interface IBuffer extends InternalBufferTypes {
+public interface IBuffer extends InternalBufferTypes, ChainConfigurator {
 
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
