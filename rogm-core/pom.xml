@@ -90,5 +90,24 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>repo-development</id>
+			<!-- deploy test-jar to dev-repo -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>test-jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>

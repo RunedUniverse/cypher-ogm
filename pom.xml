@@ -214,6 +214,7 @@
 				<defaultGoal>clean compile install</defaultGoal>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<skipTests>true</skipTests>
@@ -228,6 +229,7 @@
 				<defaultGoal>test</defaultGoal>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<groups>system</groups>
@@ -242,6 +244,7 @@
 				<defaultGoal>test</defaultGoal>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<groups>db-neo4j</groups>
@@ -256,6 +259,7 @@
 				<defaultGoal>deploy</defaultGoal>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<skipTests>true</skipTests>
