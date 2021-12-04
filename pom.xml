@@ -256,7 +256,7 @@
 		<profile>
 			<id>package-doc</id>
 			<build>
-				<defaultGoal>jar-no-fork jar</defaultGoal>
+				<defaultGoal>org.apache.maven.plugins:maven-source-plugin:jar-no-fork org.apache.maven.plugins:maven-javadoc-plugin:jar</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -272,7 +272,7 @@
 		<profile>
 			<id>package-sign</id>
 			<build>
-				<defaultGoal>sign</defaultGoal>
+				<defaultGoal>org.apache.maven.plugins:maven-gpg-plugin:sign</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
