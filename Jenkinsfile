@@ -120,6 +120,21 @@ pipeline {
 			}
 		}
 
+		stage('Doc & Sign') {
+			parallel {
+				stage('Package Sources & Javadoc') {
+					steps {
+						sh 'mvn -P package-doc'
+					}
+				}
+				stage('GPG Sign') {
+					steps {
+						sh 'mvn -P package-sign'
+					}
+				}
+			}
+		}
+
 		stage('Deploy') {
 			steps {
 			    script {
