@@ -60,7 +60,7 @@
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm</groupId>
 				<artifactId>rogm-bom</artifactId>
-				<version>[${project.parent.version}.${min-bom-version},)</version>
+				<version>${project.parent.version}.${min-bom-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

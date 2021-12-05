@@ -43,29 +43,29 @@
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm</groupId>
 				<artifactId>core</artifactId>
-				<version>${project.parent.version}.${min-core-version}</version>
+				<version>[${project.parent.version}.${min-core-version},)</version>
 			</dependency>
 			<!-- PARSER -->
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm.parser</groupId>
 				<artifactId>json</artifactId>
-				<version>${project.parent.version}.${min-parser-json-version}</version>
+				<version>[${project.parent.version}.${min-parser-json-version},)</version>
 			</dependency>
 			<!-- LANGUAGES -->
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm.lang</groupId>
 				<artifactId>cypher</artifactId>
-				<version>${project.parent.version}.${min-lang-cypher-version}</version>
+				<version>[${project.parent.version}.${min-lang-cypher-version},)</version>
 			</dependency>
 			<!-- MODULES -->
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm.modules</groupId>
 				<artifactId>neo4j</artifactId>
-				<version>${project.parent.version}.${min-module-neo4j-version}</version>
+				<version>[${project.parent.version}.${min-module-neo4j-version},)</version>
 			</dependency>
 			<!-- DEPRECATED - NOT RELEASED -->
 			<!-- <dependency> <groupId>net.runeduniverse.libs.rogm.modules</groupId> 
-				<artifactId>decorator</artifactId> <version>[${project.parent.version}.${min-module-decorator-version})</version> 
+				<artifactId>decorator</artifactId> <version>[${project.parent.version}.${min-module-decorator-version},)</version> 
 				</dependency> -->
 			<!-- UTILS -->
 			<dependency>
@@ -144,7 +144,7 @@
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm</groupId>
 				<artifactId>core</artifactId>
-				<version>${project.parent.version}.${min-core-version}</version>
+				<version>[${project.parent.version}.${min-core-version},)</version>
 				<classifier>tests</classifier>
 				<type>test-jar</type>
 				<scope>test</scope>
