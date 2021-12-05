@@ -189,15 +189,15 @@
 
 	<profiles>
 		<profile>
-			<id>license-update</id>
-			<build>
-				<defaultGoal>license:format</defaultGoal>
-			</build>
-		</profile>
-		<profile>
 			<id>license-check</id>
 			<build>
 				<defaultGoal>license:check</defaultGoal>
+			</build>
+		</profile>
+		<profile>
+			<id>license-update</id>
+			<build>
+				<defaultGoal>license:format</defaultGoal>
 			</build>
 		</profile>
 		<profile>
