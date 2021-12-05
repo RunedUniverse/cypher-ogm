@@ -212,7 +212,7 @@
 		<profile>
 			<id>jenkins-install</id>
 			<build>
-				<defaultGoal>clean compile org.apache.maven.plugins:maven-source-plugin:jar-no-fork org.apache.maven.plugins:maven-javadoc-plugin:jar  org.apache.maven.plugins:maven-gpg-plugin:sign install</defaultGoal>
+				<defaultGoal>clean compile source:jar-no-fork javadoc:jar org.apache.maven.plugins:maven-gpg-plugin:sign install</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -269,7 +269,7 @@
 		<profile>
 			<id>jenkins-deploy</id>
 			<build>
-				<defaultGoal>deploy</defaultGoal>
+				<defaultGoal>source:jar-no-fork javadoc:jar deploy</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
