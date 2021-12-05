@@ -7,13 +7,13 @@ pipeline {
 	stages {
 		stage('Update Maven Repo') {
 			steps {
-				sh 'mvn dependency:resolve'
 				sh 'mvn install --non-recursive'
 			}
 		}
 		stage('Install BOM') {
 			steps {
 				dir(path: 'rogm-bom') {
+					sh 'mvn dependency:resolve'
 					sh 'mvn clean install'
 				}
 			}

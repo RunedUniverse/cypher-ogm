@@ -8,8 +8,8 @@
 		<version>2.1</version>
 	</parent>
 
-	<groupId>net.runeduniverse.libs.rogm.modules</groupId>
-	<artifactId>neo4j</artifactId>
+	<groupId>net.runeduniverse.libs.rogm</groupId>
+	<artifactId>modules-neo4j</artifactId>
 	<version>${project.parent.version}.${artifact-version}</version>
 
 	<name>ROGM Module Neo4j</name>
@@ -26,12 +26,12 @@
 			<artifactId>core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.runeduniverse.libs.rogm.lang</groupId>
-			<artifactId>cypher</artifactId>
+			<groupId>net.runeduniverse.libs.rogm</groupId>
+			<artifactId>lang-cypher</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.runeduniverse.libs.rogm.parser</groupId>
-			<artifactId>json</artifactId>
+			<groupId>net.runeduniverse.libs.rogm</groupId>
+			<artifactId>parser-json</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j.driver</groupId>
@@ -66,7 +66,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm</groupId>
-				<artifactId>rogm-bom</artifactId>
+				<artifactId>bom</artifactId>
 				<version>${project.parent.version}.${bom-version}</version>
 				<type>pom</type>
 				<scope>import</scope>

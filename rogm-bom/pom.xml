@@ -9,7 +9,7 @@
 	</parent>
 
 	<groupId>net.runeduniverse.libs.rogm</groupId>
-	<artifactId>rogm-bom</artifactId>
+	<artifactId>bom</artifactId>
 	<version>${project.parent.version}.${artifact-version}</version>
 	<packaging>pom</packaging>
 
@@ -48,25 +48,25 @@
 			</dependency>
 			<!-- PARSER -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm.parser</groupId>
-				<artifactId>json</artifactId>
+				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<artifactId>parser-json</artifactId>
 				<version>[${project.parent.version}.${min-parser-json-version},)</version>
 			</dependency>
 			<!-- LANGUAGES -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm.lang</groupId>
-				<artifactId>cypher</artifactId>
+				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<artifactId>lang-cypher</artifactId>
 				<version>[${project.parent.version}.${min-lang-cypher-version},)</version>
 			</dependency>
 			<!-- MODULES -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm.modules</groupId>
-				<artifactId>neo4j</artifactId>
+				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<artifactId>modules-neo4j</artifactId>
 				<version>[${project.parent.version}.${min-module-neo4j-version},)</version>
 			</dependency>
 			<!-- DEPRECATED - NOT RELEASED -->
-			<!-- <dependency> <groupId>net.runeduniverse.libs.rogm.modules</groupId> 
-				<artifactId>decorator</artifactId> <version>[${project.parent.version}.${min-module-decorator-version},)</version> 
+			<!-- <dependency> <groupId>net.runeduniverse.libs.rogm</groupId> 
+				<artifactId>modules-decorator</artifactId> <version>[${project.parent.version}.${min-module-decorator-version},)</version> 
 				</dependency> -->
 			<!-- UTILS -->
 			<dependency>
