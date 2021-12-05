@@ -432,6 +432,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
 					<version>3.0.1</version>
+					<configuration>
+						<homedir>/var/lib/jenkins/gpg</homedir>
+						<keyname>41A2C641F9499E1F</keyname>
+						<passphraseServerId>gpg-signature-rogm</passphraseServerId>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
