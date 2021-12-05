@@ -28,6 +28,7 @@
 	</organization>
 
 	<properties>
+		<root-dir>${project.parent.basedir}</root-dir>
 		<artifact-version>1</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
 		<min-core-version>1</min-core-version>

@@ -16,7 +16,7 @@
 
 	<properties>
 		<artifact-version>1</artifact-version>
-		<min-bom-version>1</min-bom-version>
+		<bom-version>1</bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
 	</properties>
 
@@ -58,9 +58,9 @@
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm</groupId>
 				<artifactId>rogm-bom</artifactId>
+				<version>${project.parent.version}.${bom-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-				<version>${project.parent.version}.${min-bom-version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
