@@ -11,6 +11,13 @@ pipeline {
 				sh 'mvn install --non-recursive'
 			}
 		}
+		stage('Install BOM') {
+			steps {
+				dir(path: 'rogm-bom') {
+					sh 'mvn -P jenkins-install'
+				}
+			}
+		}
 		stage('License Check') {
 			steps {
 				sh 'mvn -P license-check'
