@@ -13,22 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.libs.rogm.querying.builder;
+package net.runeduniverse.libs.rogm.buffer;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import lombok.Getter;
-import net.runeduniverse.libs.rogm.querying.IFNode;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
-
-@Getter
-public class NodeFilter extends AProxyFilter<NodeFilter> implements IFNode {
-
-	private final Set<IFRelation> relations = new HashSet<>();
-
-	public NodeFilter() {
-		this.instance = this;
-	}
+public class AdvancedBuffer extends BasicBuffer {
 
 }

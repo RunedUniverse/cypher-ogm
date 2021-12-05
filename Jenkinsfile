@@ -11,6 +11,11 @@ pipeline {
 				sh 'mvn install --non-recursive'
 			}
 		}
+		stage('License Check') {
+			steps {
+				sh 'mvn -P license-check'
+			}
+		}
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
@@ -49,13 +54,13 @@ pipeline {
 						}
 					}
 				}
-				stage('Decorator') {
-					steps {
-						dir(path: 'rogm-module-decorator') {
-							sh 'mvn -P jenkins-install'
-						}
-					}
-				}
+				//stage('Decorator') {
+				//	steps {
+				//		dir(path: 'rogm-module-decorator') {
+				//			sh 'mvn -P jenkins-install'
+				//		}
+				//	}
+				//}
 			}
 		}
 		
@@ -117,7 +122,16 @@ pipeline {
 
 		stage('Deploy') {
 			steps {
-				sh 'mvn -P jenkins-deploy'
+			    script {
+			        switch(GIT_BRANCH) {
+			        	case 'master':
+			        		sh 'mvn -P repo-releases,jenkins-deploy'
+			        		break
+			        	default:
+			        		sh 'mvn -P repo-development,jenkins-deploy'
+			        		break
+			    	}
+			    }
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
