@@ -5,17 +5,17 @@ pipeline {
 		jdk 'OpenJDK 8'
 	}
 	stages {
+		stage('Install BOM') {
+			steps {
+				dir(path: 'rogm-bom') {
+					sh 'mvn clean install'
+				}
+			}
+		}
 		stage('Update Maven Repo') {
 			steps {
 				sh 'mvn dependency:resolve'
 				sh 'mvn install --non-recursive'
-			}
-		}
-		stage('Install BOM') {
-			steps {
-				dir(path: 'rogm-bom') {
-					sh 'mvn -P jenkins-install'
-				}
 			}
 		}
 		stage('License Check') {
