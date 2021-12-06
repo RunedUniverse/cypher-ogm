@@ -56,10 +56,10 @@
 			<organizationUrl>https://www.runeduniverse.net</organizationUrl>
 			<timezone>Europe/Vienna</timezone>
 			<roles>
-				<role>maintainer</role>
-				<role>founder</role>
-				<role>architect</role>
-				<role>developer</role>
+				<role>Maintainer</role>
+				<role>Founder</role>
+				<role>Architect</role>
+				<role>Developer</role>
 			</roles>
 		</developer>
 	</developers>
