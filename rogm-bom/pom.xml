@@ -1,31 +1,22 @@
-<!--
-
-    Copyright © 2021 Pl4yingNight (pl4yingnight@gmail.com)
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
+<!-- Copyright © 2021 Pl4yingNight (pl4yingnight@gmail.com) Licensed under 
+	the Apache License, Version 2.0 (the "License"); you may not use this file 
+	except in compliance with the License. You may obtain a copy of the License 
+	at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable 
+	law or agreed to in writing, software distributed under the License is distributed 
+	on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+	express or implied. See the License for the specific language governing permissions 
+	and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>net.runeduniverse.libs</groupId>
+		<groupId>net.runeduniverse.lib</groupId>
 		<artifactId>rogm</artifactId>
 		<version>2.1</version>
 	</parent>
 
-	<groupId>net.runeduniverse.libs.rogm</groupId>
+	<groupId>net.runeduniverse.lib.rogm</groupId>
 	<artifactId>rogm-bom</artifactId>
 	<version>${project.parent.version}.${artifact-version}</version>
 	<packaging>pom</packaging>
@@ -59,36 +50,36 @@
 		<dependencies>
 			<!-- CORE -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-core</artifactId>
 				<version>[${project.parent.version}.${min-core-version},)</version>
 			</dependency>
 			<!-- PARSER -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm.parser</groupId>
+				<groupId>net.runeduniverse.lib.rogm.parser</groupId>
 				<artifactId>rogm-parser-json</artifactId>
 				<version>[${project.parent.version}.${min-parser-json-version},)</version>
 			</dependency>
 			<!-- LANGUAGES -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm.lang</groupId>
+				<groupId>net.runeduniverse.lib.rogm.lang</groupId>
 				<artifactId>rogm-lang-cypher</artifactId>
 				<version>[${project.parent.version}.${min-lang-cypher-version},)</version>
 			</dependency>
 			<!-- MODULES -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm.modules</groupId>
+				<groupId>net.runeduniverse.lib.rogm.modules</groupId>
 				<artifactId>rogm-modules-neo4j</artifactId>
 				<version>[${project.parent.version}.${min-module-neo4j-version},)</version>
 			</dependency>
 			<!-- DEPRECATED - NOT RELEASED -->
-			<!-- <dependency> <groupId>net.runeduniverse.libs.rogm.modules</groupId> 
+			<!-- <dependency> <groupId>net.runeduniverse.lib.rogm.modules</groupId> 
 				<artifactId>rogm-modules-decorator</artifactId> <version>[${project.parent.version}.${min-module-decorator-version},)</version> 
 				</dependency> -->
 
 			<!-- TESTS -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-core</artifactId>
 				<version>[${project.parent.version}.${min-core-version},)</version>
 				<classifier>tests</classifier>

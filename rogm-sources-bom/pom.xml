@@ -1,31 +1,22 @@
-<!--
-
-    Copyright © 2021 Pl4yingNight (pl4yingnight@gmail.com)
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
+<!-- Copyright © 2021 Pl4yingNight (pl4yingnight@gmail.com) Licensed under 
+	the Apache License, Version 2.0 (the "License"); you may not use this file 
+	except in compliance with the License. You may obtain a copy of the License 
+	at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable 
+	law or agreed to in writing, software distributed under the License is distributed 
+	on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+	express or implied. See the License for the specific language governing permissions 
+	and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>net.runeduniverse.libs</groupId>
+		<groupId>net.runeduniverse.lib</groupId>
 		<artifactId>rogm</artifactId>
 		<version>2.1</version>
 	</parent>
 
-	<groupId>net.runeduniverse.libs.rogm</groupId>
+	<groupId>net.runeduniverse.lib.rogm</groupId>
 	<artifactId>rogm-sources-bom</artifactId>
 	<version>${project.parent.version}.${artifact-version}</version>
 	<packaging>pom</packaging>
@@ -36,11 +27,11 @@
 		<root-dir>${project.parent.basedir}</root-dir>
 		<artifact-version>1</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
-		<runeduniverse-utils-version>1.0.0</runeduniverse-utils-version>
-		<runeduniverse-logging-version>0.0.2</runeduniverse-logging-version>
-		<runeduniverse-errors-version>0.0.1</runeduniverse-errors-version>
-		<runeduniverse-chain-version>0.0.1</runeduniverse-chain-version>
-		<runeduniverse-scanner-version>1.0.5</runeduniverse-scanner-version>
+		<runeduniverse-utils-common-version>1.0.0</runeduniverse-utils-common-version>
+		<runeduniverse-utils-logging-version>0.0.2</runeduniverse-utils-logging-version>
+		<runeduniverse-utils-errors-version>0.0.1</runeduniverse-utils-errors-version>
+		<runeduniverse-utils-chain-version>0.0.1</runeduniverse-utils-chain-version>
+		<runeduniverse-utils-scanner-version>1.0.5</runeduniverse-utils-scanner-version>
 		<!-- ARTIFACT VERSIONS - OBJECT MAPPER -->
 		<jackson-databind-version>2.11.0</jackson-databind-version>
 		<!-- ARTIFACT VERSIONS - OPTIONAL DRIVERS / DB CONNECTORS -->
@@ -59,29 +50,29 @@
 		<dependencies>
 			<!-- UTILS -->
 			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
-				<artifactId>utils</artifactId>
-				<version>${runeduniverse-utils-version}</version>
+				<groupId>net.runeduniverse.lib.utils</groupId>
+				<artifactId>utils-common</artifactId>
+				<version>${runeduniverse-utils-common-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
-				<artifactId>logging</artifactId>
-				<version>${runeduniverse-logging-version}</version>
+				<groupId>net.runeduniverse.lib.utils</groupId>
+				<artifactId>utils-logging</artifactId>
+				<version>${runeduniverse-utils-logging-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
-				<artifactId>errors</artifactId>
-				<version>${runeduniverse-errors-version}</version>
+				<groupId>net.runeduniverse.lib.utils</groupId>
+				<artifactId>utils-errors</artifactId>
+				<version>${runeduniverse-utils-errors-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
-				<artifactId>chain</artifactId>
-				<version>${runeduniverse-chain-version}</version>
+				<groupId>net.runeduniverse.lib.utils</groupId>
+				<artifactId>utils-chain</artifactId>
+				<version>${runeduniverse-utils-chain-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
+				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>scanner</artifactId>
-				<version>${runeduniverse-scanner-version}</version>
+				<version>${runeduniverse-utils-scanner-version}</version>
 			</dependency>
 
 			<!-- OBJECT MAPPER -->
@@ -96,14 +87,6 @@
 				<groupId>org.neo4j.driver</groupId>
 				<artifactId>neo4j-java-driver</artifactId>
 				<version>${neo4j-java-driver-version}</version>
-			</dependency>
-
-			<!-- COMPILER -->
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${lombok-version}</version>
-				<scope>provided</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
