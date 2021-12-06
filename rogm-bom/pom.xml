@@ -20,12 +20,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>net.runeduniverse.libs</groupId>
+		<groupId>net.runeduniverse.lib</groupId>
 		<artifactId>rogm</artifactId>
 		<version>2.1</version>
 	</parent>
 
-	<groupId>net.runeduniverse.libs.rogm</groupId>
+	<groupId>net.runeduniverse.lib.rogm</groupId>
 	<artifactId>rogm-bom</artifactId>
 	<version>${project.parent.version}.${artifact-version}</version>
 	<packaging>pom</packaging>
@@ -59,108 +59,36 @@
 		<dependencies>
 			<!-- CORE -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-core</artifactId>
 				<version>[${project.parent.version}.${min-core-version},)</version>
 			</dependency>
 			<!-- PARSER -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm.parser</groupId>
+				<groupId>net.runeduniverse.lib.rogm.parser</groupId>
 				<artifactId>rogm-parser-json</artifactId>
 				<version>[${project.parent.version}.${min-parser-json-version},)</version>
 			</dependency>
 			<!-- LANGUAGES -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm.lang</groupId>
+				<groupId>net.runeduniverse.lib.rogm.lang</groupId>
 				<artifactId>rogm-lang-cypher</artifactId>
 				<version>[${project.parent.version}.${min-lang-cypher-version},)</version>
 			</dependency>
 			<!-- MODULES -->
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm.modules</groupId>
+				<groupId>net.runeduniverse.lib.rogm.modules</groupId>
 				<artifactId>rogm-modules-neo4j</artifactId>
 				<version>[${project.parent.version}.${min-module-neo4j-version},)</version>
 			</dependency>
 			<!-- DEPRECATED - NOT RELEASED -->
-			<!-- <dependency> <groupId>net.runeduniverse.libs.rogm.modules</groupId> 
+			<!-- <dependency> <groupId>net.runeduniverse.lib.rogm.modules</groupId> 
 				<artifactId>rogm-modules-decorator</artifactId> <version>[${project.parent.version}.${min-module-decorator-version},)</version> 
 				</dependency> -->
-			<!-- UTILS -->
-			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
-				<artifactId>utils</artifactId>
-				<version>1.0.0</version>
-			</dependency>
-			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
-				<artifactId>logging</artifactId>
-				<version>0.0.2</version>
-			</dependency>
-			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
-				<artifactId>errors</artifactId>
-				<version>0.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
-				<artifactId>chain</artifactId>
-				<version>0.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>net.runeduniverse.libs</groupId>
-				<artifactId>scanner</artifactId>
-				<version>1.0.5</version>
-			</dependency>
-
-			<!-- OBJECT MAPPER -->
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>2.11.0</version>
-			</dependency>
-
-			<!-- OPTIONAL DRIVERS / DB CONNECTORS -->
-			<dependency>
-				<groupId>org.neo4j.driver</groupId>
-				<artifactId>neo4j-java-driver</artifactId>
-				<version>4.0.1</version>
-			</dependency>
-
-			<!-- COMPILER -->
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>1.18.12</version>
-				<scope>provided</scope>
-			</dependency>
 
 			<!-- TESTS -->
 			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>5.7.1</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-engine</artifactId>
-				<version>5.7.1</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.platform</groupId>
-				<artifactId>junit-platform-launcher</artifactId>
-				<version>1.7.1</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.platform</groupId>
-				<artifactId>junit-platform-runner</artifactId>
-				<version>1.7.1</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-core</artifactId>
 				<version>[${project.parent.version}.${min-core-version},)</version>
 				<classifier>tests</classifier>

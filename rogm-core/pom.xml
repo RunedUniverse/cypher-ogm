@@ -20,12 +20,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>net.runeduniverse.libs</groupId>
+		<groupId>net.runeduniverse.lib</groupId>
 		<artifactId>rogm</artifactId>
 		<version>2.1</version>
 	</parent>
 
-	<groupId>net.runeduniverse.libs.rogm</groupId>
+	<groupId>net.runeduniverse.lib.rogm</groupId>
 	<artifactId>rogm-core</artifactId>
 	<version>${project.parent.version}.${artifact-version}</version>
 
@@ -34,29 +34,30 @@
 	<properties>
 		<artifact-version>1</artifact-version>
 		<bom-version>1</bom-version>
+		<sources-bom-version>1</sources-bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>net.runeduniverse.libs</groupId>
-			<artifactId>utils</artifactId>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-common</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.runeduniverse.libs</groupId>
-			<artifactId>logging</artifactId>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-logging</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.runeduniverse.libs</groupId>
-			<artifactId>errors</artifactId>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-errors</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.runeduniverse.libs</groupId>
-			<artifactId>chain</artifactId>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-chain</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.runeduniverse.libs</groupId>
-			<artifactId>scanner</artifactId>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-scanner</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -75,7 +76,14 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<groupId>net.runeduniverse.lib.rogm</groupId>
+				<artifactId>rogm-sources-bom</artifactId>
+				<version>${project.parent.version}.${sources-bom-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-bom</artifactId>
 				<version>${project.parent.version}.${bom-version}</version>
 				<type>pom</type>
@@ -88,6 +96,7 @@
 		<profile>
 			<id>dev-install</id>
 			<build>
+				<defaultGoal>clean license:format compile install</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

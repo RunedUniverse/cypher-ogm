@@ -10,17 +10,12 @@ pipeline {
 				sh 'mvn install --non-recursive'
 			}
 		}
-		stage('Install BOM') {
+		stage('Install Bill of Materials') {
 			steps {
 				dir(path: 'rogm-bom') {
 					sh 'mvn dependency:resolve'
-					sh 'mvn clean install'
+					sh 'mvn -P jenkins-install --non-recursive'
 				}
-			}
-		}
-		stage('License Check') {
-			steps {
-				sh 'mvn -P license-check'
 			}
 		}
 		stage('Build CORE') {
@@ -68,6 +63,12 @@ pipeline {
 				//		}
 				//	}
 				//}
+			}
+		}
+		
+		stage('License Check') {
+			steps {
+				sh 'mvn -P license-check,license-prj-utils-approve,license-apache2-approve'
 			}
 		}
 		
