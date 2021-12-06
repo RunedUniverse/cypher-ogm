@@ -35,6 +35,7 @@
 
 	<modules>
 		<module>rogm-bom</module>
+		<module>rogm-sources-bom</module>
 		<module>rogm-core</module>
 		<module>rogm-parser-json</module>
 		<module>rogm-lang-cypher</module>

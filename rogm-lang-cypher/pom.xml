@@ -34,6 +34,7 @@
 	<properties>
 		<artifact-version>1</artifact-version>
 		<bom-version>1</bom-version>
+		<sources-bom-version>1</sources-bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
 	</properties>
 
@@ -72,6 +73,13 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<artifactId>rogm-sources-bom</artifactId>
+				<version>${project.parent.version}.${sources-bom-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.libs.rogm</groupId>
 				<artifactId>rogm-bom</artifactId>
