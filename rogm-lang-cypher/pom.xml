@@ -26,23 +26,25 @@
 	</parent>
 
 	<groupId>net.runeduniverse.libs.rogm.lang</groupId>
-	<artifactId>cypher</artifactId>
-	<version>${major.version}.${lang.cypher.version}</version>
+	<artifactId>rogm-lang-cypher</artifactId>
+	<version>${project.parent.version}.${artifact-version}</version>
 
 	<name>ROGM Lang Cypher</name>
 
 	<properties>
+		<artifact-version>1</artifact-version>
+		<bom-version>1</bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>rogm-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm.parser</groupId>
-			<artifactId>json</artifactId>
+			<artifactId>rogm-parser-json</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs</groupId>
@@ -62,9 +64,21 @@
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>rogm-core</artifactId>
 			<classifier>tests</classifier>
 			<type>test-jar</type>
 		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<artifactId>rogm-bom</artifactId>
+				<version>${project.parent.version}.${bom-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

@@ -26,19 +26,21 @@
 	</parent>
 
 	<groupId>net.runeduniverse.libs.rogm.modules</groupId>
-	<artifactId>decorator</artifactId>
-	<version>${major.version}.${module.decorator.version}</version>
+	<artifactId>rogm-modules-decorator</artifactId>
+	<version>${project.parent.version}.${artifact-version}</version>
 
 	<name>ROGM Module Decorator</name>
 
 	<properties>
+		<artifact-version>1</artifact-version>
+		<bom-version>1</bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>rogm-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -54,11 +56,24 @@
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.libs.rogm</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>rogm-core</artifactId>
 			<classifier>tests</classifier>
 			<type>test-jar</type>
 		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.runeduniverse.libs.rogm</groupId>
+				<artifactId>rogm-bom</artifactId>
+				<version>${project.parent.version}.${bom-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<profiles>
 		<profile>
 			<id>jenkins-deploy</id>
