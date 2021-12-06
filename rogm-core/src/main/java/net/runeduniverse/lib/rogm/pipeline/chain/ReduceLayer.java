@@ -24,8 +24,8 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityCollectionContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.LazyEntriesContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.RelatedEntriesContainer;
-import net.runeduniverse.libs.chain.Chain;
-import net.runeduniverse.libs.chain.ChainRuntime;
+import net.runeduniverse.lib.utils.chain.Chain;
+import net.runeduniverse.lib.utils.chain.ChainRuntime;
 
 public interface ReduceLayer {
 

@@ -23,8 +23,8 @@ import net.runeduniverse.lib.rogm.info.SessionInfo;
 import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder;
-import net.runeduniverse.libs.chain.ChainManager;
-import net.runeduniverse.libs.logging.UniversalLogger;
+import net.runeduniverse.lib.utils.chain.ChainManager;
+import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public abstract class APipelineFactory<ROUTER extends AChainRouter> {
 	protected final Archive archive;

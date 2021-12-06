@@ -24,19 +24,18 @@ import java.util.logging.Logger;
 
 import org.junit.jupiter.api.*;
 
-import net.runeduniverse.lib.rogm.modules.neo4j.Neo4jConfiguration;
+import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.Session;
 import net.runeduniverse.lib.rogm.modules.neo4j.SessionTest;
-import net.runeduniverse.lib.utils.common.logging.DebugLogger;
-import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.Session;
-import net.runeduniverse.libs.rogm.pipeline.Pipeline;
-import net.runeduniverse.libs.rogm.querying.IFNode;
-import net.runeduniverse.libs.rogm.test.AConfigTest;
-import net.runeduniverse.libs.rogm.test.ConsoleLogger;
-import net.runeduniverse.libs.rogm.test.model.*;
-import net.runeduniverse.libs.rogm.test.model.relations.*;
-import net.runeduniverse.libs.rogm.test.system.TestEntity;
-import net.runeduniverse.libs.rogm.test.system.TestModelNode;
+import net.runeduniverse.lib.rogm.pipeline.Pipeline;
+import net.runeduniverse.lib.rogm.querying.IFNode;
+import net.runeduniverse.lib.rogm.test.AConfigTest;
+import net.runeduniverse.lib.rogm.test.ConsoleLogger;
+import net.runeduniverse.lib.rogm.test.model.*;
+import net.runeduniverse.lib.rogm.test.model.relations.*;
+import net.runeduniverse.lib.rogm.test.system.TestEntity;
+import net.runeduniverse.lib.rogm.test.system.TestModelNode;
+import net.runeduniverse.lib.utils.logging.DebugLogger;
 
 public class SessionTest extends AConfigTest {
 

@@ -15,9 +15,9 @@
  */
 package net.runeduniverse.lib.rogm.modules.neo4j;
 
-import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.pipeline.DatabasePipelineFactory;
-import net.runeduniverse.libs.chain.ChainManager;
+import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.pipeline.DatabasePipelineFactory;
+import net.runeduniverse.lib.utils.chain.ChainManager;
 
 public class DebugDatabasePipelineFactory extends DatabasePipelineFactory {
 

@@ -27,8 +27,8 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.libs.chain.ChainManager;
-import net.runeduniverse.libs.logging.UniversalLogger;
+import net.runeduniverse.lib.utils.chain.ChainManager;
+import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public abstract class AChainRouter {
 

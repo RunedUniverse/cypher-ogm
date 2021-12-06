@@ -29,7 +29,7 @@ import lombok.Setter;
 import net.runeduniverse.lib.rogm.querying.FilterType;
 import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.rogm.querying.ILabeled;
-import net.runeduniverse.libs.errors.ExceptionSuppressions;
+import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
 
 public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, InvocationHandler {
 	protected FILTER instance;

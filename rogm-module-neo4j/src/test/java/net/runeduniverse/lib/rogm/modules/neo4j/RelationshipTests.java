@@ -30,20 +30,19 @@ import java.util.Map;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import net.runeduniverse.lib.rogm.modules.neo4j.Neo4jConfiguration;
-import net.runeduniverse.libs.rogm.annotations.NodeEntity;
-import net.runeduniverse.libs.rogm.annotations.Relationship;
-import net.runeduniverse.libs.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.libs.rogm.annotations.StartNode;
-import net.runeduniverse.libs.rogm.annotations.TargetNode;
-import net.runeduniverse.libs.rogm.querying.FilterNode;
-import net.runeduniverse.libs.rogm.querying.FilterRelation;
-import net.runeduniverse.libs.rogm.querying.IFNode;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
-import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.test.AConfigTest;
-import net.runeduniverse.libs.rogm.test.model.*;
-import net.runeduniverse.libs.rogm.test.model.relations.*;
+import net.runeduniverse.lib.rogm.annotations.NodeEntity;
+import net.runeduniverse.lib.rogm.annotations.Relationship;
+import net.runeduniverse.lib.rogm.annotations.RelationshipEntity;
+import net.runeduniverse.lib.rogm.annotations.StartNode;
+import net.runeduniverse.lib.rogm.annotations.TargetNode;
+import net.runeduniverse.lib.rogm.querying.FilterNode;
+import net.runeduniverse.lib.rogm.querying.FilterRelation;
+import net.runeduniverse.lib.rogm.querying.IFNode;
+import net.runeduniverse.lib.rogm.querying.IFRelation;
+import net.runeduniverse.lib.rogm.querying.IFilter;
+import net.runeduniverse.lib.rogm.test.AConfigTest;
+import net.runeduniverse.lib.rogm.test.model.*;
+import net.runeduniverse.lib.rogm.test.model.relations.*;
 
 public class RelationshipTests extends AConfigTest {
 

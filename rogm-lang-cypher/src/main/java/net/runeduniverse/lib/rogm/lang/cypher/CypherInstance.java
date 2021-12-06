@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
-import net.runeduniverse.libs.rogm.lang.Language.*;
-import net.runeduniverse.libs.logging.UniversalLogger;
-import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
-import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.querying.*;
-import net.runeduniverse.libs.utils.DataHashMap;
-import net.runeduniverse.libs.utils.DataMap;
-import net.runeduniverse.libs.utils.StringVariableGenerator;
+import net.runeduniverse.lib.rogm.lang.Language.*;
+import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.querying.*;
+import net.runeduniverse.lib.utils.logging.UniversalLogger;
+import net.runeduniverse.lib.utils.common.DataHashMap;
+import net.runeduniverse.lib.utils.common.DataMap;
+import net.runeduniverse.lib.utils.common.StringVariableGenerator;
 
 @RequiredArgsConstructor
 public class CypherInstance implements Instance {

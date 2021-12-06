@@ -32,16 +32,16 @@ import org.neo4j.driver.TransactionWork;
 import org.neo4j.driver.Value;
 
 import lombok.RequiredArgsConstructor;
-import net.runeduniverse.libs.rogm.info.ConnectionInfo;
-import net.runeduniverse.libs.logging.UniversalLogger;
-import net.runeduniverse.libs.rogm.modules.Module;
-import net.runeduniverse.libs.rogm.modules.Module.IRawDataRecord;
-import net.runeduniverse.libs.rogm.modules.Module.IRawIdRecord;
-import net.runeduniverse.libs.rogm.modules.Module.IRawRecord;
-import net.runeduniverse.libs.rogm.modules.RawDataRecord;
-import net.runeduniverse.libs.rogm.modules.RawIdRecord;
-import net.runeduniverse.libs.rogm.modules.RawRecord;
-import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.info.ConnectionInfo;
+import net.runeduniverse.lib.rogm.modules.Module;
+import net.runeduniverse.lib.rogm.modules.Module.IRawDataRecord;
+import net.runeduniverse.lib.rogm.modules.Module.IRawIdRecord;
+import net.runeduniverse.lib.rogm.modules.Module.IRawRecord;
+import net.runeduniverse.lib.rogm.modules.RawDataRecord;
+import net.runeduniverse.lib.rogm.modules.RawIdRecord;
+import net.runeduniverse.lib.rogm.modules.RawRecord;
+import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public class Neo4jModuleInstance implements Module.Instance<Long> {
 	private Driver driver = null;

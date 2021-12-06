@@ -23,8 +23,8 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.Value;
 
 import lombok.Getter;
-import net.runeduniverse.libs.rogm.modules.Module;
-import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.modules.Module;
+import net.runeduniverse.lib.rogm.parser.Parser;
 
 @Getter
 public class Data implements Module.Data {

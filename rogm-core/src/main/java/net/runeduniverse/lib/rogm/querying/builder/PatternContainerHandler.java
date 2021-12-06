@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.lib.rogm.pattern.IPattern;
-import net.runeduniverse.libs.logging.logs.CompoundTree;
+import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @NoArgsConstructor
 @AllArgsConstructor

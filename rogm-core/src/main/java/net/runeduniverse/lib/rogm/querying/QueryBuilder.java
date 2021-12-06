@@ -40,8 +40,8 @@ import net.runeduniverse.lib.rogm.querying.builder.ParamHandler;
 import net.runeduniverse.lib.rogm.querying.builder.PatternContainerHandler;
 import net.runeduniverse.lib.rogm.querying.builder.RelationFilter;
 import net.runeduniverse.lib.rogm.querying.builder.ReturnedHandler;
-import net.runeduniverse.libs.logging.logs.CompoundTree;
-import net.runeduniverse.libs.utils.StringVariableGenerator;
+import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
+import net.runeduniverse.lib.utils.common.StringVariableGenerator;
 
 public final class QueryBuilder {
 	public static creator<NodeQueryBuilder> CREATOR_NODE_BUILDER = QueryBuilder::createNodeBuilder;

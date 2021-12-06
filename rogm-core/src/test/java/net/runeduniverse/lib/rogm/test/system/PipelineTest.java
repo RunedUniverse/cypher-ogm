@@ -31,6 +31,7 @@ import net.runeduniverse.lib.rogm.test.AConfigTest;
 import net.runeduniverse.lib.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.lib.rogm.test.dummies.DummyModule;
 import net.runeduniverse.lib.rogm.test.dummies.DummyParser;
+import net.runeduniverse.lib.utils.logging.DebugLogger;
 
 public class PipelineTest {
 	public static final String MODEL_PKG_PATH = AConfigTest.MODEL_PKG_PATH;

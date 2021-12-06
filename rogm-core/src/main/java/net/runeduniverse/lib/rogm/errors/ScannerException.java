@@ -15,7 +15,7 @@
  */
 package net.runeduniverse.lib.rogm.errors;
 
-import net.runeduniverse.libs.errors.ExceptionSuppressions;
+import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
 
 public class ScannerException extends ExceptionSuppressions {
 	private static final long serialVersionUID = 4295891405650593671L;

@@ -26,16 +26,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import net.runeduniverse.lib.rogm.lang.cypher.CypherInstance;
-import net.runeduniverse.lib.rogm.lang.cypher.CypherLanguage;
-import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.parser.json.Feature;
-import net.runeduniverse.libs.rogm.parser.json.JSONParser;
-import net.runeduniverse.libs.rogm.querying.FilterNode;
-import net.runeduniverse.libs.rogm.querying.FilterRelation;
-import net.runeduniverse.libs.rogm.test.AConfigTest;
-import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
+import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.annotations.Direction;
+import net.runeduniverse.lib.rogm.parser.json.Feature;
+import net.runeduniverse.lib.rogm.parser.json.JSONParser;
+import net.runeduniverse.lib.rogm.querying.FilterNode;
+import net.runeduniverse.lib.rogm.querying.FilterRelation;
+import net.runeduniverse.lib.rogm.test.AConfigTest;
+import net.runeduniverse.lib.rogm.test.dummies.DummyModule;
 
 public class CypherTest extends AConfigTest {
 

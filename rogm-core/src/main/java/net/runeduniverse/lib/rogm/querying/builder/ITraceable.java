@@ -15,7 +15,7 @@
  */
 package net.runeduniverse.lib.rogm.querying.builder;
 
-import net.runeduniverse.libs.logging.logs.CompoundTree;
+import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 public interface ITraceable {
 

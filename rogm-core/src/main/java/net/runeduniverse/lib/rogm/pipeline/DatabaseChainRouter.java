@@ -33,7 +33,7 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.LazyEntriesContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.libs.logging.UniversalLogger;
+import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public class DatabaseChainRouter extends AChainRouter {
 

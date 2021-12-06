@@ -27,8 +27,8 @@ import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pipeline.chain.AssemblyLayers;
 import net.runeduniverse.lib.rogm.pipeline.chain.LookupLayers;
 import net.runeduniverse.lib.rogm.pipeline.chain.ReduceLayer;
-import net.runeduniverse.libs.chain.ChainManager;
-import net.runeduniverse.libs.logging.UniversalLogger;
+import net.runeduniverse.lib.utils.chain.ChainManager;
+import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public class DatabasePipelineFactory extends APipelineFactory<DatabaseChainRouter> {
 

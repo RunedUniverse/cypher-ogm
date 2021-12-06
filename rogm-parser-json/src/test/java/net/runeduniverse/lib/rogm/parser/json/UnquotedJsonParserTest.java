@@ -23,8 +23,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.lib.rogm.Configuration;
-import net.runeduniverse.lib.rogm.parser.json.Feature;
-import net.runeduniverse.lib.rogm.parser.json.JSONParser;
 import net.runeduniverse.lib.rogm.test.AConfigTest;
 import net.runeduniverse.lib.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.lib.rogm.test.dummies.DummyModule;

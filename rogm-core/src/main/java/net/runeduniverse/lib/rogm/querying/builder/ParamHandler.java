@@ -21,7 +21,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.runeduniverse.lib.rogm.querying.IParameterized;
-import net.runeduniverse.libs.logging.logs.CompoundTree;
+import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @NoArgsConstructor
 public class ParamHandler implements IParameterized, NoFilterType, ITraceable {

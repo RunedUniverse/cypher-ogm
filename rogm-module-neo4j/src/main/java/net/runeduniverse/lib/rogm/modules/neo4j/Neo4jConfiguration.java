@@ -15,13 +15,13 @@
  */
 package net.runeduniverse.lib.rogm.modules.neo4j;
 
-import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.lang.Language;
-import net.runeduniverse.libs.rogm.lang.cypher.CypherLanguage;
-import net.runeduniverse.libs.rogm.modules.Module;
-import net.runeduniverse.libs.rogm.parser.Parser;
-import net.runeduniverse.libs.rogm.parser.json.Feature;
-import net.runeduniverse.libs.rogm.parser.json.JSONParser;
+import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.lang.Language;
+import net.runeduniverse.lib.rogm.lang.cypher.CypherLanguage;
+import net.runeduniverse.lib.rogm.modules.Module;
+import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.parser.json.Feature;
+import net.runeduniverse.lib.rogm.parser.json.JSONParser;
 
 public class Neo4jConfiguration extends Configuration {
 

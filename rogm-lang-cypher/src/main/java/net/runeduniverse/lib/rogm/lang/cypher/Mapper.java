@@ -35,7 +35,7 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.lib.rogm.querying.IDataContainer;
 import net.runeduniverse.lib.rogm.querying.IFRelation;
 import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.utils.DataMap;
+import net.runeduniverse.lib.utils.common.DataMap;
 
 public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper, BufferTypes {
 

@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.runeduniverse.lib.rogm.querying.IOptional;
-import net.runeduniverse.libs.logging.logs.CompoundTree;
+import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @NoArgsConstructor
 @AllArgsConstructor

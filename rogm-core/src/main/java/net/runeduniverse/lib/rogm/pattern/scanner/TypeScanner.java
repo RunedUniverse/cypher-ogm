@@ -37,10 +37,10 @@ import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pattern.FieldPattern;
 import net.runeduniverse.lib.rogm.pattern.NodePattern;
 import net.runeduniverse.lib.rogm.pattern.RelationPattern;
-import net.runeduniverse.libs.scanner.MethodAnnotationScanner;
-import net.runeduniverse.libs.scanner.MethodPattern;
-import net.runeduniverse.libs.scanner.ScanOrder;
-import net.runeduniverse.libs.scanner.TypeAnnotationScanner;
+import net.runeduniverse.lib.utils.scanner.MethodAnnotationScanner;
+import net.runeduniverse.lib.utils.scanner.MethodPattern;
+import net.runeduniverse.lib.utils.scanner.ScanOrder;
+import net.runeduniverse.lib.utils.scanner.TypeAnnotationScanner;
 
 public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPattern, APattern<?>> {
 

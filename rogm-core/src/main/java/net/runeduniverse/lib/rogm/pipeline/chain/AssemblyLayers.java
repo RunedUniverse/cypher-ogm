@@ -40,10 +40,10 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.RelatedEntriesContainer;
 import net.runeduniverse.lib.rogm.querying.IFNode;
 import net.runeduniverse.lib.rogm.querying.IFRelation;
 import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.libs.chain.Chain;
-import net.runeduniverse.libs.chain.ChainRuntime;
-import net.runeduniverse.libs.utils.DataHashMap;
-import net.runeduniverse.libs.utils.DataMap;
+import net.runeduniverse.lib.utils.chain.Chain;
+import net.runeduniverse.lib.utils.chain.ChainRuntime;
+import net.runeduniverse.lib.utils.common.DataHashMap;
+import net.runeduniverse.lib.utils.common.DataMap;
 
 public interface AssemblyLayers extends BufferTypes {
 

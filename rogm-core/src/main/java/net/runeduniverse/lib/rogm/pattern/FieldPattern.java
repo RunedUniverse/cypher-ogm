@@ -24,7 +24,7 @@ import net.runeduniverse.lib.rogm.annotations.IConverter;
 import net.runeduniverse.lib.rogm.annotations.Id;
 
 @ToString(callSuper = true)
-public class FieldPattern extends net.runeduniverse.libs.scanner.FieldPattern {
+public class FieldPattern extends net.runeduniverse.lib.utils.scanner.FieldPattern {
 
 	protected final Archive archive;
 	@Getter

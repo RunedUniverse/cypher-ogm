@@ -15,7 +15,7 @@
  */
 package net.runeduniverse.lib.rogm.pipeline.chain;
 
-import net.runeduniverse.libs.chain.ChainManager;
+import net.runeduniverse.lib.utils.chain.ChainManager;
 
 public interface ChainConfigurator {
 

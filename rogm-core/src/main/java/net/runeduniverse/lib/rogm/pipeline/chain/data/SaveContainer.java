@@ -30,7 +30,7 @@ import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.querying.IDataContainer;
 import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
-import net.runeduniverse.libs.errors.ExceptionSuppressions;
+import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
 
 @ToString
 public class SaveContainer {

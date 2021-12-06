@@ -21,25 +21,24 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import net.runeduniverse.lib.rogm.lang.cypher.CypherLanguage;
-import net.runeduniverse.libs.rogm.Configuration;
-import net.runeduniverse.libs.rogm.annotations.Direction;
-import net.runeduniverse.libs.rogm.errors.ScannerException;
-import net.runeduniverse.libs.rogm.parser.json.Feature;
-import net.runeduniverse.libs.rogm.parser.json.JSONParser;
-import net.runeduniverse.libs.rogm.querying.FilterNode;
-import net.runeduniverse.libs.rogm.querying.FilterRelation;
-import net.runeduniverse.libs.rogm.querying.IDataContainer;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
-import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.rogm.querying.QueryBuilder.NodeQueryBuilder;
-import net.runeduniverse.libs.rogm.querying.QueryBuilder.RelationQueryBuilder;
-import net.runeduniverse.libs.rogm.test.AQueryBuilderTest;
-import net.runeduniverse.libs.rogm.test.ConsoleLogger;
-import net.runeduniverse.libs.rogm.test.dummies.DummyModule;
-import net.runeduniverse.libs.rogm.test.model.Artist;
-import net.runeduniverse.libs.rogm.test.model.Song;
-import net.runeduniverse.libs.rogm.test.system.TestEntity;
+import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.annotations.Direction;
+import net.runeduniverse.lib.rogm.errors.ScannerException;
+import net.runeduniverse.lib.rogm.parser.json.Feature;
+import net.runeduniverse.lib.rogm.parser.json.JSONParser;
+import net.runeduniverse.lib.rogm.querying.FilterNode;
+import net.runeduniverse.lib.rogm.querying.FilterRelation;
+import net.runeduniverse.lib.rogm.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.querying.IFRelation;
+import net.runeduniverse.lib.rogm.querying.IFilter;
+import net.runeduniverse.lib.rogm.querying.QueryBuilder.NodeQueryBuilder;
+import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
+import net.runeduniverse.lib.rogm.test.AQueryBuilderTest;
+import net.runeduniverse.lib.rogm.test.ConsoleLogger;
+import net.runeduniverse.lib.rogm.test.dummies.DummyModule;
+import net.runeduniverse.lib.rogm.test.model.Artist;
+import net.runeduniverse.lib.rogm.test.model.Song;
+import net.runeduniverse.lib.rogm.test.system.TestEntity;
 
 public class CypherQueryBuilderTest extends AQueryBuilderTest {
 

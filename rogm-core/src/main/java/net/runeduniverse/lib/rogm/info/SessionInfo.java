@@ -18,7 +18,7 @@ package net.runeduniverse.lib.rogm.info;
 import lombok.Getter;
 import net.runeduniverse.lib.rogm.buffer.IBuffer;
 import net.runeduniverse.lib.rogm.pipeline.APipelineFactory;
-import net.runeduniverse.libs.logging.logs.CompoundTree;
+import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @Getter
 public class SessionInfo {

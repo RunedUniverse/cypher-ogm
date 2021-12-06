@@ -15,7 +15,7 @@
  */
 package net.runeduniverse.lib.rogm.pattern;
 
-import static net.runeduniverse.libs.utils.StringUtils.isBlank;
+import static net.runeduniverse.lib.utils.common.StringUtils.isBlank;
 
 import java.io.Serializable;
 import java.util.Arrays;

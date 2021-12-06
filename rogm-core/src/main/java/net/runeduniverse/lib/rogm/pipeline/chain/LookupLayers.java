@@ -38,11 +38,11 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.libs.chain.Chain;
-import net.runeduniverse.libs.chain.ChainRuntime;
-import net.runeduniverse.libs.errors.ExceptionSuppressions;
+import net.runeduniverse.lib.utils.chain.Chain;
+import net.runeduniverse.lib.utils.chain.ChainRuntime;
+import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
 
-import static net.runeduniverse.libs.utils.StringUtils.isBlank;
+import static net.runeduniverse.lib.utils.common.StringUtils.isBlank;
 
 public interface LookupLayers {
 

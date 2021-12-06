@@ -17,9 +17,9 @@ package net.runeduniverse.lib.rogm.modules.neo4j;
 
 import java.util.logging.Logger;
 
-import net.runeduniverse.libs.rogm.info.ConnectionInfo;
-import net.runeduniverse.libs.rogm.modules.AModule;
-import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.info.ConnectionInfo;
+import net.runeduniverse.lib.rogm.modules.AModule;
+import net.runeduniverse.lib.rogm.parser.Parser;
 
 public class Neo4jModule extends AModule {
 

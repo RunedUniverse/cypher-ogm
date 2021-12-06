@@ -21,7 +21,7 @@ import java.util.Set;
 import lombok.Getter;
 import net.runeduniverse.lib.rogm.Session;
 import net.runeduniverse.lib.rogm.logging.PipelineLogger;
-import net.runeduniverse.libs.chain.ChainManager;
+import net.runeduniverse.lib.utils.chain.ChainManager;
 
 public final class Pipeline implements AutoCloseable {
 	private final APipelineFactory<?> factory;

@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import lombok.Getter;
-import net.runeduniverse.libs.logging.logs.CompoundTree;
 import net.runeduniverse.lib.rogm.annotations.IConverter;
 import net.runeduniverse.lib.rogm.annotations.Id;
 import net.runeduniverse.lib.rogm.errors.ScannerException;
@@ -37,11 +36,12 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder;
-import net.runeduniverse.libs.logging.Level;
-import net.runeduniverse.libs.scanner.FieldPattern;
-import net.runeduniverse.libs.scanner.MethodPattern;
-import net.runeduniverse.libs.scanner.PackageScanner;
-import net.runeduniverse.libs.scanner.TypePattern;
+import net.runeduniverse.lib.utils.logging.Level;
+import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
+import net.runeduniverse.lib.utils.scanner.FieldPattern;
+import net.runeduniverse.lib.utils.scanner.MethodPattern;
+import net.runeduniverse.lib.utils.scanner.PackageScanner;
+import net.runeduniverse.lib.utils.scanner.TypePattern;
 
 public final class Archive {
 	public static boolean PACKAGE_SCANNER_DEBUG_MODE = false;

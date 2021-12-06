@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import net.runeduniverse.libs.logging.ALogger;
+import net.runeduniverse.lib.utils.logging.ALogger;
 
 public final class PipelineLogger extends ALogger {
 

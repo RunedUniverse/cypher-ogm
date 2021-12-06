@@ -32,10 +32,10 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.LazyEntriesContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
-import net.runeduniverse.libs.chain.Chain;
-import net.runeduniverse.libs.chain.ChainRuntime;
-import net.runeduniverse.libs.errors.ExceptionSuppressions;
-import net.runeduniverse.libs.logging.UniversalLogger;
+import net.runeduniverse.lib.utils.chain.Chain;
+import net.runeduniverse.lib.utils.chain.ChainRuntime;
+import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
+import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public interface BasicBufferLayers extends InternalBufferTypes {
 

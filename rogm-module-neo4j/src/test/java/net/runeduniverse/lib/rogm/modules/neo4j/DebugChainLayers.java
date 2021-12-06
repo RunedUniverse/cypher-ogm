@@ -16,13 +16,13 @@
 package net.runeduniverse.lib.rogm.modules.neo4j;
 
 import java.util.Collection;
-import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.errors.ExceptionSuppressions;
-import net.runeduniverse.libs.logging.UniversalLogger;
-import net.runeduniverse.libs.rogm.pattern.Archive;
-import net.runeduniverse.libs.rogm.pipeline.chain.Chains;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
-import net.runeduniverse.libs.chain.Chain;
+import net.runeduniverse.lib.rogm.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.pattern.Archive;
+import net.runeduniverse.lib.rogm.pipeline.chain.Chains;
+import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
+import net.runeduniverse.lib.utils.chain.Chain;
+import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
+import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public interface DebugChainLayers {
 

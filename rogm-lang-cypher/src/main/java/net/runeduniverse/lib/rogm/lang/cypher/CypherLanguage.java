@@ -17,13 +17,13 @@ package net.runeduniverse.lib.rogm.lang.cypher;
 
 import java.util.logging.Logger;
 
-import net.runeduniverse.libs.rogm.lang.Language;
-import net.runeduniverse.libs.logging.UniversalLogger;
-import net.runeduniverse.libs.rogm.modules.IdTypeResolver;
-import net.runeduniverse.libs.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.lang.Language;
+import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.parser.Parser;
 import net.runeduniverse.lib.rogm.lang.cypher.pipeline.chains.CleanupLayers;
 import net.runeduniverse.lib.rogm.lang.cypher.pipeline.chains.CypherChains;
-import net.runeduniverse.libs.chain.ChainManager;
+import net.runeduniverse.lib.utils.logging.UniversalLogger;
+import net.runeduniverse.lib.utils.chain.ChainManager;
 
 public class CypherLanguage implements Language {
 

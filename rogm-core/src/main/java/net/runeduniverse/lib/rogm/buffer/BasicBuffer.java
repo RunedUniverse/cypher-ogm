@@ -27,7 +27,7 @@ import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.lib.rogm.pattern.INodePattern;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
-import net.runeduniverse.libs.chain.ChainManager;
+import net.runeduniverse.lib.utils.chain.ChainManager;
 
 public class BasicBuffer implements IBuffer, InternalBufferTypes {
 

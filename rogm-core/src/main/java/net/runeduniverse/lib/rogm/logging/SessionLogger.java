@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import net.runeduniverse.lib.rogm.info.SessionInfo;
-import net.runeduniverse.libs.logging.ALogger;
+import net.runeduniverse.lib.utils.logging.ALogger;
 
 public final class SessionLogger extends ALogger {
 

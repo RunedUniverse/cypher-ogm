@@ -19,17 +19,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-import net.runeduniverse.libs.rogm.modules.Module;
+import net.runeduniverse.lib.rogm.modules.Module;
 import net.runeduniverse.lib.rogm.lang.cypher.CypherInstance;
 import net.runeduniverse.lib.rogm.lang.cypher.FilterStatus;
 import net.runeduniverse.lib.rogm.lang.cypher.Mapper;
-import net.runeduniverse.libs.chain.Chain;
-import net.runeduniverse.libs.chain.ChainRuntime;
-import net.runeduniverse.libs.rogm.querying.IFNode;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
-import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.utils.DataHashMap;
-import net.runeduniverse.libs.utils.DataMap;
+import net.runeduniverse.lib.rogm.querying.IFNode;
+import net.runeduniverse.lib.rogm.querying.IFRelation;
+import net.runeduniverse.lib.rogm.querying.IFilter;
+import net.runeduniverse.lib.utils.common.DataHashMap;
+import net.runeduniverse.lib.utils.common.DataMap;
+import net.runeduniverse.lib.utils.chain.Chain;
+import net.runeduniverse.lib.utils.chain.ChainRuntime;
 
 public interface CleanupLayers {
 
