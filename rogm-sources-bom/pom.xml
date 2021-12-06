@@ -71,7 +71,7 @@
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
-				<artifactId>scanner</artifactId>
+				<artifactId>utils-scanner</artifactId>
 				<version>${runeduniverse-utils-scanner-version}</version>
 			</dependency>
 

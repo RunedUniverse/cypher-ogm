@@ -25,17 +25,17 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.libs.rogm.buffer.IBuffer;
-import net.runeduniverse.libs.rogm.buffer.BufferTypes;
-import net.runeduniverse.libs.rogm.lang.Language;
-import net.runeduniverse.libs.rogm.modules.Module;
-import net.runeduniverse.libs.rogm.modules.Module.Data;
-import net.runeduniverse.libs.rogm.pattern.IPattern;
-import net.runeduniverse.libs.rogm.pipeline.chain.data.UpdatedEntryContainer;
-import net.runeduniverse.libs.rogm.querying.IDataContainer;
-import net.runeduniverse.libs.rogm.querying.IFRelation;
-import net.runeduniverse.libs.rogm.querying.IFilter;
-import net.runeduniverse.libs.utils.DataMap;
+import net.runeduniverse.lib.rogm.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.buffer.BufferTypes;
+import net.runeduniverse.lib.rogm.lang.Language;
+import net.runeduniverse.lib.rogm.modules.Module;
+import net.runeduniverse.lib.rogm.modules.Module.Data;
+import net.runeduniverse.lib.rogm.pattern.IPattern;
+import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
+import net.runeduniverse.lib.rogm.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.querying.IFRelation;
+import net.runeduniverse.lib.rogm.querying.IFilter;
+import net.runeduniverse.lib.utils.DataMap;
 
 public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper, BufferTypes {
 
