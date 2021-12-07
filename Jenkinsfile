@@ -1,7 +1,23 @@
 pipeline {
 	agent any
+	tools {
+		maven 'Maven 3.6.3'
+		jdk 'OpenJDK 8'
+	}
 	stages {
-
+		stage('Update Maven Repo') {
+			steps {
+				sh 'mvn install --non-recursive'
+			}
+		}
+		stage('Install Bill of Materials') {
+			steps {
+				dir(path: 'rogm-bom') {
+					sh 'mvn dependency:resolve'
+					sh 'mvn -P jenkins-install --non-recursive'
+				}
+			}
+		}
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
@@ -40,24 +56,38 @@ pipeline {
 						}
 					}
 				}
-				stage('Decorator') {
-					steps {
-						dir(path: 'rogm-module-decorator') {
-							sh 'mvn -P jenkins-install'
-						}
-					}
+				//stage('Decorator') {
+				//	steps {
+				//		dir(path: 'rogm-module-decorator') {
+				//			sh 'mvn -P jenkins-install'
+				//		}
+				//	}
+				//}
+			}
+		}
+		
+		stage('License Check') {
+			steps {
+				sh 'mvn -P license-check,license-prj-utils-approve,license-apache2-approve'
+			}
+		}
+		
+		stage('System Test') {
+			steps {
+				sh 'mvn -P jenkins-test-system'
+			}
+			post {
+				always {
+					junit '*/target/surefire-reports/*.xml'
+				}
+				failure {
+				    archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
 				}
 			}
 		}
-
-		stage('Test') {
+		stage('Database Test') {
 			parallel {
-				stage('System') {
-					steps {
-						sh 'mvn -P jenkins-test-system'
-					}
-				}
-				stage('Database Neo4J') {
+				stage('Neo4J') {
 					environment {
 						BUILD_TAG_CAPS= sh(returnStdout: true, script: 'echo $BUILD_TAG | tr "[a-z]" "[A-Z]"').trim()
 						// start Neo4J
@@ -92,19 +122,31 @@ pipeline {
 				always {
 					junit '*/target/surefire-reports/*.xml'
 				}
+				failure {
+				    archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
+				}
 			}
 		}
 
 		stage('Deploy') {
 			steps {
-				sh '''mvn -P jenkins-deploy'''
+			    script {
+			        switch(GIT_BRANCH) {
+			        	case 'master':
+			        		sh 'mvn -P repo-releases,jenkins-deploy'
+			        		break
+			        	default:
+			        		sh 'mvn -P repo-development,jenkins-deploy'
+			        		break
+			    	}
+			    }
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 			}
 		}
-
 	}
-	tools {
-		maven 'Maven 3.6.3'
-		jdk 'OpenJDK 8'
+	post {
+		cleanup {
+			cleanWs()
+		}
 	}
 }
