@@ -7,13 +7,21 @@ pipeline {
 	stages {
 		stage('Update Maven Repo') {
 			steps {
+				sh 'mvn dependency:resolve'
 				sh 'mvn install --non-recursive'
+			}
+		}
+		stage('Install Bill of Sources') {
+			steps {
+				dir(path: 'rogm-sources-bom') {
+					sh 'mvn dependency:resolve'
+					sh 'mvn -P jenkins-install --non-recursive'
+				}
 			}
 		}
 		stage('Install Bill of Materials') {
 			steps {
 				dir(path: 'rogm-bom') {
-					sh 'mvn dependency:resolve'
 					sh 'mvn -P jenkins-install --non-recursive'
 				}
 			}
@@ -133,14 +141,30 @@ pipeline {
 			    script {
 			        switch(GIT_BRANCH) {
 			        	case 'master':
-			        		sh 'mvn -P repo-releases,jenkins-deploy'
+			        		sh 'mvn -P repo-releases,jenkins-deploy-signed'
 			        		break
 			        	default:
 			        		sh 'mvn -P repo-development,jenkins-deploy'
 			        		break
 			    	}
 			    }
+				archiveArtifacts artifacts: '*/target/*.pom', fingerprint: true
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
+				archiveArtifacts artifacts: '*/target/*.asc', fingerprint: true
+			}
+		}
+
+		stage('Stage at Maven-Central') {
+			steps {
+			    script {
+			        switch(GIT_BRANCH) {
+			        	case 'master':
+			        		sh 'mvn -P repo-maven-central,jenkins-deploy-signed'
+			        		break
+			        	default:
+			        		break
+			    	}
+			    }
 			}
 		}
 	}
