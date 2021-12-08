@@ -9,6 +9,7 @@ pipeline {
 			steps {
 				sh 'mvn dependency:resolve'
 				sh 'mvn install --non-recursive'
+				sh 'ls -l target'
 			}
 		}
 		stage('Install Bill of Sources') {
@@ -16,6 +17,7 @@ pipeline {
 				dir(path: 'rogm-sources-bom') {
 					sh 'mvn dependency:resolve'
 					sh 'mvn -P jenkins-install --non-recursive'
+					sh 'ls -l target'
 				}
 			}
 		}
@@ -23,6 +25,7 @@ pipeline {
 			steps {
 				dir(path: 'rogm-bom') {
 					sh 'mvn -P jenkins-install --non-recursive'
+					sh 'ls -l target'
 				}
 			}
 		}
@@ -30,6 +33,7 @@ pipeline {
 			steps {
 				dir(path: 'rogm-core') {
 					sh 'mvn -P jenkins-install'
+					sh 'ls -l target'
 				}
 			}
 		}
@@ -39,6 +43,7 @@ pipeline {
 					steps {
 						dir(path: 'rogm-parser-json') {
 							sh 'mvn -P jenkins-install'
+							sh 'ls -l target'
 						}
 					}
 				}
@@ -50,6 +55,7 @@ pipeline {
 					steps {
 						dir(path: 'rogm-lang-cypher') {
 							sh 'mvn -P jenkins-install'
+							sh 'ls -l target'
 						}
 					}
 				}
@@ -61,6 +67,7 @@ pipeline {
 					steps {
 						dir(path: 'rogm-module-neo4j') {
 							sh 'mvn -P jenkins-install'
+							sh 'ls -l target'
 						}
 					}
 				}
