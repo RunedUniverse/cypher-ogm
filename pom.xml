@@ -87,7 +87,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- ACTIVITIONS -->
 		<license-enforce>true</license-enforce>
-		<project-packaging>${project.packaging}</project-packaging>
 		<!-- ACTIVITIONS - LICENSES -->
 		<license-prj-utils-approve>true</license-prj-utils-approve>
 		<license-apache2-approve>true</license-apache2-approve>
@@ -117,12 +116,6 @@
 		<!-- JENKINS -->
 		<profile>
 			<id>jenkins-install</id>
-			<activation>
-				<property>
-					<name>project-packaging</name>
-					<value>pom</value>
-				</property>
-			</activation>
 			<build>
 				<defaultGoal>clean gpg:sign install</defaultGoal>
 			</build>
@@ -159,12 +152,6 @@
 		</profile>
 		<profile>
 			<id>jenkins-deploy-signed</id>
-			<activation>
-				<property>
-					<name>project-packaging</name>
-					<value>pom</value>
-				</property>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
