@@ -9,7 +9,6 @@ pipeline {
 			steps {
 				sh 'mvn dependency:resolve'
 				sh 'mvn install --non-recursive'
-				sh 'ls -l target'
 			}
 		}
 		stage('Install Bill of Sources') {
