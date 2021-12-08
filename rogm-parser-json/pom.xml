@@ -28,6 +28,7 @@
 	<groupId>net.runeduniverse.lib.rogm.parser</groupId>
 	<artifactId>rogm-parser-json</artifactId>
 	<version>${project.parent.version}.${artifact-version}</version>
+	<packaging>jar</packaging>
 
 	<name>ROGM Parser JSON</name>
 
