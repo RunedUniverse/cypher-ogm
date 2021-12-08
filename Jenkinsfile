@@ -148,7 +148,7 @@ pipeline {
 			    script {
 			        switch(GIT_BRANCH) {
 			        	case 'master':
-			        		sh 'mvn -P repo-releases,jenkins-deploy-signed'
+			        		sh 'mvn -P repo-releases,jenkins-deploy-signed -pl -rogm-module-decorator'
 			        		break
 			        	default:
 			        		sh 'mvn -P repo-development,jenkins-deploy'
@@ -166,7 +166,7 @@ pipeline {
 			    script {
 			        switch(GIT_BRANCH) {
 			        	case 'master':
-			        		sh 'mvn -P repo-maven-central,jenkins-deploy-signed'
+			        		sh 'mvn -P repo-maven-central,jenkins-deploy-signed -pl -rogm-module-decorator'
 			        		break
 			        	default:
 			        		break
