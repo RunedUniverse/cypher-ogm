@@ -102,6 +102,12 @@
 
 	<profiles>
 		<profile>
+			<id>jenkins-install</id>
+			<build>
+				<defaultGoal>clean compile jar:jar source:jar-no-fork javadoc:jar gpg:sign install</defaultGoal>
+			</build>
+		</profile>
+		<profile>
 			<id>jenkins-test-db-neo4j</id>
 			<build>
 				<plugins>
