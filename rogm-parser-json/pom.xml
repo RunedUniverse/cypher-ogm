@@ -89,13 +89,13 @@
 
 	<profiles>
 		<profile>
-			<id>jenkins-install</id>
+			<id>install</id>
 			<build>
-				<defaultGoal>clean compile jar:jar source:jar-no-fork javadoc:jar gpg:sign install</defaultGoal>
+				<defaultGoal>clean compile package install</defaultGoal>
 			</build>
 		</profile>
 		<profile>
-			<id>jenkins-deploy-signed</id>
+			<id>deploy-signed</id>
 			<build>
 				<plugins>
 					<plugin>

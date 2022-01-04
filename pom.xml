@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>net.runeduniverse.tools</groupId>
 		<artifactId>build-helper-java</artifactId>
-		<version>2021.12.06</version>
+		<version>2022.01.04</version>
 	</parent>
 
 	<groupId>net.runeduniverse.lib</groupId>
@@ -115,15 +115,60 @@
 		</profile>
 		<!-- JENKINS -->
 		<profile>
-			<id>jenkins-install</id>
+			<id>install</id>
 			<build>
-				<defaultGoal>clean gpg:sign install</defaultGoal>
+				<defaultGoal>clean verify install</defaultGoal>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pipeline</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pipeline</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pipeline</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pipeline</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 		<profile>
-			<id>jenkins-test-system</id>
+			<id>test-system</id>
 			<build>
-				<defaultGoal>test</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -136,9 +181,8 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jenkins-test-db-neo4j</id>
+			<id>test-db-neo4j</id>
 			<build>
-				<defaultGoal>test</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -151,12 +195,13 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jenkins-deploy-signed</id>
+			<id>deploy-signed</id>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
+						<inherited>false</inherited>
 						<configuration>
 							<artifacts>
 								<!-- gpg signature -->

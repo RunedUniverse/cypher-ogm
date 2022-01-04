@@ -114,16 +114,20 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jenkins-install</id>
+			<id>install</id>
 			<build>
-				<defaultGoal>clean compile jar:jar source:jar-no-fork javadoc:jar gpg:sign install</defaultGoal>
+				<defaultGoal>clean compile package install</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
+								<id>pipeline</id>
+								<inherited>true</inherited>
+								<phase>package</phase>
 								<goals>
+									<goal>jar</goal>
 									<goal>test-jar</goal>
 								</goals>
 							</execution>
@@ -134,7 +138,11 @@
 						<artifactId>maven-source-plugin</artifactId>
 						<executions>
 							<execution>
+								<id>pipeline</id>
+								<inherited>true</inherited>
+								<phase>package</phase>
 								<goals>
+									<goal>jar-no-fork</goal>
 									<goal>test-jar-no-fork</goal>
 								</goals>
 							</execution>
@@ -153,6 +161,9 @@
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
+								<id>pipeline</id>
+								<inherited>true</inherited>
+								<phase>package</phase>
 								<goals>
 									<goal>test-jar</goal>
 								</goals>
@@ -163,7 +174,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jenkins-deploy-signed</id>
+			<id>deploy-signed</id>
 			<build>
 				<plugins>
 					<plugin>

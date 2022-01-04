@@ -85,19 +85,18 @@
 
 	<profiles>
 		<profile>
-			<id>jenkins-install</id>
+			<id>install</id>
 			<build>
-				<defaultGoal>clean compile jar:jar source:jar-no-fork javadoc:jar gpg:sign install</defaultGoal>
+				<defaultGoal>clean compile package install</defaultGoal>
 			</build>
 		</profile>
 		<profile>
-			<id>jenkins-deploy</id>
+			<id>deploy</id>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-deploy-plugin</artifactId>
-						<version>2.8.2</version>
 						<configuration>
 							<skip>true</skip>
 						</configuration>

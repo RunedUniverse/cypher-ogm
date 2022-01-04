@@ -99,4 +99,80 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<profiles>
+		<profile>
+			<id>install</id>
+			<build>
+				<defaultGoal>clean verify install</defaultGoal>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pipeline</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pipeline</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pipeline</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pipeline</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>deploy-signed</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<inherited>false</inherited>
+						<configuration>
+							<artifacts>
+								<!-- gpg signature -->
+								<artifact>
+									<file>${project.build.directory}/${project.build.finalName}.pom.asc</file>
+									<type>pom.asc</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
