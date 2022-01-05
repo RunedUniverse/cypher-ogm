@@ -8,7 +8,7 @@ pipeline {
 		stage('Update Maven Repo') {
 			steps {
 				sh 'mvn dependency:resolve'
-				sh 'mvn -P jenkins,install --non-recursive'
+				sh 'mvn -P install --non-recursive'
 				sh 'ls -l target'
 			}
 		}
@@ -16,7 +16,7 @@ pipeline {
 			steps {
 				dir(path: 'rogm-sources-bom') {
 					sh 'mvn dependency:resolve'
-					sh 'mvn -P jenkins,install --non-recursive'
+					sh 'mvn -P install --non-recursive'
 					sh 'ls -l target'
 				}
 			}
@@ -24,7 +24,7 @@ pipeline {
 		stage('Install Bill of Materials') {
 			steps {
 				dir(path: 'rogm-bom') {
-					sh 'mvn -P jenkins,install --non-recursive'
+					sh 'mvn -P install --non-recursive'
 					sh 'ls -l target'
 				}
 			}
@@ -32,7 +32,7 @@ pipeline {
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
-					sh 'mvn -P jenkins,install'
+					sh 'mvn -P install'
 					sh 'ls -l target'
 				}
 			}
@@ -42,7 +42,7 @@ pipeline {
 				stage('JSON') {
 					steps {
 						dir(path: 'rogm-parser-json') {
-							sh 'mvn -P jenkins,install'
+							sh 'mvn -P install'
 							sh 'ls -l target'
 						}
 					}
@@ -54,7 +54,7 @@ pipeline {
 				stage('Cypher') {
 					steps {
 						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn -P jenkins,install'
+							sh 'mvn -P install'
 							sh 'ls -l target'
 						}
 					}
@@ -66,7 +66,7 @@ pipeline {
 				stage('Neo4J') {
 					steps {
 						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn -P jenkins,install'
+							sh 'mvn -P install'
 							sh 'ls -l target'
 						}
 					}
@@ -74,7 +74,7 @@ pipeline {
 				//stage('Decorator') {
 				//	steps {
 				//		dir(path: 'rogm-module-decorator') {
-				//			sh 'mvn -P jenkins,install'
+				//			sh 'mvn -P install'
 				//		}
 				//	}
 				//}
@@ -89,7 +89,7 @@ pipeline {
 		
 		stage('System Test') {
 			steps {
-				sh 'mvn -P jenkins,test,test-system'
+				sh 'mvn -P test,test-system'
 			}
 			post {
 				always {
@@ -118,7 +118,7 @@ pipeline {
 							docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
 							echo 'database loaded > starting tests'
 							printenv | sort
-							mvn -P jenkins,test,test-db-neo4j -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
+							mvn -P test,test-db-neo4j -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
 						'''
 					}
 					post {
@@ -148,10 +148,10 @@ pipeline {
 			    script {
 			        switch(GIT_BRANCH) {
 			        	case 'master':
-			        		sh 'mvn -P repo-releases,jenkins,deploy-signed -pl -rogm-module-decorator'
+			        		sh 'mvn -P repo-releases,deploy-signed -pl -rogm-module-decorator'
 			        		break
 			        	default:
-			        		sh 'mvn -P repo-development,jenkins,deploy'
+			        		sh 'mvn -P repo-development,deploy'
 			        		break
 			    	}
 			    }
@@ -166,7 +166,7 @@ pipeline {
 			    script {
 			        switch(GIT_BRANCH) {
 			        	case 'master':
-			        		sh 'mvn -P repo-maven-central,jenkins,deploy-signed -pl -rogm-module-decorator'
+			        		sh 'mvn -P repo-maven-central,deploy-signed -pl -rogm-module-decorator'
 			        		break
 			        	default:
 			        		break

@@ -116,14 +116,13 @@
 		<profile>
 			<id>install</id>
 			<build>
-				<defaultGoal>clean:clean@pipeline compile package install</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>pipeline</id>
+								<id>jenkins</id>
 								<inherited>true</inherited>
 								<phase>package</phase>
 								<goals>
@@ -138,7 +137,7 @@
 						<artifactId>maven-source-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>pipeline</id>
+								<id>jenkins</id>
 								<inherited>true</inherited>
 								<phase>package</phase>
 								<goals>
@@ -161,7 +160,7 @@
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>pipeline</id>
+								<id>jenkins</id>
 								<inherited>true</inherited>
 								<phase>package</phase>
 								<goals>
@@ -174,49 +173,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>deploy-signed</id>
+			<id>deploy</id>
 			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<configuration>
-							<artifacts>
-								<!-- gpg signatures -->
-								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}.pom.asc</file>
-									<type>pom.asc</type>
-								</artifact>
-								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}.jar.asc</file>
-									<type>jar.asc</type>
-								</artifact>
-								<!-- javadoc -->
-								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-javadoc.jar</file>
-									<type>jar</type>
-									<classifier>javadoc</classifier>
-								</artifact>
-								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-javadoc.jar.asc</file>
-									<type>jar.asc</type>
-									<classifier>javadoc</classifier>
-								</artifact>
-								<!-- sources -->
-								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-sources.jar</file>
-									<type>jar</type>
-									<classifier>sources</classifier>
-								</artifact>
-								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-sources.jar.asc</file>
-									<type>jar.asc</type>
-									<classifier>sources</classifier>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</plugin>
-				</plugins>
+				<defaultGoal>
+					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
+				</defaultGoal>
 			</build>
 		</profile>
 	</profiles>
