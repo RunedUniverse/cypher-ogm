@@ -177,7 +177,7 @@ pipeline {
 	}
 	post {
 		cleanup {
-			cleanWs()
+			//cleanWs()
 		}
 	}
 }
