@@ -120,6 +120,7 @@
 				<defaultGoal>
 					org.apache.maven.plugins:maven-clean-plugin:clean@jenkins
 					org.apache.maven.plugins:maven-compiler-plugin:compile@jenkins
+					org.apache.maven.plugins:maven-compiler-plugin:testCompile@jenkins-testing
 					org.apache.maven.plugins:maven-jar-plugin:jar@jenkins
 					org.apache.maven.plugins:maven-source-plugin:jar-no-fork@jenkins
 					org.apache.maven.plugins:maven-javadoc-plugin:jar@jenkins
@@ -178,7 +179,7 @@
 			<id>test</id>
 			<build>
 				<defaultGoal>
-					org.apache.maven.plugins:maven-surefire-plugin:test@jenkins
+					org.apache.maven.plugins:maven-surefire-plugin:test@jenkins-testing
 				</defaultGoal>
 			</build>
 		</profile>
