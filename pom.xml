@@ -119,7 +119,9 @@
 			<build>
 				<defaultGoal>
 					org.apache.maven.plugins:maven-clean-plugin:clean@jenkins
+					org.apache.maven.plugins:maven-resources-plugin:resources@jenkins
 					org.apache.maven.plugins:maven-compiler-plugin:compile@jenkins
+					org.apache.maven.plugins:maven-resources-plugin:testResources@jenkins-testing
 					org.apache.maven.plugins:maven-compiler-plugin:testCompile@jenkins-testing
 					org.apache.maven.plugins:maven-jar-plugin:jar@jenkins
 					org.apache.maven.plugins:maven-source-plugin:jar-no-fork@jenkins
