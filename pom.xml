@@ -192,9 +192,6 @@
 								<id>jenkins-testing</id>
 								<inherited>false</inherited>
 								<phase>none</phase>
-								<configuration>
-									<skip>true</skip>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>
@@ -265,8 +262,6 @@
 	</profiles>
 
 	<build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
 		<testResources>
 			<testResource>
 				<directory>src/test/resources</directory>
