@@ -117,7 +117,7 @@
 		<profile>
 			<id>install</id>
 			<build>
-				<defaultGoal>initialize verify install</defaultGoal>
+				<defaultGoal>maven-clean-plugin:clean@pipeline verify install</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

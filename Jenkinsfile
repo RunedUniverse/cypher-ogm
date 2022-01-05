@@ -32,7 +32,7 @@ pipeline {
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
-					sh 'mvn -P jenkins,install @pipeline'
+					sh 'mvn -P jenkins,install'
 					sh 'ls -l target'
 				}
 			}
