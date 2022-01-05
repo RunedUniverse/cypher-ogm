@@ -181,9 +181,33 @@
 			<id>test-junit-jupiter</id>
 			<build>
 				<defaultGoal>
+					org.apache.maven.plugins:maven-resources-plugin:testResources@jenkins-testing
+					org.apache.maven.plugins:maven-compiler-plugin:testCompile@jenkins-testing
 					org.apache.maven.plugins:maven-surefire-plugin:test@jenkins-testing
 				</defaultGoal>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>jenkins-testing</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>jenkins-testing</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
