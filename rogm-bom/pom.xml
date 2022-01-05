@@ -102,14 +102,13 @@
 		<profile>
 			<id>install</id>
 			<build>
-				<defaultGoal>clean verify install</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>pipeline</id>
+								<id>jenkins</id>
 								<inherited>false</inherited>
 								<phase>none</phase>
 							</execution>
@@ -120,7 +119,7 @@
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>pipeline</id>
+								<id>jenkins</id>
 								<inherited>false</inherited>
 								<phase>none</phase>
 							</execution>
@@ -131,7 +130,7 @@
 						<artifactId>maven-source-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>pipeline</id>
+								<id>jenkins</id>
 								<inherited>false</inherited>
 								<phase>none</phase>
 							</execution>
@@ -142,7 +141,7 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>pipeline</id>
+								<id>jenkins</id>
 								<inherited>false</inherited>
 								<phase>none</phase>
 							</execution>
