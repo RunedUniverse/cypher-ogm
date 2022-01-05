@@ -46,6 +46,7 @@ public final class SessionWrapper implements Session {
 		this.logger = new SessionLogger(SessionWrapper.class, pipelineLogger).logSessionInfo(info);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {
 		this.close();
