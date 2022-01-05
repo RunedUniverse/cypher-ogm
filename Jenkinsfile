@@ -175,9 +175,9 @@ pipeline {
 			}
 		}
 	}
-	post {
-		cleanup {
-			//cleanWs()
-		}
-	}
+	//post {
+	//	cleanup {
+	//		cleanWs()
+	//	}
+	//}
 }
