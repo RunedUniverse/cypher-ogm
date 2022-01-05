@@ -216,6 +216,9 @@
 								<id>jenkins-testing</id>
 								<inherited>false</inherited>
 								<phase>none</phase>
+								<configuration>
+									<skip>true</skip>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
