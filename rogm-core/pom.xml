@@ -116,7 +116,7 @@
 		<profile>
 			<id>install</id>
 			<build>
-				<defaultGoal>initialize@pipeline compile@pipeline package@pipeline install@pipeline</defaultGoal>
+				<defaultGoal>initialize compile package install</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
