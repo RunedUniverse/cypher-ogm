@@ -89,7 +89,7 @@ pipeline {
 		
 		stage('System Test') {
 			steps {
-				sh 'mvn -P test,test-system'
+				sh 'mvn -P test-junit-jupiter,test-system'
 			}
 			post {
 				always {
@@ -118,7 +118,7 @@ pipeline {
 							docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
 							echo 'database loaded > starting tests'
 							printenv | sort
-							mvn -P test,test-db-neo4j -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
+							mvn -P test-junit-jupiter,test-db-neo4j -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
 						'''
 					}
 					post {

@@ -176,7 +176,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>test</id>
+			<id>test-junit-jupiter</id>
 			<build>
 				<defaultGoal>
 					org.apache.maven.plugins:maven-surefire-plugin:test@jenkins-testing
