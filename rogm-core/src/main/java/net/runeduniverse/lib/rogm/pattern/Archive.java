@@ -38,10 +38,10 @@ import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 import net.runeduniverse.lib.utils.logging.Level;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
-import net.runeduniverse.lib.utils.scanner.FieldPattern;
-import net.runeduniverse.lib.utils.scanner.MethodPattern;
+import net.runeduniverse.lib.utils.scanner.pattern.FieldPattern;
+import net.runeduniverse.lib.utils.scanner.pattern.MethodPattern;
+import net.runeduniverse.lib.utils.scanner.pattern.TypePattern;
 import net.runeduniverse.lib.utils.scanner.PackageScanner;
-import net.runeduniverse.lib.utils.scanner.TypePattern;
 
 public final class Archive {
 	public static boolean PACKAGE_SCANNER_DEBUG_MODE = false;

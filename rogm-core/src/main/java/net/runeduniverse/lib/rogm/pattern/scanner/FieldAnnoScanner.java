@@ -19,10 +19,10 @@ import java.lang.annotation.Annotation;
 
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pattern.FieldPattern;
-import net.runeduniverse.lib.utils.scanner.FieldScanner;
 import net.runeduniverse.lib.utils.scanner.ScanOrder;
+import net.runeduniverse.lib.utils.scanner.templates.FieldScanner;
 
-public class FieldAnnoScanner extends net.runeduniverse.lib.utils.scanner.FieldAnnotationScanner<FieldPattern> {
+public class FieldAnnoScanner extends net.runeduniverse.lib.utils.scanner.templates.FieldAnnotationScanner<FieldPattern> {
 
 	public FieldAnnoScanner(Archive archive, Class<? extends Annotation> anno) {
 		super(creator(archive), anno);

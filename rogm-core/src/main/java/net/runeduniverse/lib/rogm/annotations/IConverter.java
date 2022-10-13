@@ -33,7 +33,6 @@ public interface IConverter<T extends Serializable> {
 		return convert((T) id);
 	}
 
-	@SuppressWarnings("deprecation")
 	static IConverter<?> createConverter(Class<?> clazz) throws InstantiationException, IllegalAccessException {
 		IConverter<?> conv = converter.get(clazz);
 		if (conv != null)
@@ -44,7 +43,6 @@ public interface IConverter<T extends Serializable> {
 		return conv;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static IConverter<?> createConverter(Converter anno, Class<?> type) throws Exception {
 		if (anno != null && anno.converter() != UnSet.class)
 			return (IConverter<?>) anno.converter()
