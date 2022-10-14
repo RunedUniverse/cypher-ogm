@@ -256,9 +256,10 @@ public final class Archive {
 	/**
 	 * Used to call all parsed Methods matching the Class
 	 * 
-	 * @param entityType
-	 * @param anno
-	 * @param obj
+	 * @param entityType  {@link Class} of the entity
+	 * @param anno	      {@link Annotation} by which the method can be identified
+	 * @param obj         {@link Object} which has the method
+	 * @param args        {@link Object} array which gets passed to the method
 	 * @return {@code true} if all calls returned successfully
 	 */
 	public boolean callMethod(Class<?> entityType, Class<? extends Annotation> anno, Object obj, Object... args) {

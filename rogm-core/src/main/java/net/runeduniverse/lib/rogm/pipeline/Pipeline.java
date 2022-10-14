@@ -49,7 +49,7 @@ public final class Pipeline implements AutoCloseable {
 	 * registers a <code>Session</code> as active
 	 * 
 	 * @deprecated for internal use only!
-	 * @param session
+	 * @param session registers a session to be managed automatically
 	 */
 	@Deprecated
 	public void registerActiveSession(Session session) {
