@@ -114,17 +114,15 @@ pipeline {
 				steps{
 				    
 					script {
-						environment {
-							BUILD_TAG_CAPS = sh(returnStdout: true, script: 'echo $BUILD_TAG | tr "[a-z]" "[A-Z]"').trim()
-						}
 						docker.image('neo4j:latest').withRun(
 								'--volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf:z ' +
-								'--volume=/var/run/neo4j-jenkins-rogm:/run:z ' +
-								'--name=${BUILD_TAG_CAPS}-db-neo4j'
+								'--volume=/var/run/neo4j-jenkins-rogm:/run:z'
 							) { c ->
-							sh 'export JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${c.id} )'
+							environment {
+								JENKINS_ROGM_NEO4J_IP = sh(returnStdout: true, script: 'docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${c.id}').trim()								
+							}
 							/* Wait until database service is up */
-							sh 'echo waiting for Neo4J[docker: ${BUILD_TAG_CAPS}-db-neo4j]\n\tto start on http://${JENKINS_ROGM_NEO4J_IP}:7474'
+							sh 'echo waiting for Neo4J to start on http://${JENKINS_ROGM_NEO4J_IP}:7474'
 							sh 'until $(curl --output /dev/null --silent --head --fail http://${JENKINS_ROGM_NEO4J_IP}:7474); do sleep 5; done'
 							/* Prepare Database */
 							sh '''
