@@ -28,10 +28,10 @@ public interface IBuffer extends BufferTypes, ChainConfigurator {
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
 	 * 
-	 * @param id          {@link Serializable} 
+	 * @param <T>  {@link Object} of type
+	 * @param id   {@link Serializable}
 	 * @param type of <T> {@link Class}
-	 * @param <T>         {@link Object} of type
-	 * @return the {@link Object} of the requested class <T>
+	 * @return the {@link Object} of the requested class
 	 */
 	<T> T getById(Serializable id, Class<T> type);
 
@@ -39,10 +39,10 @@ public interface IBuffer extends BufferTypes, ChainConfigurator {
 	 * Load Entity defined by entityId, in some cases it matches the entityId. The
 	 * Id can be defined in the Object.
 	 * 
-	 * @param entityId    {@link Serializable}
-	 * @param type of <T> {@link Class}
-	 * @param <T>         {@link Object} of type
-	 * @return the {@link Object} of the requested class <T>
+	 * @param <T>      {@link Object} of type
+	 * @param entityId {@link Serializable}
+	 * @param type     of <T> {@link Class}
+	 * @return the {@link Object} of the requested class
 	 */
 	<T> T getByEntityId(Serializable entityId, Class<T> type);
 

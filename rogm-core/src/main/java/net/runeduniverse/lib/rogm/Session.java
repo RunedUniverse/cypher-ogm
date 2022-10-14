@@ -319,7 +319,7 @@ public interface Session extends AutoCloseable {
 	/**
 	 * Saves all provided values of Collection entities.
 	 * 
-	 * @param Collection entities of Objects of Model-Classes provided through the
+	 * @param entities Collection of Objects of Model-Classes provided through the
 	 *                   Config
 	 */
 	void saveAll(Collection<? extends Object> entities);
