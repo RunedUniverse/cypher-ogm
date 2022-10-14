@@ -110,8 +110,8 @@ pipeline {
 		}
 		stage('Database Test') {
 			parallel {
-				stage('Neo4J') {
 					node {
+				stage('Neo4J') {
 						environment {
 							BUILD_TAG_CAPS = sh(returnStdout: true, script: 'echo $BUILD_TAG | tr "[a-z]" "[A-Z]"').trim()
 						}
