@@ -118,6 +118,7 @@ pipeline {
 								'--volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf:z ' +
 								'--volume=/var/run/neo4j-jenkins-rogm:/run:z'
 							) { c ->
+							echo c
 							sh 'JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${c.id} )'
 							/* Wait until database service is up */
 							sh 'echo waiting for Neo4J to start on http://${JENKINS_ROGM_NEO4J_IP}:7474'
@@ -178,7 +179,7 @@ pipeline {
 	}
 	post {
 		cleanup {
-			cleanWs()
+			//cleanWs()
 		}
 	}
 }
