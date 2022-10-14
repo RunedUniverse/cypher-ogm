@@ -111,6 +111,8 @@ pipeline {
 		stage('Database Test') {
 			parallel {
 				stage('Neo4J') {
+					steps {
+					    
 					environment {
 						BUILD_TAG_CAPS= sh(returnStdout: true, script: 'echo $BUILD_TAG | tr "[a-z]" "[A-Z]"').trim()
 					}
@@ -134,6 +136,7 @@ pipeline {
 							printenv | sort
 							mvn -P test-junit-jupiter,test-db-neo4j -Ddbhost=127.0.0.1 -Ddbuser=neo4j -Ddbpw=neo4j
 						'''
+					}
 					}
 				}
 			}
@@ -166,16 +169,11 @@ pipeline {
 		}
 
 		stage('Stage at Maven-Central') {
+			when {
+				branch 'master'
+			}
 			steps {
-			    script {
-			        switch(GIT_BRANCH) {
-			        	case 'master':
-			        		sh 'mvn -P repo-maven-central,deploy-signed -pl -rogm-module-decorator'
-			        		break
-			        	default:
-			        		break
-			    	}
-			    }
+				sh 'mvn -P repo-maven-central,deploy-signed -pl -rogm-module-decorator'
 			}
 		}
 	}
