@@ -46,9 +46,9 @@ public interface Session extends AutoCloseable {
 	boolean isConnected();
 
 	/**
-	 * Loads the Object of Class<T> matching the provided id. In case the
-	 * Object is still buffered the reference will be returned. Returns
-	 * <code>null</code> in case no Object could be loaded.
+	 * Loads the Object of Class matching the provided id. In case the Object is
+	 * still buffered the reference will be returned. Returns <code>null</code> in
+	 * case no Object could be loaded.
 	 * 
 	 * @param <T>  Model-Class provided through the Config
 	 * @param <ID> {@link Serializable} Object
@@ -59,9 +59,9 @@ public interface Session extends AutoCloseable {
 	<T, ID extends Serializable> T load(Class<T> type, ID id);
 
 	/**
-	 * Loads the Object of Class<T> matching the provided id. In case the
-	 * Object is still buffered the reference will be returned. Returns
-	 * <code>null</code> in case no Object could be loaded.
+	 * Loads the Object of Class matching the provided id. In case the Object is
+	 * still buffered the reference will be returned. Returns <code>null</code> in
+	 * case no Object could be loaded.
 	 * <p>
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
@@ -77,9 +77,9 @@ public interface Session extends AutoCloseable {
 	<T, ID extends Serializable> T load(Class<T> type, ID id, Integer depth);
 
 	/**
-	 * Lazy-Loads the Object of Class<T> matching the provided id. Except
-	 * the Object is still buffered the buffered reference (LAZY or not) will be
-	 * returned. Returns <code>null</code> in case no Object could be loaded.
+	 * Lazy-Loads the Object of Class matching the provided id. Except the Object is
+	 * still buffered the buffered reference (LAZY or not) will be returned. Returns
+	 * <code>null</code> in case no Object could be loaded.
 	 * 
 	 * @see Session#load(Class, Serializable, Integer)
 	 * 
@@ -107,9 +107,9 @@ public interface Session extends AutoCloseable {
 	<T> T load(IFilter filter);
 
 	/**
-	 * Loads all Objects of Class<T> matching the provided id. In case an
-	 * Object is still buffered the reference will be returned. Returns an empty
-	 * Collection in case no Objects could be loaded.
+	 * Loads all Objects of Class matching the provided id. In case an Object is
+	 * still buffered the reference will be returned. Returns an empty Collection in
+	 * case no Objects could be loaded.
 	 * 
 	 * @param <T>  Model-Class provided through the Config
 	 * @param <ID> {@link Serializable} Object
@@ -120,9 +120,9 @@ public interface Session extends AutoCloseable {
 	<T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id);
 
 	/**
-	 * Loads all Objects of Class<T> matching the provided id. In case an
-	 * Object is still buffered the reference will be returned. Returns an empty
-	 * Collection in case no Objects could be loaded.
+	 * Loads all Objects of Class matching the provided id. In case an Object is
+	 * still buffered the reference will be returned. Returns an empty Collection in
+	 * case no Objects could be loaded.
 	 * <p>
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
@@ -138,9 +138,9 @@ public interface Session extends AutoCloseable {
 	<T, ID extends Serializable> Collection<T> loadAll(Class<T> type, ID id, Integer depth);
 
 	/**
-	 * Lazy-Loads all Objects of Class<T> matching the provided id. Except
-	 * the Object is still buffered the buffered reference (LAZY or not) will be
-	 * returned. Returns an empty Collection in case no Objects could be loaded.
+	 * Lazy-Loads all Objects of Class matching the provided id. Except the Object
+	 * is still buffered the buffered reference (LAZY or not) will be returned.
+	 * Returns an empty Collection in case no Objects could be loaded.
 	 * 
 	 * @see Session#loadAll(Class, Serializable, Integer)
 	 * 
@@ -153,9 +153,9 @@ public interface Session extends AutoCloseable {
 	<T, ID extends Serializable> Collection<T> loadAllLazy(Class<T> type, ID id);
 
 	/**
-	 * Loads all Objects of Class<T>. In case an Object is still buffered
-	 * the reference will be returned. Returns an empty Collection in case no
-	 * Objects could be loaded.
+	 * Loads all Objects of Class. In case an Object is still buffered the reference
+	 * will be returned. Returns an empty Collection in case no Objects could be
+	 * loaded.
 	 * 
 	 * @deprecated discouraged from using - needlessly fills up RAM
 	 * @param <T>  Model-Class provided through the Config
@@ -165,9 +165,9 @@ public interface Session extends AutoCloseable {
 	<T> Collection<T> loadAll(Class<T> type);
 
 	/**
-	 * Loads all Objects of Class<T>. In case an Object is still buffered
-	 * the reference will be returned. Returns an empty Collection in case no
-	 * Objects could be loaded.
+	 * Loads all Objects of Class. In case an Object is still buffered the reference
+	 * will be returned. Returns an empty Collection in case no Objects could be
+	 * loaded.
 	 * <p>
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
@@ -182,9 +182,9 @@ public interface Session extends AutoCloseable {
 	<T> Collection<T> loadAll(Class<T> type, Integer depth);
 
 	/**
-	 * Lazy-Loads all Objects of Class<T>. Except the Object is still
-	 * buffered the buffered reference (LAZY or not) will be returned. Returns an
-	 * empty Collection in case no Objects could be loaded.
+	 * Lazy-Loads all Objects of Class. Except the Object is still buffered the
+	 * buffered reference (LAZY or not) will be returned. Returns an empty
+	 * Collection in case no Objects could be loaded.
 	 * 
 	 * @deprecated discouraged from using - needlessly fills up RAM
 	 * @see Session#loadAll(Class, Integer)
@@ -232,8 +232,8 @@ public interface Session extends AutoCloseable {
 	/**
 	 * Loads all Relations provided by values of Collection entities.
 	 * 
-	 * @param Collection entities with Objects of Model-Classes provided
-	 *                   through the Config
+	 * @param entities Collection with Objects of Model-Classes provided through the
+	 *                 Config
 	 */
 	void resolveAllLazyLoaded(Collection<? extends Object> entities);
 
@@ -244,8 +244,8 @@ public interface Session extends AutoCloseable {
 	 * recursively. <code>0</code> will load the Object without any Relations
 	 * (LAZY).
 	 * 
-	 * @param Collection entities with Objects of Model-Classes provided
-	 *                   through the Config
+	 * @param entities Collection with Objects of Model-Classes provided through the
+	 *                   Config
 	 * @param depth      requested load depth
 	 */
 	void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth);
@@ -283,9 +283,9 @@ public interface Session extends AutoCloseable {
 	 * recursively. <code>0</code> will only reload the Values and skip reloading
 	 * any Relations.
 	 * 
-	 * @param Collection entities with Collection of Model-Classes provided
-	 *                   through the Config
-	 * @param depth      requested reload depth
+	 * @param entities Collection with Collection of Model-Classes provided through
+	 *                 the Config
+	 * @param depth    requested reload depth
 	 */
 	void reloadAll(Collection<? extends Object> entities, Integer depth);
 
@@ -330,9 +330,9 @@ public interface Session extends AutoCloseable {
 	 * Depth defines how many of the Object's Relations will be saved recursively.
 	 * <code>0</code> will save the Object without saving any Relations.
 	 * 
-	 * @param Collection entities of Objects of Model-Classes provided through the
-	 *                   Config
-	 * @param depth      requested load depth
+	 * @param entities Collection of Objects of Model-Classes provided through the
+	 *                 Config
+	 * @param depth    requested load depth
 	 */
 	void saveAll(Collection<? extends Object> entities, Integer depth);
 
@@ -342,8 +342,8 @@ public interface Session extends AutoCloseable {
 	 * 
 	 * @see Session#saveAll(Collection, Integer)
 	 * 
-	 * @param Collection entities of Objects of Model-Classes provided through the
-	 *                   Config
+	 * @param entities Collection of Objects of Model-Classes provided through the
+	 *                 Config
 	 */
 	void saveAllLazy(Collection<? extends Object> entities);
 
@@ -357,8 +357,8 @@ public interface Session extends AutoCloseable {
 	/**
 	 * Deletes all provided values of Collection entities.
 	 * 
-	 * @param Collection entities of Objects of Model-Classes provided through the
-	 *                   Config
+	 * @param entities Collection of Objects of Model-Classes provided through the
+	 *                 Config
 	 */
 	void deleteAll(Collection<? extends Object> entities);
 
@@ -377,8 +377,8 @@ public interface Session extends AutoCloseable {
 	 * (Removes all provided values of Collection entities and all fo their
 	 * Relations from the Buffer)
 	 * 
-	 * @param Collection entities of Objects of Model-Classes provided through the
-	 *                   Config
+	 * @param entities Collection of Objects of Model-Classes provided through the
+	 *                 Config
 	 */
 	void unloadAll(Collection<? extends Object> entities);
 
@@ -392,8 +392,8 @@ public interface Session extends AutoCloseable {
 	/**
 	 * Creates a simple {@link Session} for direct interaction with a database.
 	 * <p>
-	 * The {@link Configuration} cnf should be use the Configuration
-	 * provided with the Database-Module you wish to use (usually prefixed with the
+	 * The {@link Configuration} cnf should be use the Configuration provided with
+	 * the Database-Module you wish to use (usually prefixed with the
 	 * Database-Name).
 	 * 
 	 * @param cnf {@link Configuration} of the database
