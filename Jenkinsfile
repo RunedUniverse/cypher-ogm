@@ -127,6 +127,8 @@ pipeline {
 							/* Prepare Database */
 							sh '''
 								echo 'Neo4J online > setting up database'
+								id
+								ls -laZ
 								cat '/var/lib/neo4j/conf/setup.cypher'
 								cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
 							'''
