@@ -113,31 +113,28 @@ pipeline {
 				stage('Neo4J') {
 					environment {
 						BUILD_TAG_CAPS= sh(returnStdout: true, script: 'echo $BUILD_TAG | tr "[a-z]" "[A-Z]"').trim()
-						// start Neo4J
-						JENKINS_ROGM_NEO4J_ID= sh(returnStdout: true, script: 'docker run -d --volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf --volume=/var/run/neo4j-jenkins-rogm:/run --name=$(echo $BUILD_TAG | tr "[a-z]" "[A-Z]") neo4j').trim()
 					}
-					steps {
+					docker.image('neo4j:latest').withRun(
+								'-e "MYSQL_ROOT_PASSWORD=my-secret-pw"' +
+								'-p 127.0.0.1:7474:7474' +
+								'--volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf' +
+								'--volume=/var/run/neo4j-jenkins-rogm:/run'
+							) { c ->
+						/* Wait until database service is up */
+						sh 'echo waiting for Neo4J[docker:${c.id}]\n\tto start on http://127.0.0.1:7474'
+						sh 'until $(curl --output /dev/null --silent --head --fail http://127.0.0.1:7474); do sleep 5; done'
+						/* Prepare Database */
 						sh '''
-							JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" $JENKINS_ROGM_NEO4J_ID)
-							echo waiting for Neo4J[docker:$BUILD_TAG_CAPS] to start on $JENKINS_ROGM_NEO4J_IP
-							until $(curl --output /dev/null --silent --head --fail http://$JENKINS_ROGM_NEO4J_IP:7474); do sleep 5; done
 							echo 'Neo4J online > setting up database'
-							docker exec $JENKINS_ROGM_NEO4J_ID cat '/var/lib/neo4j/conf/setup.cypher'
-							docker exec $JENKINS_ROGM_NEO4J_ID cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
+							docker exec ${c.id} cat '/var/lib/neo4j/conf/setup.cypher'
+							docker exec ${c.id} cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
+						'''
+						/* Run tests */
+						sh '''
 							echo 'database loaded > starting tests'
 							printenv | sort
-							mvn -P test-junit-jupiter,test-db-neo4j -Ddbhost=$JENKINS_ROGM_NEO4J_IP -Ddbuser=neo4j -Ddbpw=neo4j
+							mvn -P test-junit-jupiter,test-db-neo4j -Ddbhost=127.0.0.1 -Ddbuser=neo4j -Ddbpw=neo4j
 						'''
-					}
-					post {
-						always {
-							// stop Neo4J
-							sh '''
-								docker stop $JENKINS_ROGM_NEO4J_ID
-								docker rm $JENKINS_ROGM_NEO4J_ID
-								echo 'Docker: stop|rm: $BUILD_TAG_CAPS'
-							'''
-						}
 					}
 				}
 			}
