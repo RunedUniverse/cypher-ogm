@@ -30,7 +30,7 @@ public interface IBuffer extends BufferTypes, ChainConfigurator {
 	 * 
 	 * @param <T>  {@link Object} of type
 	 * @param id   {@link Serializable}
-	 * @param type of <T> {@link Class}
+	 * @param type of {@link Class}
 	 * @return the {@link Object} of the requested class
 	 */
 	<T> T getById(Serializable id, Class<T> type);
@@ -41,7 +41,7 @@ public interface IBuffer extends BufferTypes, ChainConfigurator {
 	 * 
 	 * @param <T>      {@link Object} of type
 	 * @param entityId {@link Serializable}
-	 * @param type     of <T> {@link Class}
+	 * @param type     of {@link Class}
 	 * @return the {@link Object} of the requested class
 	 */
 	<T> T getByEntityId(Serializable entityId, Class<T> type);
