@@ -125,8 +125,8 @@ pipeline {
 							/* Prepare Database */
 							sh '''
 								echo 'Neo4J online > setting up database'
-								docker exec ${c.id} cat '/var/lib/neo4j/conf/setup.cypher'
-								docker exec ${c.id} cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
+								docker exec ${JD_ID} cat '/var/lib/neo4j/conf/setup.cypher'
+								docker exec ${JD_ID} cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
 							'''
 							/* Run tests */
 							sh '''
