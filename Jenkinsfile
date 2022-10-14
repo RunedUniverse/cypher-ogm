@@ -123,14 +123,14 @@ pipeline {
 							sh 'echo waiting for Neo4J to start on http://172.16.0.1:7474'
 							sh 'until $(curl --output /dev/null --silent --head --fail http://172.16.0.1:7474); do sleep 5; done'
 							
-							docker.image('neo4j:latest').inside() {
+							docker.image('neo4j:latest').inside('cypher-shell -u neo4j -p neo4j -f "/var/lib/neo4j/conf/setup.cypher"') {
 							/* Prepare Database */
 							sh '''
 								echo 'Neo4J online > setting up database'
 								id
 								ls -laZ
-								cat '/var/lib/neo4j/conf/setup.cypher'
-								cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
+								pwd
+								
 							'''
 								}
 							/* Run tests */
