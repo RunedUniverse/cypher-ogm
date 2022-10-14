@@ -114,8 +114,7 @@ pipeline {
 					environment {
 						BUILD_TAG_CAPS= sh(returnStdout: true, script: 'echo $BUILD_TAG | tr "[a-z]" "[A-Z]"').trim()
 					}
-					docker.image('neo4j:latest').withRun(
-								'-e "MYSQL_ROOT_PASSWORD=my-secret-pw"' +
+					docker.image('neo4j:latest').withRun('-e "MYSQL_ROOT_PASSWORD=my-secret-pw"' +
 								'-p 127.0.0.1:7474:7474' +
 								'--volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf' +
 								'--volume=/var/run/neo4j-jenkins-rogm:/run'
