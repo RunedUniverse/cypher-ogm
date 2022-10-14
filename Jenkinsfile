@@ -115,14 +115,13 @@ pipeline {
 				    
 					script {
 						docker.image('neo4j:latest').withRun(
+								'-p 172.16.0.1:7474:7474 ' +
 								'--volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf:z ' +
 								'--volume=/var/run/neo4j-jenkins-rogm:/run:z'
 							) { c ->
-							echo c
-							sh 'JENKINS_ROGM_NEO4J_IP=$(docker inspect -f "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ${c.id} )'
 							/* Wait until database service is up */
-							sh 'echo waiting for Neo4J to start on http://${JENKINS_ROGM_NEO4J_IP}:7474'
-							sh 'until $(curl --output /dev/null --silent --head --fail http://${JENKINS_ROGM_NEO4J_IP}:7474); do sleep 5; done'
+							sh 'echo waiting for Neo4J to start on http://172.16.0.1:7474'
+							sh 'until $(curl --output /dev/null --silent --head --fail http://172.16.0.1:7474); do sleep 5; done'
 							/* Prepare Database */
 							sh '''
 								echo 'Neo4J online > setting up database'
@@ -133,7 +132,7 @@ pipeline {
 							sh '''
 								echo 'database loaded > starting tests'
 								printenv | sort
-								mvn -P test-junit-jupiter,test-db-neo4j -Ddbhost=${JENKINS_ROGM_NEO4J_IP} -Ddbuser=neo4j -Ddbpw=neo4j
+								mvn -P test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j
 							'''
 						}
 					}
