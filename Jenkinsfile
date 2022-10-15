@@ -104,48 +104,42 @@ pipeline {
 					junit '*/target/surefire-reports/*.xml'
 				}
 				failure {
-				    archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
+					archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
 				}
 			}
 		}
 		stage('Database Test') {
 			parallel {
+			
 				stage('Neo4J') {
-				steps{
-				    
-					script {
-						docker.image('neo4j:latest').withRun(
-								'-p 172.16.0.1:7474:7474 ' +
-								'-p 172.16.0.1:7687:7687 ' +
-								'--volume=${WORKSPACE}/src/test/resources/neo4j/conf:/var/lib/neo4j/conf:z ' +
-								'--volume=/var/run/neo4j-jenkins-rogm:/run:z'
-							) { c ->
-							
-							/* Wait until database service is up */
-							sh 'echo waiting for Neo4J to start'
-							sh 'until $(curl --output /dev/null --silent --head --fail http://172.16.0.1:7474); do sleep 5; done'
-		
-							docker.image('neo4j:latest').inside("--link ${c.id}:database") {
-								/* Prepare Database */
-								// cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
-								sh	'echo Neo4J online > setting up database'
-								sh 	'hostname'
-								sh 	'id'
-								sh 	'ls -laZ'
-								sh	'ls -laZ "./src/test/resources/neo4j/setup/setup.cypher"'
-								sh	'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
-								}
-							
-							/* Run tests */
-							sh '''
-								echo 'database loaded > starting tests'
-								printenv | sort
-								mvn -P test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j
-							'''
+					steps{
+						script {
+							docker.image('neo4j:latest').withRun(
+									'-p 172.16.0.1:7474:7474 ' +
+									'-p 172.16.0.1:7687:7687 ' +
+									'--volume=${WORKSPACE}/src/test/resources/neo4j/conf:/var/lib/neo4j/conf:z ' +
+									'--volume=/var/run/neo4j-jenkins-rogm:/run:z'
+								) { c ->
+
+								/* Wait until database service is up */
+								sh 'echo waiting for Neo4J to start'
+								sh 'until $(curl --output /dev/null --silent --head --fail http://172.16.0.1:7474); do sleep 5; done'
+
+								docker.image('neo4j:latest').inside("--link ${c.id}:database") {
+									/* Prepare Database */
+										sh	'echo Neo4J online > setting up database'
+										sh	'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
+									}
+
+								/* Run tests */
+								sh 'echo database loaded > starting tests'
+								sh 'printenv | sort'
+								sh 'mvn -P test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j'
+							}
 						}
 					}
 				}
-				}
+
 			}
 			post {
 				always {
@@ -159,16 +153,16 @@ pipeline {
 
 		stage('Deploy') {
 			steps {
-			    script {
-			        switch(GIT_BRANCH) {
-			        	case 'master':
-			        		sh 'mvn -P repo-releases,deploy-signed -pl -rogm-module-decorator'
-			        		break
-			        	default:
-			        		sh 'mvn -P repo-development,deploy'
-			        		break
-			    	}
-			    }
+				script {
+					switch(GIT_BRANCH) {
+						case 'master':
+							sh 'mvn -P repo-releases,deploy-signed -pl -rogm-module-decorator'
+							break
+						default:
+							sh 'mvn -P repo-development,deploy'
+							break
+					}
+				}
 				archiveArtifacts artifacts: '*/target/*.pom', fingerprint: true
 				archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
 				archiveArtifacts artifacts: '*/target/*.asc', fingerprint: true
@@ -184,9 +178,9 @@ pipeline {
 			}
 		}
 	}
-	//post {
-	//	cleanup {
-	//		cleanWs()
-	//	}
-	//}
+	post {
+		cleanup {
+			cleanWs()
+		}
+	}
 }
