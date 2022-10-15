@@ -130,10 +130,8 @@ pipeline {
 							// cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
 							sh '''
 								echo 'Neo4J online > setting up database'
-								id
-								ls -laZ
-								pwd
-								cypher-shell -u neo4j -p neo4j -f './src/test/resources/neo4j/setup.cypher'
+								hostname
+								JAVA_HOME=/opt/java/openjdk cypher-shell -u neo4j -p neo4j -f './src/test/resources/neo4j/setup.cypher'
 							'''
 								}
 							/* Run tests */
