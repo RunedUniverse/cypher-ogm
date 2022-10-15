@@ -115,25 +115,21 @@ pipeline {
 				    
 					script {
 						docker.image('neo4j:latest').withRun(
-								'-p 172.16.0.1:7474:7474 ' +
 								'-p 172.16.0.1:7687:7687 ' +
-								'--user="$(id -u):$(id -g)" ' +
 								'--volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf:z ' +
 								'--volume=/var/run/neo4j-jenkins-rogm:/run:z'
 							) { c ->
-							/* Wait until database service is up */
-							sh 'echo waiting for Neo4J to start on http://172.16.0.1:7474'
-							sh 'until $(curl --output /dev/null --silent --head --fail http://172.16.0.1:7474); do sleep 5; done'
 							
-							docker.image('neo4j:latest').inside() {
-							/* Prepare Database */
-							// cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
-							sh '''
-								echo 'Neo4J online > setting up database'
-								hostname
-								JAVA_HOME=/opt/java/openjdk cypher-shell -u neo4j -p neo4j -f './src/test/resources/neo4j/setup.cypher'
-							'''
+							docker.image('neo4j:latest').inside("--link ${c.id}:database") {
+								/* Wait until database service is up */
+								sh 'echo waiting for Neo4J to start'
+								sh 'until $(curl --output /dev/null --silent --head --fail http://database:7474); do sleep 5; done'
+								/* Prepare Database */
+								// cypher-shell -u neo4j -p neo4j -f '/var/lib/neo4j/conf/setup.cypher'
+								sh	'echo Neo4J online > setting up database'
+								sh	'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup.cypher"'
 								}
+							
 							/* Run tests */
 							sh '''
 								echo 'database loaded > starting tests'
