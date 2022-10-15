@@ -15,9 +15,7 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>net.runeduniverse.lib</groupId>
@@ -138,18 +136,51 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
 						<executions>
 							<execution>
+								<!-- must be here or it gets overridden! -->
 								<id>jenkins</id>
-								<inherited>true</inherited>
+								<inherited>false</inherited>
 								<phase>package</phase>
 								<goals>
-									<goal>test-jar</goal>
+									<goal>attach-artifact</goal>
 								</goals>
 							</execution>
 						</executions>
+						<configuration>
+							<artifacts>
+								<!-- pom -->
+								<artifact>
+									<file>${project.build.directory}/${project.build.finalName}.pom</file>
+									<type>pom</type>
+								</artifact>
+								<!-- jar -->
+								<artifact>
+									<file>${project.build.directory}/${project.build.finalName}.jar</file>
+									<type>jar</type>
+								</artifact>
+								<!-- test-jar -->
+								<artifact>
+									<file>${project.build.directory}/${project.build.finalName}-tests.jar</file>
+									<type>test-jar</type>
+									<classifier>tests</classifier>
+								</artifact>
+								<!-- javadoc -->
+								<artifact>
+									<file>${project.build.directory}/${project.build.finalName}-javadoc.jar</file>
+									<type>jar</type>
+									<classifier>javadoc</classifier>
+								</artifact>
+								<!-- sources -->
+								<artifact>
+									<file>${project.build.directory}/${project.build.finalName}-sources.jar</file>
+									<type>jar</type>
+									<classifier>sources</classifier>
+								</artifact>
+							</artifacts>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
