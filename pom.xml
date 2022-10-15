@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>net.runeduniverse.tools</groupId>
 		<artifactId>build-helper-java</artifactId>
-		<version>2022.10.15</version>
+		<version>2022.08.13</version>
 	</parent>
 
 	<groupId>net.runeduniverse.lib</groupId>
@@ -255,22 +255,8 @@
 			<id>deploy</id>
 			<build>
 				<defaultGoal>
-					org.codehaus.mojo:build-helper-maven-plugin:attach-artifact@jenkins
 					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
 				</defaultGoal>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<inherited>false</inherited>
-						<executions>
-							<execution>
-								<id>jenkins</id>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
 			</build>
 		</profile>
 		<profile>

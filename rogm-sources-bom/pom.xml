@@ -171,14 +171,6 @@
 			</build>
 		</profile>
 		<profile>
-			<id>deploy</id>
-			<build>
-				<defaultGoal>
-					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
-				</defaultGoal>
-			</build>
-		</profile>
-		<profile>
 			<id>deploy-signed</id>
 			<build>
 				<plugins>
