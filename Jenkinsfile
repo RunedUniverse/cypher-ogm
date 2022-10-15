@@ -116,6 +116,8 @@ pipeline {
 					script {
 						docker.image('neo4j:latest').withRun(
 								'-p 172.16.0.1:7474:7474 ' +
+								'-p 172.16.0.1:7687:7687 ' +
+								'--user="$(id -u):$(id -g)" ' +
 								'--volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf:z ' +
 								'--volume=/var/run/neo4j-jenkins-rogm:/run:z'
 							) { c ->
