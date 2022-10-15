@@ -151,22 +151,6 @@ pipeline {
 			}
 		}
 
-
-
-		stage ('Tracing-Data'){
-			steps {
-				sh 'mvn -P repo-development,deploy,gen-eff-pom'
-			}
-			post {
-				always {
-					archiveArtifacts artifacts: 'maven-build-trace/*.xml', fingerprint: true
-				}
-			}
-		}
-
-
-
-
 		stage('Deploy') {
 			steps {
 				script {
