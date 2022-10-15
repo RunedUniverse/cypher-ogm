@@ -117,7 +117,7 @@ pipeline {
 						docker.image('neo4j:latest').withRun(
 								'-p 172.16.0.1:7474:7474 ' +
 								'-p 172.16.0.1:7687:7687 ' +
-								'--volume=${WORKSPACE}/src/test/resources/neo4j:/var/lib/neo4j/conf:z ' +
+								'--volume=${WORKSPACE}/src/test/resources/neo4j/conf:/var/lib/neo4j/conf:z ' +
 								'--volume=/var/run/neo4j-jenkins-rogm:/run:z'
 							) { c ->
 							
@@ -132,8 +132,8 @@ pipeline {
 								sh 	'hostname'
 								sh 	'id'
 								sh 	'ls -laZ'
-								sh	'ls -laZ "./src/test/resources/neo4j/setup.cypher"'
-								sh	'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup.cypher"'
+								sh	'ls -laZ "./src/test/resources/neo4j/setup/setup.cypher"'
+								sh	'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
 								}
 							
 							/* Run tests */
