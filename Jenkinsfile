@@ -8,14 +8,20 @@ pipeline {
 		stage('Initialize') {
 			stages {
 				stage('Tools') {
-					sh 'echo "PATH = ${PATH}"'
-					sh 'echo "M2_HOME = ${M2_HOME}"'			    
+					steps {
+						sh 'echo "PATH = ${PATH}"'
+						sh 'echo "M2_HOME = ${M2_HOME}"'			    					
+					}
 				}
 				stage('Release Repo') {
-					sh 'export REPOS=repo-releases'
+					steps {
+						sh 'export REPOS=repo-releases'
+					}
 				}
 				stage('Development Repo') {
-					sh 'export REPOS=${REPOS},repo-development'
+					steps {
+						sh 'export REPOS=${REPOS},repo-development'
+					}
 				}
 			}
 			post {
