@@ -15,7 +15,7 @@ pipeline {
 		}
 		stage('Update Maven Repo') {
 			steps {
-				sh 'mvn -P repo-releases,repo-development dependency:resolve --non-recursive'
+				sh 'mvn -P repo-releases,repo-development org.apache.maven.plugins:maven-help-plugin:effective-pom org.apache.maven.plugins:maven-dependency-plugin:go-offline --non-recursive'
 				sh 'mvn -P install --non-recursive'
 				sh 'ls -l target'
 			}
@@ -23,7 +23,7 @@ pipeline {
 		stage('Install Bill of Sources') {
 			steps {
 				dir(path: 'rogm-sources-bom') {
-					sh 'mvn -P repo-releases,repo-development dependency:resolve  --non-recursive'
+					sh 'mvn -P repo-releases,repo-development org.apache.maven.plugins:maven-dependency-plugin:go-offline  --non-recursive'
 					sh 'mvn -P install --non-recursive'
 					sh 'ls -l target'
 				}
