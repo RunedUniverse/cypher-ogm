@@ -117,6 +117,7 @@ pipeline {
 			parallel {
 			
 				stage('Neo4J') {
+					agent any
 					options {
 						throttle(['jenkins-docker-socket-neo4j'])
 					}
