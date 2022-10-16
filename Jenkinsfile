@@ -4,30 +4,18 @@ pipeline {
 		maven 'maven-latest'
 		jdk 'java-1.8.0'
 	}
+	environment {
+        REPOS = """${sh(
+                returnStdout: true,
+                script: 'echo "repo-releases,repo-development"'
+            )}"""
+    }
 	stages {
 		stage('Initialize') {
-			stages {
-				stage('Tools') {
-					steps {
-						sh 'echo "PATH = ${PATH}"'
-						sh 'echo "M2_HOME = ${M2_HOME}"'			    					
-					}
-				}
-				stage('Release Repo') {
-					steps {
-						sh 'export REPOS=repo-releases'
-					}
-				}
-				stage('Development Repo') {
-					steps {
-						sh 'export REPOS=${REPOS},repo-development'
-					}
-				}
-			}
-			post {
-				always {
-					sh 'printenv | sort'
-				}
+			steps {
+				sh 'echo "PATH = ${PATH}"'
+				sh 'echo "M2_HOME = ${M2_HOME}"'			    					
+				sh 'printenv | sort'
 			}
 		}
 		stage('Update Maven Repo') {
