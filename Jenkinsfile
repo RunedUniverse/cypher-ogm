@@ -15,7 +15,7 @@ pipeline {
 		}
 		stage('Update Maven Repo') {
 			steps {
-				sh 'mvn dependency:resolve'
+				sh 'mvn dependency:resolve --non-recursive'
 				sh 'mvn -P install --non-recursive'
 				sh 'ls -l target'
 			}
@@ -23,7 +23,7 @@ pipeline {
 		stage('Install Bill of Sources') {
 			steps {
 				dir(path: 'rogm-sources-bom') {
-					sh 'mvn dependency:resolve'
+					sh 'mvn dependency:resolve --non-recursive'
 					sh 'mvn -P install --non-recursive'
 					sh 'ls -l target'
 				}
