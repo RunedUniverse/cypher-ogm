@@ -147,6 +147,8 @@
 			<id>gen-eff-pom</id>
 			<build>
 				<defaultGoal>
+					org.apache.maven.plugins:maven-help-plugin:all-profiles
+					org.apache.maven.plugins:maven-help-plugin:active-profiles
 					org.apache.maven.plugins:maven-help-plugin:effective-pom
 				</defaultGoal>
 			</build>
