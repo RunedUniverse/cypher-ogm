@@ -7,8 +7,8 @@ pipeline {
 	environment {
         REPOS = """${sh(
                 returnStdout: true,
-                script: 'echo "repo-releases,repo-development"'
-            ).trim()}"""
+                script: 'REPOS=repo-releases; if [ $GIT_BRANCH != master ]; then REPOS=$REPOS,repo-development; fi; printf $REPOS'
+            )}"""
     }
 	stages {
 		stage('Initialize') {
