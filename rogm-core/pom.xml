@@ -140,7 +140,6 @@
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>jenkins</id>
 								<inherited>true</inherited>
 								<phase>package</phase>
 								<goals>

@@ -253,7 +253,7 @@
 			<id>deploy</id>
 			<build>
 				<defaultGoal>
-					package@jenkins
+					package
 					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
 				</defaultGoal>
 				<plugins>
@@ -262,7 +262,6 @@
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>jenkins</id>
 								<inherited>false</inherited>
 								<phase>none</phase>
 							</execution>
