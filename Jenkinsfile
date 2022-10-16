@@ -6,25 +6,36 @@ pipeline {
 	}
 	stages {
 		stage('Initialize') {
-			steps {
-				sh '''
-					echo "PATH = ${PATH}"
-					echo "M2_HOME = ${M2_HOME}"
-				'''
+			stages {
+				stage('Tools') {
+					sh 'echo "PATH = ${PATH}"'
+					sh 'echo "M2_HOME = ${M2_HOME}"'			    
+				}
+				stage('Release Repo') {
+					sh 'export REPOS=repo-releases'
+				}
+				stage('Development Repo') {
+					sh 'export REPOS=${REPOS},repo-development'
+				}
+			}
+			post {
+				always {
+					sh 'printenv | sort'
+				}
 			}
 		}
 		stage('Update Maven Repo') {
 			steps {
-				sh 'mvn -P repo-releases,repo-development dependency:resolve --non-recursive'
-				sh 'mvn -P install --non-recursive'
+				sh 'mvn -P ${REPOS} dependency:resolve --non-recursive'
+				sh 'mvn -P ${REPOS},install --non-recursive'
 				sh 'ls -l target'
 			}
 		}
 		stage('Install Bill of Sources') {
 			steps {
 				dir(path: 'rogm-sources-bom') {
-					sh 'mvn -P repo-releases,repo-development dependency:resolve  --non-recursive'
-					sh 'mvn -P install --non-recursive'
+					sh 'mvn -P ${REPOS} dependency:resolve  --non-recursive'
+					sh 'mvn -P ${REPOS},install --non-recursive'
 					sh 'ls -l target'
 				}
 			}
@@ -32,7 +43,7 @@ pipeline {
 		stage('Install Bill of Materials') {
 			steps {
 				dir(path: 'rogm-bom') {
-					sh 'mvn -P install --non-recursive'
+					sh 'mvn -P ${REPOS},install --non-recursive'
 					sh 'ls -l target'
 				}
 			}
@@ -40,7 +51,7 @@ pipeline {
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
-					sh 'mvn -P install --non-recursive'
+					sh 'mvn -P ${REPOS},install --non-recursive'
 					sh 'ls -l target'
 				}
 			}
@@ -50,7 +61,7 @@ pipeline {
 				stage('JSON') {
 					steps {
 						dir(path: 'rogm-parser-json') {
-							sh 'mvn -P install --non-recursive'
+							sh 'mvn -P ${REPOS},install --non-recursive'
 							sh 'ls -l target'
 						}
 					}
@@ -62,7 +73,7 @@ pipeline {
 				stage('Cypher') {
 					steps {
 						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn -P install --non-recursive'
+							sh 'mvn -P ${REPOS},install --non-recursive'
 							sh 'ls -l target'
 						}
 					}
@@ -74,7 +85,7 @@ pipeline {
 				stage('Neo4J') {
 					steps {
 						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn -P install --non-recursive'
+							sh 'mvn -P ${REPOS},install --non-recursive'
 							sh 'ls -l target'
 						}
 					}
@@ -82,7 +93,7 @@ pipeline {
 				//stage('Decorator') {
 				//	steps {
 				//		dir(path: 'rogm-module-decorator') {
-				//			sh 'mvn -P install --non-recursive'
+				//			sh 'mvn -P ${REPOS},install --non-recursive'
 				//		}
 				//	}
 				//}
@@ -91,13 +102,13 @@ pipeline {
 
 		stage('License Check') {
 			steps {
-				sh 'mvn -P license-check,license-prj-utils-approve,license-apache2-approve'
+				sh 'mvn -P ${REPOS},license-check,license-prj-utils-approve,license-apache2-approve'
 			}
 		}
 
 		stage('System Test') {
 			steps {
-				sh 'mvn -P test-junit-jupiter,test-system'
+				sh 'mvn -P ${REPOS},test-junit-jupiter,test-system'
 			}
 			post {
 				always {
@@ -134,7 +145,7 @@ pipeline {
 								/* Run tests */
 								sh 'echo database loaded > starting tests'
 								sh 'printenv | sort'
-								sh 'mvn -P test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j'
+								sh 'mvn -P ${REPOS},test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j'
 							}
 						}
 					}
