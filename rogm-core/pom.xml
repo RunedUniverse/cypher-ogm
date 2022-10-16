@@ -35,8 +35,6 @@
 		<bom-version>1</bom-version>
 		<sources-bom-version>1</sources-bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
-		<!-- TRACING -->
-		<tracing-log-path>../maven-build-trace/</tracing-log-path>
 	</properties>
 
 	<dependencies>

@@ -161,6 +161,7 @@ pipeline {
 			}
 			post {
 				always {
+					archiveArtifacts artifacts: 'rogm-core/maven-build-trace/*.xml', fingerprint: true
 					archiveArtifacts artifacts: 'maven-build-trace/*.xml', fingerprint: true
 				}
 			}
