@@ -35,8 +35,6 @@
 		<bom-version>1</bom-version>
 		<sources-bom-version>1</sources-bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
-		<!-- TRACING -->
-		<tracing-log-path>../maven-build-trace/</tracing-log-path>
 	</properties>
 
 	<dependencies>
@@ -136,21 +134,23 @@
 			<id>deploy</id>
 			<!-- deploy test-jar -->
 			<build>
-				<defaultGoal>
-					org.apache.maven.plugins:maven-jar-plugin:jar@jenkins
-					org.apache.maven.plugins:maven-jar-plugin:test-jar@jenkins-testing
-					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
-				</defaultGoal>
-			</build>
-		</profile>
-		<profile>
-			<id>gen-eff-pom</id>
-			<build>
-				<defaultGoal>
-					org.apache.maven.plugins:maven-help-plugin:all-profiles
-					org.apache.maven.plugins:maven-help-plugin:active-profiles
-					org.apache.maven.plugins:maven-help-plugin:effective-pom
-				</defaultGoal>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>jenkins</id>
+								<inherited>true</inherited>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+									<goal>test-jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 	</profiles>
