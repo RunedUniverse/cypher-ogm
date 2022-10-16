@@ -88,13 +88,13 @@ pipeline {
 				//}
 			}
 		}
-		
+
 		stage('License Check') {
 			steps {
 				sh 'mvn -P license-check,license-prj-utils-approve,license-apache2-approve'
 			}
 		}
-		
+
 		stage('System Test') {
 			steps {
 				sh 'mvn -P test-junit-jupiter,test-system'
@@ -146,68 +146,68 @@ pipeline {
 					junit '*/target/surefire-reports/*.xml'
 				}
 				failure {
-				    archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
+					archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
 				}
 			}
 		}
 
 		stage('Deploy') {
 			parallel {
-			    stage('Development') {
-			        steps {
-			        	sh 'mvn -P repo-development,deploy --non-recursive'
-			        	dir(path: 'rogm-sources-bom') {
+				stage('Development') {
+					steps {
+						sh 'mvn -P repo-development,deploy --non-recursive'
+						dir(path: 'rogm-sources-bom') {
 							sh 'mvn -P repo-development,deploy --non-recursive'
 						}
-			        	dir(path: 'rogm-bom') {
+						dir(path: 'rogm-bom') {
 							sh 'mvn -P repo-development,deploy --non-recursive'
 						}
-			        	dir(path: 'rogm-core') {
+						dir(path: 'rogm-core') {
 							sh 'mvn -P repo-development,deploy --non-recursive'
 						}
-			        	dir(path: 'rogm-parser-json') {
+						dir(path: 'rogm-parser-json') {
 							sh 'mvn -P repo-development,deploy --non-recursive'
 						}
-			        	dir(path: 'rogm-lang-cypher') {
+						dir(path: 'rogm-lang-cypher') {
 							sh 'mvn -P repo-development,deploy --non-recursive'
 						}
-			        	dir(path: 'rogm-module-neo4j') {
+						dir(path: 'rogm-module-neo4j') {
 							sh 'mvn -P repo-development,deploy --non-recursive'
 						}
-			        	dir(path: 'rogm-module-decorator') {
+						dir(path: 'rogm-module-decorator') {
 							sh 'mvn -P repo-development,deploy --non-recursive'
 						}
-			        }
-			    }
+					}
+				}
 				stage('Release') {
 					when {
 						branch 'master'
 					}
-			        steps {
-			        	sh 'mvn -P repo-releases,deploy-signed --non-recursive'
-			        	dir(path: 'rogm-sources-bom') {
+					steps {
+						sh 'mvn -P repo-releases,deploy-signed --non-recursive'
+						dir(path: 'rogm-sources-bom') {
 							sh 'mvn -P repo-releases,deploy-signed --non-recursive'
 						}
-			        	dir(path: 'rogm-bom') {
+						dir(path: 'rogm-bom') {
 							sh 'mvn -P repo-releases,deploy-signed --non-recursive'
 						}
-			        	dir(path: 'rogm-core') {
+						dir(path: 'rogm-core') {
 							sh 'mvn -P repo-releases,deploy-signed --non-recursive'
 						}
-			        	dir(path: 'rogm-parser-json') {
+						dir(path: 'rogm-parser-json') {
 							sh 'mvn -P repo-releases,deploy-signed --non-recursive'
 						}
-			        	dir(path: 'rogm-lang-cypher') {
+						dir(path: 'rogm-lang-cypher') {
 							sh 'mvn -P repo-releases,deploy-signed --non-recursive'
 						}
-			        	dir(path: 'rogm-module-neo4j') {
+						dir(path: 'rogm-module-neo4j') {
 							sh 'mvn -P repo-releases,deploy-signed --non-recursive'
 						}
-			        	dir(path: 'rogm-module-decorator') {
-							sh 'mvn -P repo-releases,deploy-signed --non-recursive'
-						}
-			        }
-			    }
+						//dir(path: 'rogm-module-decorator') {
+						//	sh 'mvn -P repo-releases,deploy-signed --non-recursive'
+						//}
+					}
+				}
 			}
 			post {
 				always {
@@ -227,24 +227,24 @@ pipeline {
 				dir(path: 'rogm-sources-bom') {
 					sh 'mvn -P repo-maven-central,deploy-signed --non-recursive'
 				}
-		       	dir(path: 'rogm-bom') {
+				dir(path: 'rogm-bom') {
 					sh 'mvn -P repo-maven-central,deploy-signed --non-recursive'
 				}
-		        dir(path: 'rogm-core') {
+				dir(path: 'rogm-core') {
 					sh 'mvn -P repo-maven-central,deploy-signed --non-recursive'
 				}
-		       	dir(path: 'rogm-parser-json') {
+				dir(path: 'rogm-parser-json') {
 					sh 'mvn -P repo-maven-central,deploy-signed --non-recursive'
 				}
-		        dir(path: 'rogm-lang-cypher') {
+				dir(path: 'rogm-lang-cypher') {
 					sh 'mvn -P repo-maven-central,deploy-signed --non-recursive'
 				}
-		       	dir(path: 'rogm-module-neo4j') {
+				dir(path: 'rogm-module-neo4j') {
 					sh 'mvn -P repo-maven-central,deploy-signed --non-recursive'
 				}
-		        dir(path: 'rogm-module-decorator') {
-					sh 'mvn -P repo-maven-central,deploy-signed --non-recursive'
-				}
+				//dir(path: 'rogm-module-decorator') {
+				//	sh 'mvn -P repo-maven-central,deploy-signed --non-recursive'
+				//}
 			}
 		}
 	}
