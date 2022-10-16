@@ -160,27 +160,27 @@ pipeline {
 			parallel {
 				stage('Development') {
 					steps {
-						sh 'mvn -P dist-repo-development,deploy --non-recursive'
+						sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
 						dir(path: 'rogm-sources-bom') {
-							sh 'mvn -P dist-repo-development,deploy --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
 						}
 						dir(path: 'rogm-bom') {
-							sh 'mvn -P dist-repo-development,deploy --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
 						}
 						dir(path: 'rogm-core') {
-							sh 'mvn -P dist-repo-development,deploy --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
 						}
 						dir(path: 'rogm-parser-json') {
-							sh 'mvn -P dist-repo-development,deploy --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
 						}
 						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn -P dist-repo-development,deploy --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
 						}
 						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn -P dist-repo-development,deploy --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
 						}
 						dir(path: 'rogm-module-decorator') {
-							sh 'mvn -P dist-repo-development,deploy --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
 						}
 					}
 				}
@@ -189,27 +189,27 @@ pipeline {
 						branch 'master'
 					}
 					steps {
-						sh 'mvn -P dist-repo-releases,deploy-signed --non-recursive'
+						sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
 						dir(path: 'rogm-sources-bom') {
-							sh 'mvn -P dist-repo-releases,deploy-signed --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
 						}
 						dir(path: 'rogm-bom') {
-							sh 'mvn -P dist-repo-releases,deploy-signed --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
 						}
 						dir(path: 'rogm-core') {
-							sh 'mvn -P dist-repo-releases,deploy-signed --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
 						}
 						dir(path: 'rogm-parser-json') {
-							sh 'mvn -P dist-repo-releases,deploy-signed --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
 						}
 						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn -P dist-repo-releases,deploy-signed --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
 						}
 						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn -P dist-repo-releases,deploy-signed --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
 						}
 						//dir(path: 'rogm-module-decorator') {
-						//	sh 'mvn -P dist-repo-releases,deploy-signed --non-recursive'
+						//	sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
 						//}
 					}
 				}
