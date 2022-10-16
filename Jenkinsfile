@@ -8,7 +8,7 @@ pipeline {
         REPOS = """${sh(
                 returnStdout: true,
                 script: 'echo "repo-releases,repo-development"'
-            )}"""
+            ).trim()}"""
     }
 	stages {
 		stage('Initialize') {
