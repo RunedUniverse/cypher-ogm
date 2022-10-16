@@ -147,7 +147,7 @@
 			<id>gen-eff-pom</id>
 			<build>
 				<defaultGoal>
-					org.apache.maven.plugins:maven-help-plugin:effective-pom@jenkins-tracing
+					org.apache.maven.plugins:maven-help-plugin:effective-pom
 				</defaultGoal>
 			</build>
 		</profile>
