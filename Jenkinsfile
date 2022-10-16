@@ -157,11 +157,9 @@ pipeline {
 				dir(path: 'rogm-core') {
 					sh 'mvn -P repo-development,deploy,gen-eff-pom'
 				}
-				sh 'mvn -P repo-development,deploy,gen-eff-pom'
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: 'rogm-core/maven-build-trace/*.xml', fingerprint: true
 					archiveArtifacts artifacts: 'maven-build-trace/*.xml', fingerprint: true
 				}
 			}
