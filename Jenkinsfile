@@ -117,6 +117,9 @@ pipeline {
 			parallel {
 			
 				stage('Neo4J') {
+					options {
+						throttle(['jenkins-docker-socket-neo4j'])
+					}
 					steps{
 						script {
 							docker.image('neo4j:latest').withRun(
