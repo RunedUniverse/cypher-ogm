@@ -5,11 +5,11 @@ pipeline {
 		jdk 'java-1.8.0'
 	}
 	environment {
-        REPOS = """${sh(
-                returnStdout: true,
-                script: 'REPOS=repo-releases; if [ $GIT_BRANCH != master ]; then REPOS=$REPOS,repo-development; fi; printf $REPOS'
-            )}"""
-    }
+		REPOS = """${sh(
+				returnStdout: true,
+				script: 'REPOS=repo-releases; if [ $GIT_BRANCH != master ]; then REPOS=$REPOS,repo-development; fi; printf $REPOS'
+			)}"""
+	}
 	stages {
 		stage('Initialize') {
 			steps {
@@ -228,6 +228,7 @@ pipeline {
 				branch 'master'
 			}
 			steps {
+				// never add : -P ${REPOS} => this is ment to fail here
 				sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
 				dir(path: 'rogm-sources-bom') {
 					sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
