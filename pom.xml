@@ -92,18 +92,6 @@
 		<java-source-version>1.8</java-source-version>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>runeduniverse-releases</id>
-			<url>https://nexus.runeduniverse.net/repository/maven-releases/</url>
-		</repository>
-		<!-- dev-repo contains: build-helper-java & development builds -->
-		<repository>
-			<id>runeduniverse-development</id>
-			<url>https://nexus.runeduniverse.net/repository/maven-development/</url>
-		</repository>
-	</repositories>
-
 	<profiles>
 		<profile>
 			<id>dev-install</id>
