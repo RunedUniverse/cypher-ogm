@@ -91,7 +91,7 @@
 		<!-- VERSIONS -->
 		<java-source-version>1.8</java-source-version>
 		<!-- TRACING -->
-		<tracing-log-path>/maven-build-trace/</tracing-log-path>
+		<tracing-log-path>./maven-build-trace/</tracing-log-path>
 	</properties>
 
 	<repositories>
