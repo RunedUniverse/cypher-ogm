@@ -102,6 +102,12 @@
 		<profile>
 			<id>install</id>
 			<build>
+				<defaultGoal>
+					org.apache.maven.plugins:maven-clean-plugin:clean@jenkins
+					org.apache.maven.plugins:maven-resources-plugin:resources@jenkins
+					org.apache.maven.plugins:maven-gpg-plugin:sign@jenkins
+					org.apache.maven.plugins:maven-install-plugin:install@jenkins
+				</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
