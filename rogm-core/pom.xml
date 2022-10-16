@@ -134,14 +134,20 @@
 			<id>deploy</id>
 			<!-- deploy test-jar -->
 			<build>
+				<defaultGoal>
+					org.apache.maven.plugins:maven-jar-plugin:jar@jenkins
+					org.apache.maven.plugins:maven-jar-plugin:test-jar@jenkins-testing
+					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
+				</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
-								<inherited>true</inherited>
-								<phase>package</phase>
+								<id>jenkins</id>
+								<inherited>false</inherited>
+								<phase>none</phase>
 								<goals>
 									<goal>jar</goal>
 									<goal>test-jar</goal>

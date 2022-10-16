@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>net.runeduniverse.tools</groupId>
 		<artifactId>build-helper-java</artifactId>
-		<version>2022.10.15</version>
+		<version>2022.08.13</version>
 	</parent>
 
 	<groupId>net.runeduniverse.lib</groupId>
@@ -253,7 +253,7 @@
 			<id>deploy</id>
 			<build>
 				<defaultGoal>
-					package
+					org.apache.maven.plugins:maven-jar-plugin:jar@jenkins
 					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
 				</defaultGoal>
 				<plugins>
@@ -262,6 +262,7 @@
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
+								<id>jenkins</id>
 								<inherited>false</inherited>
 								<phase>none</phase>
 							</execution>
