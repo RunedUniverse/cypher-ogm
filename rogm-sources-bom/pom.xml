@@ -42,7 +42,7 @@
 		<runeduniverse-utils-chain-version>1.0.0</runeduniverse-utils-chain-version>
 		<runeduniverse-utils-scanner-version>1.0.5</runeduniverse-utils-scanner-version>
 		<!-- ARTIFACT VERSIONS - OBJECT MAPPER -->
-		<jackson-databind-version>2.11.0</jackson-databind-version>
+		<jackson-databind-version>2.13.4.1</jackson-databind-version>
 		<!-- ARTIFACT VERSIONS - OPTIONAL DRIVERS / DB CONNECTORS -->
 		<neo4j-java-driver-version>4.0.1</neo4j-java-driver-version>
 		<!-- ARTIFACT VERSIONS - COMPILER -->
