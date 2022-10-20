@@ -9,6 +9,9 @@ Whilst not compromising of functionality and usability. We recommend using it in
 ## Distribution through Maven
 ### Repository
 #### RunedUniverse: Releases
+> This contains our locally hosted release artifacts.<br>
+> These same artifacts are deployed to Maven Central (Sonatype)
+
 ```xml
 <repository>
   <id>runeduniverse-releases</id>
@@ -19,7 +22,11 @@ Whilst not compromising of functionality and usability. We recommend using it in
 ### Dependencies
 In projects with APIs it is recommended to only include the CORE in the API <br>
 and include the Modules only in the actual core-programm.<br>
-Additionally a Bill of Materials (BOM) is provided to help you choose the most stable version!
+Additionally a Bill of Materials (BOM) is provided to help you choose the most up-to-date version!
+
+#### ROGM BOM
+
+[![Maven Central](https://img.shields.io/maven-central/v/net.runeduniverse.lib.rogm/rogm-bom.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.runeduniverse.lib.rogm%22%20AND%20a:%22rogm-bom%22)
 
 ```xml
 <!-- ROGM BOM -->
@@ -29,6 +36,11 @@ Additionally a Bill of Materials (BOM) is provided to help you choose the most s
   <version>2.1.1</version>
 </dependency>
 ```
+
+#### ROGM CORE
+
+[![Maven Central](https://img.shields.io/maven-central/v/net.runeduniverse.lib.rogm/rogm-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.runeduniverse.lib.rogm%22%20AND%20a:%22rogm-core%22)
+
 ```xml
 <!-- ROGM CORE -->
 <dependency>
@@ -37,6 +49,11 @@ Additionally a Bill of Materials (BOM) is provided to help you choose the most s
   <version>2.1.1</version>
 </dependency>
 ```
+
+#### Parser: JSON
+
+[![Maven Central](https://img.shields.io/maven-central/v/net.runeduniverse.lib.rogm.parser/rogm-parser-json.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.runeduniverse.lib.rogm.parser%22%20AND%20a:%22rogm-parser-json%22)
+
 ```xml
 <!-- Parser: JSON -->
 <dependency>
@@ -45,6 +62,11 @@ Additionally a Bill of Materials (BOM) is provided to help you choose the most s
   <version>2.1.1</version>
 </dependency>
 ```
+
+#### Language: Cypher
+
+[![Maven Central](https://img.shields.io/maven-central/v/net.runeduniverse.lib.rogm.lang/rogm-lang-cypher.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.runeduniverse.lib.rogm.lang%22%20AND%20a:%22rogm-lang-cypher%22)
+
 ```xml
 <!-- Language: Cypher -->
 <dependency>
@@ -53,6 +75,11 @@ Additionally a Bill of Materials (BOM) is provided to help you choose the most s
   <version>2.1.1</version>
 </dependency>
 ```
+
+#### Module: Neo4j
+
+[![Maven Central](https://img.shields.io/maven-central/v/net.runeduniverse.lib.rogm.modules/rogm-modules-neo4j.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.runeduniverse.lib.rogm.modules%22%20AND%20a:%22rogm-modules-neo4j%22)
+
 ```xml
 <!-- Module: Neo4j -->
 <dependency>
