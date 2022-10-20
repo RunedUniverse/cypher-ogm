@@ -31,8 +31,8 @@
 
 	<properties>
 		<artifact-version>1</artifact-version>
-		<bom-version>1</bom-version>
-		<sources-bom-version>1</sources-bom-version>
+		<min-bom-version>1</min-bom-version>
+		<min-sources-bom-version>1</min-sources-bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
 	</properties>
 
@@ -76,14 +76,14 @@
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-sources-bom</artifactId>
-				<version>${project.parent.version}.${sources-bom-version}</version>
+				<version>[${project.parent.version}.${min-sources-bom-version},)</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-bom</artifactId>
-				<version>${project.parent.version}.${bom-version}</version>
+				<version>[${project.parent.version}.${min-bom-version},)</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

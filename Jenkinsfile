@@ -196,12 +196,12 @@ pipeline {
 						branch 'master'
 					}
 					steps {
-						sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+						sh 'mvn -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
 						dir(path: 'rogm-sources-bom') {
-							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
 						}
 						dir(path: 'rogm-bom') {
-							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
 						}
 						dir(path: 'rogm-core') {
 							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
@@ -236,12 +236,12 @@ pipeline {
 			}
 			steps {
 				// never add : -P ${REPOS} => this is ment to fail here
-				sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
+				sh 'mvn -P dist-repo-maven-central,deploy-pom-signed --non-recursive'
 				dir(path: 'rogm-sources-bom') {
-					sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
+					sh 'mvn -P dist-repo-maven-central,deploy-pom-signed --non-recursive'
 				}
 				dir(path: 'rogm-bom') {
-					sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
+					sh 'mvn -P dist-repo-maven-central,deploy-pom-signed --non-recursive'
 				}
 				dir(path: 'rogm-core') {
 					sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'

@@ -105,70 +105,6 @@
 					org.apache.maven.plugins:maven-gpg-plugin:sign@jenkins
 					org.apache.maven.plugins:maven-install-plugin:install@jenkins
 				</defaultGoal>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>test-junit-jupiter</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins-testing</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
 			</build>
 		</profile>
 		<profile>
@@ -177,31 +113,6 @@
 				<defaultGoal>
 					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
 				</defaultGoal>
-			</build>
-		</profile>
-		<profile>
-			<id>deploy-signed</id>
-			<build>
-				<defaultGoal>
-					org.codehaus.mojo:build-helper-maven-plugin:attach-artifact@jenkins
-					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
-				</defaultGoal>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<inherited>false</inherited>
-						<configuration>
-							<artifacts>
-								<!-- gpg signature -->
-								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}.pom.asc</file>
-									<type>pom.asc</type>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</plugin>
-				</plugins>
 			</build>
 		</profile>
 	</profiles>
