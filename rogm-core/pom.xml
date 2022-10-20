@@ -124,7 +124,7 @@
 					org.apache.maven.plugins:maven-source-plugin:jar-no-fork@jenkins
 					org.apache.maven.plugins:maven-source-plugin:test-jar-no-fork@jenkins-testing
 					org.apache.maven.plugins:maven-javadoc-plugin:jar@jenkins
-					org.apache.maven.plugins:maven-javadoc-plugin:test-jar@jenkins
+					org.apache.maven.plugins:maven-javadoc-plugin:test-jar@jenkins-testing
 					org.apache.maven.plugins:maven-gpg-plugin:sign@jenkins
 					org.apache.maven.plugins:maven-install-plugin:install@jenkins
 				</defaultGoal>
@@ -193,7 +193,7 @@
 								<!-- test-jar -->
 								<artifact>
 									<file>${project.build.directory}/${project.build.finalName}-tests.jar.asc</file>
-									<type>tests.asc</type>
+									<type>test-jar.asc</type>
 								</artifact>
 								<artifact>
 									<file>${project.build.directory}/${project.build.finalName}-test-javadoc.jar</file>
