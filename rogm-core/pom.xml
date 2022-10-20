@@ -193,27 +193,28 @@
 								<!-- test-jar -->
 								<artifact>
 									<file>${project.build.directory}/${project.build.finalName}-tests.jar.asc</file>
-									<type>test-jar.asc</type>
+									<type>jar.asc</type>
+									<classifier>tests</classifier>
 								</artifact>
 								<artifact>
 									<file>${project.build.directory}/${project.build.finalName}-test-javadoc.jar</file>
-									<type>test-jar</type>
-									<classifier>javadoc</classifier>
+									<type>jar</type>
+									<classifier>test-javadoc</classifier>
 								</artifact>
 								<artifact>
 									<file>${project.build.directory}/${project.build.finalName}-test-javadoc.jar.asc</file>
-									<type>test-jar.asc</type>
-									<classifier>javadoc</classifier>
+									<type>jar.asc</type>
+									<classifier>test-javadoc</classifier>
 								</artifact>
 								<artifact>
 									<file>${project.build.directory}/${project.build.finalName}-test-sources.jar</file>
-									<type>test-jar</type>
-									<classifier>sources</classifier>
+									<type>jar</type>
+									<classifier>test-sources</classifier>
 								</artifact>
 								<artifact>
 									<file>${project.build.directory}/${project.build.finalName}-test-sources.jar.asc</file>
-									<type>test-jar.asc</type>
-									<classifier>sources</classifier>
+									<type>jar.asc</type>
+									<classifier>test-sources</classifier>
 								</artifact>
 								<!-- javadoc -->
 								<artifact>
