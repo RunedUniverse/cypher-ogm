@@ -42,6 +42,7 @@
 		<min-jackson-databind-version>2.12.6.1</min-jackson-databind-version>
 		<!-- ARTIFACT VERSIONS - OPTIONAL DRIVERS / DB CONNECTORS -->
 		<min-neo4j-java-driver-version>4.0.1</min-neo4j-java-driver-version>
+		<max-neo4j-java-driver-version>4.4.9</max-neo4j-java-driver-version>
 		<!-- ARTIFACT VERSIONS - COMPILER -->
 		<min-lombok-version>1.18.12</min-lombok-version>
 		<!-- VERSIONS - TESTING -->
@@ -92,9 +93,9 @@
 			<dependency>
 				<groupId>org.neo4j.driver</groupId>
 				<artifactId>neo4j-java-driver</artifactId>
-				<version>[${min-neo4j-java-driver-version},)</version>
+				<version>[${min-neo4j-java-driver-version},${max-neo4j-java-driver-version}]</version>
 			</dependency>
-			
+
 			<!-- COMPILER -->
 			<dependency>
 				<groupId>org.projectlombok</groupId>
@@ -102,7 +103,7 @@
 				<version>[${min-lombok-version},)</version>
 				<scope>provided</scope>
 			</dependency>
-			
+
 			<!-- TESTING -->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
