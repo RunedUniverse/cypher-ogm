@@ -26,8 +26,8 @@ import net.runeduniverse.lib.rogm.buffer.IBuffer;
 import net.runeduniverse.lib.rogm.querying.IFRelation;
 import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
-import net.runeduniverse.lib.utils.scanner.MethodPattern;
-import net.runeduniverse.lib.utils.scanner.TypePattern;
+import net.runeduniverse.lib.utils.scanner.pattern.MethodPattern;
+import net.runeduniverse.lib.utils.scanner.pattern.TypePattern;
 
 public abstract class APattern<B extends IQueryBuilder<?, ?, ? extends IFilter>>
 		extends TypePattern<FieldPattern, MethodPattern> implements IBaseQueryPattern<B>, IValidatable {

@@ -74,7 +74,6 @@ public abstract class APipelineFactory<ROUTER extends AChainRouter> {
 
 	public abstract void closeConnections();
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {
 		this.closeConnections();

@@ -15,17 +15,14 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>net.runeduniverse.lib</groupId>
-		<artifactId>rogm</artifactId>
+		<groupId>net.runeduniverse.lib.rogm</groupId>
+		<artifactId>rogm-parent</artifactId>
 		<version>2.1</version>
 	</parent>
 
-	<groupId>net.runeduniverse.lib.rogm</groupId>
 	<artifactId>rogm-sources-bom</artifactId>
 	<version>${project.parent.version}.${artifact-version}</version>
 	<packaging>pom</packaging>
@@ -36,23 +33,24 @@
 		<root-dir>${project.parent.basedir}</root-dir>
 		<artifact-version>1</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
-		<runeduniverse-utils-common-version>1.0.0</runeduniverse-utils-common-version>
-		<runeduniverse-utils-logging-version>1.0.0</runeduniverse-utils-logging-version>
-		<runeduniverse-utils-errors-version>1.0.0</runeduniverse-utils-errors-version>
-		<runeduniverse-utils-chain-version>1.0.0</runeduniverse-utils-chain-version>
-		<runeduniverse-utils-scanner-version>1.0.5</runeduniverse-utils-scanner-version>
+		<min-runeduniverse-utils-common-version>1.0.0</min-runeduniverse-utils-common-version>
+		<min-runeduniverse-utils-logging-version>1.0.0</min-runeduniverse-utils-logging-version>
+		<min-runeduniverse-utils-errors-version>1.0.0</min-runeduniverse-utils-errors-version>
+		<min-runeduniverse-utils-chain-version>1.0.0</min-runeduniverse-utils-chain-version>
+		<min-runeduniverse-utils-scanner-version>1.0.5</min-runeduniverse-utils-scanner-version>
 		<!-- ARTIFACT VERSIONS - OBJECT MAPPER -->
-		<jackson-databind-version>2.11.0</jackson-databind-version>
+		<min-jackson-databind-version>2.12.6.1</min-jackson-databind-version>
 		<!-- ARTIFACT VERSIONS - OPTIONAL DRIVERS / DB CONNECTORS -->
-		<neo4j-java-driver-version>4.0.1</neo4j-java-driver-version>
+		<min-neo4j-java-driver-version>4.0.1</min-neo4j-java-driver-version>
+		<max-neo4j-java-driver-version>4.4.9</max-neo4j-java-driver-version>
 		<!-- ARTIFACT VERSIONS - COMPILER -->
-		<lombok-version>1.18.12</lombok-version>
+		<min-lombok-version>1.18.12</min-lombok-version>
 		<!-- VERSIONS - TESTING -->
-		<junit-platform-surefire-provider-version>1.3.2</junit-platform-surefire-provider-version>
-		<junit-platform-launcher-version>1.7.1</junit-platform-launcher-version>
-		<junit-platform-runner-version>1.7.1</junit-platform-runner-version>
-		<junit-jupiter-api-version>5.7.1</junit-jupiter-api-version>
-		<junit-jupiter-engine-version>5.7.1</junit-jupiter-engine-version>
+		<min-junit-platform-surefire-provider-version>1.3.2</min-junit-platform-surefire-provider-version>
+		<min-junit-platform-launcher-version>1.7.1</min-junit-platform-launcher-version>
+		<min-junit-platform-runner-version>1.7.1</min-junit-platform-runner-version>
+		<min-junit-jupiter-api-version>5.7.1</min-junit-jupiter-api-version>
+		<min-junit-jupiter-engine-version>5.7.1</min-junit-jupiter-engine-version>
 	</properties>
 
 	<dependencyManagement>
@@ -61,41 +59,75 @@
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-common</artifactId>
-				<version>${runeduniverse-utils-common-version}</version>
+				<version>[${min-runeduniverse-utils-common-version},)</version>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-logging</artifactId>
-				<version>${runeduniverse-utils-logging-version}</version>
+				<version>[${min-runeduniverse-utils-logging-version},)</version>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-errors</artifactId>
-				<version>${runeduniverse-utils-errors-version}</version>
+				<version>[${min-runeduniverse-utils-errors-version},)</version>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-chain</artifactId>
-				<version>${runeduniverse-utils-chain-version}</version>
+				<version>[${min-runeduniverse-utils-chain-version},)</version>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-scanner</artifactId>
-				<version>${runeduniverse-utils-scanner-version}</version>
+				<version>[${min-runeduniverse-utils-scanner-version},)</version>
 			</dependency>
 
 			<!-- OBJECT MAPPER -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>${jackson-databind-version}</version>
+				<version>[${min-jackson-databind-version},)</version>
 			</dependency>
 
 			<!-- OPTIONAL DRIVERS / DB CONNECTORS -->
 			<dependency>
 				<groupId>org.neo4j.driver</groupId>
 				<artifactId>neo4j-java-driver</artifactId>
-				<version>${neo4j-java-driver-version}</version>
+				<version>[${min-neo4j-java-driver-version},${max-neo4j-java-driver-version}]</version>
+			</dependency>
+
+			<!-- COMPILER -->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>[${min-lombok-version},)</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<!-- TESTING -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>[${min-junit-jupiter-api-version},)</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>[${min-junit-jupiter-engine-version},)</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-launcher</artifactId>
+				<version>[${min-junit-platform-launcher-version},)</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-runner</artifactId>
+				<version>[${min-junit-platform-runner-version},)</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -104,91 +136,20 @@
 		<profile>
 			<id>install</id>
 			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
+				<defaultGoal>
+					org.apache.maven.plugins:maven-clean-plugin:clean@jenkins
+					org.apache.maven.plugins:maven-resources-plugin:resources@jenkins
+					org.apache.maven.plugins:maven-gpg-plugin:sign@jenkins
+					org.apache.maven.plugins:maven-install-plugin:install@jenkins
+				</defaultGoal>
 			</build>
 		</profile>
 		<profile>
-			<id>test-junit-jupiter</id>
+			<id>deploy</id>
 			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>jenkins-testing</id>
-								<inherited>false</inherited>
-								<phase>none</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>deploy-signed</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<inherited>false</inherited>
-						<configuration>
-							<artifacts>
-								<!-- gpg signature -->
-								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}.pom.asc</file>
-									<type>pom.asc</type>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</plugin>
-				</plugins>
+				<defaultGoal>
+					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
+				</defaultGoal>
 			</build>
 		</profile>
 	</profiles>

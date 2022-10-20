@@ -37,8 +37,9 @@ public interface IPattern {
 	/**
 	 * Used to call parsed Methods
 	 * 
-	 * @param anno
-	 * @param obj
+	 * @param anno	{@link Annotation} by which the method can be identified
+	 * @param obj   {@link Object} which has the method
+	 * @param args  {@link Object} array which gets passed to the method
 	 * @return {@code true} if successfull
 	 */
 	public boolean callMethod(Class<? extends Annotation> anno, Object obj, Object... args);
