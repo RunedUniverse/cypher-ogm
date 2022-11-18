@@ -103,9 +103,11 @@ pipeline {
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
-					archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
-					sh 'mv target/*.pom target/*.asc target/result/'
+					dir(path: 'target') {
+						archiveArtifacts artifacts: '*.pom', fingerprint: true
+						archiveArtifacts artifacts: '*.asc', fingerprint: true
+						sh 'mv *.pom *.asc result/'
+					}
 				}
 			}
 		}
