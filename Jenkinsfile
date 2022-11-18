@@ -98,7 +98,14 @@ pipeline {
 			}
 			steps {
 				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-				sh 'mkdir -p target/result/'
+				sh 'ls -l target/'
+			}
+			post {
+				always {
+					archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
+					archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
+					sh 'mv target/*.pom target/*.jar target/*.asc target/result/'
+				}
 			}
 		}
 		stage('Install Bill of Sources') {
@@ -109,7 +116,14 @@ pipeline {
 				dir(path: 'rogm-sources-bom') {
 					sh 'mvn-dev -P ${REPOS} dependency:resolve  --non-recursive'
 					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-					sh 'mv target/*.pom target/*.asc ../target/result/'
+					sh 'ls -l target/'
+				}
+			}
+			post {
+				always {
+					archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
+					archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
+					sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 				}
 			}
 		}
@@ -120,7 +134,14 @@ pipeline {
 			steps {
 				dir(path: 'rogm-bom') {
 					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-					sh 'mv target/*.pom target/*.asc ../target/result/'
+					sh 'ls -l target/'
+				}
+			}
+			post {
+				always {
+					archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
+					archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
+					sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 				}
 			}
 		}
@@ -131,6 +152,14 @@ pipeline {
 			steps {
 				dir(path: 'rogm-core') {
 					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+					sh 'ls -l target/'
+				}
+			}
+			post {
+				always {
+					archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
+					archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+					archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
 					sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 				}
 			}
@@ -144,6 +173,14 @@ pipeline {
 					steps {
 						dir(path: 'rogm-parser-json') {
 							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+							sh 'ls -l target/'
+						}
+					}
+					post {
+						always {
+							archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
+							archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+							archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
 							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 						}
 					}
@@ -159,6 +196,14 @@ pipeline {
 					steps {
 						dir(path: 'rogm-lang-cypher') {
 							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+							sh 'ls -l target/'
+						}
+					}
+					post {
+						always {
+							archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
+							archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+							archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
 							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 						}
 					}
@@ -174,6 +219,14 @@ pipeline {
 					steps {
 						dir(path: 'rogm-module-neo4j') {
 							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+							sh 'ls -l target/'
+						}
+					}
+					post {
+						always {
+							archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
+							archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+							archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
 							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 						}
 					}
@@ -185,6 +238,14 @@ pipeline {
 				//	steps {
 				//		dir(path: 'rogm-module-decorator') {
 				//			sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+				//			sh 'ls -l target/'
+				//		}
+				//	}
+				//	post {
+				//		always {
+				//			archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
+				//			archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+				//			archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
 				//			sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 				//		}
 				//	}
@@ -312,9 +373,6 @@ pipeline {
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: 'target/result/*.pom', fingerprint: true
-					archiveArtifacts artifacts: 'target/result/*.jar', fingerprint: true
-					archiveArtifacts artifacts: 'target/result/*.asc', fingerprint: true
 					archiveArtifacts artifacts: 'target/result/*.tar.xz', fingerprint: true
 					archiveArtifacts artifacts: 'target/result/*.zip', fingerprint: true
 				}
