@@ -9,7 +9,6 @@ pipeline {
     }
 	tools {
 		maven 'maven-latest'
-		jdk 'java-1.8.0'
 	}
 	environment {
 		PATH = """${sh(
@@ -34,9 +33,9 @@ pipeline {
 				script: 'REPOS=repo-releases; if [ $GIT_BRANCH != master ]; then REPOS=$REPOS,repo-development; fi; printf $REPOS'
 			)}"""
 
-		CHANGES_MVN_PARENT = """${sh(
+		CHANGES_ROGM_PARENT = """${sh(
 				returnStdout: true,
-				script: '.build/git-check-for-change pom.xml mvn-parent'
+				script: '.build/git-check-for-change pom.xml rogm-parent'
 			)}"""
 		CHANGES_ROGM_BOM = """${sh(
 				returnStdout: true,
@@ -78,7 +77,7 @@ pipeline {
 		stage('Update Maven Repo') {
 			when {
 				anyOf {
-					environment name: 'CHANGES_MVN_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_PARENT', value: '1'
 					environment name: 'CHANGES_ROGM_BOM', value: '1'
 					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
 					environment name: 'CHANGES_ROGM_CORE', value: '1'
@@ -90,6 +89,14 @@ pipeline {
 			}
 			steps {
 				sh 'mvn-dev -P ${REPOS} dependency:resolve --non-recursive'
+				sh 'mkdir -p target/result/'
+			}
+		}
+		stage('Install ROGM Parent') {
+			when {
+				environment name: 'CHANGES_ROGM_PARENT', value: '1'
+			}
+			steps {
 				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 				sh 'mkdir -p target/result/'
 				sh 'ls -l target'
@@ -196,7 +203,7 @@ pipeline {
 		stage('License Check') {
 			when {
 				anyOf {
-					environment name: 'CHANGES_MVN_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_PARENT', value: '1'
 					environment name: 'CHANGES_ROGM_BOM', value: '1'
 					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
 					environment name: 'CHANGES_ROGM_CORE', value: '1'
@@ -214,7 +221,7 @@ pipeline {
 		stage('System Test') {
 			when {
 				anyOf {
-					environment name: 'CHANGES_MVN_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_PARENT', value: '1'
 					environment name: 'CHANGES_ROGM_BOM', value: '1'
 					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
 					environment name: 'CHANGES_ROGM_CORE', value: '1'
@@ -242,7 +249,7 @@ pipeline {
 				stage('Neo4J') {
 					when {
 						anyOf {
-							environment name: 'CHANGES_MVN_PARENT', value: '1'
+							environment name: 'CHANGES_ROGM_PARENT', value: '1'
 							environment name: 'CHANGES_ROGM_BOM', value: '1'
 							environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
 							environment name: 'CHANGES_ROGM_CORE', value: '1'
@@ -294,7 +301,7 @@ pipeline {
 		stage('Package Build Result') {
 			when {
 				anyOf {
-					environment name: 'CHANGES_MVN_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_PARENT', value: '1'
 					environment name: 'CHANGES_ROGM_BOM', value: '1'
 					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
 					environment name: 'CHANGES_ROGM_CORE', value: '1'
@@ -326,9 +333,9 @@ pipeline {
 			parallel {
 				stage('Develop') {
 					stages {
-						stage('mvn-parent') {
+						stage('rogm-parent') {
 							when {
-								environment name: 'CHANGES_MVN_PARENT', value: '1'
+								environment name: 'CHANGES_ROGM_PARENT', value: '1'
 							}
 							steps {
 								sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
@@ -412,9 +419,9 @@ pipeline {
 						branch 'master'
 					}
 					stages {
-						stage('mvn-parent') {
+						stage('rogm-parent') {
 							when {
-								environment name: 'CHANGES_MVN_PARENT', value: '1'
+								environment name: 'CHANGES_ROGM_PARENT', value: '1'
 							}
 							steps {
 								sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
@@ -501,9 +508,9 @@ pipeline {
 			}
 			stages {
 				// never add : -P ${REPOS} => this is ment to fail here
-				stage('mvn-parent') {
+				stage('rogm-parent') {
 					when {
-						environment name: 'CHANGES_MVN_PARENT', value: '1'
+						environment name: 'CHANGES_ROGM_PARENT', value: '1'
 					}
 					steps {
 						sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-pom-signed --non-recursive'
