@@ -98,6 +98,7 @@ pipeline {
 			}
 			steps {
 				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+				sh 'mkdir -p target/result/'
 				sh 'ls -l target/'
 			}
 			post {
