@@ -306,9 +306,9 @@ pipeline {
 			}
 			steps {
 				dir(path: 'target/result') {
+					sh 'ls -l'
 					sh 'tar -I "pxz -9" -cvf ../rogm.tar.xz *'
 					sh 'zip -9 ../rogm.zip *'
-					sh 'ls -l'
 				}
 			}
 			post {
@@ -324,59 +324,172 @@ pipeline {
 
 		stage('Deploy') {
 			parallel {
-				stage('Development') {
-					steps {
-						sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
-						dir(path: 'rogm-sources-bom') {
-							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
+				stage('Develop') {
+					stages {
+						stage('mvn-parent') {
+							when {
+								environment name: 'CHANGES_MVN_PARENT', value: '1'
+							}
+							steps {
+								sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
+							}
 						}
-						dir(path: 'rogm-bom') {
-							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
+						stage('rogm-bom') {
+							when {
+								environment name: 'CHANGES_ROGM_BOM', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-bom') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
+								}
+							}
 						}
-						dir(path: 'rogm-core') {
-							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
+						stage('rogm-sources-bom') {
+							when {
+								environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-sources-bom') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
+								}
+							}
 						}
-						dir(path: 'rogm-parser-json') {
-							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
+						stage('rogm-core') {
+							when {
+								environment name: 'CHANGES_ROGM_CORE', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-core') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
+								}
+							}
 						}
-						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
+						stage('rogm-parser-json') {
+							when {
+								environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-parser-json') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
+								}
+							}
 						}
-						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
+						stage('rogm-lang-cypher') {
+							when {
+								environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-lang-cypher') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
+								}
+							}
 						}
-						dir(path: 'rogm-module-decorator') {
-							sh 'mvn -P ${REPOS},dist-repo-development,deploy --non-recursive'
+						stage('rogm-module-neo4j') {
+							when {
+								environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-module-neo4j') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
+								}
+							}
+						}
+						stage('rogm-module-decorator') {
+							when {
+								environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-module-decorator') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
+								}
+							}
 						}
 					}
 				}
+
 				stage('Release') {
 					when {
 						branch 'master'
 					}
-					steps {
-						sh 'mvn -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
-						dir(path: 'rogm-sources-bom') {
-							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
+					stages {
+						stage('mvn-parent') {
+							when {
+								environment name: 'CHANGES_MVN_PARENT', value: '1'
+							}
+							steps {
+								sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
+							}
 						}
-						dir(path: 'rogm-bom') {
-							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
+						stage('rogm-bom') {
+							when {
+								environment name: 'CHANGES_ROGM_BOM', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-bom') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
+								}
+							}
 						}
-						dir(path: 'rogm-core') {
-							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+						stage('rogm-sources-bom') {
+							when {
+								environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-sources-bom') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
+								}
+							}
 						}
-						dir(path: 'rogm-parser-json') {
-							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+						stage('rogm-core') {
+							when {
+								environment name: 'CHANGES_ROGM_CORE', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-core') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+								}
+							}
 						}
-						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+						stage('rogm-parser-json') {
+							when {
+								environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-parser-json') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+								}
+							}
 						}
-						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+						stage('rogm-lang-cypher') {
+							when {
+								environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-lang-cypher') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+								}
+							}
 						}
-						//dir(path: 'rogm-module-decorator') {
-						//	sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
-						//}
+						stage('rogm-module-neo4j') {
+							when {
+								environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-module-neo4j') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+								}
+							}
+						}
+						stage('rogm-module-decorator') {
+							when {
+								environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+							}
+							steps {
+								dir(path: 'rogm-module-decorator') {
+									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
+								}
+							}
+						}
 					}
 				}
 			}
@@ -386,29 +499,85 @@ pipeline {
 			when {
 				branch 'master'
 			}
-			steps {
+			stages {
 				// never add : -P ${REPOS} => this is ment to fail here
-				sh 'mvn -P dist-repo-maven-central,deploy-pom-signed --non-recursive'
-				dir(path: 'rogm-sources-bom') {
-					sh 'mvn -P dist-repo-maven-central,deploy-pom-signed --non-recursive'
+				stage('mvn-parent') {
+					when {
+						environment name: 'CHANGES_MVN_PARENT', value: '1'
+					}
+					steps {
+						sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-pom-signed --non-recursive'
+					}
 				}
-				dir(path: 'rogm-bom') {
-					sh 'mvn -P dist-repo-maven-central,deploy-pom-signed --non-recursive'
+				stage('rogm-bom') {
+					when {
+						environment name: 'CHANGES_ROGM_BOM', value: '1'
+					}
+					steps {
+						dir(path: 'rogm-bom') {
+							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-pom-signed --non-recursive'
+						}
+					}
 				}
-				dir(path: 'rogm-core') {
-					sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
+				stage('rogm-sources-bom') {
+					when {
+						environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+					}
+					steps {
+						dir(path: 'rogm-sources-bom') {
+							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-pom-signed --non-recursive'
+						}
+					}
 				}
-				dir(path: 'rogm-parser-json') {
-					sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
+				stage('rogm-core') {
+					when {
+						environment name: 'CHANGES_ROGM_CORE', value: '1'
+					}
+					steps {
+						dir(path: 'rogm-core') {
+							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
+						}
+					}
 				}
-				dir(path: 'rogm-lang-cypher') {
-					sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
+				stage('rogm-parser-json') {
+					when {
+						environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+					}
+					steps {
+						dir(path: 'rogm-parser-json') {
+							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
+						}
+					}
 				}
-				dir(path: 'rogm-module-neo4j') {
-					sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
+				stage('rogm-lang-cypher') {
+					when {
+						environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+					}
+					steps {
+						dir(path: 'rogm-lang-cypher') {
+							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
+						}
+					}
 				}
-				//dir(path: 'rogm-module-decorator') {
-				//	sh 'mvn -P dist-repo-maven-central,deploy-signed --non-recursive'
+				stage('rogm-module-neo4j') {
+					when {
+						environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+					}
+					steps {
+						dir(path: 'rogm-module-neo4j') {
+							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
+						}
+					}
+				}
+				//stage('rogm-module-decorator') {
+				//	when {
+				//		environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+				//	}
+				//	steps {
+				//		dir(path: 'rogm-module-decorator') {
+				//			sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
+				//		}
+				//	}
 				//}
 			}
 		}
