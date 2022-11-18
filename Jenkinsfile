@@ -76,33 +76,58 @@ pipeline {
 			}
 		}
 		stage('Update Maven Repo') {
+			when {
+				anyOf {
+					environment name: 'CHANGES_MVN_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_CORE', value: '1'
+					environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+					environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+				}
+			}
 			steps {
-				sh 'mvn -P ${REPOS} dependency:resolve --non-recursive'
-				sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+				sh 'mvn-dev -P ${REPOS} dependency:resolve --non-recursive'
+				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+				sh 'mkdir -p target/result/'
 				sh 'ls -l target'
 			}
 		}
 		stage('Install Bill of Sources') {
+			when {
+				environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+			}
 			steps {
 				dir(path: 'rogm-sources-bom') {
-					sh 'mvn -P ${REPOS} dependency:resolve  --non-recursive'
-					sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+					sh 'mvn-dev -P ${REPOS} dependency:resolve  --non-recursive'
+					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+					sh 'mv target/*.pom target/*.asc ../target/result/'
 					sh 'ls -l target'
 				}
 			}
 		}
 		stage('Install Bill of Materials') {
+			when {
+				environment name: 'CHANGES_ROGM_BOM', value: '1'
+			}
 			steps {
 				dir(path: 'rogm-bom') {
-					sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+					sh 'mv target/*.pom target/*.asc ../target/result/'
 					sh 'ls -l target'
 				}
 			}
 		}
 		stage('Build CORE') {
+			when {
+				environment name: 'CHANGES_ROGM_CORE', value: '1'
+			}
 			steps {
 				dir(path: 'rogm-core') {
-					sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+					sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 					sh 'ls -l target'
 				}
 			}
@@ -110,9 +135,13 @@ pipeline {
 		stage('Build Parser') {
 			parallel {
 				stage('JSON') {
+					when {
+						environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+					}
 					steps {
 						dir(path: 'rogm-parser-json') {
-							sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 							sh 'ls -l target'
 						}
 					}
@@ -122,9 +151,13 @@ pipeline {
 		stage('Build Languages') {
 			parallel {
 				stage('Cypher') {
+					when {
+						environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+					}
 					steps {
 						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 							sh 'ls -l target'
 						}
 					}
@@ -134,17 +167,26 @@ pipeline {
 		stage('Build Module') {
 			parallel {
 				stage('Neo4J') {
+					when {
+						environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+					}
 					steps {
 						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
 							sh 'ls -l target'
 						}
 					}
 				}
 				//stage('Decorator') {
+				//	when {
+				//		environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+				//	}
 				//	steps {
 				//		dir(path: 'rogm-module-decorator') {
-				//			sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+				//			sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
+				//			sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
+				//			sh 'ls -l target'
 				//		}
 				//	}
 				//}
@@ -152,14 +194,38 @@ pipeline {
 		}
 
 		stage('License Check') {
+			when {
+				anyOf {
+					environment name: 'CHANGES_MVN_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_CORE', value: '1'
+					environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+					environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+				}
+			}
 			steps {
-				sh 'mvn -P ${REPOS},license-check,license-prj-utils-approve,license-apache2-approve'
+				sh 'mvn-dev -P ${REPOS},license-check,license-prj-utils-approve,license-apache2-approve'
 			}
 		}
 
 		stage('System Test') {
+			when {
+				anyOf {
+					environment name: 'CHANGES_MVN_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_CORE', value: '1'
+					environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+					environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+				}
+			}
 			steps {
-				sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-system'
+				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-system'
 			}
 			post {
 				always {
@@ -174,6 +240,18 @@ pipeline {
 			parallel {
 			
 				stage('Neo4J') {
+					when {
+						anyOf {
+							environment name: 'CHANGES_MVN_PARENT', value: '1'
+							environment name: 'CHANGES_ROGM_BOM', value: '1'
+							environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+							environment name: 'CHANGES_ROGM_CORE', value: '1'
+							environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+							environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+							environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+							environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+						}
+					}
 					steps{
 						script {
 							docker.image('neo4j:latest').withRun(
@@ -196,7 +274,7 @@ pipeline {
 								/* Run tests */
 								sh 'echo database loaded > starting tests'
 								sh 'printenv | sort'
-								sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j'
+								sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j'
 							}
 						}
 					}
@@ -209,6 +287,37 @@ pipeline {
 				}
 				failure {
 					archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
+				}
+			}
+		}
+		
+		stage('Package Build Result') {
+			when {
+				anyOf {
+					environment name: 'CHANGES_MVN_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_CORE', value: '1'
+					environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+					environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+				}
+			}
+			steps {
+				dir(path: 'target/result') {
+					sh 'tar -I "pxz -9" -cvf ../rogm.tar.xz *'
+					sh 'zip -9 ../rogm.zip *'
+					sh 'ls -l'
+				}
+			}
+			post {
+				always {
+					archiveArtifacts artifacts: 'target/result/*.pom', fingerprint: true
+					archiveArtifacts artifacts: 'target/result/*.jar', fingerprint: true
+					archiveArtifacts artifacts: 'target/result/*.asc', fingerprint: true
+					archiveArtifacts artifacts: 'target/result/*.tar.xz', fingerprint: true
+					archiveArtifacts artifacts: 'target/result/*.zip', fingerprint: true
 				}
 			}
 		}
@@ -269,13 +378,6 @@ pipeline {
 						//	sh 'mvn -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
 						//}
 					}
-				}
-			}
-			post {
-				always {
-					archiveArtifacts artifacts: '*/target/*.pom', fingerprint: true
-					archiveArtifacts artifacts: '*/target/*.jar', fingerprint: true
-					archiveArtifacts artifacts: '*/target/*.asc', fingerprint: true
 				}
 			}
 		}
