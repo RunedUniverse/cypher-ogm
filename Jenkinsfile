@@ -12,9 +12,59 @@ pipeline {
 		jdk 'java-1.8.0'
 	}
 	environment {
+		PATH = """${sh(
+				returnStdout: true,
+				script: 'chmod +x $WORKSPACE/.build/*; printf $WORKSPACE/.build:$PATH'
+			)}"""
+
+		GLOBAL_MAVEN_SETTINGS = """${sh(
+				returnStdout: true,
+				script: 'printf /srv/jenkins/.m2/global-settings.xml'
+			)}"""
+		MAVEN_SETTINGS = """${sh(
+				returnStdout: true,
+				script: 'printf $WORKSPACE/.mvn/settings.xml'
+			)}"""
+		MAVEN_TOOLCHAINS = """${sh(
+				returnStdout: true,
+				script: 'printf $WORKSPACE/.mvn/toolchains.xml'
+			)}"""
 		REPOS = """${sh(
 				returnStdout: true,
 				script: 'REPOS=repo-releases; if [ $GIT_BRANCH != master ]; then REPOS=$REPOS,repo-development; fi; printf $REPOS'
+			)}"""
+
+		CHANGES_MVN_PARENT = """${sh(
+				returnStdout: true,
+				script: '.build/git-check-for-change pom.xml mvn-parent'
+			)}"""
+		CHANGES_ROGM_BOM = """${sh(
+				returnStdout: true,
+				script: '.build/git-check-for-change rogm-bom/pom.xml rogm-bom'
+			)}"""
+		CHANGES_ROGM_SOURCES_BOM = """${sh(
+				returnStdout: true,
+				script: '.build/git-check-for-change rogm-sources-bom/pom.xml rogm-sources-bom'
+			)}"""
+		CHANGES_ROGM_CORE = """${sh(
+				returnStdout: true,
+				script: '.build/git-check-for-change rogm-core/pom.xml rogm-core'
+			)}"""
+		CHANGES_ROGM_PARSER_JSON = """${sh(
+				returnStdout: true,
+				script: '.build/git-check-for-change rogm-parser-json/pom.xml rogm-parser-json'
+			)}"""
+		CHANGES_ROGM_LANG_CYPHER = """${sh(
+				returnStdout: true,
+				script: '.build/git-check-for-change rogm-lang-cypher/pom.xml rogm-lang-cypher'
+			)}"""
+		CHANGES_ROGM_MODULE_NEO4J = """${sh(
+				returnStdout: true,
+				script: '.build/git-check-for-change rogm-module-neo4j/pom.xml rogm-module-neo4j'
+			)}"""
+		CHANGES_ROGM_MODULE_DECORATOR = """${sh(
+				returnStdout: true,
+				script: '.build/git-check-for-change rogm-module-decorator/pom.xml rogm-module-decorator'
 			)}"""
 	}
 	stages {
@@ -28,7 +78,7 @@ pipeline {
 		stage('Update Maven Repo') {
 			steps {
 				sh 'mvn -P ${REPOS} dependency:resolve --non-recursive'
-				sh 'mvn -P ${REPOS},install --non-recursive'
+				sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 				sh 'ls -l target'
 			}
 		}
@@ -36,7 +86,7 @@ pipeline {
 			steps {
 				dir(path: 'rogm-sources-bom') {
 					sh 'mvn -P ${REPOS} dependency:resolve  --non-recursive'
-					sh 'mvn -P ${REPOS},install --non-recursive'
+					sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 					sh 'ls -l target'
 				}
 			}
@@ -44,7 +94,7 @@ pipeline {
 		stage('Install Bill of Materials') {
 			steps {
 				dir(path: 'rogm-bom') {
-					sh 'mvn -P ${REPOS},install --non-recursive'
+					sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 					sh 'ls -l target'
 				}
 			}
@@ -52,7 +102,7 @@ pipeline {
 		stage('Build CORE') {
 			steps {
 				dir(path: 'rogm-core') {
-					sh 'mvn -P ${REPOS},install --non-recursive'
+					sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 					sh 'ls -l target'
 				}
 			}
@@ -62,7 +112,7 @@ pipeline {
 				stage('JSON') {
 					steps {
 						dir(path: 'rogm-parser-json') {
-							sh 'mvn -P ${REPOS},install --non-recursive'
+							sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 							sh 'ls -l target'
 						}
 					}
@@ -74,7 +124,7 @@ pipeline {
 				stage('Cypher') {
 					steps {
 						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn -P ${REPOS},install --non-recursive'
+							sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 							sh 'ls -l target'
 						}
 					}
@@ -86,7 +136,7 @@ pipeline {
 				stage('Neo4J') {
 					steps {
 						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn -P ${REPOS},install --non-recursive'
+							sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 							sh 'ls -l target'
 						}
 					}
@@ -94,7 +144,7 @@ pipeline {
 				//stage('Decorator') {
 				//	steps {
 				//		dir(path: 'rogm-module-decorator') {
-				//			sh 'mvn -P ${REPOS},install --non-recursive'
+				//			sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 				//		}
 				//	}
 				//}
@@ -109,7 +159,7 @@ pipeline {
 
 		stage('System Test') {
 			steps {
-				sh 'mvn -P ${REPOS},test-junit-jupiter,test-system'
+				sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-system'
 			}
 			post {
 				always {
@@ -146,7 +196,7 @@ pipeline {
 								/* Run tests */
 								sh 'echo database loaded > starting tests'
 								sh 'printenv | sort'
-								sh 'mvn -P ${REPOS},test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j'
+								sh 'mvn -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j'
 							}
 						}
 					}
