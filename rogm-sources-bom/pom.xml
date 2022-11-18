@@ -28,6 +28,8 @@
 	<packaging>pom</packaging>
 
 	<name>ROGM - Bill of Sources</name>
+	<url>https://github.com/RunedUniverse/rogm/tree/master/rogm-sources-bom</url>
+	<inceptionYear>2020</inceptionYear>
 
 	<properties>
 		<root-dir>${project.parent.basedir}</root-dir>
@@ -41,7 +43,7 @@
 		<!-- ARTIFACT VERSIONS - OBJECT MAPPER -->
 		<jackson-databind-version>[2.12.6.1,)</jackson-databind-version>
 		<!-- ARTIFACT VERSIONS - OPTIONAL DRIVERS / DB CONNECTORS -->
-		<neo4j-java-driver-version>[4.0.1,4.4.9]</neo4j-java-driver-version>
+		<neo4j-java-driver-version>[4.0.1,5.0.0)</neo4j-java-driver-version>
 		<!-- ARTIFACT VERSIONS - COMPILER -->
 		<lombok-version>[1.18.12,)</lombok-version>
 		<!-- VERSIONS - TESTING -->
@@ -51,6 +53,34 @@
 		<junit-jupiter-api-version>[5.7.1,)</junit-jupiter-api-version>
 		<junit-jupiter-engine-version>[5.7.1,)</junit-jupiter-engine-version>
 	</properties>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>RunedUniverse</name>
+		<url>https://www.runeduniverse.net</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>pl4yingnight</id>
+			<name>Pl4yingNight</name>
+			<email>pl4yingnight@gmail.com</email>
+			<organization>RunedUniverse</organization>
+			<organizationUrl>https://www.runeduniverse.net</organizationUrl>
+			<timezone>Europe/Vienna</timezone>
+			<roles>
+				<role>Maintainer</role>
+				<role>Architect</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<dependencyManagement>
 		<dependencies>

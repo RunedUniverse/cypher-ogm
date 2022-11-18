@@ -29,6 +29,8 @@
 	<packaging>jar</packaging>
 
 	<name>ROGM Parser JSON</name>
+	<url>https://github.com/RunedUniverse/rogm/wiki/Parser-Packages#json</url>
+	<inceptionYear>2020</inceptionYear>
 
 	<properties>
 		<artifact-version>2</artifact-version>
@@ -36,6 +38,34 @@
 		<sources-bom-version>2</sources-bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
 	</properties>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>RunedUniverse</name>
+		<url>https://www.runeduniverse.net</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>pl4yingnight</id>
+			<name>Pl4yingNight</name>
+			<email>pl4yingnight@gmail.com</email>
+			<organization>RunedUniverse</organization>
+			<organizationUrl>https://www.runeduniverse.net</organizationUrl>
+			<timezone>Europe/Vienna</timezone>
+			<roles>
+				<role>Maintainer</role>
+				<role>Architect</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<dependencies>
 		<dependency>
