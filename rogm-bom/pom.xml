@@ -79,9 +79,11 @@
 				<version>[${major-version}.${minor-version}.${min-module-neo4j-version},)</version>
 			</dependency>
 			<!-- DEPRECATED - NOT RELEASED -->
-			<!-- <dependency> <groupId>net.runeduniverse.lib.rogm.modules</groupId> 
-				<artifactId>rogm-modules-decorator</artifactId> <version>[${major-version}.${minor-version}.${min-module-decorator-version},)</version> 
-				</dependency> -->
+			<!-- <dependency> -->
+			<!-- 	<groupId>net.runeduniverse.lib.rogm.modules</groupId> -->
+			<!-- 	<artifactId>rogm-modules-decorator</artifactId> -->
+			<!-- 	<version>[${major-version}.${minor-version}.${min-module-decorator-version},)</version> -->
+			<!-- </dependency> -->
 
 			<!-- TESTS -->
 			<dependency>
