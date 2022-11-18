@@ -15,27 +15,25 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
-		<version>2.1</version>
+		<version>2.1.1</version>
 	</parent>
 
 	<groupId>net.runeduniverse.lib.rogm.parser</groupId>
 	<artifactId>rogm-parser-json</artifactId>
-	<version>${project.parent.version}.${artifact-version}</version>
+	<version>${major-version}.${minor-version}.${artifact-version}</version>
 	<packaging>jar</packaging>
 
 	<name>ROGM Parser JSON</name>
 
 	<properties>
-		<artifact-version>1</artifact-version>
-		<bom-version>1</bom-version>
-		<sources-bom-version>1</sources-bom-version>
+		<artifact-version>2</artifact-version>
+		<bom-version>2</bom-version>
+		<sources-bom-version>2</sources-bom-version>
 		<root-dir>${project.parent.basedir}</root-dir>
 	</properties>
 
@@ -51,20 +49,24 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.lib.rogm</groupId>
 			<artifactId>rogm-core</artifactId>
 			<classifier>tests</classifier>
 			<type>test-jar</type>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -73,14 +75,14 @@
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-sources-bom</artifactId>
-				<version>${project.parent.version}.${sources-bom-version}</version>
+				<version>${major-version}.${minor-version}.${sources-bom-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-bom</artifactId>
-				<version>${project.parent.version}.${bom-version}</version>
+				<version>${major-version}.${minor-version}.${bom-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

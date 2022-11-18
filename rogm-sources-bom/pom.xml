@@ -20,24 +20,24 @@
 	<parent>
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
-		<version>2.1</version>
+		<version>2.1.1</version>
 	</parent>
 
 	<artifactId>rogm-sources-bom</artifactId>
-	<version>${project.parent.version}.${artifact-version}</version>
+	<version>${major-version}.${minor-version}.${artifact-version}</version>
 	<packaging>pom</packaging>
 
 	<name>ROGM - Bill of Sources</name>
 
 	<properties>
 		<root-dir>${project.parent.basedir}</root-dir>
-		<artifact-version>1</artifact-version>
+		<artifact-version>2</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
-		<min-runeduniverse-utils-common-version>1.0.0</min-runeduniverse-utils-common-version>
-		<min-runeduniverse-utils-logging-version>1.0.0</min-runeduniverse-utils-logging-version>
-		<min-runeduniverse-utils-errors-version>1.0.0</min-runeduniverse-utils-errors-version>
-		<min-runeduniverse-utils-chain-version>1.0.0</min-runeduniverse-utils-chain-version>
-		<min-runeduniverse-utils-scanner-version>1.0.5</min-runeduniverse-utils-scanner-version>
+		<min-runeduniverse-utils-common-version>1.0.1</min-runeduniverse-utils-common-version>
+		<min-runeduniverse-utils-logging-version>1.0.1</min-runeduniverse-utils-logging-version>
+		<min-runeduniverse-utils-errors-version>1.0.1</min-runeduniverse-utils-errors-version>
+		<min-runeduniverse-utils-chain-version>1.0.1</min-runeduniverse-utils-chain-version>
+		<min-runeduniverse-utils-scanner-version>1.0.6</min-runeduniverse-utils-scanner-version>
 		<!-- ARTIFACT VERSIONS - OBJECT MAPPER -->
 		<min-jackson-databind-version>2.12.6.1</min-jackson-databind-version>
 		<!-- ARTIFACT VERSIONS - OPTIONAL DRIVERS / DB CONNECTORS -->
