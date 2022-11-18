@@ -122,9 +122,11 @@ pipeline {
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
-					archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
-					sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
+					dir(path: 'rogm-sources-bom/target') {
+						archiveArtifacts artifacts: '*.pom', fingerprint: true
+						archiveArtifacts artifacts: '*.asc', fingerprint: true
+						sh 'mv *.pom *.jar target/*.asc ../../target/result/'
+					}
 				}
 			}
 		}
@@ -140,9 +142,11 @@ pipeline {
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
-					archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
-					sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
+					dir(path: 'rogm-bom/target') {
+						archiveArtifacts artifacts: '*.pom', fingerprint: true
+						archiveArtifacts artifacts: '*.asc', fingerprint: true
+						sh 'mv *.pom *.jar target/*.asc ../../target/result/'
+					}
 				}
 			}
 		}
@@ -158,10 +162,11 @@ pipeline {
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
-					archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-					archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
-					sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
+					dir(path: 'rogm-core/target') {
+						archiveArtifacts artifacts: '*.pom', fingerprint: true
+						archiveArtifacts artifacts: '*.asc', fingerprint: true
+						sh 'mv *.pom *.jar target/*.asc ../../target/result/'
+					}
 				}
 			}
 		}
@@ -179,10 +184,12 @@ pipeline {
 					}
 					post {
 						always {
-							archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
-							archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-							archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
-							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
+							dir(path: 'rogm-parser-json/target') {
+								archiveArtifacts artifacts: '*.pom', fingerprint: true
+								archiveArtifacts artifacts: '*.jar', fingerprint: true
+								archiveArtifacts artifacts: '*.asc', fingerprint: true
+								sh 'mv *.pom *.jar target/*.asc ../../target/result/'
+							}
 						}
 					}
 				}
@@ -202,10 +209,12 @@ pipeline {
 					}
 					post {
 						always {
-							archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
-							archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-							archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
-							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
+							dir(path: 'rogm-lang-cypher/target') {
+								archiveArtifacts artifacts: '*.pom', fingerprint: true
+								archiveArtifacts artifacts: '*.jar', fingerprint: true
+								archiveArtifacts artifacts: '*.asc', fingerprint: true
+								sh 'mv *.pom *.jar target/*.asc ../../target/result/'
+							}
 						}
 					}
 				}
@@ -225,10 +234,12 @@ pipeline {
 					}
 					post {
 						always {
-							archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
-							archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-							archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
-							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
+							dir(path: 'rogm-module-neo4j/target') {
+								archiveArtifacts artifacts: '*.pom', fingerprint: true
+								archiveArtifacts artifacts: '*.jar', fingerprint: true
+								archiveArtifacts artifacts: '*.asc', fingerprint: true
+								sh 'mv *.pom *.jar target/*.asc ../../target/result/'
+							}
 						}
 					}
 				}
@@ -244,10 +255,12 @@ pipeline {
 				//	}
 				//	post {
 				//		always {
-				//			archiveArtifacts artifacts: 'target/*.pom', fingerprint: true
-				//			archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-				//			archiveArtifacts artifacts: 'target/*.asc', fingerprint: true
-				//			sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
+				//			dir(path: 'rogm-module-decorator/target') {
+				//				archiveArtifacts artifacts: '*.pom', fingerprint: true
+				//				archiveArtifacts artifacts: '*.jar', fingerprint: true
+				//				archiveArtifacts artifacts: '*.asc', fingerprint: true
+				//				sh 'mv *.pom *.jar target/*.asc ../../target/result/'
+				//			}
 				//		}
 				//	}
 				//}
