@@ -99,7 +99,6 @@ pipeline {
 			steps {
 				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 				sh 'mkdir -p target/result/'
-				sh 'ls -l target'
 			}
 		}
 		stage('Install Bill of Sources') {
@@ -111,7 +110,6 @@ pipeline {
 					sh 'mvn-dev -P ${REPOS} dependency:resolve  --non-recursive'
 					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 					sh 'mv target/*.pom target/*.asc ../target/result/'
-					sh 'ls -l target'
 				}
 			}
 		}
@@ -123,7 +121,6 @@ pipeline {
 				dir(path: 'rogm-bom') {
 					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 					sh 'mv target/*.pom target/*.asc ../target/result/'
-					sh 'ls -l target'
 				}
 			}
 		}
@@ -135,7 +132,6 @@ pipeline {
 				dir(path: 'rogm-core') {
 					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 					sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
-					sh 'ls -l target'
 				}
 			}
 		}
@@ -149,7 +145,6 @@ pipeline {
 						dir(path: 'rogm-parser-json') {
 							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
-							sh 'ls -l target'
 						}
 					}
 				}
@@ -165,7 +160,6 @@ pipeline {
 						dir(path: 'rogm-lang-cypher') {
 							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
-							sh 'ls -l target'
 						}
 					}
 				}
@@ -181,7 +175,6 @@ pipeline {
 						dir(path: 'rogm-module-neo4j') {
 							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 							sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
-							sh 'ls -l target'
 						}
 					}
 				}
@@ -193,7 +186,6 @@ pipeline {
 				//		dir(path: 'rogm-module-decorator') {
 				//			sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
 				//			sh 'mv target/*.pom target/*.jar target/*.asc ../target/result/'
-				//			sh 'ls -l target'
 				//		}
 				//	}
 				//}
