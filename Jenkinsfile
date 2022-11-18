@@ -61,10 +61,10 @@ pipeline {
 				returnStdout: true,
 				script: '.build/git-check-for-change rogm-module-neo4j/pom.xml rogm-module-neo4j'
 			)}"""
-		CHANGES_ROGM_MODULE_DECORATOR = """${sh(
-				returnStdout: true,
-				script: '.build/git-check-for-change rogm-module-decorator/pom.xml rogm-module-decorator'
-			)}"""
+		//CHANGES_ROGM_MODULE_DECORATOR = """${sh(
+		//		returnStdout: true,
+		//		script: '.build/git-check-for-change rogm-module-decorator/pom.xml rogm-module-decorator'
+		//	)}"""
 	}
 	stages {
 		stage('Initialize') {
