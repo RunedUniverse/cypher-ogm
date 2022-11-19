@@ -390,8 +390,8 @@ pipeline {
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: 'target/result/*.tar.xz', fingerprint: true
-					archiveArtifacts artifacts: 'target/result/*.zip', fingerprint: true
+					archiveArtifacts artifacts: 'target/*.tar.xz', fingerprint: true
+					archiveArtifacts artifacts: 'target/*.zip', fingerprint: true
 				}
 			}
 		}
