@@ -367,7 +367,7 @@ pipeline {
 				}
 			}
 		}
-		
+
 		stage('Package Build Result') {
 			when {
 				anyOf {
@@ -390,8 +390,10 @@ pipeline {
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: 'target/*.tar.xz', fingerprint: true
-					archiveArtifacts artifacts: 'target/*.zip', fingerprint: true
+					dir(path: 'target') {
+						archiveArtifacts artifacts: '*.tar.xz', fingerprint: true
+						archiveArtifacts artifacts: '*.zip', fingerprint: true
+					}
 				}
 			}
 		}
