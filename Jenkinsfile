@@ -359,10 +359,11 @@ pipeline {
 
 			}
 			post {
-				always {
+				success {
 					junit '*/target/surefire-reports/*.xml'
 				}
 				failure {
+					junit '*/target/surefire-reports/*.xml'
 					archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
 				}
 			}
