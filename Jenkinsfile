@@ -643,16 +643,16 @@ pipeline {
 						}
 					}
 				}
-				//stage('rogm-module-decorator') {
-				//	when {
-				//		environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
-				//	}
-				//	steps {
-				//		dir(path: 'rogm-module-decorator') {
-				//			sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
-				//		}
-				//	}
-				//}
+				stage('rogm-module-decorator') {
+					when {
+						environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+					}
+					steps {
+						dir(path: 'rogm-module-decorator') {
+							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
+						}
+					}
+				}
 			}
 		}
 	}
