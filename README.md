@@ -33,7 +33,7 @@ Additionally a Bill of Materials (BOM) is provided to help you choose the most u
 <dependency>
   <groupId>net.runeduniverse.lib.rogm</groupId>
   <artifactId>rogm-bom</artifactId>
-  <version>2.1.1</version>
+  <version>2.1.2</version>
 </dependency>
 ```
 
@@ -46,7 +46,7 @@ Additionally a Bill of Materials (BOM) is provided to help you choose the most u
 <dependency>
   <groupId>net.runeduniverse.lib.rogm</groupId>
   <artifactId>rogm-core</artifactId>
-  <version>2.1.1</version>
+  <version>2.1.2</version>
 </dependency>
 ```
 
@@ -59,7 +59,7 @@ Additionally a Bill of Materials (BOM) is provided to help you choose the most u
 <dependency>
   <groupId>net.runeduniverse.lib.rogm.parser</groupId>
   <artifactId>rogm-parser-json</artifactId>
-  <version>2.1.1</version>
+  <version>2.1.2</version>
 </dependency>
 ```
 
@@ -72,7 +72,7 @@ Additionally a Bill of Materials (BOM) is provided to help you choose the most u
 <dependency>
   <groupId>net.runeduniverse.lib.rogm.lang</groupId>
   <artifactId>rogm-lang-cypher</artifactId>
-  <version>2.1.1</version>
+  <version>2.1.2</version>
 </dependency>
 ```
 
@@ -85,6 +85,6 @@ Additionally a Bill of Materials (BOM) is provided to help you choose the most u
 <dependency>
   <groupId>net.runeduniverse.lib.rogm.modules</groupId>
   <artifactId>rogm-modules-neo4j</artifactId>
-  <version>2.1.1</version>
+  <version>2.1.2</version>
 </dependency>
 ```

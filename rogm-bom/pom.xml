@@ -20,14 +20,28 @@
 	<parent>
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
-		<version>2.1</version>
+		<version>2.1.1</version>
+		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>rogm-bom</artifactId>
-	<version>${project.parent.version}.${artifact-version}</version>
+	<version>${major-version}.${minor-version}.${artifact-version}</version>
 	<packaging>pom</packaging>
 
 	<name>ROGM - Bill of Materials</name>
+	<url>https://github.com/RunedUniverse/rogm/wiki#bill-of-materials-bom</url>
+	<inceptionYear>2020</inceptionYear>
+
+	<properties>
+		<root-dir>${project.parent.relativePath}</root-dir>
+		<artifact-version>2</artifact-version>
+		<!-- ARTIFACT VERSIONS -->
+		<min-core-version>2</min-core-version>
+		<min-parser-json-version>2</min-parser-json-version>
+		<min-lang-cypher-version>2</min-lang-cypher-version>
+		<min-module-decorator-version>2</min-module-decorator-version>
+		<min-module-neo4j-version>2</min-module-neo4j-version>
+	</properties>
 
 	<licenses>
 		<license>
@@ -41,16 +55,21 @@
 		<url>https://www.runeduniverse.net</url>
 	</organization>
 
-	<properties>
-		<root-dir>${project.parent.basedir}</root-dir>
-		<artifact-version>1</artifact-version>
-		<!-- ARTIFACT VERSIONS -->
-		<min-core-version>1</min-core-version>
-		<min-parser-json-version>1</min-parser-json-version>
-		<min-lang-cypher-version>1</min-lang-cypher-version>
-		<min-module-decorator-version>1</min-module-decorator-version>
-		<min-module-neo4j-version>1</min-module-neo4j-version>
-	</properties>
+	<developers>
+		<developer>
+			<id>pl4yingnight</id>
+			<name>Pl4yingNight</name>
+			<email>pl4yingnight@gmail.com</email>
+			<organization>RunedUniverse</organization>
+			<organizationUrl>https://www.runeduniverse.net</organizationUrl>
+			<timezone>Europe/Vienna</timezone>
+			<roles>
+				<role>Maintainer</role>
+				<role>Architect</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<dependencyManagement>
 		<dependencies>
@@ -58,36 +77,38 @@
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-core</artifactId>
-				<version>[${project.parent.version}.${min-core-version},)</version>
+				<version>[${major-version}.${minor-version}.${min-core-version},)</version>
 			</dependency>
 			<!-- PARSER -->
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm.parser</groupId>
 				<artifactId>rogm-parser-json</artifactId>
-				<version>[${project.parent.version}.${min-parser-json-version},)</version>
+				<version>[${major-version}.${minor-version}.${min-parser-json-version},)</version>
 			</dependency>
 			<!-- LANGUAGES -->
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm.lang</groupId>
 				<artifactId>rogm-lang-cypher</artifactId>
-				<version>[${project.parent.version}.${min-lang-cypher-version},)</version>
+				<version>[${major-version}.${minor-version}.${min-lang-cypher-version},)</version>
 			</dependency>
 			<!-- MODULES -->
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm.modules</groupId>
 				<artifactId>rogm-modules-neo4j</artifactId>
-				<version>[${project.parent.version}.${min-module-neo4j-version},)</version>
+				<version>[${major-version}.${minor-version}.${min-module-neo4j-version},)</version>
 			</dependency>
 			<!-- DEPRECATED - NOT RELEASED -->
-			<!-- <dependency> <groupId>net.runeduniverse.lib.rogm.modules</groupId> 
-				<artifactId>rogm-modules-decorator</artifactId> <version>[${project.parent.version}.${min-module-decorator-version},)</version> 
-				</dependency> -->
+			<!-- <dependency> -->
+			<!-- 	<groupId>net.runeduniverse.lib.rogm.modules</groupId> -->
+			<!-- 	<artifactId>rogm-modules-decorator</artifactId> -->
+			<!-- 	<version>[${major-version}.${minor-version}.${min-module-decorator-version},)</version> -->
+			<!-- </dependency> -->
 
 			<!-- TESTS -->
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-core</artifactId>
-				<version>[${project.parent.version}.${min-core-version},)</version>
+				<version>[${major-version}.${minor-version}.${min-core-version},)</version>
 				<classifier>tests</classifier>
 				<type>test-jar</type>
 				<scope>test</scope>

@@ -20,38 +20,68 @@
 	<parent>
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
-		<version>2.1</version>
+		<version>2.1.1</version>
+		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>rogm-sources-bom</artifactId>
-	<version>${project.parent.version}.${artifact-version}</version>
+	<version>${major-version}.${minor-version}.${artifact-version}</version>
 	<packaging>pom</packaging>
 
 	<name>ROGM - Bill of Sources</name>
+	<url>https://github.com/RunedUniverse/rogm/tree/master/rogm-sources-bom</url>
+	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<root-dir>${project.parent.basedir}</root-dir>
-		<artifact-version>1</artifact-version>
+		<root-dir>${project.parent.relativePath}</root-dir>
+		<artifact-version>2</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
-		<min-runeduniverse-utils-common-version>1.0.0</min-runeduniverse-utils-common-version>
-		<min-runeduniverse-utils-logging-version>1.0.0</min-runeduniverse-utils-logging-version>
-		<min-runeduniverse-utils-errors-version>1.0.0</min-runeduniverse-utils-errors-version>
-		<min-runeduniverse-utils-chain-version>1.0.0</min-runeduniverse-utils-chain-version>
-		<min-runeduniverse-utils-scanner-version>1.0.5</min-runeduniverse-utils-scanner-version>
+		<runeduniverse-utils-common-version>[1.0.1,)</runeduniverse-utils-common-version>
+		<runeduniverse-utils-logging-version>[1.0.1,)</runeduniverse-utils-logging-version>
+		<runeduniverse-utils-errors-version>[1.0.1,)</runeduniverse-utils-errors-version>
+		<runeduniverse-utils-chain-version>[1.0.1,)</runeduniverse-utils-chain-version>
+		<runeduniverse-utils-scanner-version>[1.0.6,)</runeduniverse-utils-scanner-version>
 		<!-- ARTIFACT VERSIONS - OBJECT MAPPER -->
-		<min-jackson-databind-version>2.12.6.1</min-jackson-databind-version>
+		<jackson-databind-version>[2.12.6.1,)</jackson-databind-version>
 		<!-- ARTIFACT VERSIONS - OPTIONAL DRIVERS / DB CONNECTORS -->
-		<min-neo4j-java-driver-version>4.0.1</min-neo4j-java-driver-version>
-		<max-neo4j-java-driver-version>4.4.9</max-neo4j-java-driver-version>
+		<neo4j-java-driver-version>[4.0.1,5.0.0-alpha01)</neo4j-java-driver-version>
 		<!-- ARTIFACT VERSIONS - COMPILER -->
-		<min-lombok-version>1.18.12</min-lombok-version>
+		<lombok-version>[1.18.12,)</lombok-version>
 		<!-- VERSIONS - TESTING -->
-		<min-junit-platform-surefire-provider-version>1.3.2</min-junit-platform-surefire-provider-version>
-		<min-junit-platform-launcher-version>1.7.1</min-junit-platform-launcher-version>
-		<min-junit-platform-runner-version>1.7.1</min-junit-platform-runner-version>
-		<min-junit-jupiter-api-version>5.7.1</min-junit-jupiter-api-version>
-		<min-junit-jupiter-engine-version>5.7.1</min-junit-jupiter-engine-version>
+		<junit-platform-surefire-provider-version>[1.3.2,)</junit-platform-surefire-provider-version>
+		<junit-platform-launcher-version>[1.7.1,)</junit-platform-launcher-version>
+		<junit-platform-runner-version>[1.7.1,)</junit-platform-runner-version>
+		<junit-jupiter-api-version>[5.7.1,)</junit-jupiter-api-version>
+		<junit-jupiter-engine-version>[5.7.1,)</junit-jupiter-engine-version>
 	</properties>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>RunedUniverse</name>
+		<url>https://www.runeduniverse.net</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>pl4yingnight</id>
+			<name>Pl4yingNight</name>
+			<email>pl4yingnight@gmail.com</email>
+			<organization>RunedUniverse</organization>
+			<organizationUrl>https://www.runeduniverse.net</organizationUrl>
+			<timezone>Europe/Vienna</timezone>
+			<roles>
+				<role>Maintainer</role>
+				<role>Architect</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<dependencyManagement>
 		<dependencies>
@@ -59,48 +89,48 @@
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-common</artifactId>
-				<version>[${min-runeduniverse-utils-common-version},)</version>
+				<version>${runeduniverse-utils-common-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-logging</artifactId>
-				<version>[${min-runeduniverse-utils-logging-version},)</version>
+				<version>${runeduniverse-utils-logging-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-errors</artifactId>
-				<version>[${min-runeduniverse-utils-errors-version},)</version>
+				<version>${runeduniverse-utils-errors-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-chain</artifactId>
-				<version>[${min-runeduniverse-utils-chain-version},)</version>
+				<version>${runeduniverse-utils-chain-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.utils</groupId>
 				<artifactId>utils-scanner</artifactId>
-				<version>[${min-runeduniverse-utils-scanner-version},)</version>
+				<version>${runeduniverse-utils-scanner-version}</version>
 			</dependency>
 
 			<!-- OBJECT MAPPER -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>[${min-jackson-databind-version},)</version>
+				<version>${jackson-databind-version}</version>
 			</dependency>
 
 			<!-- OPTIONAL DRIVERS / DB CONNECTORS -->
 			<dependency>
 				<groupId>org.neo4j.driver</groupId>
 				<artifactId>neo4j-java-driver</artifactId>
-				<version>[${min-neo4j-java-driver-version},${max-neo4j-java-driver-version}]</version>
+				<version>${neo4j-java-driver-version}</version>
 			</dependency>
 
 			<!-- COMPILER -->
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
-				<version>[${min-lombok-version},)</version>
+				<version>${lombok-version}</version>
 				<scope>provided</scope>
 			</dependency>
 
@@ -108,25 +138,25 @@
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
-				<version>[${min-junit-jupiter-api-version},)</version>
+				<version>${junit-jupiter-api-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-engine</artifactId>
-				<version>[${min-junit-jupiter-engine-version},)</version>
+				<version>${junit-jupiter-engine-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.junit.platform</groupId>
 				<artifactId>junit-platform-launcher</artifactId>
-				<version>[${min-junit-platform-launcher-version},)</version>
+				<version>${junit-platform-launcher-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.junit.platform</groupId>
 				<artifactId>junit-platform-runner</artifactId>
-				<version>[${min-junit-platform-runner-version},)</version>
+				<version>${junit-platform-runner-version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
