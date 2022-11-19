@@ -384,7 +384,6 @@ pipeline {
 				}
 			}
 			steps {
-				sh 'tree -I .mvn/repo'
 				dir(path: 'target/result') {
 					sh 'ls -l'
 					sh 'tar -I "pxz -9" -cvf ../rogm.tar.xz *'
