@@ -305,10 +305,11 @@ pipeline {
 				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-system'
 			}
 			post {
-				always {
+				success {
 					junit '*/target/surefire-reports/*.xml'
 				}
 				failure {
+					junit '*/target/surefire-reports/*.xml'
 					archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
 				}
 			}
