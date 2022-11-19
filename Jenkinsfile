@@ -385,6 +385,7 @@ pipeline {
 			}
 			steps {
 				dir(path: 'target/result') {
+					sh 'tree .'
 					sh 'ls -l'
 					sh 'tar -I "pxz -9" -cvf ../rogm.tar.xz *'
 					sh 'zip -9 ../rogm.zip *'
