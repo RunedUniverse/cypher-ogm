@@ -6,7 +6,7 @@ pipeline {
 			throttleEnabled: true,
 			throttleOption: 'category'
 		)
-    }
+	}
 	tools {
 		maven 'maven-latest'
 	}
