@@ -88,6 +88,7 @@ pipeline {
 				}
 			}
 			steps {
+				sh 'mvn-dev -P ${REPOS} dependency:purge-local-repository -DactTransitively=false -DreResolve=false'
 				sh 'mvn-dev -P ${REPOS} dependency:resolve --non-recursive'
 				sh 'mkdir -p target/result/'
 			}
