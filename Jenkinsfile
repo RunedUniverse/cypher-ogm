@@ -107,7 +107,7 @@ pipeline {
 					dir(path: 'target') {
 						archiveArtifacts artifacts: '*.pom', fingerprint: true
 						archiveArtifacts artifacts: '*.asc', fingerprint: true
-						sh 'mv *.pom *.asc result/'
+						sh 'cp *.pom *.asc result/'
 					}
 				}
 			}
@@ -128,7 +128,7 @@ pipeline {
 					dir(path: 'rogm-sources-bom/target') {
 						archiveArtifacts artifacts: '*.pom', fingerprint: true
 						archiveArtifacts artifacts: '*.asc', fingerprint: true
-						sh 'mv *.pom *.asc ../../target/result/'
+						sh 'cp *.pom *.asc ../../target/result/'
 					}
 				}
 			}
@@ -148,7 +148,7 @@ pipeline {
 					dir(path: 'rogm-bom/target') {
 						archiveArtifacts artifacts: '*.pom', fingerprint: true
 						archiveArtifacts artifacts: '*.asc', fingerprint: true
-						sh 'mv *.pom *.asc ../../target/result/'
+						sh 'cp *.pom *.asc ../../target/result/'
 					}
 				}
 			}
@@ -168,7 +168,7 @@ pipeline {
 					dir(path: 'rogm-core/target') {
 						archiveArtifacts artifacts: '*.pom', fingerprint: true
 						archiveArtifacts artifacts: '*.asc', fingerprint: true
-						sh 'mv *.pom *.jar *.asc ../../target/result/'
+						sh 'cp *.pom *.jar *.asc ../../target/result/'
 					}
 				}
 			}
@@ -191,7 +191,7 @@ pipeline {
 								archiveArtifacts artifacts: '*.pom', fingerprint: true
 								archiveArtifacts artifacts: '*.jar', fingerprint: true
 								archiveArtifacts artifacts: '*.asc', fingerprint: true
-								sh 'mv *.pom *.jar *.asc ../../target/result/'
+								sh 'cp *.pom *.jar *.asc ../../target/result/'
 							}
 						}
 					}
@@ -216,7 +216,7 @@ pipeline {
 								archiveArtifacts artifacts: '*.pom', fingerprint: true
 								archiveArtifacts artifacts: '*.jar', fingerprint: true
 								archiveArtifacts artifacts: '*.asc', fingerprint: true
-								sh 'mv *.pom *.jar *.asc ../../target/result/'
+								sh 'cp *.pom *.jar *.asc ../../target/result/'
 							}
 						}
 					}
@@ -241,7 +241,7 @@ pipeline {
 								archiveArtifacts artifacts: '*.pom', fingerprint: true
 								archiveArtifacts artifacts: '*.jar', fingerprint: true
 								archiveArtifacts artifacts: '*.asc', fingerprint: true
-								sh 'mv *.pom *.jar *.asc ../../target/result/'
+								sh 'cp *.pom *.jar *.asc ../../target/result/'
 							}
 						}
 					}
@@ -262,7 +262,7 @@ pipeline {
 				//				archiveArtifacts artifacts: '*.pom', fingerprint: true
 				//				archiveArtifacts artifacts: '*.jar', fingerprint: true
 				//				archiveArtifacts artifacts: '*.asc', fingerprint: true
-				//				sh 'mv *.pom *.jar *.asc ../../target/result/'
+				//				sh 'cp *.pom *.jar *.asc ../../target/result/'
 				//			}
 				//		}
 				//	}
