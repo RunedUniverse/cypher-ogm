@@ -43,7 +43,7 @@
 		<!-- ARTIFACT VERSIONS - OBJECT MAPPER -->
 		<jackson-databind-version>[2.12.6.1,)</jackson-databind-version>
 		<!-- ARTIFACT VERSIONS - OPTIONAL DRIVERS / DB CONNECTORS -->
-		<neo4j-java-driver-version>[4.0.1,5.0.0)</neo4j-java-driver-version>
+		<neo4j-java-driver-version>[4.0.1,5.0.0-alpha01)</neo4j-java-driver-version>
 		<!-- ARTIFACT VERSIONS - COMPILER -->
 		<lombok-version>[1.18.12,)</lombok-version>
 		<!-- VERSIONS - TESTING -->
