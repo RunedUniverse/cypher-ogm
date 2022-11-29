@@ -25,6 +25,7 @@ TOOLCHAIN=toolchain-openjdk-1-8-0
 INSTALL=install
 CLEAR=false
 INFO=false
+QUIT=false
 
 print_help() {
   printf ">>> JENKINS BUILD SIMULATOR\n\n";
@@ -44,6 +45,7 @@ print_help() {
   printf "                               [default] install\n\n"
   printf "  -c | --clear-repo      ... clear maven repo\n"
   printf "  -I | --info            ... show info\n"
+  printf "  -q | --quit            ... quit after info\n"
   printf "  ____________________________________________________________________________\n"
   printf "  -h | --help            ... show this help page\n\n";
 }
@@ -59,6 +61,7 @@ print_info() {
   printf ">>    TOOLCHAIN             = "$TOOLCHAIN"\n"
   printf ">>    INSTALL               = "$INSTALL"\n"
   printf ">>    CLEAR                 = "$CLEAR"\n"
+  printf ">>    QUIT                  = "$QUIT"\n"
   printf "  ____________________________________________________________________________\n"
   printf "==  Tools\n"
   printf ">>    maven build tool      = "$WORKSPACE/.build/mvn-dev"\n"
@@ -96,6 +99,9 @@ elif [ "$1" = "--clear-repo" -o "$1" = "-c" ]; then
 elif [ "$1" = "--info" -o "$1" = "-I" ]; then
   INFO=true
   shift 1
+elif [ "$1" = "--quit" -o "$1" = "-q" ]; then
+  QUIT=true
+  shift 1
 else
   break
 fi
@@ -112,6 +118,11 @@ fi
 if $CLEAR; then
   printf "=== CLEAR MAVEN REPO\n"
   WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev dependency:purge-local-repository -DactTransitively=false -DreResolve=false -P ${REPOS}
+fi
+
+if $QUIT; then
+  printf "=== quitting...\n"
+  exit 0
 fi
 
 # start building
