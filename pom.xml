@@ -38,7 +38,9 @@
 		<module>rogm-core</module>
 		<module>rogm-parser-json</module>
 		<module>rogm-lang-cypher</module>
+		<module>rogm-lang-sql-mariadb</module>
 		<module>rogm-module-neo4j</module>
+		<module>rogm-module-mariadb</module>
 		<module>rogm-module-decorator</module>
 	</modules>
 
@@ -86,7 +88,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<major-version>2</major-version>
 		<minor-version>1</minor-version>
-		<artifact-version>1</artifact-version>
+		<artifact-version>2</artifact-version>
 		<!-- ACTIVITIONS -->
 		<license-enforce>true</license-enforce>
 		<!-- ACTIVITIONS - LICENSES -->

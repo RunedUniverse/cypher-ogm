@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
-		<version>2.1.1</version>
+		<version>2.1.2</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -34,7 +34,7 @@
 
 	<properties>
 		<root-dir>${project.parent.relativePath}</root-dir>
-		<artifact-version>2</artifact-version>
+		<artifact-version>3</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
 		<runeduniverse-utils-common-version>[1.0.1,)</runeduniverse-utils-common-version>
 		<runeduniverse-utils-logging-version>[1.0.1,)</runeduniverse-utils-logging-version>
