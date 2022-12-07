@@ -84,7 +84,6 @@
 	</issueManagement>
 
 	<properties>
-		<root-dir>${project.basedir}</root-dir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<major-version>2</major-version>
 		<minor-version>1</minor-version>
@@ -338,7 +337,7 @@
 						</properties>
 						<licenseSets>
 							<licenseSet>
-								<header>${root-dir}/src/license/header.txt</header>
+								<header>src/license/header.txt</header>
 								<excludes>
 									<exclude>**/.mvn/repo/**</exclude>
 									<exclude>**/resources/**</exclude>

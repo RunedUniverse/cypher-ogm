@@ -32,7 +32,6 @@ s	</parent>
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<root-dir>../</root-dir>
 		<artifact-version>3</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
 		<runeduniverse-utils-common-version>[1.0.1,)</runeduniverse-utils-common-version>

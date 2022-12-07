@@ -36,7 +36,6 @@
 		<artifact-version>1</artifact-version>
 		<bom-version>3</bom-version>
 		<sources-bom-version>3</sources-bom-version>
-		<root-dir>../</root-dir>
 	</properties>
 
 	<licenses>

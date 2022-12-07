@@ -32,13 +32,14 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<root-dir>../</root-dir>
 		<artifact-version>3</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
 		<min-core-version>2</min-core-version>
 		<min-parser-json-version>2</min-parser-json-version>
 		<min-lang-cypher-version>2</min-lang-cypher-version>
+		<min-lang-sql-mariadb-version>1</min-lang-sql-mariadb-version>
 		<min-module-decorator-version>2</min-module-decorator-version>
+		<min-module-mariadb-version>1</min-module-mariadb-version>
 		<min-module-neo4j-version>2</min-module-neo4j-version>
 	</properties>
 
@@ -90,7 +91,17 @@
 				<artifactId>rogm-lang-cypher</artifactId>
 				<version>[${major-version}.${minor-version}.${min-lang-cypher-version},)</version>
 			</dependency>
+			<dependency>
+				<groupId>net.runeduniverse.lib.rogm.lang</groupId>
+				<artifactId>rogm-lang-sql-mariadb</artifactId>
+				<version>[${major-version}.${minor-version}.${min-lang-sql-mariadb-version},)</version>
+			</dependency>
 			<!-- MODULES -->
+			<dependency>
+				<groupId>net.runeduniverse.lib.rogm.modules</groupId>
+				<artifactId>rogm-modules-mariadb</artifactId>
+				<version>[${major-version}.${minor-version}.${min-module-mariadb-version},)</version>
+			</dependency>
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm.modules</groupId>
 				<artifactId>rogm-modules-neo4j</artifactId>
