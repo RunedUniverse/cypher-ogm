@@ -35,7 +35,16 @@
 	<modules>
 		<module>rogm-bom</module>
 		<module>rogm-sources-bom</module>
+		<module>rogm-api</module>
+		<module>rogm-api-graph</module>
+		<module>rogm-api-docstore</module>
+		<module>rogm-api-kvstore</module>
+		<module>rogm-api-sql</module>
 		<module>rogm-core</module>
+		<module>rogm-core-graph</module>
+		<module>rogm-core-docstore</module>
+		<module>rogm-core-kvstore</module>
+		<module>rogm-core-sql</module>
 		<module>rogm-parser-json</module>
 		<module>rogm-lang-cypher</module>
 		<module>rogm-module-neo4j</module>
@@ -82,11 +91,10 @@
 	</issueManagement>
 
 	<properties>
-		<root-dir>${project.basedir}</root-dir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<major-version>2</major-version>
-		<minor-version>1</minor-version>
-		<artifact-version>1</artifact-version>
+		<minor-version>2</minor-version>
+		<artifact-version>0</artifact-version>
 		<!-- ACTIVITIONS -->
 		<license-enforce>true</license-enforce>
 		<!-- ACTIVITIONS - LICENSES -->
@@ -336,7 +344,7 @@
 						</properties>
 						<licenseSets>
 							<licenseSet>
-								<header>${root-dir}/src/license/header.txt</header>
+								<header>src/license/header.txt</header>
 								<excludes>
 									<exclude>**/.mvn/repo/**</exclude>
 									<exclude>**/resources/**</exclude>

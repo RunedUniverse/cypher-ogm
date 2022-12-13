@@ -21,7 +21,6 @@
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
 		<version>2.1.1</version>
-		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>rogm-core</artifactId>
@@ -61,7 +60,6 @@
 			<timezone>Europe/Vienna</timezone>
 			<roles>
 				<role>Maintainer</role>
-				<role>Architect</role>
 				<role>Developer</role>
 			</roles>
 		</developer>
