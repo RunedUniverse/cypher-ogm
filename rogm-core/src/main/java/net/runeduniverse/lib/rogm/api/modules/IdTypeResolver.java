@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.modules;
+package net.runeduniverse.lib.rogm.api.modules;
 
 public interface IdTypeResolver {
 	Class<?> idType();

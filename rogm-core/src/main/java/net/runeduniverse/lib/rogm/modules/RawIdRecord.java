@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.runeduniverse.lib.rogm.modules.Module.IRawIdRecord;
+import net.runeduniverse.lib.rogm.api.modules.IRawIdRecord;
 
 public class RawIdRecord implements IRawIdRecord {
 	private final Map<String, Serializable> data;

@@ -25,25 +25,30 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import lombok.Getter;
-import net.runeduniverse.lib.rogm.annotations.IConverter;
-import net.runeduniverse.lib.rogm.annotations.Id;
-import net.runeduniverse.lib.rogm.errors.ScannerException;
-import net.runeduniverse.lib.rogm.info.PackageInfo;
-import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
-import net.runeduniverse.lib.rogm.pattern.IPattern.IDeleteContainer;
-import net.runeduniverse.lib.rogm.pattern.scanner.TypeScanner;
-import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
+import net.runeduniverse.lib.rogm.api.annotations.IConverter;
+import net.runeduniverse.lib.rogm.api.annotations.Id;
+import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.container.ISaveContainer;
+import net.runeduniverse.lib.rogm.api.errors.ScannerException;
+import net.runeduniverse.lib.rogm.api.info.PackageInfo;
+import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IQueryPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IValidatable;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 import net.runeduniverse.lib.utils.logging.Level;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 import net.runeduniverse.lib.utils.scanner.pattern.FieldPattern;
 import net.runeduniverse.lib.utils.scanner.pattern.MethodPattern;
 import net.runeduniverse.lib.utils.scanner.pattern.TypePattern;
+import net.runeduniverse.lib.utils.scanner.ITypeScanner;
 import net.runeduniverse.lib.utils.scanner.PackageScanner;
 
-public final class Archive {
+public final class Archive implements IArchive {
 	public static boolean PACKAGE_SCANNER_DEBUG_MODE = false;
 
 	private final Map<Class<?>, Set<IPattern>> patterns = new HashMap<>();
@@ -71,7 +76,7 @@ public final class Archive {
 		this.queryBuilder = new QueryBuilder(this);
 	}
 
-	public void scan(TypeScanner... scanner) throws ScannerException {
+	public void scan(ITypeScanner... scanner) throws ScannerException {
 		try {
 			new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), this.validator)
 					.enableDebugMode(
@@ -256,10 +261,10 @@ public final class Archive {
 	/**
 	 * Used to call all parsed Methods matching the Class
 	 * 
-	 * @param entityType  {@link Class} of the entity
-	 * @param anno	      {@link Annotation} by which the method can be identified
-	 * @param obj         {@link Object} which has the method
-	 * @param args        {@link Object} array which gets passed to the method
+	 * @param entityType {@link Class} of the entity
+	 * @param anno       {@link Annotation} by which the method can be identified
+	 * @param obj        {@link Object} which has the method
+	 * @param args       {@link Object} array which gets passed to the method
 	 * @return {@code true} if all calls returned successfully
 	 */
 	public boolean callMethod(Class<?> entityType, Class<? extends Annotation> anno, Object obj, Object... args) {
@@ -270,8 +275,8 @@ public final class Archive {
 		return success;
 	}
 
-	public IQueryBuilder<?, ?, ? extends IFilter> search(final Class<?> entityType, boolean lazy) throws Exception {
-		IQueryBuilder<?, ?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
+	public IQueryBuilderInstance<?, ?, ? extends IFilter> search(final Class<?> entityType, boolean lazy) throws Exception {
+		IQueryBuilderInstance<?, ?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
 				.search(lazy);
 		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
 			pattern.search(builder);
@@ -279,17 +284,17 @@ public final class Archive {
 	}
 
 	// search exactly 1 node / querry deeper layers for node
-	public IQueryBuilder<?, ?, ? extends IFilter> search(final Class<?> entityType, Serializable id, boolean lazy)
+	public IQueryBuilderInstance<?, ?, ? extends IFilter> search(final Class<?> entityType, Serializable id, boolean lazy)
 			throws Exception {
-		IQueryBuilder<?, ?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
+		IQueryBuilderInstance<?, ?, ?> builder = this.getPattern(entityType, IBaseQueryPattern.class)
 				.search(id, lazy);
 		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
 			pattern.search(builder);
 		return builder;
 	}
 
-	public SaveContainer save(final Class<?> entityType, Object entity, Integer depth) throws Exception {
-		SaveContainer container = this.getPattern(entityType, IBaseQueryPattern.class)
+	public ISaveContainer save(final Class<?> entityType, Object entity, Integer depth) throws Exception {
+		ISaveContainer container = this.getPattern(entityType, IBaseQueryPattern.class)
 				.save(entity, depth);
 		for (IQueryPattern pattern : this.getPatterns(entityType, IQueryPattern.class))
 			pattern.save(container);

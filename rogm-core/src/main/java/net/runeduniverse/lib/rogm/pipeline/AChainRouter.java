@@ -20,13 +20,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.runeduniverse.lib.rogm.api.container.IPatternContainer;
+import net.runeduniverse.lib.rogm.api.container.ISaveContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.pattern.Archive;
-import net.runeduniverse.lib.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.IdContainer;
-import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
-import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.utils.chain.ChainManager;
 import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
@@ -67,7 +67,7 @@ public abstract class AChainRouter {
 
 	public abstract void reloadAll(Collection<Object> entities, DepthContainer depth) throws Exception;
 
-	public abstract void save(EntityContainer entity, SaveContainer container, DepthContainer depth) throws Exception;
+	public abstract void save(EntityContainer entity, ISaveContainer container, DepthContainer depth) throws Exception;
 
 	public abstract void delete(EntityContainer entity, DepthContainer depth) throws Exception;
 

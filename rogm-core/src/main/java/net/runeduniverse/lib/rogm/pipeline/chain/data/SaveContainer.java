@@ -24,19 +24,20 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.ToString;
-import net.runeduniverse.lib.rogm.annotations.PostSave;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.pattern.Archive;
-import net.runeduniverse.lib.rogm.querying.IDataContainer;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
+import net.runeduniverse.lib.rogm.api.annotations.PostSave;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.container.ISaveContainer;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
+import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
 
 @ToString
-public class SaveContainer {
+public class SaveContainer implements ISaveContainer {
 
 	@Getter
-	protected final Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData = new HashMap<>();
+	protected final Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData = new HashMap<>();
 
 	protected IDataContainer container;
 	protected EffectedFilterCalculator calculator = (a, b, i) -> new HashSet<>();
@@ -54,11 +55,11 @@ public class SaveContainer {
 		return this.container;
 	}
 
-	public Set<IFilter> calculateEffectedFilter(final Archive archive, final IBuffer buffer) throws Exception {
+	public Set<IFilter> calculateEffectedFilter(final IArchive archive, final IBuffer buffer) throws Exception {
 		return this.calculator.calculate(archive, buffer, this.includedData);
 	}
 
-	public void postSave(final Archive archive) throws ExceptionSuppressions {
+	public void postSave(final IArchive archive) throws ExceptionSuppressions {
 		List<Exception> errors = new ArrayList<>();
 		for (Object object : includedData.keySet())
 			if (object != null)
@@ -83,12 +84,12 @@ public class SaveContainer {
 
 	@FunctionalInterface
 	public static interface DataContainerCreator {
-		IDataContainer create(final Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData) throws Exception;
+		IDataContainer create(final Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData) throws Exception;
 	}
 
 	@FunctionalInterface
 	public static interface EffectedFilterCalculator {
-		Set<IFilter> calculate(final Archive archive, final IBuffer buffer,
-				final Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData) throws Exception;
+		Set<IFilter> calculate(final IArchive archive, final IBuffer buffer,
+				final Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData) throws Exception;
 	}
 }

@@ -20,7 +20,7 @@ import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.querying.IIdentified;
+import net.runeduniverse.lib.rogm.api.querying.IIdentified;
 
 @AllArgsConstructor
 public class IdentifiedHandler implements IIdentified<Serializable>, NoFilterType {

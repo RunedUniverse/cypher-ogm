@@ -16,7 +16,8 @@
 package net.runeduniverse.lib.rogm.modules.neo4j;
 
 import java.util.Collection;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
+
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pipeline.chain.Chains;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;

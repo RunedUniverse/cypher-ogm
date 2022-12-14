@@ -22,17 +22,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import net.runeduniverse.lib.rogm.annotations.Converter;
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.annotations.Id;
-import net.runeduniverse.lib.rogm.annotations.NodeEntity;
-import net.runeduniverse.lib.rogm.annotations.PostDelete;
-import net.runeduniverse.lib.rogm.annotations.PostLoad;
-import net.runeduniverse.lib.rogm.annotations.PostSave;
-import net.runeduniverse.lib.rogm.annotations.PreDelete;
-import net.runeduniverse.lib.rogm.annotations.PreSave;
-import net.runeduniverse.lib.rogm.annotations.Relationship;
-import net.runeduniverse.lib.rogm.annotations.IConverter.UUIDConverter;
+import net.runeduniverse.lib.rogm.api.annotations.Converter;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.Id;
+import net.runeduniverse.lib.rogm.api.annotations.NodeEntity;
+import net.runeduniverse.lib.rogm.api.annotations.PostDelete;
+import net.runeduniverse.lib.rogm.api.annotations.PostLoad;
+import net.runeduniverse.lib.rogm.api.annotations.PostSave;
+import net.runeduniverse.lib.rogm.api.annotations.PreDelete;
+import net.runeduniverse.lib.rogm.api.annotations.PreSave;
+import net.runeduniverse.lib.rogm.api.annotations.Relationship;
+import net.runeduniverse.lib.rogm.api.annotations.IConverter.UUIDConverter;
 
 @Getter
 @NodeEntity

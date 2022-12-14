@@ -17,9 +17,9 @@ package net.runeduniverse.lib.rogm.lang.cypher;
 
 import java.util.logging.Logger;
 
-import net.runeduniverse.lib.rogm.lang.Language;
-import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
-import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.api.lang.Language;
+import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 import net.runeduniverse.lib.rogm.lang.cypher.pipeline.chains.CleanupLayers;
 import net.runeduniverse.lib.rogm.lang.cypher.pipeline.chains.CypherChains;
 import net.runeduniverse.lib.utils.logging.UniversalLogger;

@@ -18,21 +18,21 @@ package net.runeduniverse.lib.rogm.pipeline;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.buffer.BufferTypes.IEntry;
-import net.runeduniverse.lib.rogm.buffer.BufferTypes.LoadState;
-import net.runeduniverse.lib.rogm.lang.DatabaseCleaner;
-import net.runeduniverse.lib.rogm.lang.Language;
-import net.runeduniverse.lib.rogm.modules.Module;
-import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.buffer.IEntry;
+import net.runeduniverse.lib.rogm.api.buffer.LoadState;
+import net.runeduniverse.lib.rogm.api.container.ISaveContainer;
+import net.runeduniverse.lib.rogm.api.lang.DatabaseCleaner;
+import net.runeduniverse.lib.rogm.api.lang.Language;
+import net.runeduniverse.lib.rogm.api.modules.Module;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.pipeline.chain.Chains;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityCollectionContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.IdContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.LazyEntriesContainer;
-import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
-import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public class DatabaseChainRouter extends AChainRouter {
@@ -97,7 +97,7 @@ public class DatabaseChainRouter extends AChainRouter {
 	}
 
 	@Override
-	public void save(EntityContainer entity, SaveContainer container, DepthContainer depth) throws Exception {
+	public void save(EntityContainer entity, ISaveContainer container, DepthContainer depth) throws Exception {
 		super.callChain(Chains.SAVE_CHAIN.ONE.LABEL, Void.class, this.dbCleaner, entity, container, depth);
 	}
 

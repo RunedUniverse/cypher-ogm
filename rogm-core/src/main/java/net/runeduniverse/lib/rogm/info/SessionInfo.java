@@ -16,7 +16,9 @@
 package net.runeduniverse.lib.rogm.info;
 
 import lombok.Getter;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.info.ConnectionInfo;
+import net.runeduniverse.lib.rogm.api.info.PackageInfo;
 import net.runeduniverse.lib.rogm.pipeline.APipelineFactory;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 

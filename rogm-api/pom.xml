@@ -48,6 +48,30 @@
 		</developer>
 	</developers>
 
+	<dependencies>
+		<!-- ARTIFACTS -->
+		<!-- <dependency>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-logging</artifactId>
+		</dependency>-->
+		<dependency>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-errors</artifactId>
+		</dependency>
+		<!-- <dependency>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-chain</artifactId>
+		</dependency>-->
+		<dependency>
+			<groupId>net.runeduniverse.lib.utils</groupId>
+			<artifactId>utils-scanner</artifactId>
+		</dependency>
+	</dependencies>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

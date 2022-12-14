@@ -24,9 +24,9 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import net.runeduniverse.lib.rogm.Configuration;
-import net.runeduniverse.lib.rogm.querying.IFNode;
-import net.runeduniverse.lib.rogm.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.Configuration;
+import net.runeduniverse.lib.rogm.api.querying.IFNode;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
 import net.runeduniverse.lib.rogm.test.AQueryBuilderTest;
 import net.runeduniverse.lib.rogm.test.ConsoleLogger;
 import net.runeduniverse.lib.rogm.test.dummies.DummyLanguage;

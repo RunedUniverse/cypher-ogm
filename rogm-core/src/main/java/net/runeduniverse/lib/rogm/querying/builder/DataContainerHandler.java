@@ -18,8 +18,8 @@ package net.runeduniverse.lib.rogm.querying.builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.querying.FilterType;
-import net.runeduniverse.lib.rogm.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.api.querying.FilterType;
+import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @NoArgsConstructor

@@ -28,8 +28,8 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 
-import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
-import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 
 @SuppressWarnings("deprecation")
 public class JSONParser implements Parser {

@@ -19,17 +19,22 @@ import java.io.Serializable;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.runeduniverse.lib.rogm.annotations.IConverter;
-import net.runeduniverse.lib.rogm.annotations.Id;
-import net.runeduniverse.lib.rogm.annotations.PreReload;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.querying.IFRelation;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
+import net.runeduniverse.lib.rogm.api.annotations.IConverter;
+import net.runeduniverse.lib.rogm.api.annotations.Id;
+import net.runeduniverse.lib.rogm.api.annotations.PreReload;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IData;
+import net.runeduniverse.lib.rogm.api.pattern.IPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IValidatable;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 import net.runeduniverse.lib.utils.scanner.pattern.MethodPattern;
 import net.runeduniverse.lib.utils.scanner.pattern.TypePattern;
 
-public abstract class APattern<B extends IQueryBuilder<?, ?, ? extends IFilter>>
+public abstract class APattern<B extends IQueryBuilderInstance<?, ?, ? extends IFilter>>
 		extends TypePattern<FieldPattern, MethodPattern> implements IBaseQueryPattern<B>, IValidatable {
 
 	protected final Archive archive;

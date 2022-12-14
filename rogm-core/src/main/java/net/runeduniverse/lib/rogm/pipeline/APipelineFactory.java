@@ -17,10 +17,10 @@ package net.runeduniverse.lib.rogm.pipeline;
 
 import lombok.Getter;
 import net.runeduniverse.lib.rogm.Session;
-import net.runeduniverse.lib.rogm.errors.ScannerException;
-import net.runeduniverse.lib.rogm.info.PackageInfo;
+import net.runeduniverse.lib.rogm.api.errors.ScannerException;
+import net.runeduniverse.lib.rogm.api.info.PackageInfo;
+import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
 import net.runeduniverse.lib.rogm.info.SessionInfo;
-import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 import net.runeduniverse.lib.utils.chain.ChainManager;

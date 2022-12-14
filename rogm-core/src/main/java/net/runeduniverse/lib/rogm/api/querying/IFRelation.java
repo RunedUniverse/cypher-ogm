@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.querying;
+package net.runeduniverse.lib.rogm.api.querying;
 
-import net.runeduniverse.lib.rogm.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
 
 public interface IFRelation extends IFilter, ILabeled {
 	IFNode getStart();

@@ -22,8 +22,8 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import net.runeduniverse.lib.rogm.Configuration;
 import net.runeduniverse.lib.rogm.Session;
+import net.runeduniverse.lib.rogm.api.Configuration;
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pipeline.DatabasePipelineFactory;
 import net.runeduniverse.lib.rogm.pipeline.Pipeline;

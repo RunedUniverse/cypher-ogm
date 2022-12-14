@@ -18,7 +18,10 @@ package net.runeduniverse.lib.rogm.querying;
 import java.io.Serializable;
 
 import lombok.Getter;
-import net.runeduniverse.lib.rogm.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.querying.IFNode;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.querying.IIdentified;
 
 @Getter
 public class FilterRelation extends AParamFilter<FilterRelation> implements IFRelation, IIdentified<Serializable> {

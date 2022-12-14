@@ -22,7 +22,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.api.Configuration;
 import net.runeduniverse.lib.rogm.test.AConfigTest;
 import net.runeduniverse.lib.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.lib.rogm.test.dummies.DummyModule;

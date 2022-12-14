@@ -26,9 +26,9 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.querying.FilterType;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.ILabeled;
+import net.runeduniverse.lib.rogm.api.querying.FilterType;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.ILabeled;
 import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
 
 public abstract class AProxyFilter<FILTER> implements IFilter, ILabeled, InvocationHandler {

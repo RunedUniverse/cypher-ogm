@@ -15,7 +15,7 @@
  */
 package net.runeduniverse.lib.rogm.modules.neo4j;
 
-import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.api.Configuration;
 import net.runeduniverse.lib.rogm.pipeline.DatabasePipelineFactory;
 import net.runeduniverse.lib.utils.chain.ChainManager;
 

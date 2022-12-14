@@ -15,8 +15,8 @@
  */
 package net.runeduniverse.lib.rogm.querying.builder;
 
-import net.runeduniverse.lib.rogm.querying.FilterType;
-import net.runeduniverse.lib.rogm.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.FilterType;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 
 public interface NoFilterType extends IFilter {
 	@Override

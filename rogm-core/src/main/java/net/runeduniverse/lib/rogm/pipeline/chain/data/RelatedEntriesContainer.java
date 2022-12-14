@@ -22,7 +22,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import net.runeduniverse.lib.rogm.buffer.BufferTypes.IEntry;
+import net.runeduniverse.lib.rogm.api.buffer.IEntry;
 
 @NoArgsConstructor
 @ToString

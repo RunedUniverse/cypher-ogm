@@ -25,19 +25,19 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.buffer.BufferTypes;
-import net.runeduniverse.lib.rogm.lang.Language;
-import net.runeduniverse.lib.rogm.modules.Module;
-import net.runeduniverse.lib.rogm.modules.Module.Data;
-import net.runeduniverse.lib.rogm.pattern.IPattern;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.buffer.LoadState;
+import net.runeduniverse.lib.rogm.api.lang.Language;
+import net.runeduniverse.lib.rogm.api.modules.Data;
+import net.runeduniverse.lib.rogm.api.pattern.IData;
+import net.runeduniverse.lib.rogm.api.pattern.IDataRecord;
+import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
-import net.runeduniverse.lib.rogm.querying.IDataContainer;
-import net.runeduniverse.lib.rogm.querying.IFRelation;
-import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.utils.common.DataMap;
 
-public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper, BufferTypes {
+public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper {
 
 	private IFilter primary;
 	private String qry;
@@ -103,29 +103,29 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 	}
 
 	@Override
-	public IPattern.IDataRecord parseDataRecord(List<Map<String, Data>> records) {
+	public IDataRecord parseDataRecord(List<Map<String, Data>> records) {
 		/*
 		 * List => 1 Map per Record-line Map => key = a - value = all data from a
 		 */
 		Set<Serializable> ids = new HashSet<>();
-		List<Set<IPattern.IData>> recordData = new ArrayList<>();
+		List<Set<IData>> recordData = new ArrayList<>();
 
 		for (Map<String, Data> record : records) {
 			ids.add(record.get(this.map.get(this.primary))
 					.getId());
 
-			Set<IPattern.IData> set = new HashSet<IPattern.IData>();
+			Set<IData> set = new HashSet<IData>();
 			recordData.add(set);
 
 			for (IFilter filter : this.map.keySet()) {
-				Module.Data data = record.get(this.map.get(filter));
+				Data data = record.get(this.map.get(filter));
 				if (data == null || data.getId() == null)
 					continue;
 				set.add(new PData(data, filter));
 			}
 		}
 
-		return new IPattern.IDataRecord() {
+		return new IDataRecord() {
 			public IFilter getPrimaryFilter() {
 				return primary;
 			}
@@ -136,7 +136,7 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 			}
 
 			@Override
-			public List<Set<IPattern.IData>> getData() {
+			public List<Set<IData>> getData() {
 				return recordData;
 			}
 		};
@@ -163,7 +163,7 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 	}
 
 	@Getter
-	protected static class PData implements IPattern.IData {
+	protected static class PData implements IData {
 		private Serializable id;
 		@Setter
 		private Serializable entityId;
@@ -171,7 +171,7 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 		private String data;
 		private IFilter filter;
 
-		protected PData(Module.Data data, IFilter filter) {
+		protected PData(Data data, IFilter filter) {
 			this.id = data.getId();
 			this.entityId = data.getEntityId();
 			this.labels = data.getLabels();

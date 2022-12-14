@@ -20,11 +20,11 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
-import net.runeduniverse.lib.rogm.Configuration;
-import net.runeduniverse.lib.rogm.errors.ScannerException;
-import net.runeduniverse.lib.rogm.modules.PassiveModule;
+import net.runeduniverse.lib.rogm.api.Configuration;
+import net.runeduniverse.lib.rogm.api.errors.ScannerException;
+import net.runeduniverse.lib.rogm.api.modules.PassiveModule;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.pattern.Archive;
-import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 import net.runeduniverse.lib.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.lib.rogm.test.dummies.DummyModule;

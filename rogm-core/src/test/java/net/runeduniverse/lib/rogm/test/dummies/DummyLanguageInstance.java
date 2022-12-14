@@ -17,13 +17,13 @@ package net.runeduniverse.lib.rogm.test.dummies;
 
 import java.util.Set;
 
-import net.runeduniverse.lib.rogm.lang.Language.IDeleteMapper;
-import net.runeduniverse.lib.rogm.lang.Language.ILoadMapper;
-import net.runeduniverse.lib.rogm.lang.Language.ISaveMapper;
-import net.runeduniverse.lib.rogm.lang.Language.Instance;
-import net.runeduniverse.lib.rogm.querying.IDataContainer;
-import net.runeduniverse.lib.rogm.querying.IFRelation;
-import net.runeduniverse.lib.rogm.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.lang.Language.IDeleteMapper;
+import net.runeduniverse.lib.rogm.api.lang.Language.ILoadMapper;
+import net.runeduniverse.lib.rogm.api.lang.Language.ISaveMapper;
+import net.runeduniverse.lib.rogm.api.lang.Language.Instance;
+import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 
 public class DummyLanguageInstance implements Instance{
 

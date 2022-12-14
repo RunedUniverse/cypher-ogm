@@ -17,8 +17,8 @@ package net.runeduniverse.lib.rogm.test.dummies;
 
 import java.util.logging.Logger;
 
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 import net.runeduniverse.lib.rogm.modules.AModule;
-import net.runeduniverse.lib.rogm.parser.Parser;
 
 public class DummyModule extends AModule {
 

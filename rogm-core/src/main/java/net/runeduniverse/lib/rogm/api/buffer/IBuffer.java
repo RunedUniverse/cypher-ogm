@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.buffer;
+package net.runeduniverse.lib.rogm.api.buffer;
 
 import java.io.Serializable;
 import java.util.Collection;
 
-import net.runeduniverse.lib.rogm.pattern.Archive;
-import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
+import net.runeduniverse.lib.rogm.api.container.IUpdatedEntryContainer;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
 import net.runeduniverse.lib.rogm.pipeline.chain.ChainConfigurator;
-import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;;
 
-public interface IBuffer extends BufferTypes, ChainConfigurator {
+public interface IBuffer extends ChainConfigurator {
 
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
@@ -53,7 +53,7 @@ public interface IBuffer extends BufferTypes, ChainConfigurator {
 	void addEntry(Serializable id, Serializable entityId, Object entity, LoadState loadState,
 			IBaseQueryPattern<?> pattern);
 
-	void updateEntry(Archive archive, UpdatedEntryContainer container) throws Exception;
+	void updateEntry(IArchive archive, IUpdatedEntryContainer container) throws Exception;
 
 	void removeEntry(IEntry entry);
 
@@ -64,5 +64,4 @@ public interface IBuffer extends BufferTypes, ChainConfigurator {
 	IEntry getEntry(Object entity);
 
 	Collection<IEntry> getAllEntries();
-
 }

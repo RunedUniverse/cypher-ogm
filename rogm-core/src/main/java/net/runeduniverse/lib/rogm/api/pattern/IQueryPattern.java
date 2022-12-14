@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.pattern;
+package net.runeduniverse.lib.rogm.api.pattern;
 
-import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
+import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.container.ISaveContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 
 public interface IQueryPattern extends IPattern{
-	void search(IQueryBuilder<?, ?, ? extends IFilter> builder) throws Exception;
+	void search(IQueryBuilderInstance<?, ?, ? extends IFilter> builder) throws Exception;
 
-	void save(SaveContainer container) throws Exception;
+	void save(ISaveContainer container) throws Exception;
 
 	void delete(IDeleteContainer container) throws Exception;
 }

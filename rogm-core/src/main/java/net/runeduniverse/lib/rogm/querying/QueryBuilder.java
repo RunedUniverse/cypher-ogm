@@ -22,13 +22,25 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
-import net.runeduniverse.lib.rogm.pattern.Archive;
-import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
-import net.runeduniverse.lib.rogm.pattern.INodePattern;
-import net.runeduniverse.lib.rogm.pattern.IPattern;
-import net.runeduniverse.lib.rogm.pattern.IRelationPattern;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.container.IPatternContainer;
+import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
+import net.runeduniverse.lib.rogm.api.pattern.INodePattern;
+import net.runeduniverse.lib.rogm.api.pattern.IPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IRelationPattern;
+import net.runeduniverse.lib.rogm.api.querying.FilterType;
+import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFNode;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IIdentified;
+import net.runeduniverse.lib.rogm.api.querying.ILazyLoading;
+import net.runeduniverse.lib.rogm.api.querying.IOptional;
+import net.runeduniverse.lib.rogm.api.querying.IParameterized;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
+import net.runeduniverse.lib.rogm.api.querying.IReturned;
 import net.runeduniverse.lib.rogm.querying.builder.AProxyFilter;
 import net.runeduniverse.lib.rogm.querying.builder.DataContainerHandler;
 import net.runeduniverse.lib.rogm.querying.builder.ITraceable;
@@ -43,12 +55,15 @@ import net.runeduniverse.lib.rogm.querying.builder.ReturnedHandler;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 import net.runeduniverse.lib.utils.common.StringVariableGenerator;
 
-public final class QueryBuilder {
-	public static creator<NodeQueryBuilder> CREATOR_NODE_BUILDER = QueryBuilder::createNodeBuilder;
-	public static creator<RelationQueryBuilder> CREATOR_REALATION_BUILDER = QueryBuilder::createRelationBuilder;
-	private final Archive archive;
+public final class QueryBuilder extends net.runeduniverse.lib.rogm.api.querying.QueryBuilder{
+	static {
+		CREATOR_NODE_BUILDER = QueryBuilder::createNodeBuilder;
+		CREATOR_REALATION_BUILDER = QueryBuilder::createRelationBuilder;
+	}
+	
+	private final IArchive archive;
 
-	public QueryBuilder(Archive archive) {
+	public QueryBuilder(IArchive archive) {
 		this.archive = archive;
 	}
 
@@ -60,16 +75,11 @@ public final class QueryBuilder {
 		return CREATOR_REALATION_BUILDER.create(this.archive);
 	}
 
-	@FunctionalInterface
-	public static interface creator<BUILDER> {
-		BUILDER create(Archive archive);
-	}
-
-	private static NodeQueryBuilder createNodeBuilder(Archive archive) {
+	private static NodeQueryBuilder createNodeBuilder(IArchive archive) {
 		return new NodeQueryBuilder(archive);
 	}
 
-	private static RelationQueryBuilder createRelationBuilder(Archive archive) {
+	private static RelationQueryBuilder createRelationBuilder(IArchive archive) {
 		return new RelationQueryBuilder(archive);
 	}
 
@@ -78,7 +88,7 @@ public final class QueryBuilder {
 
 		protected Set<RelationQueryBuilder> relationBuilders = new HashSet<>();
 
-		public NodeQueryBuilder(Archive archive) {
+		public NodeQueryBuilder(IArchive archive) {
 			super(archive, new NodeFilter());
 			super.instance = this;
 		}
@@ -144,10 +154,9 @@ public final class QueryBuilder {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-
 		}
 
-		protected IFNode build(final Map<IQueryBuilder<?, ?, ?>, IFilter> registry) {
+		protected IFNode build(final Map<IQueryBuilderInstance<?, ?, ?>, IFilter> registry) {
 			if (registry.containsKey(this))
 				return (IFNode) registry.get(this);
 
@@ -166,7 +175,7 @@ public final class QueryBuilder {
 
 		@Override
 		protected void toRecord(CompoundTree tree, StringVariableGenerator gen,
-				Map<IQueryBuilder<?, ?, ?>, String> registry, CompoundTree localTree) {
+				Map<IQueryBuilderInstance<?, ?, ?>, String> registry, CompoundTree localTree) {
 			for (RelationQueryBuilder rqb : this.relationBuilders)
 				localTree.append("REL", rqb.toRecord2(tree, gen, registry));
 		}
@@ -179,7 +188,7 @@ public final class QueryBuilder {
 		protected NodeQueryBuilder startNodeBuilder = null;
 		protected NodeQueryBuilder targetNodeBuilder = null;
 
-		public RelationQueryBuilder(Archive archive) {
+		public RelationQueryBuilder(IArchive archive) {
 			super(archive, new RelationFilter());
 			super.instance = this;
 		}
@@ -207,7 +216,7 @@ public final class QueryBuilder {
 			return this.targetNodeBuilder;
 		}
 
-		protected IFRelation build(final Map<IQueryBuilder<?, ?, ?>, IFilter> registry) {
+		protected IFRelation build(final Map<IQueryBuilderInstance<?, ?, ?>, IFilter> registry) {
 			if (registry.containsKey(this))
 				return (IFRelation) registry.get(this);
 
@@ -263,7 +272,7 @@ public final class QueryBuilder {
 
 		@Override
 		protected void toRecord(CompoundTree tree, StringVariableGenerator gen,
-				Map<IQueryBuilder<?, ?, ?>, String> registry, CompoundTree localTree) {
+				Map<IQueryBuilderInstance<?, ?, ?>, String> registry, CompoundTree localTree) {
 			this.startNodeBuilder.toRecord(tree, gen, registry);
 			this.targetNodeBuilder.toRecord(tree, gen, registry);
 			localTree.append("DIRECTION", this.direction.name());
@@ -272,7 +281,7 @@ public final class QueryBuilder {
 		}
 
 		public CharSequence toRecord2(CompoundTree tree, StringVariableGenerator gen,
-				Map<IQueryBuilder<?, ?, ?>, String> registry) {
+				Map<IQueryBuilderInstance<?, ?, ?>, String> registry) {
 			super.toRecord(tree, gen, registry);
 
 			return String.format("(%s) %s-[%s]-%s (%s)",
@@ -284,9 +293,9 @@ public final class QueryBuilder {
 	}
 
 	protected static abstract class AQueryBuilder<BUILDER extends AQueryBuilder<?, PROXY_FILTER, PATTERN, RESULT>, PROXY_FILTER extends AProxyFilter<?>, PATTERN extends IBaseQueryPattern<?>, RESULT extends IFilter>
-			implements IQueryBuilder<BUILDER, PATTERN, RESULT> {
+			implements IQueryBuilderInstance<BUILDER, PATTERN, RESULT> {
 
-		protected final Archive archive;
+		protected final IArchive archive;
 		protected final PROXY_FILTER proxyFilter;
 		protected final Map<Class<?>, Object> handler;
 		protected boolean autoGenerated = false;
@@ -300,7 +309,7 @@ public final class QueryBuilder {
 		protected Serializable id = null;
 		protected boolean lazy = false;
 
-		protected AQueryBuilder(Archive archive, PROXY_FILTER proxyFilter) {
+		protected AQueryBuilder(IArchive archive, PROXY_FILTER proxyFilter) {
 			this.archive = archive;
 			this.proxyFilter = proxyFilter;
 			this.handler = this.proxyFilter.getHandler();
@@ -340,9 +349,9 @@ public final class QueryBuilder {
 		@Override
 		public BUILDER storePattern(PATTERN pattern) {
 			if (pattern == null)
-				this.handler.remove(IPattern.IPatternContainer.class);
+				this.handler.remove(IPatternContainer.class);
 			else
-				this.handler.put(IPattern.IPatternContainer.class, new PatternContainerHandler(pattern));
+				this.handler.put(IPatternContainer.class, new PatternContainerHandler(pattern));
 			return this.instance;
 		}
 
@@ -402,7 +411,7 @@ public final class QueryBuilder {
 		@SuppressWarnings("unchecked")
 		@Override
 		public PATTERN getStoredPattern() {
-			PatternContainerHandler container = (PatternContainerHandler) handler.get(IPattern.IPatternContainer.class);
+			PatternContainerHandler container = (PatternContainerHandler) handler.get(IPatternContainer.class);
 			if (container == null)
 				return null;
 			return (PATTERN) container.getPattern();
@@ -498,7 +507,7 @@ public final class QueryBuilder {
 
 		protected abstract void validateStructure();
 
-		protected abstract RESULT build(final Map<IQueryBuilder<?, ?, ?>, IFilter> registry);
+		protected abstract RESULT build(final Map<IQueryBuilderInstance<?, ?, ?>, IFilter> registry);
 
 		@Override
 		public RESULT getResult() {
@@ -510,10 +519,10 @@ public final class QueryBuilder {
 		}
 
 		protected abstract void toRecord(final CompoundTree tree, final StringVariableGenerator gen,
-				final Map<IQueryBuilder<?, ?, ?>, String> registry, final CompoundTree localTree);
+				final Map<IQueryBuilderInstance<?, ?, ?>, String> registry, final CompoundTree localTree);
 
 		protected void toRecord(final CompoundTree tree, final StringVariableGenerator gen,
-				final Map<IQueryBuilder<?, ?, ?>, String> registry) {
+				final Map<IQueryBuilderInstance<?, ?, ?>, String> registry) {
 			if (registry.containsKey(this.instance))
 				return;
 			String key = gen.nextVal();

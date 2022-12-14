@@ -18,9 +18,9 @@ package net.runeduniverse.lib.rogm.test.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.runeduniverse.lib.rogm.annotations.GeneratedValue;
-import net.runeduniverse.lib.rogm.annotations.Id;
-import net.runeduniverse.lib.rogm.annotations.NodeEntity;
+import net.runeduniverse.lib.rogm.api.annotations.GeneratedValue;
+import net.runeduniverse.lib.rogm.api.annotations.Id;
+import net.runeduniverse.lib.rogm.api.annotations.NodeEntity;
 import net.runeduniverse.lib.rogm.test.system.TestModelNode;
 
 @NodeEntity

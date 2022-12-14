@@ -24,11 +24,11 @@ import java.util.logging.Logger;
 
 import org.junit.jupiter.api.*;
 
-import net.runeduniverse.lib.rogm.Configuration;
 import net.runeduniverse.lib.rogm.Session;
+import net.runeduniverse.lib.rogm.api.Configuration;
+import net.runeduniverse.lib.rogm.api.querying.IFNode;
 import net.runeduniverse.lib.rogm.modules.neo4j.SessionTest;
 import net.runeduniverse.lib.rogm.pipeline.Pipeline;
-import net.runeduniverse.lib.rogm.querying.IFNode;
 import net.runeduniverse.lib.rogm.test.AConfigTest;
 import net.runeduniverse.lib.rogm.test.ConsoleLogger;
 import net.runeduniverse.lib.rogm.test.model.*;

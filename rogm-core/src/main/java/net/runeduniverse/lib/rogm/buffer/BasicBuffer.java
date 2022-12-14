@@ -22,14 +22,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.runeduniverse.lib.rogm.annotations.PostDelete;
-import net.runeduniverse.lib.rogm.pattern.Archive;
-import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
-import net.runeduniverse.lib.rogm.pattern.INodePattern;
-import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
+import net.runeduniverse.lib.rogm.api.annotations.PostDelete;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.buffer.IEntry;
+import net.runeduniverse.lib.rogm.api.buffer.LoadState;
+import net.runeduniverse.lib.rogm.api.container.IUpdatedEntryContainer;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
+import net.runeduniverse.lib.rogm.api.pattern.INodePattern;
 import net.runeduniverse.lib.utils.chain.ChainManager;
 
-public class BasicBuffer implements IBuffer, InternalBufferTypes {
+public class BasicBuffer implements IBuffer {
 
 	private Map<Object, Entry> entries = new HashMap<>();
 	private Map<Class<?>, TypeEntry> typeMap = new HashMap<>();
@@ -95,7 +98,7 @@ public class BasicBuffer implements IBuffer, InternalBufferTypes {
 	}
 
 	@Override
-	public void updateEntry(Archive archive, UpdatedEntryContainer container) {
+	public void updateEntry(IArchive archive, IUpdatedEntryContainer container) {
 		Object entity = container.getEntity();
 		if (entity == null)
 			return;

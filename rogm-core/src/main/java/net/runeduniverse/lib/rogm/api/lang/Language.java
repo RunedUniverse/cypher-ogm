@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.lang;
+package net.runeduniverse.lib.rogm.api.lang;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -22,16 +22,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.buffer.BufferTypes.LoadState;
-import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
-import net.runeduniverse.lib.rogm.modules.Module.Data;
-import net.runeduniverse.lib.rogm.parser.Parser;
-import net.runeduniverse.lib.rogm.pattern.IPattern;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.buffer.LoadState;
+import net.runeduniverse.lib.rogm.api.modules.Data;
+import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
+import net.runeduniverse.lib.rogm.api.pattern.IDataRecord;
+import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
-import net.runeduniverse.lib.rogm.querying.IDataContainer;
-import net.runeduniverse.lib.rogm.querying.IFRelation;
-import net.runeduniverse.lib.rogm.querying.IFilter;
 
 public interface Language extends DatabaseCleaner {
 
@@ -50,7 +50,7 @@ public interface Language extends DatabaseCleaner {
 	}
 
 	public interface ILoadMapper extends IMapper {
-		IPattern.IDataRecord parseDataRecord(List<Map<String, Data>> records);
+		IDataRecord parseDataRecord(List<Map<String, Data>> records);
 	}
 
 	public interface ISaveMapper extends IMapper {

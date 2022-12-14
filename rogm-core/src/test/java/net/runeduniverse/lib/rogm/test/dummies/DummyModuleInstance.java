@@ -17,11 +17,11 @@ package net.runeduniverse.lib.rogm.test.dummies;
 
 import java.io.Serializable;
 
-import net.runeduniverse.lib.rogm.info.ConnectionInfo;
-import net.runeduniverse.lib.rogm.modules.Module.IRawDataRecord;
-import net.runeduniverse.lib.rogm.modules.Module.IRawIdRecord;
-import net.runeduniverse.lib.rogm.modules.Module.IRawRecord;
-import net.runeduniverse.lib.rogm.modules.Module.Instance;
+import net.runeduniverse.lib.rogm.api.info.ConnectionInfo;
+import net.runeduniverse.lib.rogm.api.modules.IRawDataRecord;
+import net.runeduniverse.lib.rogm.api.modules.IRawIdRecord;
+import net.runeduniverse.lib.rogm.api.modules.IRawRecord;
+import net.runeduniverse.lib.rogm.api.modules.Module.Instance;
 
 public class DummyModuleInstance implements Instance<Serializable> {
 

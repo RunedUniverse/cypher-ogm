@@ -19,11 +19,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.annotations.Property;
-import net.runeduniverse.lib.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.lib.rogm.annotations.StartNode;
-import net.runeduniverse.lib.rogm.annotations.TargetNode;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.Property;
+import net.runeduniverse.lib.rogm.api.annotations.RelationshipEntity;
+import net.runeduniverse.lib.rogm.api.annotations.StartNode;
+import net.runeduniverse.lib.rogm.api.annotations.TargetNode;
 import net.runeduniverse.lib.rogm.test.model.Inventory;
 import net.runeduniverse.lib.rogm.test.model.Item;
 

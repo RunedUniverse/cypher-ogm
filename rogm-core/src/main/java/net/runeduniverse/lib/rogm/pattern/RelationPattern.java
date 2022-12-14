@@ -22,16 +22,20 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import lombok.Getter;
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.annotations.PreDelete;
-import net.runeduniverse.lib.rogm.annotations.PreSave;
-import net.runeduniverse.lib.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.lib.rogm.annotations.StartNode;
-import net.runeduniverse.lib.rogm.annotations.TargetNode;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.PreDelete;
+import net.runeduniverse.lib.rogm.api.annotations.PreSave;
+import net.runeduniverse.lib.rogm.api.annotations.RelationshipEntity;
+import net.runeduniverse.lib.rogm.api.annotations.StartNode;
+import net.runeduniverse.lib.rogm.api.annotations.TargetNode;
+import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.pattern.INodePattern;
+import net.runeduniverse.lib.rogm.api.pattern.IRelationPattern;
+import net.runeduniverse.lib.rogm.api.pattern.PatternType;
+import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
-import net.runeduniverse.lib.rogm.querying.IDataContainer;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
@@ -172,7 +176,7 @@ public class RelationPattern extends APattern<RelationQueryBuilder> implements I
 	}
 
 	public RelationQueryBuilder save(Object entity, NodeQueryBuilder caller, Direction direction,
-			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
+			Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 
 		if (entity == null || this.startField.getValue(entity) == null || this.targetField.getValue(entity) == null)
 			return null;
@@ -264,7 +268,7 @@ public class RelationPattern extends APattern<RelationQueryBuilder> implements I
 	}
 
 	private NodeQueryBuilder _getDataNode(FieldPattern field, Object entity,
-			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, RelationQueryBuilder relation, Integer depth)
+			Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData, RelationQueryBuilder relation, Integer depth)
 			throws Exception {
 		INodePattern<?> node = this.archive.getPattern(field.getType(), NodePattern.class);
 		if (node == null)

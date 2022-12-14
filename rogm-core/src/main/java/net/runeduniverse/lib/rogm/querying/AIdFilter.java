@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.runeduniverse.lib.rogm.api.querying.IIdentified;
 
 @AllArgsConstructor
 public abstract class AIdFilter<ID extends Serializable> implements IIdentified<ID> {

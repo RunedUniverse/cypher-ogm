@@ -19,13 +19,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.runeduniverse.lib.rogm.lang.Language.IDeleteMapper;
-import net.runeduniverse.lib.rogm.modules.Module.IRawRecord;
-import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.buffer.IEntry;
+import net.runeduniverse.lib.rogm.api.buffer.LoadState;
+import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.lang.Language.IDeleteMapper;
+import net.runeduniverse.lib.rogm.api.modules.IRawRecord;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IData;
 import net.runeduniverse.lib.rogm.pattern.Archive;
-import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
-import net.runeduniverse.lib.rogm.pattern.IPattern.IData;
-import net.runeduniverse.lib.rogm.pattern.IPattern.IDeleteContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.Chains;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityContainer;
@@ -37,7 +40,7 @@ import net.runeduniverse.lib.utils.chain.ChainRuntime;
 import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
 import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
-public interface BasicBufferLayers extends InternalBufferTypes {
+public interface BasicBufferLayers {
 
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.CHECK_BUFFERED_STATUS })
 	public static <T> void ckeckBufferedStatus(final ChainRuntime<T> runtime, final IBuffer buffer, IdContainer id,

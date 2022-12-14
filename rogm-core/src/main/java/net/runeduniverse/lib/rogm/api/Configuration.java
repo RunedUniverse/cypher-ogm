@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm;
+package net.runeduniverse.lib.rogm.api;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,14 +23,13 @@ import java.util.logging.Logger;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.buffer.BasicBuffer;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.info.ConnectionInfo;
-import net.runeduniverse.lib.rogm.info.PackageInfo;
-import net.runeduniverse.lib.rogm.lang.Language;
-import net.runeduniverse.lib.rogm.modules.Module;
-import net.runeduniverse.lib.rogm.modules.PassiveModule;
-import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.info.ConnectionInfo;
+import net.runeduniverse.lib.rogm.api.info.PackageInfo;
+import net.runeduniverse.lib.rogm.api.lang.Language;
+import net.runeduniverse.lib.rogm.api.modules.Module;
+import net.runeduniverse.lib.rogm.api.modules.PassiveModule;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 
 @Getter
 public class Configuration {
@@ -56,7 +55,7 @@ public class Configuration {
 	@Setter
 	protected String password;
 	@Setter
-	protected IBuffer buffer = new BasicBuffer();
+	protected IBuffer buffer = null;
 
 	public Configuration(Parser parser, Language lang, Module module, String uri) throws NullPointerException {
 		this.parser = parser;
@@ -70,11 +69,11 @@ public class Configuration {
 
 	public void validate() {
 		if (this.parser == null)
-			throw new NullPointerException("Instance of net.runeduniverse.lib.rogm.parser.Parser is missing!");
+			throw new NullPointerException("Instance of net.runeduniverse.lib.rogm.api.parser.Parser is missing!");
 		if (this.lang == null)
-			throw new NullPointerException("Instance of net.runeduniverse.lib.rogm.lang.Language is missing!");
+			throw new NullPointerException("Instance of net.runeduniverse.lib.rogm.api.lang.Language is missing!");
 		if (this.module == null)
-			throw new NullPointerException("Instance of net.runeduniverse.lib.rogm.modules.Module is missing!");
+			throw new NullPointerException("Instance of net.runeduniverse.lib.rogm.api.modules.Module is missing!");
 	}
 
 	public Configuration addPackage(String pkg) {
@@ -119,5 +118,25 @@ public class Configuration {
 
 	public ConnectionInfo getConnectionInfo() {
 		return new ConnectionInfo(this);
+	}
+
+	public IBuffer getBuffer() {
+		if (this.buffer != null)
+			return this.buffer;
+
+		try {
+			Class<?> clazz = Class.forName("net.runeduniverse.lib.rogm.buffer.BasicBuffer");
+			if (!IBuffer.class.isAssignableFrom(clazz))
+				throw new Exception("Loaded Class<" + clazz.getCanonicalName() + "> is not assignable to Class<"
+						+ IBuffer.class.getCanonicalName() + ">");
+			this.buffer = (IBuffer) clazz.newInstance();
+
+		} catch (Exception e) {
+			if (this.logger == null)
+				e.printStackTrace();
+			else
+				this.logger.log(Level.SEVERE, "Configuration: Buffer not defined or loading failed!", e);
+		}
+		return this.buffer;
 	}
 }

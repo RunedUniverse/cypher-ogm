@@ -17,9 +17,9 @@ package net.runeduniverse.lib.rogm.test.model.relations;
 
 import lombok.Getter;
 import lombok.ToString;
-import net.runeduniverse.lib.rogm.annotations.GeneratedValue;
-import net.runeduniverse.lib.rogm.annotations.Id;
-import net.runeduniverse.lib.rogm.annotations.RelationshipEntity;
+import net.runeduniverse.lib.rogm.api.annotations.GeneratedValue;
+import net.runeduniverse.lib.rogm.api.annotations.Id;
+import net.runeduniverse.lib.rogm.api.annotations.RelationshipEntity;
 import net.runeduniverse.lib.rogm.test.system.TestModelRelation;
 
 @RelationshipEntity

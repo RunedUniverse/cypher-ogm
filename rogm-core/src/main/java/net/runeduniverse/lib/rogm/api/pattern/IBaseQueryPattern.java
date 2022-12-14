@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.pattern;
+package net.runeduniverse.lib.rogm.api.pattern;
 
 import java.io.Serializable;
 
-import net.runeduniverse.lib.rogm.annotations.IConverter;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
-import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
+import net.runeduniverse.lib.rogm.api.annotations.IConverter;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.container.ISaveContainer;
+import net.runeduniverse.lib.rogm.api.container.IUpdatedEntryContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 
-public interface IBaseQueryPattern<B extends IQueryBuilder<?, ?, ? extends IFilter>> extends IPattern {
+public interface IBaseQueryPattern<B extends IQueryBuilderInstance<?, ?, ? extends IFilter>> extends IPattern {
 
 	boolean isIdSet(Object entity);
 
@@ -42,16 +43,16 @@ public interface IBaseQueryPattern<B extends IQueryBuilder<?, ?, ? extends IFilt
 
 	B search(boolean lazy) throws Exception;
 
-	// search exactly 1 node / querry deeper layers for node
+	// search exactly 1 node / query deeper layers for node
 	B search(Serializable id, boolean lazy) throws Exception;
 
 	B completeSearch(B builder) throws Exception;
 
-	SaveContainer save(Object entity, Integer depth) throws Exception;
+	ISaveContainer save(Object entity, Integer depth) throws Exception;
 
 	IDeleteContainer delete(final Serializable id, Object entity) throws Exception;
 
-	default void prepareEntityId(final UpdatedEntryContainer container) {
+	default void prepareEntityId(final IUpdatedEntryContainer container) {
 		container.setEntityId(this.prepareEntityId(container.getId(), container.getEntityId()));
 	}
 }

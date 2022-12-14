@@ -16,10 +16,10 @@
 package net.runeduniverse.lib.rogm.test.model.relations;
 
 import lombok.Getter;
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.lib.rogm.annotations.StartNode;
-import net.runeduniverse.lib.rogm.annotations.TargetNode;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.RelationshipEntity;
+import net.runeduniverse.lib.rogm.api.annotations.StartNode;
+import net.runeduniverse.lib.rogm.api.annotations.TargetNode;
 import net.runeduniverse.lib.rogm.test.model.Actor;
 import net.runeduniverse.lib.rogm.test.model.Person;
 

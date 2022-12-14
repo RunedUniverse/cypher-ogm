@@ -26,9 +26,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import lombok.NoArgsConstructor;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
 import net.runeduniverse.lib.rogm.pattern.APattern;
 import net.runeduniverse.lib.rogm.pattern.FieldPattern;
-import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
 import net.runeduniverse.lib.rogm.test.AArchiveTest;
 import net.runeduniverse.lib.rogm.test.model.Artist;
 import net.runeduniverse.lib.rogm.test.model.Game;

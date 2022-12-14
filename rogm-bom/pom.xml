@@ -34,6 +34,7 @@
 	<properties>
 		<artifact-version>0</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
+		<min-api-version>0</min-api-version>
 		<min-core-version>0</min-core-version>
 		<min-parser-json-version>0</min-parser-json-version>
 		<min-lang-cypher-version>0</min-lang-cypher-version>
@@ -70,6 +71,12 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- API -->
+			<dependency>
+				<groupId>net.runeduniverse.lib.rogm</groupId>
+				<artifactId>rogm-api</artifactId>
+				<version>[${major-version}.${minor-version}.${min-api-version},)</version>
+			</dependency>
 			<!-- CORE -->
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm</groupId>

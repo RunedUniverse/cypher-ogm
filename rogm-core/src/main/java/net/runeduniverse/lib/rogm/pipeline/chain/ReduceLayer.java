@@ -17,8 +17,8 @@ package net.runeduniverse.lib.rogm.pipeline.chain;
 
 import java.util.Collection;
 
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.buffer.BufferTypes.IEntry;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.buffer.IEntry;
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityCollectionContainer;

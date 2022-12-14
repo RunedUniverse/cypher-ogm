@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.parser;
+package net.runeduniverse.lib.rogm.api.parser;
 
 import java.util.logging.Logger;
 
-import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
 
 public interface Parser {
 

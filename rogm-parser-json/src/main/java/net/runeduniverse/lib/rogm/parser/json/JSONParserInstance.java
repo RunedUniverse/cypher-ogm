@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
-import net.runeduniverse.lib.rogm.parser.Parser.Instance;
+import net.runeduniverse.lib.rogm.api.parser.Parser.Instance;
 
 @RequiredArgsConstructor
 class JSONParserInstance implements Instance {

@@ -18,7 +18,7 @@ package net.runeduniverse.lib.rogm.querying.builder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.querying.ILazyLoading;
+import net.runeduniverse.lib.rogm.api.querying.ILazyLoading;
 
 @Getter
 @Setter

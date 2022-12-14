@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.querying;
+package net.runeduniverse.lib.rogm.api.querying;
 
 import java.io.Serializable;
 import java.util.Set;
 
-import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
 
-public interface IQueryBuilder<B extends IQueryBuilder<?, ?, R>, P extends IBaseQueryPattern<?>, R extends IFilter> {
+public interface IQueryBuilderInstance<B extends IQueryBuilderInstance<?, ?, R>, P extends IBaseQueryPattern<?>, R extends IFilter> {
 
 	// internal use only
 	@Deprecated

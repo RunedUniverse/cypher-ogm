@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.info;
+package net.runeduniverse.lib.rogm.api.info;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.api.Configuration;
 
 @Getter
 @NoArgsConstructor

@@ -17,11 +17,11 @@ package net.runeduniverse.lib.rogm.test;
 
 import java.util.logging.Logger;
 
-import net.runeduniverse.lib.rogm.Configuration;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.lang.Language;
-import net.runeduniverse.lib.rogm.modules.Module;
-import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.api.Configuration;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.lang.Language;
+import net.runeduniverse.lib.rogm.api.modules.Module;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 import net.runeduniverse.lib.rogm.pattern.Archive;
 
 public abstract class AConfigTest {

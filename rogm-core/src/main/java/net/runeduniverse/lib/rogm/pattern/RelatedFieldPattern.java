@@ -23,12 +23,15 @@ import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.annotations.NodeEntity;
-import net.runeduniverse.lib.rogm.annotations.Relationship;
-import net.runeduniverse.lib.rogm.annotations.RelationshipEntity;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.NodeEntity;
+import net.runeduniverse.lib.rogm.api.annotations.Relationship;
+import net.runeduniverse.lib.rogm.api.annotations.RelationshipEntity;
+import net.runeduniverse.lib.rogm.api.pattern.INodePattern;
+import net.runeduniverse.lib.rogm.api.pattern.IRelationPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IValidatable;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
@@ -92,7 +95,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 	}
 
 	public void saveRelation(Object entity, NodeQueryBuilder nodeBuilder,
-			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
+			Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 		if (entity == null)
 			return;
 		if (this.collection)
@@ -106,7 +109,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	private void _addRelation(NodeQueryBuilder nodeBuilder, Object relEntity,
-			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
+			Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 		if (relEntity == null)
 			return;
 

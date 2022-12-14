@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Getter;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IParameterized;
 
 public abstract class AParamHolder<F extends IFilter> extends AFilter<F> implements IParameterized {
 

@@ -32,15 +32,16 @@ import org.neo4j.driver.TransactionWork;
 import org.neo4j.driver.Value;
 
 import lombok.RequiredArgsConstructor;
-import net.runeduniverse.lib.rogm.info.ConnectionInfo;
-import net.runeduniverse.lib.rogm.modules.Module;
-import net.runeduniverse.lib.rogm.modules.Module.IRawDataRecord;
-import net.runeduniverse.lib.rogm.modules.Module.IRawIdRecord;
-import net.runeduniverse.lib.rogm.modules.Module.IRawRecord;
+import net.runeduniverse.lib.rogm.api.info.ConnectionInfo;
+import net.runeduniverse.lib.rogm.api.modules.Data;
+import net.runeduniverse.lib.rogm.api.modules.IRawDataRecord;
+import net.runeduniverse.lib.rogm.api.modules.IRawIdRecord;
+import net.runeduniverse.lib.rogm.api.modules.IRawRecord;
+import net.runeduniverse.lib.rogm.api.modules.Module;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 import net.runeduniverse.lib.rogm.modules.RawDataRecord;
 import net.runeduniverse.lib.rogm.modules.RawIdRecord;
 import net.runeduniverse.lib.rogm.modules.RawRecord;
-import net.runeduniverse.lib.rogm.parser.Parser;
 import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public class Neo4jModuleInstance implements Module.Instance<Long> {
@@ -108,7 +109,7 @@ public class Neo4jModuleInstance implements Module.Instance<Long> {
 
 		try {
 			for (Record record : _query(qry)) {
-				Map<String, Module.Data> data = new HashMap<>();
+				Map<String, Data> data = new HashMap<>();
 				for (String key : record.keys()) {
 					if (key.startsWith("id_") || key.startsWith("eid_") || key.startsWith("labels_"))
 						continue;

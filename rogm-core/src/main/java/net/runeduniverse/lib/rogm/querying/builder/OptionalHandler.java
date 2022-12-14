@@ -19,7 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.querying.IOptional;
+import net.runeduniverse.lib.rogm.api.querying.IOptional;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @NoArgsConstructor

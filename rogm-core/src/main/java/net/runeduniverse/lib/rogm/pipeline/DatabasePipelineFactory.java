@@ -15,14 +15,14 @@
  */
 package net.runeduniverse.lib.rogm.pipeline;
 
-import net.runeduniverse.lib.rogm.Configuration;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
-import net.runeduniverse.lib.rogm.errors.ScannerException;
+import net.runeduniverse.lib.rogm.api.Configuration;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.errors.ScannerException;
+import net.runeduniverse.lib.rogm.api.lang.Language;
+import net.runeduniverse.lib.rogm.api.modules.Module;
+import net.runeduniverse.lib.rogm.api.modules.PassiveModule;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 import net.runeduniverse.lib.rogm.info.SessionInfo;
-import net.runeduniverse.lib.rogm.lang.Language;
-import net.runeduniverse.lib.rogm.modules.Module;
-import net.runeduniverse.lib.rogm.modules.PassiveModule;
-import net.runeduniverse.lib.rogm.parser.Parser;
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pipeline.chain.AssemblyLayers;
 import net.runeduniverse.lib.rogm.pipeline.chain.LookupLayers;

@@ -24,13 +24,13 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.NopAnnotationIntrospector;
 
 import lombok.RequiredArgsConstructor;
-import net.runeduniverse.lib.rogm.annotations.Id;
-import net.runeduniverse.lib.rogm.annotations.Property;
-import net.runeduniverse.lib.rogm.annotations.Relationship;
-import net.runeduniverse.lib.rogm.annotations.StartNode;
-import net.runeduniverse.lib.rogm.annotations.TargetNode;
-import net.runeduniverse.lib.rogm.annotations.Transient;
-import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.api.annotations.Id;
+import net.runeduniverse.lib.rogm.api.annotations.Property;
+import net.runeduniverse.lib.rogm.api.annotations.Relationship;
+import net.runeduniverse.lib.rogm.api.annotations.StartNode;
+import net.runeduniverse.lib.rogm.api.annotations.TargetNode;
+import net.runeduniverse.lib.rogm.api.annotations.Transient;
+import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
 
 @RequiredArgsConstructor
 public class JsonAnnotationIntrospector extends NopAnnotationIntrospector {

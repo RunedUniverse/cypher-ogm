@@ -23,11 +23,10 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.Value;
 
 import lombok.Getter;
-import net.runeduniverse.lib.rogm.modules.Module;
-import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 
 @Getter
-public class Data implements Module.Data {
+public class Data implements Data {
 
 	private Long id;
 	private String entityId;

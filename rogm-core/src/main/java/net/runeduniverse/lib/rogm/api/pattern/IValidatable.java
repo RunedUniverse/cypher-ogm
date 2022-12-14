@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.pattern;
+package net.runeduniverse.lib.rogm.api.pattern;
 
 import java.util.Collection;
 

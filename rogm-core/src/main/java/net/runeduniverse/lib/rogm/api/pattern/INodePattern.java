@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.pattern;
+package net.runeduniverse.lib.rogm.api.pattern;
 
 import java.util.Collection;
 import java.util.Map;
 
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
@@ -27,7 +27,7 @@ public interface INodePattern<B extends NodeQueryBuilder> extends IBaseQueryPatt
 
 	NodeQueryBuilder search(RelationQueryBuilder caller, boolean lazy);
 
-	NodeQueryBuilder save(Object entity, Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData,
+	NodeQueryBuilder save(Object entity, Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData,
 			Integer depth) throws Exception;
 
 	void deleteRelations(Object entity, Collection<Object> deletedEntities);

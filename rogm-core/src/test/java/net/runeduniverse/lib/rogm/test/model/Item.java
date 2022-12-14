@@ -18,11 +18,11 @@ package net.runeduniverse.lib.rogm.test.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.annotations.PreSave;
-import net.runeduniverse.lib.rogm.annotations.Property;
-import net.runeduniverse.lib.rogm.annotations.Relationship;
-import net.runeduniverse.lib.rogm.annotations.Transient;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.PreSave;
+import net.runeduniverse.lib.rogm.api.annotations.Property;
+import net.runeduniverse.lib.rogm.api.annotations.Relationship;
+import net.runeduniverse.lib.rogm.api.annotations.Transient;
 
 @Getter
 @Setter

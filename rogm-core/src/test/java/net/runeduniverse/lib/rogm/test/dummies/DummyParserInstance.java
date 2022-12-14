@@ -15,7 +15,7 @@
  */
 package net.runeduniverse.lib.rogm.test.dummies;
 
-import net.runeduniverse.lib.rogm.parser.Parser.Instance;
+import net.runeduniverse.lib.rogm.api.parser.Parser.Instance;
 
 public class DummyParserInstance implements Instance{
 

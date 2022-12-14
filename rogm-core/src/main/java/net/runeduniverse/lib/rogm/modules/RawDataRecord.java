@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.runeduniverse.lib.rogm.modules.Module.Data;
-import net.runeduniverse.lib.rogm.modules.Module.IRawDataRecord;
+import net.runeduniverse.lib.rogm.api.modules.Data;
+import net.runeduniverse.lib.rogm.api.modules.IRawDataRecord;
 
 public class RawDataRecord implements IRawDataRecord {
 

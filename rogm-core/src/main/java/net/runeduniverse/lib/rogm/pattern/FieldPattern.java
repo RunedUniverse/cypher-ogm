@@ -19,12 +19,13 @@ import java.lang.reflect.Field;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.runeduniverse.lib.rogm.annotations.Converter;
-import net.runeduniverse.lib.rogm.annotations.IConverter;
-import net.runeduniverse.lib.rogm.annotations.Id;
+import net.runeduniverse.lib.rogm.api.annotations.Converter;
+import net.runeduniverse.lib.rogm.api.annotations.IConverter;
+import net.runeduniverse.lib.rogm.api.annotations.Id;
+import net.runeduniverse.lib.rogm.api.pattern.IFieldPattern;
 
 @ToString(callSuper = true)
-public class FieldPattern extends net.runeduniverse.lib.utils.scanner.pattern.FieldPattern {
+public class FieldPattern extends net.runeduniverse.lib.utils.scanner.pattern.FieldPattern implements IFieldPattern {
 
 	protected final Archive archive;
 	@Getter

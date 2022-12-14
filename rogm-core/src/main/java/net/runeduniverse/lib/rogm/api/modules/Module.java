@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.modules;
+package net.runeduniverse.lib.rogm.api.modules;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
-import net.runeduniverse.lib.rogm.info.ConnectionInfo;
-import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.api.info.ConnectionInfo;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 
 public interface Module extends PassiveModule, IdTypeResolver {
 
@@ -42,32 +39,5 @@ public interface Module extends PassiveModule, IdTypeResolver {
 		IRawDataRecord queryObject(String qry);
 
 		IRawIdRecord execute(String qry);
-	}
-
-	public static interface IRawRecord {
-		// return the raw data
-		List<Map<String, Object>> getRawData();
-	}
-
-	public static interface IRawDataRecord {
-		// returns a Map with the ALIAS as Key and DATA as Value
-		List<Map<String, Data>> getData();
-	}
-
-	public static interface IRawIdRecord {
-		// returns a Map with the ALIAS and the IDs
-		Map<String, Serializable> getIds();
-	}
-
-	public interface Data {
-		Serializable getId();
-
-		String getEntityId();
-
-		Set<String> getLabels();
-
-		String getData();
-
-		String getAlias();
 	}
 }

@@ -26,8 +26,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import net.runeduniverse.lib.rogm.Configuration;
-import net.runeduniverse.lib.rogm.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.Configuration;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
 import net.runeduniverse.lib.rogm.parser.json.Feature;
 import net.runeduniverse.lib.rogm.parser.json.JSONParser;
 import net.runeduniverse.lib.rogm.querying.FilterNode;

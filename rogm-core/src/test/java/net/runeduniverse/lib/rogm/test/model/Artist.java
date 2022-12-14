@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import net.runeduniverse.lib.rogm.annotations.Relationship;
+import net.runeduniverse.lib.rogm.api.annotations.Relationship;
 
 @NoArgsConstructor
 @Getter

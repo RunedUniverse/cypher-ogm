@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
-		<version>2.1.1</version>
+		<version>2.2.0</version>
 	</parent>
 
 	<artifactId>rogm-core</artifactId>
@@ -33,9 +33,8 @@
 
 	<properties>
 		<artifact-version>2</artifact-version>
-		<bom-version>2</bom-version>
-		<sources-bom-version>2</sources-bom-version>
-		<root-dir>${project.parent.relativePath}</root-dir>
+		<bom-version>0</bom-version>
+		<sources-bom-version>0</sources-bom-version>
 	</properties>
 
 	<licenses>
@@ -66,6 +65,13 @@
 	</developers>
 
 	<dependencies>
+		<!-- API -->
+		<dependency>
+			<groupId>net.runeduniverse.lib.rogm</groupId>
+			<artifactId>rogm-api</artifactId>
+		</dependency>
+
+		<!-- ARTIFACTS -->
 		<dependency>
 			<groupId>net.runeduniverse.lib.utils</groupId>
 			<artifactId>utils-common</artifactId>
@@ -86,11 +92,15 @@
 			<groupId>net.runeduniverse.lib.utils</groupId>
 			<artifactId>utils-scanner</artifactId>
 		</dependency>
+
+		<!-- COMPILE -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- TESTS -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>

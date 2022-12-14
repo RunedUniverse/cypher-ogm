@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.pattern;
+package net.runeduniverse.lib.rogm.api.pattern;
 
 import java.util.Map;
 
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
@@ -29,5 +29,5 @@ public interface IRelationPattern<B extends RelationQueryBuilder> extends IBaseQ
 	RelationQueryBuilder createFilter(NodeQueryBuilder caller, Direction direction);
 
 	RelationQueryBuilder save(Object entity, NodeQueryBuilder caller, Direction direction,
-			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception;
+			Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception;
 }

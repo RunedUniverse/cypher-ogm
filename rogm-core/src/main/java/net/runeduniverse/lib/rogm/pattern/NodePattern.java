@@ -25,16 +25,22 @@ import java.util.Map;
 import java.util.Set;
 
 import lombok.Getter;
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.annotations.NodeEntity;
-import net.runeduniverse.lib.rogm.annotations.PreDelete;
-import net.runeduniverse.lib.rogm.annotations.PreSave;
-import net.runeduniverse.lib.rogm.buffer.BufferTypes;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.NodeEntity;
+import net.runeduniverse.lib.rogm.api.annotations.PreDelete;
+import net.runeduniverse.lib.rogm.api.annotations.PreSave;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.buffer.IEntry;
+import net.runeduniverse.lib.rogm.api.buffer.LoadState;
+import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.container.ISaveContainer;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
+import net.runeduniverse.lib.rogm.api.pattern.INodePattern;
+import net.runeduniverse.lib.rogm.api.pattern.PatternType;
+import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
-import net.runeduniverse.lib.rogm.querying.IDataContainer;
-import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
@@ -42,7 +48,7 @@ import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
 // deprecation = internal use
 @SuppressWarnings("deprecation")
 public class NodePattern extends APattern<NodeQueryBuilder>
-		implements INodePattern<NodeQueryBuilder>, BufferTypes {
+		implements INodePattern<NodeQueryBuilder> {
 
 	@Getter
 	private Set<String> labels = new HashSet<>();
@@ -120,7 +126,7 @@ public class NodePattern extends APattern<NodeQueryBuilder>
 	}
 
 	@Override
-	public SaveContainer save(Object entity, Integer depth) throws Exception {
+	public ISaveContainer save(Object entity, Integer depth) throws Exception {
 		return new SaveContainer(includedData -> (IDataContainer) this.save(entity, includedData, depth)
 				.getResult(), NodePattern::calcEffectedFilters);
 	}
@@ -136,8 +142,8 @@ public class NodePattern extends APattern<NodeQueryBuilder>
 	 *         the save procedure
 	 * @throws Exception
 	 */
-	private static final Set<IFilter> calcEffectedFilters(final Archive archive, final IBuffer buffer,
-			final Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData) throws Exception {
+	private static final Set<IFilter> calcEffectedFilters(final IArchive archive, final IBuffer buffer,
+			final Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData) throws Exception {
 		Set<IFilter> set = new HashSet<>();
 		for (Object object : includedData.keySet()) {
 			if (!includedData.get(object)
@@ -152,14 +158,14 @@ public class NodePattern extends APattern<NodeQueryBuilder>
 		return set;
 	}
 
-	public NodeQueryBuilder save(Object entity, Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData,
+	public NodeQueryBuilder save(Object entity, Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData,
 			Integer depth) throws Exception {
 		if (entity == null)
 			return null;
 
 		boolean readonly = depth == -1;
 		boolean persist = 0 < depth;
-		IQueryBuilder<?, ?, ? extends IFilter> container = includedData.get(entity);
+		IQueryBuilderInstance<?, ?, ? extends IFilter> container = includedData.get(entity);
 		NodeQueryBuilder nodeBuilder = null;
 
 		if (container != null) {

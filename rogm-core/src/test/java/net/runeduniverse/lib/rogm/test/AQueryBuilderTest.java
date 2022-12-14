@@ -18,7 +18,7 @@ package net.runeduniverse.lib.rogm.test;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.api.Configuration;
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder.NodeQueryBuilder;

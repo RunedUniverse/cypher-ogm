@@ -19,13 +19,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-import net.runeduniverse.lib.rogm.modules.Module;
+import net.runeduniverse.lib.rogm.api.modules.Module;
+import net.runeduniverse.lib.rogm.api.querying.IFNode;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.lang.cypher.CypherInstance;
 import net.runeduniverse.lib.rogm.lang.cypher.FilterStatus;
 import net.runeduniverse.lib.rogm.lang.cypher.Mapper;
-import net.runeduniverse.lib.rogm.querying.IFNode;
-import net.runeduniverse.lib.rogm.querying.IFRelation;
-import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.utils.common.DataHashMap;
 import net.runeduniverse.lib.utils.common.DataMap;
 import net.runeduniverse.lib.utils.chain.Chain;

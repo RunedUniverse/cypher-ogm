@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Getter;
-import net.runeduniverse.lib.rogm.querying.IFNode;
-import net.runeduniverse.lib.rogm.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.querying.IFNode;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
 
 @Getter
 public class NodeFilter extends AProxyFilter<NodeFilter> implements IFNode {

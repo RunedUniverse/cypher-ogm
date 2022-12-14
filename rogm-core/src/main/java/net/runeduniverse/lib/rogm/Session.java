@@ -18,9 +18,10 @@ package net.runeduniverse.lib.rogm;
 import java.io.Serializable;
 import java.util.Collection;
 
+import net.runeduniverse.lib.rogm.api.Configuration;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.pipeline.DatabasePipelineFactory;
 import net.runeduniverse.lib.rogm.pipeline.Pipeline;
-import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 
 /**

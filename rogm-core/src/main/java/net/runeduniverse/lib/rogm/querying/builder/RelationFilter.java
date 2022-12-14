@@ -17,9 +17,9 @@ package net.runeduniverse.lib.rogm.querying.builder;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.querying.IFNode;
-import net.runeduniverse.lib.rogm.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.querying.IFNode;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
 
 @Getter
 @Setter

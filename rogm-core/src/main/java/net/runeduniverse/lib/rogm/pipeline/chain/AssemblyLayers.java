@@ -22,30 +22,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.runeduniverse.lib.rogm.annotations.Direction;
-import net.runeduniverse.lib.rogm.annotations.PostLoad;
-import net.runeduniverse.lib.rogm.annotations.PostReload;
-import net.runeduniverse.lib.rogm.buffer.BufferTypes;
-import net.runeduniverse.lib.rogm.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.annotations.PostLoad;
+import net.runeduniverse.lib.rogm.api.annotations.PostReload;
+import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
+import net.runeduniverse.lib.rogm.api.buffer.IEntry;
+import net.runeduniverse.lib.rogm.api.buffer.LoadState;
+import net.runeduniverse.lib.rogm.api.container.IPatternContainer;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
+import net.runeduniverse.lib.rogm.api.pattern.IData;
+import net.runeduniverse.lib.rogm.api.pattern.IDataRecord;
+import net.runeduniverse.lib.rogm.api.pattern.IPattern;
+import net.runeduniverse.lib.rogm.api.querying.IFNode;
+import net.runeduniverse.lib.rogm.api.querying.IFRelation;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.pattern.Archive;
-import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
-import net.runeduniverse.lib.rogm.pattern.IPattern;
 import net.runeduniverse.lib.rogm.pattern.NodePattern;
 import net.runeduniverse.lib.rogm.pattern.RelationPattern;
-import net.runeduniverse.lib.rogm.pattern.IPattern.IData;
-import net.runeduniverse.lib.rogm.pattern.IPattern.IDataRecord;
-import net.runeduniverse.lib.rogm.pattern.IPattern.IPatternContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.RelatedEntriesContainer;
-import net.runeduniverse.lib.rogm.querying.IFNode;
-import net.runeduniverse.lib.rogm.querying.IFRelation;
-import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.utils.chain.Chain;
 import net.runeduniverse.lib.utils.chain.ChainRuntime;
 import net.runeduniverse.lib.utils.common.DataHashMap;
 import net.runeduniverse.lib.utils.common.DataMap;
 
-public interface AssemblyLayers extends BufferTypes {
+public interface AssemblyLayers {
 
 	@Chain(label = Chains.LOAD_CHAIN.ALL.LABEL, layers = { Chains.LOAD_CHAIN.ALL.ASSEMBLY_ENTITY_COLLECTION })
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.ASSEMBLY_ENTITY_COLLECTION })

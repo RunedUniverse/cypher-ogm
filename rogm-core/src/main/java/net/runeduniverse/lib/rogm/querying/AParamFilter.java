@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Getter;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.ILabeled;
 
 public abstract class AParamFilter<F extends IFilter> extends AParamHolder<F> implements ILabeled {
 

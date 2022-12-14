@@ -20,9 +20,9 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.annotations.Property;
-import net.runeduniverse.lib.rogm.annotations.Relationship;
-import net.runeduniverse.lib.rogm.annotations.Transient;
+import net.runeduniverse.lib.rogm.api.annotations.Property;
+import net.runeduniverse.lib.rogm.api.annotations.Relationship;
+import net.runeduniverse.lib.rogm.api.annotations.Transient;
 import net.runeduniverse.lib.rogm.test.model.relations.Slot;
 
 @Getter

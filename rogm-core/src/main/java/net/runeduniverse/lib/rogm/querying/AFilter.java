@@ -16,6 +16,10 @@
 package net.runeduniverse.lib.rogm.querying;
 
 import lombok.Getter;
+import net.runeduniverse.lib.rogm.api.querying.FilterType;
+import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.IOptional;
+import net.runeduniverse.lib.rogm.api.querying.IReturned;
 
 public abstract class AFilter<F extends IFilter> implements IReturned, IOptional {
 

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import net.runeduniverse.lib.rogm.Configuration;
+import net.runeduniverse.lib.rogm.api.Configuration;
 import net.runeduniverse.lib.rogm.test.AArchiveTest;
 import net.runeduniverse.lib.rogm.test.ConsoleLogger;
 import net.runeduniverse.lib.rogm.test.model.*;

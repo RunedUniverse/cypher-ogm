@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.info;
+package net.runeduniverse.lib.rogm.api.info;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.Configuration;
-import net.runeduniverse.lib.rogm.modules.Module;
+import net.runeduniverse.lib.rogm.api.Configuration;
+import net.runeduniverse.lib.rogm.api.modules.Module;
 
 @Getter
 @Setter

@@ -20,7 +20,7 @@ import java.util.Map;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.runeduniverse.lib.rogm.querying.IParameterized;
+import net.runeduniverse.lib.rogm.api.querying.IParameterized;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @NoArgsConstructor

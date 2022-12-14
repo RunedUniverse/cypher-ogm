@@ -19,15 +19,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.runeduniverse.lib.rogm.pattern.IBaseQueryPattern;
-import net.runeduniverse.lib.rogm.pattern.IPattern;
+import net.runeduniverse.lib.rogm.api.container.IPatternContainer;
+import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class PatternContainerHandler implements IPattern.IPatternContainer, NoFilterType, ITraceable {
+public class PatternContainerHandler implements IPatternContainer, NoFilterType, ITraceable {
 
 	private IBaseQueryPattern<?> pattern;
 

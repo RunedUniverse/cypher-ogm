@@ -21,13 +21,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.runeduniverse.lib.rogm.buffer.BufferTypes.LoadState;
+import net.runeduniverse.lib.rogm.api.buffer.LoadState;
+import net.runeduniverse.lib.rogm.api.container.IUpdatedEntryContainer;
 
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
-public class UpdatedEntryContainer {
+public class UpdatedEntryContainer implements IUpdatedEntryContainer {
 	protected Serializable id;
 	protected Serializable entityId;
 	protected Object entity;

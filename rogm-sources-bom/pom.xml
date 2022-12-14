@@ -32,7 +32,6 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<root-dir>${project.parent.relativePath}</root-dir>
 		<artifact-version>0</artifact-version>
 		<!-- ARTIFACT VERSIONS -->
 		<runeduniverse-utils-common-version>[1.0.1,)</runeduniverse-utils-common-version>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.querying;
+package net.runeduniverse.lib.rogm.api.querying;
 
 // in case of <FilterType.DELETE> everything that gets returned will be deleted
 

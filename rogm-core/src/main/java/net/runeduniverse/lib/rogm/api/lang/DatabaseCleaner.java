@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.runeduniverse.lib.rogm.lang;
+package net.runeduniverse.lib.rogm.api.lang;
 
 import net.runeduniverse.lib.rogm.pipeline.chain.ChainConfigurator;
 

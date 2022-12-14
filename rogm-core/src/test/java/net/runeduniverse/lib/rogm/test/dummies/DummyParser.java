@@ -17,8 +17,8 @@ package net.runeduniverse.lib.rogm.test.dummies;
 
 import java.util.logging.Logger;
 
-import net.runeduniverse.lib.rogm.modules.IdTypeResolver;
-import net.runeduniverse.lib.rogm.parser.Parser;
+import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.api.parser.Parser;
 
 public class DummyParser implements Parser {
 
