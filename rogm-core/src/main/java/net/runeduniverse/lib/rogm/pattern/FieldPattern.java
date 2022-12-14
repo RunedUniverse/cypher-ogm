@@ -22,17 +22,18 @@ import lombok.ToString;
 import net.runeduniverse.lib.rogm.api.annotations.Converter;
 import net.runeduniverse.lib.rogm.api.annotations.IConverter;
 import net.runeduniverse.lib.rogm.api.annotations.Id;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
 import net.runeduniverse.lib.rogm.api.pattern.IFieldPattern;
 
 @ToString(callSuper = true)
 public class FieldPattern extends net.runeduniverse.lib.utils.scanner.pattern.FieldPattern implements IFieldPattern {
 
-	protected final Archive archive;
+	protected final IArchive archive;
 	@Getter
 	@Setter
 	protected IConverter<?> converter = null;
 
-	public FieldPattern(Archive archive, Field field) throws Exception {
+	public FieldPattern(IArchive archive, Field field) throws Exception {
 		super(field);
 		this.archive = archive;
 		Converter converterAnno = this.field.getAnnotation(Converter.class);

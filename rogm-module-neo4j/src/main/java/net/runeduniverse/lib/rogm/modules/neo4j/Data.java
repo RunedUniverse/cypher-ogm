@@ -26,7 +26,7 @@ import lombok.Getter;
 import net.runeduniverse.lib.rogm.api.parser.Parser;
 
 @Getter
-public class Data implements Data {
+public class Data implements net.runeduniverse.lib.rogm.api.modules.Module.Data {
 
 	private Long id;
 	private String entityId;

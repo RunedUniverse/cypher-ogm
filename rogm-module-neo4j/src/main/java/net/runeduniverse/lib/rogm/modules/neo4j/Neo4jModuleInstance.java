@@ -33,7 +33,6 @@ import org.neo4j.driver.Value;
 
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.lib.rogm.api.info.ConnectionInfo;
-import net.runeduniverse.lib.rogm.api.modules.Data;
 import net.runeduniverse.lib.rogm.api.modules.IRawDataRecord;
 import net.runeduniverse.lib.rogm.api.modules.IRawIdRecord;
 import net.runeduniverse.lib.rogm.api.modules.IRawRecord;
@@ -109,7 +108,7 @@ public class Neo4jModuleInstance implements Module.Instance<Long> {
 
 		try {
 			for (Record record : _query(qry)) {
-				Map<String, Data> data = new HashMap<>();
+				Map<String, Module.Data> data = new HashMap<>();
 				for (String key : record.keys()) {
 					if (key.startsWith("id_") || key.startsWith("eid_") || key.startsWith("labels_"))
 						continue;

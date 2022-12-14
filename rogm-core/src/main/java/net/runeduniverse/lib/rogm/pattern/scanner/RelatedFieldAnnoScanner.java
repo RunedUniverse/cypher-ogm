@@ -17,24 +17,24 @@ package net.runeduniverse.lib.rogm.pattern.scanner;
 
 import java.lang.annotation.Annotation;
 
-import net.runeduniverse.lib.rogm.pattern.Archive;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
 import net.runeduniverse.lib.rogm.pattern.FieldPattern;
 import net.runeduniverse.lib.rogm.pattern.RelatedFieldPattern;
 import net.runeduniverse.lib.utils.scanner.ScanOrder;
 import net.runeduniverse.lib.utils.scanner.templates.FieldScanner;
 
 public class RelatedFieldAnnoScanner extends FieldAnnoScanner {
-	
-	public RelatedFieldAnnoScanner(Archive archive, Class<? extends Annotation> anno) {
+
+	public RelatedFieldAnnoScanner(IArchive archive, Class<? extends Annotation> anno) {
 		super(creator(archive), anno);
 	}
 
-	public RelatedFieldAnnoScanner(Archive archive, Class<? extends Annotation> anno, ScanOrder order) {
+	public RelatedFieldAnnoScanner(IArchive archive, Class<? extends Annotation> anno, ScanOrder order) {
 		super(creator(archive), anno, order);
 	}
 
-	private static FieldScanner.PatternCreator<FieldPattern> creator(Archive archive){
+	private static FieldScanner.PatternCreator<FieldPattern> creator(IArchive archive) {
 		return f -> new RelatedFieldPattern(archive, f);
 	}
-	
+
 }

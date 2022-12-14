@@ -19,10 +19,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import net.runeduniverse.lib.rogm.api.Configuration;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
 import net.runeduniverse.lib.rogm.api.querying.QueryBuilder;
 import net.runeduniverse.lib.rogm.api.querying.QueryBuilder.NodeQueryBuilder;
 import net.runeduniverse.lib.rogm.api.querying.QueryBuilder.RelationQueryBuilder;
-import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.test.dummies.DummyLanguage;
 import net.runeduniverse.lib.rogm.test.dummies.DummyModule;
 import net.runeduniverse.lib.rogm.test.dummies.DummyParser;
@@ -44,7 +44,7 @@ public abstract class AQueryBuilderTest extends AArchiveTest {
 	}
 
 	protected static class DebugNodeQueryBuilder extends NodeQueryBuilder {
-		public DebugNodeQueryBuilder(Archive archive) {
+		public DebugNodeQueryBuilder(IArchive archive) {
 			super(archive);
 		}
 
@@ -54,7 +54,7 @@ public abstract class AQueryBuilderTest extends AArchiveTest {
 	}
 
 	protected static class DebugRelationQueryBuilder extends RelationQueryBuilder {
-		public DebugRelationQueryBuilder(Archive archive) {
+		public DebugRelationQueryBuilder(IArchive archive) {
 			super(archive);
 		}
 

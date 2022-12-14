@@ -25,8 +25,8 @@ import java.util.logging.Logger;
 import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
 import net.runeduniverse.lib.rogm.api.buffer.LoadState;
 import net.runeduniverse.lib.rogm.api.container.IUpdatedEntryContainer;
-import net.runeduniverse.lib.rogm.api.modules.Data;
 import net.runeduniverse.lib.rogm.api.modules.IdTypeResolver;
+import net.runeduniverse.lib.rogm.api.modules.Module;
 import net.runeduniverse.lib.rogm.api.parser.Parser;
 import net.runeduniverse.lib.rogm.api.pattern.IDataRecord;
 import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
@@ -50,7 +50,7 @@ public interface Language extends DatabaseCleaner {
 	}
 
 	public interface ILoadMapper extends IMapper {
-		IDataRecord parseDataRecord(List<Map<String, Data>> records);
+		IDataRecord parseDataRecord(List<Map<String, Module.Data>> records);
 	}
 
 	public interface ISaveMapper extends IMapper {

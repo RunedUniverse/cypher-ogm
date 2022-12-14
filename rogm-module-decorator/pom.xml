@@ -20,8 +20,7 @@
 	<parent>
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
-		<version>2.1.1</version>
-		<relativePath>../</relativePath>
+		<version>2.2.0</version>
 	</parent>
 
 	<groupId>net.runeduniverse.lib.rogm.modules</groupId>
@@ -34,10 +33,9 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<artifact-version>2</artifact-version>
-		<bom-version>2</bom-version>
-		<sources-bom-version>2</sources-bom-version>
-		<root-dir>${project.parent.relativePath}</root-dir>
+		<artifact-version>0</artifact-version>
+		<bom-version>0</bom-version>
+		<sources-bom-version>0</sources-bom-version>
 	</properties>
 
 	<licenses>

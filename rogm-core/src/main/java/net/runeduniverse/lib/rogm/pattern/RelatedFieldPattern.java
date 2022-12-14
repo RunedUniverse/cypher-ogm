@@ -27,6 +27,7 @@ import net.runeduniverse.lib.rogm.api.annotations.Direction;
 import net.runeduniverse.lib.rogm.api.annotations.NodeEntity;
 import net.runeduniverse.lib.rogm.api.annotations.Relationship;
 import net.runeduniverse.lib.rogm.api.annotations.RelationshipEntity;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
 import net.runeduniverse.lib.rogm.api.pattern.INodePattern;
 import net.runeduniverse.lib.rogm.api.pattern.IRelationPattern;
 import net.runeduniverse.lib.rogm.api.pattern.IValidatable;
@@ -43,7 +44,7 @@ public class RelatedFieldPattern extends FieldPattern implements IValidatable {
 	private Direction direction;
 	private boolean definedRelation;
 
-	public RelatedFieldPattern(Archive archive, Field field) throws Exception {
+	public RelatedFieldPattern(IArchive archive, Field field) throws Exception {
 		super(archive, field);
 	}
 

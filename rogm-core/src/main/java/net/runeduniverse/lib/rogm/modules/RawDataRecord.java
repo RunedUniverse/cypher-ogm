@@ -19,27 +19,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.runeduniverse.lib.rogm.api.modules.Data;
 import net.runeduniverse.lib.rogm.api.modules.IRawDataRecord;
+import net.runeduniverse.lib.rogm.api.modules.Module;
 
 public class RawDataRecord implements IRawDataRecord {
 
-	private final List<Map<String, Data>> data;
+	private final List<Map<String, Module.Data>> data;
 
 	public RawDataRecord() {
 		this.data = new ArrayList<>();
 	}
 
-	public RawDataRecord(List<Map<String, Data>> data) {
+	public RawDataRecord(List<Map<String, Module.Data>> data) {
 		this.data = data;
 	}
 
 	@Override
-	public List<Map<String, Data>> getData() {
+	public List<Map<String, Module.Data>> getData() {
 		return this.data;
 	}
 
-	public void addEntry(Map<String, Data> entry) {
+	public void addEntry(Map<String, Module.Data> entry) {
 		this.data.add(entry);
 	}
 

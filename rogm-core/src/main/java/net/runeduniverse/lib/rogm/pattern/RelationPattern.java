@@ -29,6 +29,7 @@ import net.runeduniverse.lib.rogm.api.annotations.RelationshipEntity;
 import net.runeduniverse.lib.rogm.api.annotations.StartNode;
 import net.runeduniverse.lib.rogm.api.annotations.TargetNode;
 import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
 import net.runeduniverse.lib.rogm.api.pattern.INodePattern;
 import net.runeduniverse.lib.rogm.api.pattern.IRelationPattern;
 import net.runeduniverse.lib.rogm.api.pattern.PatternType;
@@ -54,7 +55,7 @@ public class RelationPattern extends APattern<RelationQueryBuilder> implements I
 	private boolean readonlyStart = false;
 	private boolean readonlyTarget = false;
 
-	public RelationPattern(Archive archive, String pkg, ClassLoader loader, Class<?> type) {
+	public RelationPattern(IArchive archive, String pkg, ClassLoader loader, Class<?> type) {
 		super(archive, pkg, loader, type);
 
 		RelationshipEntity typeAnno = this.type.getAnnotation(RelationshipEntity.class);
@@ -268,8 +269,8 @@ public class RelationPattern extends APattern<RelationQueryBuilder> implements I
 	}
 
 	private NodeQueryBuilder _getDataNode(FieldPattern field, Object entity,
-			Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData, RelationQueryBuilder relation, Integer depth)
-			throws Exception {
+			Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData, RelationQueryBuilder relation,
+			Integer depth) throws Exception {
 		INodePattern<?> node = this.archive.getPattern(field.getType(), NodePattern.class);
 		if (node == null)
 			throw new Exception("NodePattern for Field<" + field.toString() + "> undefined!");

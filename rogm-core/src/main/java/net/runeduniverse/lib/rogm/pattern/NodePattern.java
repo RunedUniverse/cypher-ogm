@@ -47,14 +47,13 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
 
 // deprecation = internal use
 @SuppressWarnings("deprecation")
-public class NodePattern extends APattern<NodeQueryBuilder>
-		implements INodePattern<NodeQueryBuilder> {
+public class NodePattern extends APattern<NodeQueryBuilder> implements INodePattern<NodeQueryBuilder> {
 
 	@Getter
 	private Set<String> labels = new HashSet<>();
 	private Set<RelatedFieldPattern> relFields = new HashSet<>();
 
-	public NodePattern(Archive archive, String pkg, ClassLoader loader, Class<?> type) {
+	public NodePattern(IArchive archive, String pkg, ClassLoader loader, Class<?> type) {
 		super(archive, pkg, loader, type);
 
 		NodeEntity typeAnno = type.getAnnotation(NodeEntity.class);
@@ -158,8 +157,8 @@ public class NodePattern extends APattern<NodeQueryBuilder>
 		return set;
 	}
 
-	public NodeQueryBuilder save(Object entity, Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData,
-			Integer depth) throws Exception {
+	public NodeQueryBuilder save(Object entity,
+			Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData, Integer depth) throws Exception {
 		if (entity == null)
 			return null;
 

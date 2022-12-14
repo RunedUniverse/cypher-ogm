@@ -24,6 +24,7 @@ import net.runeduniverse.lib.rogm.api.annotations.Id;
 import net.runeduniverse.lib.rogm.api.annotations.PreReload;
 import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
 import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.pattern.IArchive;
 import net.runeduniverse.lib.rogm.api.pattern.IBaseQueryPattern;
 import net.runeduniverse.lib.rogm.api.pattern.IData;
 import net.runeduniverse.lib.rogm.api.pattern.IPattern;
@@ -37,14 +38,14 @@ import net.runeduniverse.lib.utils.scanner.pattern.TypePattern;
 public abstract class APattern<B extends IQueryBuilderInstance<?, ?, ? extends IFilter>>
 		extends TypePattern<FieldPattern, MethodPattern> implements IBaseQueryPattern<B>, IValidatable {
 
-	protected final Archive archive;
+	protected final IArchive archive;
 	protected FieldPattern idFieldPattern;
 	@Getter
 	protected IConverter<?> idConverter = null;
 	@Getter
 	private boolean valid = false;
 
-	public APattern(Archive archive, String pkg, ClassLoader loader, Class<?> type) {
+	public APattern(IArchive archive, String pkg, ClassLoader loader, Class<?> type) {
 		super(pkg, loader, type);
 		this.archive = archive;
 	}

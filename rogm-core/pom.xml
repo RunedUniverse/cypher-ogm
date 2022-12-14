@@ -32,7 +32,7 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<artifact-version>2</artifact-version>
+		<artifact-version>0</artifact-version>
 		<bom-version>0</bom-version>
 		<sources-bom-version>0</sources-bom-version>
 	</properties>

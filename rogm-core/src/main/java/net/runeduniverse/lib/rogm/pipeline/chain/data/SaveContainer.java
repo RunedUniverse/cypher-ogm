@@ -81,15 +81,4 @@ public class SaveContainer implements ISaveContainer {
 			return;
 		this.calculator = calculator;
 	}
-
-	@FunctionalInterface
-	public static interface DataContainerCreator {
-		IDataContainer create(final Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData) throws Exception;
-	}
-
-	@FunctionalInterface
-	public static interface EffectedFilterCalculator {
-		Set<IFilter> calculate(final IArchive archive, final IBuffer buffer,
-				final Map<Object, IQueryBuilderInstance<?, ?, ? extends IFilter>> includedData) throws Exception;
-	}
 }

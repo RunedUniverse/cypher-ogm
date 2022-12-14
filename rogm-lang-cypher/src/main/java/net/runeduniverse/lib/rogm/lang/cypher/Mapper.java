@@ -27,8 +27,9 @@ import lombok.Getter;
 import lombok.Setter;
 import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
 import net.runeduniverse.lib.rogm.api.buffer.LoadState;
+import net.runeduniverse.lib.rogm.api.container.IUpdatedEntryContainer;
 import net.runeduniverse.lib.rogm.api.lang.Language;
-import net.runeduniverse.lib.rogm.api.modules.Data;
+import net.runeduniverse.lib.rogm.api.modules.Module;
 import net.runeduniverse.lib.rogm.api.pattern.IData;
 import net.runeduniverse.lib.rogm.api.pattern.IDataRecord;
 import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
@@ -80,9 +81,9 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 	}
 
 	@Override
-	public <ID extends Serializable> Collection<UpdatedEntryContainer> updateObjectIds(Map<String, ID> ids,
+	public <ID extends Serializable> Collection<IUpdatedEntryContainer> updateObjectIds(Map<String, ID> ids,
 			LoadState loadState) {
-		Set<UpdatedEntryContainer> col = new HashSet<>();
+		Set<IUpdatedEntryContainer> col = new HashSet<>();
 		this.map.forEach((filter, code) -> {
 			if (filter instanceof IFRelation) {
 				Object s = ids.get("id_" + code);
@@ -103,14 +104,14 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 	}
 
 	@Override
-	public IDataRecord parseDataRecord(List<Map<String, Data>> records) {
+	public IDataRecord parseDataRecord(List<Map<String, Module.Data>> records) {
 		/*
 		 * List => 1 Map per Record-line Map => key = a - value = all data from a
 		 */
 		Set<Serializable> ids = new HashSet<>();
 		List<Set<IData>> recordData = new ArrayList<>();
 
-		for (Map<String, Data> record : records) {
+		for (Map<String, Module.Data> record : records) {
 			ids.add(record.get(this.map.get(this.primary))
 					.getId());
 
@@ -118,7 +119,7 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 			recordData.add(set);
 
 			for (IFilter filter : this.map.keySet()) {
-				Data data = record.get(this.map.get(filter));
+				Module.Data data = record.get(this.map.get(filter));
 				if (data == null || data.getId() == null)
 					continue;
 				set.add(new PData(data, filter));
@@ -171,7 +172,7 @@ public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Langu
 		private String data;
 		private IFilter filter;
 
-		protected PData(Data data, IFilter filter) {
+		protected PData(Module.Data data, IFilter filter) {
 			this.id = data.getId();
 			this.entityId = data.getEntityId();
 			this.labels = data.getLabels();

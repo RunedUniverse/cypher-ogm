@@ -21,6 +21,8 @@ import net.runeduniverse.lib.rogm.api.buffer.IBuffer;
 import net.runeduniverse.lib.rogm.api.buffer.IEntry;
 import net.runeduniverse.lib.rogm.api.buffer.LoadState;
 import net.runeduniverse.lib.rogm.api.container.IDeleteContainer;
+import net.runeduniverse.lib.rogm.api.container.ISaveContainer;
+import net.runeduniverse.lib.rogm.api.container.IUpdatedEntryContainer;
 import net.runeduniverse.lib.rogm.api.lang.DatabaseCleaner;
 import net.runeduniverse.lib.rogm.api.lang.Language;
 import net.runeduniverse.lib.rogm.api.lang.Language.IDeleteMapper;
@@ -37,7 +39,6 @@ import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.DepthContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.EntityContainer;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
-import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.lib.utils.chain.Chain;
 import net.runeduniverse.lib.utils.chain.ChainRuntime;
 import net.runeduniverse.lib.utils.errors.ExceptionSuppressions;
@@ -63,7 +64,7 @@ public interface LookupLayers {
 
 	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.BUILD_QUERY_MAPPER })
 	public static ISaveMapper buildSaveMapper(final Archive archive, final IBuffer buffer, final Language.Instance lang,
-			SaveContainer container) throws Exception {
+			ISaveContainer container) throws Exception {
 		return lang.save(container.getDataContainer(), container.calculateEffectedFilter(archive, buffer));
 	}
 
@@ -107,7 +108,7 @@ public interface LookupLayers {
 	}
 
 	@Chain(label = Chains.SAVE_CHAIN.ONE.LABEL, layers = { Chains.SAVE_CHAIN.ONE.COLLECT_UPDATED_ENTRIES })
-	public static Collection<UpdatedEntryContainer> collectUpdatedEntries(ISaveMapper mapper, IRawIdRecord record,
+	public static Collection<IUpdatedEntryContainer> collectUpdatedEntries(ISaveMapper mapper, IRawIdRecord record,
 			DepthContainer depth) {
 		return mapper.updateObjectIds(record.getIds(), LoadState.get(depth.getValue() == 0));
 	}
