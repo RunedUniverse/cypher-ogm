@@ -23,10 +23,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import net.runeduniverse.lib.rogm.api.buffer.IEntry;
+import net.runeduniverse.lib.rogm.api.container.ILazyEntriesContainer;
 
 @NoArgsConstructor
 @ToString
-public class LazyEntriesContainer {
+public class LazyEntriesContainer implements ILazyEntriesContainer {
 	@Getter
 	private final Set<IEntry> lazyEntries = new HashSet<>();
 
@@ -38,7 +39,7 @@ public class LazyEntriesContainer {
 		return this.lazyEntries.addAll(entries);
 	}
 
-	public boolean addEntries(LazyEntriesContainer container) {
+	public boolean addEntries(ILazyEntriesContainer container) {
 		return this.lazyEntries.addAll(container.getLazyEntries());
 	}
 

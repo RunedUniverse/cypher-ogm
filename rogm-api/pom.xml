@@ -62,13 +62,20 @@
 			<groupId>net.runeduniverse.lib.utils</groupId>
 			<artifactId>utils-errors</artifactId>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>net.runeduniverse.lib.utils</groupId>
 			<artifactId>utils-chain</artifactId>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>net.runeduniverse.lib.utils</groupId>
 			<artifactId>utils-scanner</artifactId>
+		</dependency>
+
+		<!-- COMPILE -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

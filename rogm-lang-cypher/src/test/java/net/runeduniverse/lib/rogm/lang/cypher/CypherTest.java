@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
 
 import net.runeduniverse.lib.rogm.api.Configuration;
 import net.runeduniverse.lib.rogm.api.annotations.Direction;
+import net.runeduniverse.lib.rogm.api.querying.FilterNode;
+import net.runeduniverse.lib.rogm.api.querying.FilterRelation;
 import net.runeduniverse.lib.rogm.parser.json.Feature;
 import net.runeduniverse.lib.rogm.parser.json.JSONParser;
-import net.runeduniverse.lib.rogm.querying.FilterNode;
-import net.runeduniverse.lib.rogm.querying.FilterRelation;
 import net.runeduniverse.lib.rogm.test.AConfigTest;
 import net.runeduniverse.lib.rogm.test.dummies.DummyModule;
 

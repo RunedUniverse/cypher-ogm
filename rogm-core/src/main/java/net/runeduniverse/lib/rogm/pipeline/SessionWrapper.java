@@ -26,10 +26,10 @@ import java.util.logging.Level;
 
 import net.runeduniverse.lib.rogm.Session;
 import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.QueryBuilder;
 import net.runeduniverse.lib.rogm.info.SessionInfo;
 import net.runeduniverse.lib.rogm.logging.PipelineLogger;
 import net.runeduniverse.lib.rogm.logging.SessionLogger;
-import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 
 public final class SessionWrapper implements Session {
 

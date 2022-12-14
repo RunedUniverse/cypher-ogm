@@ -32,8 +32,8 @@ import net.runeduniverse.lib.rogm.api.pattern.IRelationPattern;
 import net.runeduniverse.lib.rogm.api.pattern.IValidatable;
 import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
-import net.runeduniverse.lib.rogm.querying.QueryBuilder.NodeQueryBuilder;
-import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
+import net.runeduniverse.lib.rogm.api.querying.QueryBuilder.NodeQueryBuilder;
+import net.runeduniverse.lib.rogm.api.querying.QueryBuilder.RelationQueryBuilder;
 
 @Getter
 @Setter

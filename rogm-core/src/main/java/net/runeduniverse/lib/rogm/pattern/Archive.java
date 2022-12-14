@@ -39,7 +39,7 @@ import net.runeduniverse.lib.rogm.api.pattern.IQueryPattern;
 import net.runeduniverse.lib.rogm.api.pattern.IValidatable;
 import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
-import net.runeduniverse.lib.rogm.querying.QueryBuilder;
+import net.runeduniverse.lib.rogm.api.querying.QueryBuilder;
 import net.runeduniverse.lib.utils.logging.Level;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 import net.runeduniverse.lib.utils.scanner.pattern.FieldPattern;

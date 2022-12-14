@@ -20,9 +20,9 @@ import java.util.Collection;
 
 import net.runeduniverse.lib.rogm.api.Configuration;
 import net.runeduniverse.lib.rogm.api.querying.IFilter;
+import net.runeduniverse.lib.rogm.api.querying.QueryBuilder;
 import net.runeduniverse.lib.rogm.pipeline.DatabasePipelineFactory;
 import net.runeduniverse.lib.rogm.pipeline.Pipeline;
-import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 
 /**
  * The Session Interface provides access to the connected database.

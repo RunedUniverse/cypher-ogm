@@ -35,9 +35,9 @@ import net.runeduniverse.lib.rogm.api.pattern.PatternType;
 import net.runeduniverse.lib.rogm.api.querying.IDataContainer;
 import net.runeduniverse.lib.rogm.api.querying.IFilter;
 import net.runeduniverse.lib.rogm.api.querying.IQueryBuilderInstance;
+import net.runeduniverse.lib.rogm.api.querying.QueryBuilder.NodeQueryBuilder;
+import net.runeduniverse.lib.rogm.api.querying.QueryBuilder.RelationQueryBuilder;
 import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
-import net.runeduniverse.lib.rogm.querying.QueryBuilder.NodeQueryBuilder;
-import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
 //deprecation = internal use
 @SuppressWarnings("deprecation")
