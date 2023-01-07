@@ -1,0 +1,234 @@
+<executions
+	xmlns="https://api.runeduniverse.net/runes4tools/r4m-build-executions"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://api.runeduniverse.net/runes4tools/r4m-build-executions https://api.runeduniverse.net/runes4tools/r4m-build-executions-v1.xsd">
+
+	<execution id="default">
+		<triggers>
+			<active-profile id="dev-install" />
+		</triggers>
+		<lifecycles>
+			<lifecycle id="clean">
+				<phases>
+					<phase id="clean">
+						<goals>
+							<goal id="clean">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-clean-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+				</phases>
+			</lifecycle>
+			<lifecycle id="default">
+				<phases>
+					<phase id="validate">
+						<goals>
+							<goal id="format">
+								<groupId>com.mycila</groupId>
+								<artifactId>license-maven-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="initialize">
+						<goals>
+							<goal id="toolchain">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-toolchains-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="process-resources">
+						<goals>
+							<goal id="resources">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-resources-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="compile">
+						<goals>
+							<goal id="compile">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-compiler-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="process-test-resources">
+						<goals>
+							<goal id="testResources">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-resources-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="test-compile">
+						<goals>
+							<goal id="testCompile">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-compiler-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="test">
+						<goals>
+							<goal id="test">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-surefire-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="test">
+						<goals>
+							<goal id="test">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-surefire-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="package">
+						<goals>
+							<goal id="jar">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-jar-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="install">
+						<goals>
+							<goal id="install">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-install-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+				</phases>
+			</lifecycle>
+		</lifecycles>
+	</execution>
+	<execution id="pipeline">
+		<triggers>
+			<active-profile id="jenkins" />
+		</triggers>
+		<lifecycles>
+			<lifecycle id="clean">
+				<phases>
+					<phase id="clean">
+						<goals>
+							<goal id="clean">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-clean-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+				</phases>
+			</lifecycle>
+			<lifecycle id="default">
+				<phases>
+					<phase id="validate">
+						<goals>
+							<goal id="check">
+								<groupId>com.mycila</groupId>
+								<artifactId>license-maven-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="initialize">
+						<goals>
+							<goal id="toolchain">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-toolchains-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="process-resources">
+						<goals>
+							<goal id="resources">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-resources-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="compile">
+						<goals>
+							<goal id="compile">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-compiler-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="process-test-resources">
+						<goals>
+							<goal id="testResources">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-resources-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="test-compile">
+						<goals>
+							<goal id="testCompile">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-compiler-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="test">
+						<goals>
+							<goal id="test">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-surefire-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="package">
+						<goals>
+							<goal id="jar">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-jar-plugin</artifactId>
+							</goal>
+							<goal id="jar-no-fork">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-source-plugin</artifactId>
+							</goal>
+							<goal id="jar">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-javadoc-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="verify">
+						<goals>
+							<goal id="sign">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-gpg-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="install">
+						<goals>
+							<goal id="install">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-install-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+					<phase id="deploy">
+						<goals>
+							<!-- attach-artifact could be removed -->
+							<!-- if maven could cache more effective -->
+							<goal id="attach-artifact">
+								<groupId>org.codehaus.mojo</groupId>
+								<artifactId>build-helper-maven-plugin</artifactId>
+							</goal>
+							<goal id="deploy">
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-deploy-plugin</artifactId>
+							</goal>
+						</goals>
+					</phase>
+				</phases>
+			</lifecycle>
+		</lifecycles>
+	</execution>
+</executions>
