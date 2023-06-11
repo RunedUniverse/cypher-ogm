@@ -1,6 +1,6 @@
 <!--
 
-    Copyright © 2022 Pl4yingNight (pl4yingnight@gmail.com)
+    Copyright © 2023 VenaNocta (venanocta@gmail.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -330,7 +330,7 @@
 					<artifactId>license-maven-plugin</artifactId>
 					<configuration>
 						<properties>
-							<year>2022</year>
+							<year>2023</year>
 							<owner>VenaNocta</owner>
 							<email>venanocta@gmail.com</email>
 						</properties>
