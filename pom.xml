@@ -56,9 +56,9 @@
 
 	<developers>
 		<developer>
-			<id>pl4yingnight</id>
-			<name>Pl4yingNight</name>
-			<email>pl4yingnight@gmail.com</email>
+			<id>venanocta</id>
+			<name>VenaNocta</name>
+			<email>venanocta@gmail.com</email>
 			<organization>RunedUniverse</organization>
 			<organizationUrl>https://www.runeduniverse.net</organizationUrl>
 			<timezone>Europe/Vienna</timezone>
@@ -331,8 +331,8 @@
 					<configuration>
 						<properties>
 							<year>2022</year>
-							<owner>Pl4yingNight</owner>
-							<email>pl4yingnight@gmail.com</email>
+							<owner>VenaNocta</owner>
+							<email>venanocta@gmail.com</email>
 						</properties>
 						<licenseSets>
 							<licenseSet>
