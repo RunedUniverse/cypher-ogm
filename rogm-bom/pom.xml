@@ -1,6 +1,6 @@
 <!--
 
-    Copyright © 2023 VenaNocta (venanocta@gmail.com)
+    Copyright © 2022 Pl4yingNight (pl4yingnight@gmail.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -115,26 +115,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<profiles>
-		<profile>
-			<id>install</id>
-			<build>
-				<defaultGoal>
-					org.apache.maven.plugins:maven-clean-plugin:clean@jenkins
-					org.apache.maven.plugins:maven-resources-plugin:resources@jenkins
-					org.apache.maven.plugins:maven-gpg-plugin:sign@jenkins
-					org.apache.maven.plugins:maven-install-plugin:install@jenkins
-				</defaultGoal>
-			</build>
-		</profile>
-		<profile>
-			<id>deploy</id>
-			<build>
-				<defaultGoal>
-					org.apache.maven.plugins:maven-deploy-plugin:deploy@jenkins
-				</defaultGoal>
-			</build>
-		</profile>
-	</profiles>
 </project>

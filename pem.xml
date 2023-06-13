@@ -25,7 +25,54 @@
 
 		<execution id="default" source="override">
 			<triggers>
+				<active-profile id="license-check" />
+			</triggers>
+			<lifecycles>
+				<lifecycle id="default">
+					<phases>
+						<phase id="validate">
+							<goals>
+								<goal id="check">
+									<modes>
+										<default />
+									</modes>
+									<groupId>com.mycila</groupId>
+									<artifactId>license-maven-plugin</artifactId>
+								</goal>
+							</goals>
+						</phase>
+					</phases>
+				</lifecycle>
+			</lifecycles>
+		</execution>
+
+		<execution id="default" source="override">
+			<triggers>
+				<active-profile id="license-update" />
+			</triggers>
+			<lifecycles>
+				<lifecycle id="default">
+					<phases>
+						<phase id="validate">
+							<goals>
+								<goal id="format">
+									<modes>
+										<default />
+									</modes>
+									<groupId>com.mycila</groupId>
+									<artifactId>license-maven-plugin</artifactId>
+								</goal>
+							</goals>
+						</phase>
+					</phases>
+				</lifecycle>
+			</lifecycles>
+		</execution>
+
+		<execution id="default" source="override">
+			<triggers>
 				<active-profile id="dev-install" />
+				<missing-profile id="jenkins" />
 			</triggers>
 			<lifecycles>
 				<lifecycle id="clean">
@@ -50,6 +97,7 @@
 							<goals>
 								<goal id="format">
 									<modes>
+										<default />
 										<dev />
 									</modes>
 									<groupId>com.mycila</groupId>
@@ -123,20 +171,20 @@
 								</goal>
 							</goals>
 						</phase>
-						<phase id="test">
+						<phase id="package">
 							<goals>
-								<goal id="test">
+								<goal id="jar">
 									<modes>
 										<dev />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
-									<artifactId>maven-surefire-plugin</artifactId>
+									<artifactId>maven-jar-plugin</artifactId>
 								</goal>
 							</goals>
 						</phase>
 						<phase id="package">
 							<goals>
-								<goal id="jar">
+								<goal id="test-jar">
 									<modes>
 										<dev />
 									</modes>
@@ -175,7 +223,7 @@
 							<goals>
 								<goal id="compile">
 									<modes>
-										<default />
+										<install />
 										<junit-jupiter />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
@@ -187,7 +235,7 @@
 							<goals>
 								<goal id="testCompile">
 									<modes>
-										<default />
+										<install />
 										<junit-jupiter />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
@@ -199,7 +247,7 @@
 							<goals>
 								<goal id="test">
 									<modes>
-										<default />
+										<install />
 										<junit-jupiter />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
@@ -211,23 +259,44 @@
 							<goals>
 								<goal id="jar">
 									<modes>
-										<default />
+										<install />
 										<deploy />
 										<deploy-signed />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-jar-plugin</artifactId>
 								</goal>
+								<goal id="test-jar">
+									<modes>
+										<install-test />
+									</modes>
+									<groupId>org.apache.maven.plugins</groupId>
+									<artifactId>maven-jar-plugin</artifactId>
+								</goal>
 								<goal id="jar-no-fork">
 									<modes>
-										<default />
+										<install />
+									</modes>
+									<groupId>org.apache.maven.plugins</groupId>
+									<artifactId>maven-source-plugin</artifactId>
+								</goal>
+								<goal id="test-jar-no-fork">
+									<modes>
+										<install-test />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-source-plugin</artifactId>
 								</goal>
 								<goal id="jar">
 									<modes>
-										<default />
+										<install />
+									</modes>
+									<groupId>org.apache.maven.plugins</groupId>
+									<artifactId>maven-javadoc-plugin</artifactId>
+								</goal>
+								<goal id="test-jar">
+									<modes>
+										<install-test />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-javadoc-plugin</artifactId>
@@ -251,6 +320,7 @@
 								<goal id="clean">
 									<modes>
 										<default />
+										<install />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-clean-plugin</artifactId>
@@ -261,22 +331,11 @@
 				</lifecycle>
 				<lifecycle id="default">
 					<phases>
-						<phase id="validate">
-							<goals>
-								<goal id="check">
-									<modes>
-										<default />
-									</modes>
-									<groupId>com.mycila</groupId>
-									<artifactId>license-maven-plugin</artifactId>
-								</goal>
-							</goals>
-						</phase>
 						<phase id="initialize">
 							<goals>
 								<goal id="toolchain">
 									<modes>
-										<default />
+										<install />
 										<junit-jupiter />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
@@ -288,7 +347,7 @@
 							<goals>
 								<goal id="resources">
 									<modes>
-										<default />
+										<install />
 										<junit-jupiter />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
@@ -300,7 +359,7 @@
 							<goals>
 								<goal id="testResources">
 									<modes>
-										<default />
+										<install />
 										<junit-jupiter />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
@@ -312,7 +371,7 @@
 							<goals>
 								<goal id="sign">
 									<modes>
-										<default />
+										<install />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-gpg-plugin</artifactId>
@@ -323,7 +382,7 @@
 							<goals>
 								<goal id="install">
 									<modes>
-										<default />
+										<install />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-install-plugin</artifactId>
@@ -336,7 +395,6 @@
 								<!-- if maven could cache more effective -->
 								<goal id="attach-artifact">
 									<modes>
-										<default />
 										<deploy-signed />
 									</modes>
 									<groupId>org.codehaus.mojo</groupId>
