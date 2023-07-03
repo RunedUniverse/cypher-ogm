@@ -21,7 +21,6 @@
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
 		<version>2.1.1</version>
-		<relativePath>../</relativePath>
 	</parent>
 
 	<groupId>net.runeduniverse.lib.rogm.lang</groupId>
@@ -37,7 +36,7 @@
 		<artifact-version>2</artifact-version>
 		<bom-version>2</bom-version>
 		<sources-bom-version>2</sources-bom-version>
-		<root-dir>${project.parent.relativePath}</root-dir>
+		<root-dir>..</root-dir>
 	</properties>
 
 	<licenses>

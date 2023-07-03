@@ -21,7 +21,6 @@
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
 		<version>2.1.1</version>
-		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>rogm-sources-bom</artifactId>
@@ -33,8 +32,8 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<root-dir>${project.parent.relativePath}</root-dir>
 		<artifact-version>2</artifact-version>
+		<root-dir>..</root-dir>
 		<!-- ARTIFACT VERSIONS -->
 		<runeduniverse-utils-common-version>[1.0.1,)</runeduniverse-utils-common-version>
 		<runeduniverse-utils-logging-version>[1.0.1,)</runeduniverse-utils-logging-version>

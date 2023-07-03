@@ -15,13 +15,14 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
 		<version>2.1.1</version>
-		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>rogm-core</artifactId>
@@ -36,7 +37,7 @@
 		<artifact-version>2</artifact-version>
 		<bom-version>2</bom-version>
 		<sources-bom-version>2</sources-bom-version>
-		<root-dir>${project.parent.relativePath}</root-dir>
+		<root-dir>..</root-dir>
 	</properties>
 
 	<licenses>
@@ -110,7 +111,8 @@
 			<dependency>
 				<groupId>net.runeduniverse.lib.rogm</groupId>
 				<artifactId>rogm-sources-bom</artifactId>
-				<version>${major-version}.${minor-version}.${sources-bom-version}</version>
+				<version>
+					${major-version}.${minor-version}.${sources-bom-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -128,7 +130,8 @@
 		<profile>
 			<id>dev-install</id>
 			<build>
-				<defaultGoal>clean license:format toolchains:toolchain compile install</defaultGoal>
+				<defaultGoal>clean license:format toolchains:toolchain compile
+					install</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -168,7 +171,8 @@
 							<artifacts>
 								<!-- gpg signature -->
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}.pom.asc</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}.pom.asc</file>
 									<type>pom.asc</type>
 								</artifact>
 							</artifacts>
@@ -181,7 +185,7 @@
 						<executions>
 							<execution>
 								<!-- must be here or it gets overridden! -->
-								<id>jenkins</id>
+								<id>pipeline</id>
 								<inherited>true</inherited>
 								<phase>verify</phase>
 								<goals>
@@ -193,58 +197,69 @@
 							<artifacts>
 								<!-- gpg signatures -->
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}.pom.asc</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}.pom.asc</file>
 									<type>pom.asc</type>
 								</artifact>
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}.jar.asc</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}.jar.asc</file>
 									<type>jar.asc</type>
 								</artifact>
 								<!-- test-jar -->
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-tests.jar.asc</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}-tests.jar.asc</file>
 									<type>jar.asc</type>
 									<classifier>tests</classifier>
 								</artifact>
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-test-javadoc.jar</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}-test-javadoc.jar</file>
 									<type>jar</type>
 									<classifier>test-javadoc</classifier>
 								</artifact>
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-test-javadoc.jar.asc</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}-test-javadoc.jar.asc</file>
 									<type>jar.asc</type>
 									<classifier>test-javadoc</classifier>
 								</artifact>
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-test-sources.jar</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}-test-sources.jar</file>
 									<type>jar</type>
 									<classifier>test-sources</classifier>
 								</artifact>
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-test-sources.jar.asc</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}-test-sources.jar.asc</file>
 									<type>jar.asc</type>
 									<classifier>test-sources</classifier>
 								</artifact>
 								<!-- javadoc -->
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-javadoc.jar</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}-javadoc.jar</file>
 									<type>jar</type>
 									<classifier>javadoc</classifier>
 								</artifact>
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-javadoc.jar.asc</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}-javadoc.jar.asc</file>
 									<type>jar.asc</type>
 									<classifier>javadoc</classifier>
 								</artifact>
 								<!-- sources -->
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-sources.jar</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}-sources.jar</file>
 									<type>jar</type>
 									<classifier>sources</classifier>
 								</artifact>
 								<artifact>
-									<file>${project.build.directory}/${project.build.finalName}-sources.jar.asc</file>
+									<file>
+										${project.build.directory}/${project.build.finalName}-sources.jar.asc</file>
 									<type>jar.asc</type>
 									<classifier>sources</classifier>
 								</artifact>
