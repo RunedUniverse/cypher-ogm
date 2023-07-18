@@ -117,15 +117,13 @@ pipeline {
 				environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
 			}
 			steps {
-				dir(path: 'rogm-sources-bom') {
-					sh 'mvn-dev -P ${REPOS} dependency:resolve  --non-recursive'
-					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-					sh 'ls -l target/'
-				}
+				sh 'mvn-dev -P ${REPOS} dependency:resolve -pl rogm-sources-bom'
+				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install -pl rogm-sources-bom'
 			}
 			post {
 				always {
 					dir(path: 'rogm-sources-bom/target') {
+						sh 'ls -l'
 						archiveArtifacts artifacts: '*.pom', fingerprint: true
 						archiveArtifacts artifacts: '*.asc', fingerprint: true
 						sh 'cp *.pom *.asc ../../target/result/'
@@ -138,14 +136,12 @@ pipeline {
 				environment name: 'CHANGES_ROGM_BOM', value: '1'
 			}
 			steps {
-				dir(path: 'rogm-bom') {
-					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-					sh 'ls -l target/'
-				}
+				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install -pl rogm-bom'
 			}
 			post {
 				always {
 					dir(path: 'rogm-bom/target') {
+						sh 'ls -l'
 						archiveArtifacts artifacts: '*.pom', fingerprint: true
 						archiveArtifacts artifacts: '*.asc', fingerprint: true
 						sh 'cp *.pom *.asc ../../target/result/'
@@ -158,14 +154,12 @@ pipeline {
 				environment name: 'CHANGES_ROGM_CORE', value: '1'
 			}
 			steps {
-				dir(path: 'rogm-core') {
-					sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-					sh 'ls -l target/'
-				}
+				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install -pl rogm-core'
 			}
 			post {
 				always {
 					dir(path: 'rogm-core/target') {
+						sh 'ls -l'
 						archiveArtifacts artifacts: '*.pom', fingerprint: true
 						archiveArtifacts artifacts: '*.asc', fingerprint: true
 						sh 'cp *.pom *.jar *.asc ../../target/result/'
@@ -180,14 +174,12 @@ pipeline {
 						environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-parser-json') {
-							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-							sh 'ls -l target/'
-						}
+						sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install -pl rogm-parser-json'
 					}
 					post {
 						always {
 							dir(path: 'rogm-parser-json/target') {
+								sh 'ls -l'
 								archiveArtifacts artifacts: '*.pom', fingerprint: true
 								archiveArtifacts artifacts: '*.jar', fingerprint: true
 								archiveArtifacts artifacts: '*.asc', fingerprint: true
@@ -205,14 +197,12 @@ pipeline {
 						environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-							sh 'ls -l target/'
-						}
+						sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install -pl rogm-lang-cypher'
 					}
 					post {
 						always {
 							dir(path: 'rogm-lang-cypher/target') {
+								sh 'ls -l'
 								archiveArtifacts artifacts: '*.pom', fingerprint: true
 								archiveArtifacts artifacts: '*.jar', fingerprint: true
 								archiveArtifacts artifacts: '*.asc', fingerprint: true
@@ -230,14 +220,12 @@ pipeline {
 						environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-							sh 'ls -l target/'
-						}
+						sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install -pl rogm-module-neo4j'
 					}
 					post {
 						always {
 							dir(path: 'rogm-module-neo4j/target') {
+								sh 'ls -l'
 								archiveArtifacts artifacts: '*.pom', fingerprint: true
 								archiveArtifacts artifacts: '*.jar', fingerprint: true
 								archiveArtifacts artifacts: '*.asc', fingerprint: true
@@ -251,14 +239,12 @@ pipeline {
 				//		environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
 				//	}
 				//	steps {
-				//		dir(path: 'rogm-module-decorator') {
-				//			sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-				//			sh 'ls -l target/'
-				//		}
+				//		sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install -pl rogm-module-decorator'
 				//	}
 				//	post {
 				//		always {
 				//			dir(path: 'rogm-module-decorator/target') {
+				//				sh 'ls -l'
 				//				archiveArtifacts artifacts: '*.pom', fingerprint: true
 				//				archiveArtifacts artifacts: '*.jar', fingerprint: true
 				//				archiveArtifacts artifacts: '*.asc', fingerprint: true
@@ -417,9 +403,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_BOM', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-bom') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy -pl rogm-bom'
 							}
 						}
 						stage('rogm-sources-bom') {
@@ -427,9 +411,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-sources-bom') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy -pl rogm-sources-bom'
 							}
 						}
 						stage('rogm-core') {
@@ -437,9 +419,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_CORE', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-core') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy -pl rogm-core'
 							}
 						}
 						stage('rogm-parser-json') {
@@ -447,9 +427,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-parser-json') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy -pl rogm-parser-json'
 							}
 						}
 						stage('rogm-lang-cypher') {
@@ -457,9 +435,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-lang-cypher') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy -pl rogm-lang-cypher'
 							}
 						}
 						stage('rogm-module-neo4j') {
@@ -467,9 +443,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-module-neo4j') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy -pl rogm-module-neo4j'
 							}
 						}
 						stage('rogm-module-decorator') {
@@ -477,9 +451,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-module-decorator') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-development,deploy -pl rogm-module-decorator'
 							}
 						}
 					}
@@ -503,9 +475,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_BOM', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-bom') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-pom-signed -pl rogm-bom'
 							}
 						}
 						stage('rogm-sources-bom') {
@@ -513,9 +483,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-sources-bom') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-pom-signed --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-pom-signed -pl rogm-sources-bom'
 							}
 						}
 						stage('rogm-core') {
@@ -523,9 +491,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_CORE', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-core') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed -pl rogm-core'
 							}
 						}
 						stage('rogm-parser-json') {
@@ -533,9 +499,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-parser-json') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed -pl rogm-parser-json'
 							}
 						}
 						stage('rogm-lang-cypher') {
@@ -543,9 +507,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-lang-cypher') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed -pl rogm-lang-cypher'
 							}
 						}
 						stage('rogm-module-neo4j') {
@@ -553,9 +515,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-module-neo4j') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed -pl rogm-module-neo4j'
 							}
 						}
 						stage('rogm-module-decorator') {
@@ -563,9 +523,7 @@ pipeline {
 								environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
 							}
 							steps {
-								dir(path: 'rogm-module-decorator') {
-									sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed --non-recursive'
-								}
+								sh 'mvn-dev -P ${REPOS},dist-repo-releases,deploy-signed -pl rogm-module-decorator'
 							}
 						}
 					}
@@ -592,9 +550,7 @@ pipeline {
 						environment name: 'CHANGES_ROGM_BOM', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-bom') {
-							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-pom-signed --non-recursive'
-						}
+						sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-pom-signed -pl rogm-bom'
 					}
 				}
 				stage('rogm-sources-bom') {
@@ -602,9 +558,7 @@ pipeline {
 						environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-sources-bom') {
-							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-pom-signed --non-recursive'
-						}
+						sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-pom-signed -pl rogm-sources-bom'
 					}
 				}
 				stage('rogm-core') {
@@ -612,9 +566,7 @@ pipeline {
 						environment name: 'CHANGES_ROGM_CORE', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-core') {
-							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
-						}
+						sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed -pl rogm-core'
 					}
 				}
 				stage('rogm-parser-json') {
@@ -622,9 +574,7 @@ pipeline {
 						environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-parser-json') {
-							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
-						}
+						sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed -pl rogm-parser-json'
 					}
 				}
 				stage('rogm-lang-cypher') {
@@ -632,9 +582,7 @@ pipeline {
 						environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-lang-cypher') {
-							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
-						}
+						sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed -pl rogm-lang-cypher'
 					}
 				}
 				stage('rogm-module-neo4j') {
@@ -642,9 +590,7 @@ pipeline {
 						environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-module-neo4j') {
-							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
-						}
+						sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed -pl rogm-module-neo4j'
 					}
 				}
 				stage('rogm-module-decorator') {
@@ -652,9 +598,7 @@ pipeline {
 						environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
 					}
 					steps {
-						dir(path: 'rogm-module-decorator') {
-							sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed --non-recursive'
-						}
+						sh 'mvn-dev -P repo-releases,dist-repo-maven-central,deploy-signed -pl rogm-module-decorator'
 					}
 				}
 			}
