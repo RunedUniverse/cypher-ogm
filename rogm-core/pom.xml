@@ -130,8 +130,6 @@
 		<profile>
 			<id>dev-install</id>
 			<build>
-				<defaultGoal>clean license:format toolchains:toolchain compile
-					install</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

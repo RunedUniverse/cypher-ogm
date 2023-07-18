@@ -72,7 +72,10 @@
 		<execution id="default" source="override">
 			<triggers>
 				<active-profile id="dev-install" />
-				<missing-profile id="jenkins" />
+				<missing-profile id="install" />
+				<missing-profile id="test-junit-jupiter" />
+				<missing-profile id="deploy" />
+				<missing-profile id="deploy-signed" />
 			</triggers>
 			<lifecycles>
 				<lifecycle id="clean">
@@ -207,7 +210,10 @@
 
 		<execution id="pipeline" source="override">
 			<triggers>
-				<active-profile id="jenkins" />
+				<active-profile id="install" />
+				<active-profile id="test-junit-jupiter" />
+				<active-profile id="deploy" />
+				<active-profile id="deploy-signed" />
 			</triggers>
 			<restrictions>
 				<packaging-procedure>jar</packaging-procedure>
@@ -243,7 +249,6 @@
 							<goals>
 								<goal id="test">
 									<modes>
-										<install />
 										<junit-jupiter />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
@@ -306,7 +311,10 @@
 
 		<execution id="pipeline" source="override">
 			<triggers>
-				<active-profile id="jenkins" />
+				<active-profile id="install" />
+				<active-profile id="test-junit-jupiter" />
+				<active-profile id="deploy" />
+				<active-profile id="deploy-signed" />
 			</triggers>
 			<lifecycles>
 				<lifecycle id="clean">
