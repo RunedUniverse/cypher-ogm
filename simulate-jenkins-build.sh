@@ -131,10 +131,10 @@ printf ">>>  [BUILD]\n"
 pushd $WORKSPACE
 # parent
 printf "=== BUILD : ROGM PARENT\n"
-#execmvn_cmd dependency:resolve --non-recursive
+execmvn_cmd dependency:resolve --non-recursive
 
 printf "=== BUILD : ROGM Bill of Sources\n"
-#execmvn_cmd dependency:resolve --non-recursive -pl rogm-sources-bom
+execmvn_cmd dependency:resolve -pl rogm-sources-bom
 execmvn_install_projects rogm-sources-bom
 
 printf "=== BUILD : ROGM Bill of Materials\n"
