@@ -150,10 +150,7 @@
 			<build>
 				<defaultGoal>
 					clean
-					install/+package
-					install-test/package
-					install/verify
-					install/install
+					install,install-test/install]
 				</defaultGoal>
 			</build>
 		</profile>
