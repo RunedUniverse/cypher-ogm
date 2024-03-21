@@ -86,6 +86,8 @@
 		<major-version>2</major-version>
 		<minor-version>1</minor-version>
 		<artifact-version>2</artifact-version>
+		<!-- ARTIFACT VERSIONS -->
+		<lombok-version>1.18.12</lombok-version>
 		<!-- ARTIFACT VERSIONS - COMPILER -->
 		<plugin-maven-clean-version>3.1.0</plugin-maven-clean-version>
 		<plugin-maven-toolchains-version>3.1.0</plugin-maven-toolchains-version>
@@ -94,6 +96,7 @@
 		<plugin-maven-jar-version>3.0.2</plugin-maven-jar-version>
 		<plugin-maven-source-version>3.2.1</plugin-maven-source-version>
 		<plugin-maven-javadoc-version>3.2.0</plugin-maven-javadoc-version>
+		<plugin-maven-surefire-version>3.0.0-M5</plugin-maven-surefire-version>
 		<plugin-maven-install-version>3.0.0-M1</plugin-maven-install-version>
 		<plugin-revelc-formatter-version>2.23.0</plugin-revelc-formatter-version>
 		<plugin-mycila-license-version>4.2.rc1</plugin-mycila-license-version>
