@@ -35,35 +35,35 @@ pipeline {
 
 		CHANGES_ROGM_PARENT = """${sh(
 				returnStdout: true,
-				script: '.build/git-check-for-change pom.xml rogm-parent'
+				script: '.build/git-check-version-tag rogm-parent .'
 			)}"""
 		CHANGES_ROGM_BOM = """${sh(
 				returnStdout: true,
-				script: '.build/git-check-for-change rogm-bom/pom.xml rogm-bom'
+				script: '.build/git-check-version-tag rogm-bom rogm-bom'
 			)}"""
 		CHANGES_ROGM_SOURCES_BOM = """${sh(
 				returnStdout: true,
-				script: '.build/git-check-for-change rogm-sources-bom/pom.xml rogm-sources-bom'
+				script: '.build/git-check-version-tag rogm-sources-bom rogm-sources-bom'
 			)}"""
 		CHANGES_ROGM_CORE = """${sh(
 				returnStdout: true,
-				script: '.build/git-check-for-change rogm-core/pom.xml rogm-core'
+				script: '.build/git-check-version-tag rogm-core rogm-core'
 			)}"""
 		CHANGES_ROGM_PARSER_JSON = """${sh(
 				returnStdout: true,
-				script: '.build/git-check-for-change rogm-parser-json/pom.xml rogm-parser-json'
+				script: '.build/git-check-version-tag rogm-parser-json rogm-parser-json'
 			)}"""
 		CHANGES_ROGM_LANG_CYPHER = """${sh(
 				returnStdout: true,
-				script: '.build/git-check-for-change rogm-lang-cypher/pom.xml rogm-lang-cypher'
+				script: '.build/git-check-version-tag rogm-lang-cypher rogm-lang-cypher'
 			)}"""
 		CHANGES_ROGM_MODULE_NEO4J = """${sh(
 				returnStdout: true,
-				script: '.build/git-check-for-change rogm-module-neo4j/pom.xml rogm-module-neo4j'
+				script: '.build/git-check-version-tag rogm-module-neo4j rogm-module-neo4j'
 			)}"""
 		//CHANGES_ROGM_MODULE_DECORATOR = """${sh(
 		//		returnStdout: true,
-		//		script: '.build/git-check-for-change rogm-module-decorator/pom.xml rogm-module-decorator'
+		//		script: '.build/git-check-version-tag rogm-module-decorator rogm-module-decorator'
 		//	)}"""
 	}
 	stages {
