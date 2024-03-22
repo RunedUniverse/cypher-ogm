@@ -74,8 +74,7 @@ pipeline {
 				sh 'printenv | sort'
 				
 				sh 'mvn-dev -P ${REPOS},install --non-recursive'
-				
-				sh 'mvn org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -q -DforceStdout -pl=rogm-parser-json'
+				sh 'mvn-dev org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -q -DforceStdout -pl=rogm-parser-json'
 				sh 'git describe --tags --abbrev=0 remotes/origin/master --match rogm-parser-json/v2.1.2'
 				sh 'git describe --tags --abbrev=0 remotes/origin/master --match rogm-core/v2.1.3'
 			}
