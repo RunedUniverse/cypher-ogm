@@ -15,10 +15,7 @@ fi
 #git-check-version-tag <tag-name> <maven-module>
 #git-check-version-tag java-utils-bom ../java-utils-bom
 
-pushd $2 > /dev/null
-TAG=$1/v$(mvn $GLOBAL_SETTINGS_FILE $SETTINGS_FILE org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -q -DforceStdout --non-recursive)
-popd > /dev/null
-echo $TAG
+TAG=$1/v$(mvn $GLOBAL_SETTINGS_FILE $SETTINGS_FILE org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -q -DforceStdout -pl=$2)
 if git describe --tags --abbrev=0 remotes/origin/master --match $TAG &>/dev/null
 then
   printf 0;
