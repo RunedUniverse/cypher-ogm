@@ -108,22 +108,26 @@ if $INFO; then
   print_info
 fi
 
-# clear
-if $CLEAR; then
-  printf "=== CLEAR MAVEN REPO\n"
-  WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev dependency:purge-local-repository -DactTransitively=false -DreResolve=false -P ${REPOS}
-fi
-
+execmvn() {
+  WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev $@
+}
 
 execmvn_cmd() {
-  WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN} $@
+  execmvn -P ${REPOS},${TOOLCHAIN} $@
 }
 
 execmvn_install_projects() {
   local projects=$1
   shift 1
-  WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN},${INSTALL} -pl $projects $@
+  execmvn -P ${REPOS},${TOOLCHAIN},${INSTALL} -pl $projects $@
 }
+
+# clear
+if $CLEAR; then
+  printf "=== CLEAR MAVEN REPO\n"
+  execmvn -P ${REPOS},install --non-recursive
+  execmvn -P ${REPOS} dependency:purge-local-repository -DactTransitively=false -DreResolve=false
+fi
 
 # start building
 printf ">>>  [BUILD]\n"
