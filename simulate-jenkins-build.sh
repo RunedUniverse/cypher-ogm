@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 #
-# Copyright © 2022 Pl4yingNight (pl4yingnight@gmail.com)
+# Copyright © 2024 VenaNocta (venanocta@gmail.com)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -114,37 +114,44 @@ if $CLEAR; then
   WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev dependency:purge-local-repository -DactTransitively=false -DreResolve=false -P ${REPOS}
 fi
 
+
+execmvn_cmd() {
+  WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN} $@
+}
+
+execmvn_install_projects() {
+  local projects=$1
+  shift 1
+  WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN},${INSTALL} -pl $projects $@
+}
+
 # start building
 printf ">>>  [BUILD]\n"
 
-cd $WORKSPACE
+pushd $WORKSPACE
 # parent
 printf "=== BUILD : ROGM PARENT\n"
-WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS} dependency:resolve --non-recursive
-WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN},${INSTALL} --non-recursive
+execmvn_cmd dependency:resolve --non-recursive
+execmvn_install_projects . --non-recursive
 
-cd $WORKSPACE/rogm-sources-bom
 printf "=== BUILD : ROGM Bill of Sources\n"
-WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS} dependency:resolve  --non-recursive
-WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN},${INSTALL} --non-recursive
+execmvn_cmd dependency:resolve -pl rogm-sources-bom
+execmvn_install_projects rogm-sources-bom
 
-cd $WORKSPACE/rogm-bom
 printf "=== BUILD : ROGM Bill of Materials\n"
-WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN},${INSTALL} --non-recursive
+execmvn_install_projects rogm-bom
 
-cd $WORKSPACE/rogm-core
 printf "=== BUILD : ROGM CORE\n"
-WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN},${INSTALL} --non-recursive
+execmvn_install_projects rogm-core
 
-cd $WORKSPACE/rogm-parser-json
 printf "=== BUILD : ROGM Parser JSON\n"
-WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN},${INSTALL} --non-recursive
+execmvn_install_projects rogm-parser-json
 
-cd $WORKSPACE/rogm-lang-cypher
 printf "=== BUILD : ROGM Language Cypher\n"
-WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN},${INSTALL} --non-recursive
+execmvn_install_projects rogm-lang-cypher
 
-cd $WORKSPACE/rogm-module-neo4j
 printf "=== BUILD : ROGM Module Neo4j\n"
-WORKSPACE=$WORKSPACE GLOBAL_MAVEN_SETTINGS=$GLOBAL_MAVEN_SETTINGS MAVEN_SETTINGS=$MAVEN_SETTINGS MAVEN_TOOLCHAINS=$MAVEN_TOOLCHAINS $WORKSPACE/.build/mvn-dev -P ${REPOS},${TOOLCHAIN},${INSTALL} --non-recursive
+execmvn_install_projects rogm-module-neo4j
+
+popd
 

@@ -1,6 +1,6 @@
 <!--
 
-    Copyright © 2022 Pl4yingNight (pl4yingnight@gmail.com)
+    Copyright © 2023 VenaNocta (venanocta@gmail.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@
 	<parent>
 		<groupId>net.runeduniverse.lib.rogm</groupId>
 		<artifactId>rogm-parent</artifactId>
-		<version>2.1.1</version>
-		<relativePath>../</relativePath>
+		<version>2.1.2</version>
 	</parent>
 
 	<groupId>net.runeduniverse.lib.rogm.modules</groupId>
@@ -37,7 +36,7 @@
 		<artifact-version>2</artifact-version>
 		<bom-version>2</bom-version>
 		<sources-bom-version>2</sources-bom-version>
-		<root-dir>${project.parent.relativePath}</root-dir>
+		<root-dir>..</root-dir>
 	</properties>
 
 	<licenses>
@@ -115,35 +114,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<profiles>
-		<profile>
-			<id>deploy</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jenkins-deploy-signed</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
