@@ -33,10 +33,7 @@ pipeline {
 				script: 'REPOS=repo-releases; if [ $GIT_BRANCH != master ]; then REPOS=$REPOS,repo-development; fi; printf $REPOS'
 			)}"""
 
-		CHANGES_ROGM_PARENT = """${sh(
-				returnStdout: true,
-				script: '.build/git-check-version-tag rogm-parent .'
-			)}"""
+		
 		CHANGES_ROGM_BOM = """${sh(
 				returnStdout: true,
 				script: '.build/git-check-version-tag rogm-bom rogm-bom'
@@ -48,10 +45,6 @@ pipeline {
 		CHANGES_ROGM_CORE = """${sh(
 				returnStdout: true,
 				script: '.build/git-check-version-tag rogm-core rogm-core'
-			)}"""
-		CHANGES_ROGM_PARSER_JSON = """${sh(
-				returnStdout: true,
-				script: '.build/git-check-version-tag rogm-parser-json rogm-parser-json'
 			)}"""
 		CHANGES_ROGM_LANG_CYPHER = """${sh(
 				returnStdout: true,
@@ -71,11 +64,20 @@ pipeline {
 			steps {
 				sh 'echo "PATH = ${PATH}"'
 				sh 'echo "M2_HOME = ${M2_HOME}"'
+				sh 'mvn-dev -P ${REPOS},install --non-recursive'
+				script {
+					env.CHANGES_ROGM_PARENT = sh(
+						returnStdout: true,
+						script: '.build/git-check-version-tag rogm-parent .'
+					)
+					env.CHANGES_ROGM_PARSER_JSON = sh(
+						returnStdout: true,
+						script: '.build/git-check-version-tag rogm-parser-json rogm-parser-json'
+					)
+				}
+				
 				sh 'printenv | sort'
 				
-				sh 'mvn-dev -P ${REPOS},install --non-recursive'
-				sh 'mvn-dev org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -q -DforceStdout -pl=rogm-parser-json'
-				sh 'git describe --tags --abbrev=0 remotes/origin/master --match rogm-parser-json/v2.1.2'
 				sh 'git describe --tags --abbrev=0 remotes/origin/master --match rogm-core/v2.1.3'
 			}
 		}
