@@ -1,10 +1,20 @@
-<!-- Copyright © 2024 VenaNocta (venanocta@gmail.com) Licensed under the 
-	Apache License, Version 2.0 (the "License"); you may not use this file except 
-	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
-	Unless required by applicable law or agreed to in writing, software distributed 
-	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
-	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
-	the specific language governing permissions and limitations under the License. -->
+<!--
+
+    Copyright © 2024 VenaNocta (venanocta@gmail.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
 <project-execution-model
 	xmlns="https://api.runeduniverse.net/runes4tools/r4m-pem"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -132,10 +142,7 @@
 
 		<execution id="pipeline" source="override">
 			<triggers>
-				<active-profile id="install" />
-				<active-profile id="test-junit-jupiter" />
-				<active-profile id="deploy" />
-				<active-profile id="deploy-signed" />
+				<on-call />
 			</triggers>
 			<lifecycles>
 				<lifecycle id="help">
@@ -207,17 +214,6 @@
 								</goal>
 							</goals>
 						</phase>
-						<phase id="verify">
-							<goals>
-								<goal id="sign">
-									<modes>
-										<install />
-									</modes>
-									<groupId>org.apache.maven.plugins</groupId>
-									<artifactId>maven-gpg-plugin</artifactId>
-								</goal>
-							</goals>
-						</phase>
 						<phase id="install">
 							<goals>
 								<goal id="install">
@@ -273,17 +269,38 @@
 				</lifecycle>
 			</lifecycles>
 		</execution>
+		<execution id="gpg-signature-credentials" source="override">
+			<triggers>
+				<active-profile id="gpg-signature-software" />
+			</triggers>
+			<lifecycles>
+				<lifecycle id="default">
+					<phases>
+						<phase id="verify">
+							<goals>
+								<goal id="sign">
+									<modes>
+										<install />
+									</modes>
+									<groupId>org.apache.maven.plugins</groupId>
+									<artifactId>maven-gpg-plugin</artifactId>
+								</goal>
+							</goals>
+						</phase>
+					</phases>
+				</lifecycle>
+			</lifecycles>
+		</execution>
 
-		<!-- packaging-procedure: pom -->
+		<!-- packaging-procedure: pom & jar -->
 		<execution id="signed-pom" source="override">
+			<triggers>
+				<active-profile id="gpg-signature-software" />
+			</triggers>
 			<restrictions>
 				<packaging-procedure>pom</packaging-procedure>
 				<packaging-procedure>jar</packaging-procedure>
 			</restrictions>
-			<triggers>
-				<default />
-				<active-profile id="deploy-signed" />
-			</triggers>
 			<lifecycles>
 				<lifecycle id="default">
 					<phases>
@@ -309,11 +326,7 @@
 
 		<execution id="default" source="override">
 			<triggers>
-				<active-profile id="dev-install" />
-				<missing-profile id="install" />
-				<missing-profile id="test-junit-jupiter" />
-				<missing-profile id="deploy" />
-				<missing-profile id="deploy-signed" />
+				<default />
 			</triggers>
 			<restrictions>
 				<packaging-procedure>jar</packaging-procedure>
@@ -405,7 +418,7 @@
 								</goal>
 								<goal id="test-jar">
 									<modes>
-										<dev />
+										<dev-test />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-jar-plugin</artifactId>
@@ -419,10 +432,7 @@
 
 		<execution id="pipeline" source="override">
 			<triggers>
-				<active-profile id="install" />
-				<active-profile id="test-junit-jupiter" />
-				<active-profile id="deploy" />
-				<active-profile id="deploy-signed" />
+				<on-call />
 			</triggers>
 			<restrictions>
 				<packaging-procedure>jar</packaging-procedure>
@@ -518,14 +528,40 @@
 			</lifecycles>
 		</execution>
 
-		<execution source="override" id="signed-jar">
+		<execution source="override" id="packaging-jar">
+			<triggers>
+				<always />
+			</triggers>
 			<restrictions>
 				<packaging-procedure>jar</packaging-procedure>
 			</restrictions>
+			<lifecycles>
+				<lifecycle id="default">
+					<phases>
+						<phase id="deploy">
+							<goals>
+								<goal id="attach-artifact">
+									<groupId>org.codehaus.mojo</groupId>
+									<artifactId>build-helper-maven-plugin</artifactId>
+									<modes>
+										<deploy />
+										<deploy-signed />
+									</modes>
+								</goal>
+							</goals>
+						</phase>
+					</phases>
+				</lifecycle>
+			</lifecycles>
+		</execution>
+
+		<execution source="override" id="signed-jar">
 			<triggers>
-				<default />
-				<active-profile id="deploy-signed" />
+				<active-profile id="gpg-signature-software" />
 			</triggers>
+			<restrictions>
+				<packaging-procedure>jar</packaging-procedure>
+			</restrictions>
 			<lifecycles>
 				<lifecycle id="default">
 					<phases>

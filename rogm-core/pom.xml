@@ -1,6 +1,6 @@
 <!--
 
-    Copyright © 2023 VenaNocta (venanocta@gmail.com)
+    Copyright © 2024 VenaNocta (venanocta@gmail.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -130,19 +130,10 @@
 		<profile>
 			<id>dev-install</id>
 			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>test-jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
+				<defaultGoal>
+					clean
+					dev,dev-test/install]
+				</defaultGoal>
 			</build>
 		</profile>
 		<profile>
@@ -150,119 +141,72 @@
 			<build>
 				<defaultGoal>
 					clean
-					install,install-test/install]
+					install,install-test/install]@pipeline
 				</defaultGoal>
 			</build>
 		</profile>
-		<profile>
-			<id>deploy-signed</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<inherited>false</inherited>
+	</profiles>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>packaging-jar</id>
 						<configuration>
-							<artifacts>
-								<!-- gpg signature -->
+							<artifacts combine.children="append">
 								<artifact>
 									<file>
-										${project.build.directory}/${project.build.finalName}.pom.asc</file>
-									<type>pom.asc</type>
+										${project.build.directory}/${project.build.finalName}-test-javadoc.jar
+									</file>
+									<type>jar</type>
+									<classifier>javadoc</classifier>
+								</artifact>
+								<!-- sources -->
+								<artifact>
+									<file>
+										${project.build.directory}/${project.build.finalName}-test-sources.jar
+									</file>
+									<type>jar</type>
+									<classifier>sources</classifier>
 								</artifact>
 							</artifacts>
 						</configuration>
-					</plugin>
-					<!-- re-configured -->
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<!-- must be here or it gets overridden! -->
-								<id>pipeline</id>
-								<inherited>true</inherited>
-								<phase>verify</phase>
-								<goals>
-									<goal>attach-artifact</goal>
-								</goals>
-							</execution>
-						</executions>
+					</execution>
+					<execution>
+						<id>signed-jar</id>
 						<configuration>
-							<artifacts>
+							<artifacts combine.children="append">
 								<!-- gpg signatures -->
 								<artifact>
 									<file>
-										${project.build.directory}/${project.build.finalName}.pom.asc</file>
-									<type>pom.asc</type>
-								</artifact>
-								<artifact>
-									<file>
-										${project.build.directory}/${project.build.finalName}.jar.asc</file>
+										${project.build.directory}/${project.build.finalName}-tests.jar.asc
+									</file>
 									<type>jar.asc</type>
-								</artifact>
-								<!-- test-jar -->
-								<artifact>
-									<file>
-										${project.build.directory}/${project.build.finalName}-tests.jar.asc</file>
-									<type>jar.asc</type>
-									<classifier>tests</classifier>
-								</artifact>
-								<artifact>
-									<file>
-										${project.build.directory}/${project.build.finalName}-test-javadoc.jar</file>
-									<type>jar</type>
-									<classifier>test-javadoc</classifier>
-								</artifact>
-								<artifact>
-									<file>
-										${project.build.directory}/${project.build.finalName}-test-javadoc.jar.asc</file>
-									<type>jar.asc</type>
-									<classifier>test-javadoc</classifier>
-								</artifact>
-								<artifact>
-									<file>
-										${project.build.directory}/${project.build.finalName}-test-sources.jar</file>
-									<type>jar</type>
-									<classifier>test-sources</classifier>
-								</artifact>
-								<artifact>
-									<file>
-										${project.build.directory}/${project.build.finalName}-test-sources.jar.asc</file>
-									<type>jar.asc</type>
-									<classifier>test-sources</classifier>
 								</artifact>
 								<!-- javadoc -->
 								<artifact>
 									<file>
-										${project.build.directory}/${project.build.finalName}-javadoc.jar</file>
-									<type>jar</type>
-									<classifier>javadoc</classifier>
-								</artifact>
-								<artifact>
-									<file>
-										${project.build.directory}/${project.build.finalName}-javadoc.jar.asc</file>
+										${project.build.directory}/${project.build.finalName}-test-javadoc.jar.asc
+									</file>
 									<type>jar.asc</type>
 									<classifier>javadoc</classifier>
 								</artifact>
 								<!-- sources -->
 								<artifact>
 									<file>
-										${project.build.directory}/${project.build.finalName}-sources.jar</file>
-									<type>jar</type>
-									<classifier>sources</classifier>
-								</artifact>
-								<artifact>
-									<file>
-										${project.build.directory}/${project.build.finalName}-sources.jar.asc</file>
+										${project.build.directory}/${project.build.finalName}-test-sources.jar.asc
+									</file>
 									<type>jar.asc</type>
 									<classifier>sources</classifier>
 								</artifact>
 							</artifacts>
 						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

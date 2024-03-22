@@ -139,7 +139,7 @@
 		<profile>
 			<id>dev-install</id>
 			<build>
-				<defaultGoal>clean install]</defaultGoal>
+				<defaultGoal>clean dev/install]</defaultGoal>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -182,7 +182,7 @@
 			<id>install</id>
 			<build>
 				<defaultGoal>
-					clean install/install]
+					clean install/install]@pipeline
 				</defaultGoal>
 			</build>
 		</profile>
@@ -190,7 +190,7 @@
 			<id>test-junit-jupiter</id>
 			<build>
 				<defaultGoal>
-					junit-jupiter/[validate,initialize],[test]
+					junit-jupiter/[validate,initialize],[test]@pipeline
 				</defaultGoal>
 			</build>
 		</profile>
@@ -225,73 +225,13 @@
 		<profile>
 			<id>deploy</id>
 			<build>
-				<defaultGoal>deploy/deploy]</defaultGoal>
+				<defaultGoal>deploy/deploy]@pipeline</defaultGoal>
 			</build>
 		</profile>
 		<profile>
 			<id>deploy-signed</id>
 			<build>
-				<defaultGoal>deploy-signed/deploy]</defaultGoal>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>signed-pom</id>
-								<configuration>
-									<artifacts>
-										<!-- gpg signature -->
-										<artifact>
-											<file>
-												${project.build.directory}/${project.build.finalName}.pom.asc</file>
-											<type>pom.asc</type>
-										</artifact>
-									</artifacts>
-								</configuration>
-							</execution>
-							<execution>
-								<id>signed-jar</id>
-								<configuration>
-									<artifacts>
-										<!-- gpg signatures -->
-										<artifact>
-											<file>
-												${project.build.directory}/${project.build.finalName}.jar.asc</file>
-											<type>jar.asc</type>
-										</artifact>
-										<!-- javadoc -->
-										<artifact>
-											<file>
-												${project.build.directory}/${project.build.finalName}-javadoc.jar</file>
-											<type>jar</type>
-											<classifier>javadoc</classifier>
-										</artifact>
-										<artifact>
-											<file>
-												${project.build.directory}/${project.build.finalName}-javadoc.jar.asc</file>
-											<type>jar.asc</type>
-											<classifier>javadoc</classifier>
-										</artifact>
-										<!-- sources -->
-										<artifact>
-											<file>
-												${project.build.directory}/${project.build.finalName}-sources.jar</file>
-											<type>jar</type>
-											<classifier>sources</classifier>
-										</artifact>
-										<artifact>
-											<file>
-												${project.build.directory}/${project.build.finalName}-sources.jar.asc</file>
-											<type>jar.asc</type>
-											<classifier>sources</classifier>
-										</artifact>
-									</artifacts>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
+				<defaultGoal>deploy-signed/deploy]@pipeline</defaultGoal>
 			</build>
 		</profile>
 		<!-- REPOSITORIES -->
@@ -498,6 +438,10 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
 			<plugin>
@@ -635,6 +579,75 @@
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>${plugin-mojohaus-build-helper-version}</version>
+					<executions>
+						<execution>
+							<id>packaging-jar</id>
+							<configuration>
+								<artifacts>
+									<!-- javadoc -->
+									<artifact>
+										<file>
+											${project.build.directory}/${project.build.finalName}-javadoc.jar
+										</file>
+										<type>jar</type>
+										<classifier>javadoc</classifier>
+									</artifact>
+									<!-- sources -->
+									<artifact>
+										<file>
+											${project.build.directory}/${project.build.finalName}-sources.jar
+										</file>
+										<type>jar</type>
+										<classifier>sources</classifier>
+									</artifact>
+								</artifacts>
+							</configuration>
+						</execution>
+						<execution>
+							<id>signed-pom</id>
+							<configuration>
+								<artifacts>
+									<!-- gpg signature -->
+									<artifact>
+										<file>
+											${project.build.directory}/${project.build.finalName}.pom.asc
+										</file>
+										<type>pom.asc</type>
+									</artifact>
+								</artifacts>
+							</configuration>
+						</execution>
+						<execution>
+							<id>signed-jar</id>
+							<configuration>
+								<artifacts>
+									<!-- gpg signatures -->
+									<artifact>
+										<file>
+											${project.build.directory}/${project.build.finalName}.jar.asc
+										</file>
+										<type>jar.asc</type>
+									</artifact>
+									<!-- javadoc -->
+									<artifact>
+										<file>
+											${project.build.directory}/${project.build.finalName}-javadoc.jar.asc
+										</file>
+										<type>jar.asc</type>
+										<classifier>javadoc</classifier>
+									</artifact>
+									<!-- sources -->
+									<artifact>
+										<file>
+											${project.build.directory}/${project.build.finalName}-sources.jar.asc
+										</file>
+										<type>jar.asc</type>
+										<classifier>sources</classifier>
+									</artifact>
+								</artifacts>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

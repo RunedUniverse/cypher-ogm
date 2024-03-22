@@ -132,6 +132,7 @@ pushd $WORKSPACE
 # parent
 printf "=== BUILD : ROGM PARENT\n"
 execmvn_cmd dependency:resolve --non-recursive
+execmvn_install_projects . --non-recursive
 
 printf "=== BUILD : ROGM Bill of Sources\n"
 execmvn_cmd dependency:resolve -pl rogm-sources-bom
