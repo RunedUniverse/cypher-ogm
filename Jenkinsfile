@@ -32,32 +32,6 @@ pipeline {
 				returnStdout: true,
 				script: 'REPOS=repo-releases; if [ $GIT_BRANCH != master ]; then REPOS=$REPOS,repo-development; fi; printf $REPOS'
 			)}"""
-
-		
-		CHANGES_ROGM_BOM = """${sh(
-				returnStdout: true,
-				script: '.build/git-check-version-tag rogm-bom rogm-bom'
-			)}"""
-		CHANGES_ROGM_SOURCES_BOM = """${sh(
-				returnStdout: true,
-				script: '.build/git-check-version-tag rogm-sources-bom rogm-sources-bom'
-			)}"""
-		CHANGES_ROGM_CORE = """${sh(
-				returnStdout: true,
-				script: '.build/git-check-version-tag rogm-core rogm-core'
-			)}"""
-		CHANGES_ROGM_LANG_CYPHER = """${sh(
-				returnStdout: true,
-				script: '.build/git-check-version-tag rogm-lang-cypher rogm-lang-cypher'
-			)}"""
-		CHANGES_ROGM_MODULE_NEO4J = """${sh(
-				returnStdout: true,
-				script: '.build/git-check-version-tag rogm-module-neo4j rogm-module-neo4j'
-			)}"""
-		//CHANGES_ROGM_MODULE_DECORATOR = """${sh(
-		//		returnStdout: true,
-		//		script: '.build/git-check-version-tag rogm-module-decorator rogm-module-decorator'
-		//	)}"""
 	}
 	stages {
 		stage('Initialize') {
@@ -68,17 +42,38 @@ pipeline {
 				script {
 					env.CHANGES_ROGM_PARENT = sh(
 						returnStdout: true,
-						script: '.build/git-check-version-tag rogm-parent .'
+						script: 'git-check-version-tag rogm-parent .'
+					)
+					env.CHANGES_ROGM_BOM = sh(
+						returnStdout: true,
+						script: 'git-check-version-tag rogm-bom rogm-bom'
+					)
+					env.CHANGES_ROGM_SOURCES_BOM = sh(
+						returnStdout: true,
+						script: 'git-check-version-tag rogm-sources-bom rogm-sources-bom'
+					)
+					env.CHANGES_ROGM_CORE = sh(
+						returnStdout: true,
+						script: 'git-check-version-tag rogm-core rogm-core'
 					)
 					env.CHANGES_ROGM_PARSER_JSON = sh(
 						returnStdout: true,
-						script: '.build/git-check-version-tag rogm-parser-json rogm-parser-json'
+						script: 'git-check-version-tag rogm-parser-json rogm-parser-json'
 					)
+					env.CHANGES_ROGM_LANG_CYPHER = sh(
+						returnStdout: true,
+						script: 'git-check-version-tag rogm-lang-cypher rogm-lang-cypher'
+					)
+					env.CHANGES_ROGM_MODULE_NEO4J = sh(
+						returnStdout: true,
+						script: 'git-check-version-tag rogm-module-neo4j rogm-module-neo4j'
+					)
+					//env.CHANGES_ROGM_MODULE_DECORATOR = sh(
+					//		returnStdout: true,
+					//		script: 'git-check-version-tag rogm-module-decorator rogm-module-decorator'
+					//)
 				}
-				
 				sh 'printenv | sort'
-				
-				sh 'git describe --tags --abbrev=0 remotes/origin/master --match rogm-core/v2.1.3'
 			}
 		}
 		stage('Update Maven Repo') {
