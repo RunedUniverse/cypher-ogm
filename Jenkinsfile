@@ -332,7 +332,7 @@ pipeline {
 								sh 'echo waiting for Neo4J to start'
 								sh 'until $(curl --output /dev/null --silent --head --fail http://172.16.0.1:7474); do sleep 5; done'
 
-								docker.image('neo4j:latest').inside("--link ${c.id}:database") {
+								docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
 									/* Prepare Database */
 										sh	'echo Neo4J online > setting up database'
 										sh	'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
