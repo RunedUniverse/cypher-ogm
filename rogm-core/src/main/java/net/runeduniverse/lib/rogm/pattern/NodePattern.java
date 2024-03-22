@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,7 @@ import net.runeduniverse.lib.rogm.querying.QueryBuilder.RelationQueryBuilder;
 
 // deprecation = internal use
 @SuppressWarnings("deprecation")
-public class NodePattern extends APattern<NodeQueryBuilder>
-		implements INodePattern<NodeQueryBuilder>, BufferTypes {
+public class NodePattern extends APattern<NodeQueryBuilder> implements INodePattern<NodeQueryBuilder>, BufferTypes {
 
 	@Getter
 	private Set<String> labels = new HashSet<>();
@@ -128,7 +127,7 @@ public class NodePattern extends APattern<NodeQueryBuilder>
 	/***
 	 * implementation of FunctionalInterface
 	 * <code>SaveContainer.EffectedFilterCalculator</code>
-	 * 
+	 *
 	 * @param archive
 	 * @param buffer
 	 * @param includedData

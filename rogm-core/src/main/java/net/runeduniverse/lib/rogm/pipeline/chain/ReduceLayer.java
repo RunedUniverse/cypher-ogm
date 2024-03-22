@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,9 @@ import net.runeduniverse.lib.utils.chain.ChainRuntime;
 
 public interface ReduceLayer {
 
-	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = {
-			Chains.LOAD_CHAIN.ONE.REDUCE_COLLECTION }, ignoreResult = true)
+	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL,
+			layers = { Chains.LOAD_CHAIN.ONE.REDUCE_COLLECTION },
+			ignoreResult = true)
 	public static <T> T reduceCollection(final ChainRuntime<T> runtime, Collection<T> collection) {
 		for (T t : collection) {
 			runtime.setResult(t);
@@ -48,16 +49,16 @@ public interface ReduceLayer {
 		runtime.callSubChainWithSourceData(Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL, null);
 	}
 
-	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL, layers = {
-			Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.VALIDATE_LAZY_ENTRIES })
+	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL,
+			layers = { Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.VALIDATE_LAZY_ENTRIES })
 	public static void validateLazyEntries(final ChainRuntime<?> runtime, final LazyEntriesContainer lazyEntries,
 			final DepthContainer depth) {
 		if (lazyEntries.isEmpty() || depth == null || depth.getValue() <= 0)
 			runtime.setCanceled(true);
 	}
 
-	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL, layers = {
-			Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.CALL_RESOLVE_SELECTED })
+	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL,
+			layers = { Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.CALL_RESOLVE_SELECTED })
 	public static void resolveLazyEntries(final ChainRuntime<?> runtime, final Archive archive,
 			final LazyEntriesContainer lazyEntries) throws Exception {
 		LazyEntriesContainer nextLazyEntries = new LazyEntriesContainer();
@@ -71,8 +72,8 @@ public interface ReduceLayer {
 		lazyEntries.addEntries(nextLazyEntries);
 	}
 
-	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL, layers = {
-			Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LOOP_LAZY_ENTRIES })
+	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LABEL,
+			layers = { Chains.LOAD_CHAIN.RESOLVE_LAZY.ALL.LOOP_LAZY_ENTRIES })
 	public static void loopLazyEntries(final ChainRuntime<?> runtime, final DepthContainer depth) {
 		depth.subtractOne();
 		if (0 < depth.getValue())

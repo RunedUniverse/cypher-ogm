@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -264,8 +264,8 @@ public class RelationPattern extends APattern<RelationQueryBuilder> implements I
 	}
 
 	private NodeQueryBuilder _getDataNode(FieldPattern field, Object entity,
-			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, RelationQueryBuilder relation, Integer depth)
-			throws Exception {
+			Map<Object, IQueryBuilder<?, ?, ? extends IFilter>> includedData, RelationQueryBuilder relation,
+			Integer depth) throws Exception {
 		INodePattern<?> node = this.archive.getPattern(field.getType(), NodePattern.class);
 		if (node == null)
 			throw new Exception("NodePattern for Field<" + field.toString() + "> undefined!");

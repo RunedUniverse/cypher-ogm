@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public interface IBuffer extends BufferTypes, ChainConfigurator {
 
 	/***
 	 * Load Entity defined by Id. The Id gets defined from the Database.
-	 * 
+	 *
 	 * @param <T>  {@link Object} of type
 	 * @param id   {@link Serializable}
 	 * @param type of {@link Class}
@@ -38,7 +38,7 @@ public interface IBuffer extends BufferTypes, ChainConfigurator {
 	/***
 	 * Load Entity defined by entityId, in some cases it matches the entityId. The
 	 * Id can be defined in the Object.
-	 * 
+	 *
 	 * @param <T>      {@link Object} of type
 	 * @param entityId {@link Serializable}
 	 * @param type     of {@link Class}

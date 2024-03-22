@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.SaveContainer;
 import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
 
-public interface IQueryPattern extends IPattern{
+public interface IQueryPattern extends IPattern {
 	void search(IQueryBuilder<?, ?, ? extends IFilter> builder) throws Exception;
 
 	void save(SaveContainer container) throws Exception;

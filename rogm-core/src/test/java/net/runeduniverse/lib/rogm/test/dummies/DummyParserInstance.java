@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package net.runeduniverse.lib.rogm.test.dummies;
 
 import net.runeduniverse.lib.rogm.parser.Parser.Instance;
 
-public class DummyParserInstance implements Instance{
+public class DummyParserInstance implements Instance {
 
 	@Override
 	public String serialize(Object object) throws Exception {
@@ -34,7 +34,7 @@ public class DummyParserInstance implements Instance{
 	@Override
 	public <T> void deserialize(T obj, String value) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

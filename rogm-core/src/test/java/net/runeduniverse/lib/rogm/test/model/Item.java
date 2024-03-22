@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,16 +33,16 @@ public class Item extends AEntity {
 
 	private String str = "my string";
 	private Boolean bool = false;
-	
+
 	@Property
 	private String itemStackData = null;
-	
+
 	@Transient
 	@Getter
 	private String itemStack = null;
-	
+
 	@PreSave
 	private void _preSave() {
-		this.itemStackData = "{type:"+itemStack+'}';
+		this.itemStackData = "{type:" + itemStack + '}';
 	}
 }

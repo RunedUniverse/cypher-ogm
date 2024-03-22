@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,10 @@ public interface IPattern {
 
 	/**
 	 * Used to call parsed Methods
-	 * 
-	 * @param anno	{@link Annotation} by which the method can be identified
-	 * @param obj   {@link Object} which has the method
-	 * @param args  {@link Object} array which gets passed to the method
+	 *
+	 * @param anno {@link Annotation} by which the method can be identified
+	 * @param obj  {@link Object} which has the method
+	 * @param args {@link Object} array which gets passed to the method
 	 * @return {@code true} if successfull
 	 */
 	public boolean callMethod(Class<? extends Annotation> anno, Object obj, Object... args);

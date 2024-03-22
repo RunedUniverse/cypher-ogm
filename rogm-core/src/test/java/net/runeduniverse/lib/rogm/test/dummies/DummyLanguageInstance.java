@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import net.runeduniverse.lib.rogm.querying.IDataContainer;
 import net.runeduniverse.lib.rogm.querying.IFRelation;
 import net.runeduniverse.lib.rogm.querying.IFilter;
 
-public class DummyLanguageInstance implements Instance{
+public class DummyLanguageInstance implements Instance {
 
 	@Override
 	public ILoadMapper load(IFilter filter) throws Exception {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,8 @@ import net.runeduniverse.lib.rogm.pattern.FieldPattern;
 import net.runeduniverse.lib.utils.scanner.ScanOrder;
 import net.runeduniverse.lib.utils.scanner.templates.FieldScanner;
 
-public class FieldAnnoScanner extends net.runeduniverse.lib.utils.scanner.templates.FieldAnnotationScanner<FieldPattern> {
+public class FieldAnnoScanner
+		extends net.runeduniverse.lib.utils.scanner.templates.FieldAnnotationScanner<FieldPattern> {
 
 	public FieldAnnoScanner(Archive archive, Class<? extends Annotation> anno) {
 		super(creator(archive), anno);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,8 @@ public class FilterNode extends AParamFilter<FilterNode> implements IFNode, IIde
 	}
 
 	public FilterNode addRelation(FilterRelation relation, IFNode target) {
-		relations.add(relation.setStart(this).setTarget(target));
+		relations.add(relation.setStart(this)
+				.setTarget(target));
 		return this;
 	}
 
@@ -56,7 +57,8 @@ public class FilterNode extends AParamFilter<FilterNode> implements IFNode, IIde
 	}
 
 	public FilterNode addRelationTo(FilterRelation relation) {
-		relations.add(relation.setStart(this).setDirection(Direction.OUTGOING));
+		relations.add(relation.setStart(this)
+				.setDirection(Direction.OUTGOING));
 		return this;
 	}
 
@@ -67,7 +69,8 @@ public class FilterNode extends AParamFilter<FilterNode> implements IFNode, IIde
 	}
 
 	public FilterNode addRelationFrom(FilterRelation relation) {
-		relations.add(relation.setTarget(this).setDirection(Direction.INCOMING));
+		relations.add(relation.setTarget(this)
+				.setDirection(Direction.INCOMING));
 		return this;
 	}
 }

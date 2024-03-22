@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Provides information of the connection-status.
-	 * 
+	 *
 	 * @return status of the database connection
 	 */
 	boolean isConnected();
@@ -49,7 +49,7 @@ public interface Session extends AutoCloseable {
 	 * Loads the Object of Class matching the provided id. In case the Object is
 	 * still buffered the reference will be returned. Returns <code>null</code> in
 	 * case no Object could be loaded.
-	 * 
+	 *
 	 * @param <T>  Model-Class provided through the Config
 	 * @param <ID> {@link Serializable} Object
 	 * @param type requested Type
@@ -66,7 +66,7 @@ public interface Session extends AutoCloseable {
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
 	 * (LAZY).
-	 * 
+	 *
 	 * @param <T>   Model-Class provided through the Config
 	 * @param <ID>  {@link Serializable} Object
 	 * @param type  requested Type
@@ -80,9 +80,9 @@ public interface Session extends AutoCloseable {
 	 * Lazy-Loads the Object of Class matching the provided id. Except the Object is
 	 * still buffered the buffered reference (LAZY or not) will be returned. Returns
 	 * <code>null</code> in case no Object could be loaded.
-	 * 
+	 *
 	 * @see Session#load(Class, Serializable, Integer)
-	 * 
+	 *
 	 * @param <T>  Model-Class provided through the Config
 	 * @param <ID> {@link Serializable} Object
 	 * @param type requested Type
@@ -97,7 +97,7 @@ public interface Session extends AutoCloseable {
 	 * <p>
 	 * In case of use it is recommended to build the Filter with the
 	 * {@link QueryBuilder} acquirable through {@link Session#getQueryBuilder()}.
-	 * 
+	 *
 	 * @deprecated may not return the Object of the correct Class
 	 * @param <T>    Model-Class provided through the Config
 	 * @param filter Custom-Filter
@@ -110,7 +110,7 @@ public interface Session extends AutoCloseable {
 	 * Loads all Objects of Class matching the provided id. In case an Object is
 	 * still buffered the reference will be returned. Returns an empty Collection in
 	 * case no Objects could be loaded.
-	 * 
+	 *
 	 * @param <T>  Model-Class provided through the Config
 	 * @param <ID> {@link Serializable} Object
 	 * @param type requested Type
@@ -127,7 +127,7 @@ public interface Session extends AutoCloseable {
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
 	 * (LAZY).
-	 * 
+	 *
 	 * @param <T>   Model-Class provided through the Config
 	 * @param <ID>  {@link Serializable} Object
 	 * @param type  requested Type
@@ -141,9 +141,9 @@ public interface Session extends AutoCloseable {
 	 * Lazy-Loads all Objects of Class matching the provided id. Except the Object
 	 * is still buffered the buffered reference (LAZY or not) will be returned.
 	 * Returns an empty Collection in case no Objects could be loaded.
-	 * 
+	 *
 	 * @see Session#loadAll(Class, Serializable, Integer)
-	 * 
+	 *
 	 * @param <T>  Model-Class provided through the Config
 	 * @param <ID> {@link Serializable} Object
 	 * @param type requested Type
@@ -156,7 +156,7 @@ public interface Session extends AutoCloseable {
 	 * Loads all Objects of Class. In case an Object is still buffered the reference
 	 * will be returned. Returns an empty Collection in case no Objects could be
 	 * loaded.
-	 * 
+	 *
 	 * @deprecated discouraged from using - needlessly fills up RAM
 	 * @param <T>  Model-Class provided through the Config
 	 * @param type requested Type
@@ -172,7 +172,7 @@ public interface Session extends AutoCloseable {
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
 	 * (LAZY).
-	 * 
+	 *
 	 * @deprecated discouraged from using - needlessly fills up RAM
 	 * @param <T>   Model-Class provided through the Config
 	 * @param type  requested Type
@@ -185,10 +185,10 @@ public interface Session extends AutoCloseable {
 	 * Lazy-Loads all Objects of Class. Except the Object is still buffered the
 	 * buffered reference (LAZY or not) will be returned. Returns an empty
 	 * Collection in case no Objects could be loaded.
-	 * 
+	 *
 	 * @deprecated discouraged from using - needlessly fills up RAM
 	 * @see Session#loadAll(Class, Integer)
-	 * 
+	 *
 	 * @param <T>  Model-Class provided through the Config
 	 * @param type requested Type
 	 * @return Collection with none, new or buffered Objects of the defined type
@@ -201,7 +201,7 @@ public interface Session extends AutoCloseable {
 	 * <p>
 	 * In case of use it is recommended to build the Filter with the
 	 * {@link QueryBuilder} acquirable through {@link Session#getQueryBuilder()}.
-	 * 
+	 *
 	 * @deprecated may not return the Object of the correct Class
 	 * @param <T>    Model-Class provided through the Config
 	 * @param filter Custom-Filter
@@ -212,7 +212,7 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Loads all Relations provided by entity.
-	 * 
+	 *
 	 * @param entity Object of Model-Class provided through the Config
 	 */
 	void resolveLazyLoaded(Object entity);
@@ -223,7 +223,7 @@ public interface Session extends AutoCloseable {
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
 	 * (LAZY).
-	 * 
+	 *
 	 * @param entity Object of Model-Class provided through the Config
 	 * @param depth  requested load depth
 	 */
@@ -231,7 +231,7 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Loads all Relations provided by values of Collection entities.
-	 * 
+	 *
 	 * @param entities Collection with Objects of Model-Classes provided through the
 	 *                 Config
 	 */
@@ -243,16 +243,16 @@ public interface Session extends AutoCloseable {
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will load the Object without any Relations
 	 * (LAZY).
-	 * 
+	 *
 	 * @param entities Collection with Objects of Model-Classes provided through the
-	 *                   Config
-	 * @param depth      requested load depth
+	 *                 Config
+	 * @param depth    requested load depth
 	 */
 	void resolveAllLazyLoaded(Collection<? extends Object> entities, Integer depth);
 
 	/**
 	 * Reloads the Values and Relations of entity.
-	 * 
+	 *
 	 * @param entity entity Object of Model-Class provided through the Config
 	 */
 	void reload(Object entity);
@@ -263,7 +263,7 @@ public interface Session extends AutoCloseable {
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will only reload the Values and skip reloading
 	 * any Relations.
-	 * 
+	 *
 	 * @param entity entity Object of Model-Class provided through the Config
 	 * @param depth  requested reload depth
 	 */
@@ -271,7 +271,7 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Reloads the Values and Relations of Collection entities.
-	 * 
+	 *
 	 * @param entities Collection of Model-Classes provided through the Config
 	 */
 	void reloadAll(Collection<? extends Object> entities);
@@ -282,7 +282,7 @@ public interface Session extends AutoCloseable {
 	 * Depth defines how often the requested Objects Relations will be loaded
 	 * recursively. <code>0</code> will only reload the Values and skip reloading
 	 * any Relations.
-	 * 
+	 *
 	 * @param entities Collection with Collection of Model-Classes provided through
 	 *                 the Config
 	 * @param depth    requested reload depth
@@ -291,7 +291,7 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Saves the provided Object.
-	 * 
+	 *
 	 * @param entity Object of Model-Class provided through the Config
 	 */
 	void save(Object entity);
@@ -301,7 +301,7 @@ public interface Session extends AutoCloseable {
 	 * <p>
 	 * Depth defines how many of the Object's Relations will be saved recursively.
 	 * <code>0</code> will save the Object without saving any Relations.
-	 * 
+	 *
 	 * @param entity Object of Model-Class provided through the Config
 	 * @param depth  requested load depth
 	 */
@@ -309,18 +309,18 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Saves the provided Object without any Relations.
-	 * 
+	 *
 	 * @see Session#save(Object, Integer)
-	 * 
+	 *
 	 * @param entity Object of Model-Class provided through the Config
 	 */
 	void saveLazy(Object entity);
 
 	/**
 	 * Saves all provided values of Collection entities.
-	 * 
+	 *
 	 * @param entities Collection of Objects of Model-Classes provided through the
-	 *                   Config
+	 *                 Config
 	 */
 	void saveAll(Collection<? extends Object> entities);
 
@@ -329,7 +329,7 @@ public interface Session extends AutoCloseable {
 	 * <p>
 	 * Depth defines how many of the Object's Relations will be saved recursively.
 	 * <code>0</code> will save the Object without saving any Relations.
-	 * 
+	 *
 	 * @param entities Collection of Objects of Model-Classes provided through the
 	 *                 Config
 	 * @param depth    requested load depth
@@ -339,9 +339,9 @@ public interface Session extends AutoCloseable {
 	/**
 	 * Saves the provided values of Collection entities without saving any
 	 * Relations.
-	 * 
+	 *
 	 * @see Session#saveAll(Collection, Integer)
-	 * 
+	 *
 	 * @param entities Collection of Objects of Model-Classes provided through the
 	 *                 Config
 	 */
@@ -349,14 +349,14 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Deletes the provided Object.
-	 * 
+	 *
 	 * @param entity Object of Model-Class provided through the Config
 	 */
 	void delete(Object entity);
 
 	/**
 	 * Deletes all provided values of Collection entities.
-	 * 
+	 *
 	 * @param entities Collection of Objects of Model-Classes provided through the
 	 *                 Config
 	 */
@@ -366,7 +366,7 @@ public interface Session extends AutoCloseable {
 	 * Unloades the provided Object.
 	 * <p>
 	 * (Removes the provided Object and all Relations from the Buffer)
-	 * 
+	 *
 	 * @param entity Object of Model-Class provided through the Config
 	 */
 	void unload(Object entity);
@@ -376,7 +376,7 @@ public interface Session extends AutoCloseable {
 	 * <p>
 	 * (Removes all provided values of Collection entities and all fo their
 	 * Relations from the Buffer)
-	 * 
+	 *
 	 * @param entities Collection of Objects of Model-Classes provided through the
 	 *                 Config
 	 */
@@ -384,7 +384,7 @@ public interface Session extends AutoCloseable {
 
 	/**
 	 * Provides the configured {@link QueryBuilder} for the use in custom queries
-	 * 
+	 *
 	 * @return configured {@link QueryBuilder} instance
 	 */
 	QueryBuilder getQueryBuilder();
@@ -395,7 +395,7 @@ public interface Session extends AutoCloseable {
 	 * The {@link Configuration} cnf should be use the Configuration provided with
 	 * the Database-Module you wish to use (usually prefixed with the
 	 * Database-Name).
-	 * 
+	 *
 	 * @param cnf {@link Configuration} of the database
 	 * @return {@link Session} for direct interaction with a database
 	 * @throws Exception re-throws any Exception that might accure during

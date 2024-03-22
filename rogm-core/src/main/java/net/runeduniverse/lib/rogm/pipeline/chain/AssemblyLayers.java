@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,8 @@ public interface AssemblyLayers extends BufferTypes {
 
 	@Chain(label = Chains.LOAD_CHAIN.ALL.LABEL, layers = { Chains.LOAD_CHAIN.ALL.ASSEMBLY_ENTITY_COLLECTION })
 	@Chain(label = Chains.LOAD_CHAIN.ONE.LABEL, layers = { Chains.LOAD_CHAIN.ONE.ASSEMBLY_ENTITY_COLLECTION })
-	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.SELECTED.LABEL, layers = {
-			Chains.LOAD_CHAIN.RESOLVE_LAZY.SELECTED.ASSEMBLY_ENTITY_COLLECTION })
+	@Chain(label = Chains.LOAD_CHAIN.RESOLVE_LAZY.SELECTED.LABEL,
+			layers = { Chains.LOAD_CHAIN.RESOLVE_LAZY.SELECTED.ASSEMBLY_ENTITY_COLLECTION })
 	@SuppressWarnings("unchecked")
 	public static <T> Collection<T> load(ChainRuntime<?> runtime, Archive archive, IBuffer buffer, IDataRecord record)
 			throws Exception {
@@ -128,8 +128,8 @@ public interface AssemblyLayers extends BufferTypes {
 		return nodes;
 	}
 
-	@Chain(label = Chains.RELOAD_CHAIN.SELECTED.LABEL, layers = {
-			Chains.RELOAD_CHAIN.SELECTED.UPDATE_ENTITY_COLLECTION })
+	@Chain(label = Chains.RELOAD_CHAIN.SELECTED.LABEL,
+			layers = { Chains.RELOAD_CHAIN.SELECTED.UPDATE_ENTITY_COLLECTION })
 	public static void update(ChainRuntime<?> runtime, Archive archive, IBuffer buffer, EntityContainer entityContainer,
 			RelatedEntriesContainer relatedEntities, IDataRecord record) throws Exception {
 		Object entity = entityContainer.getEntity();

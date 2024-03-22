@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -255,11 +255,11 @@ public final class Archive {
 
 	/**
 	 * Used to call all parsed Methods matching the Class
-	 * 
-	 * @param entityType  {@link Class} of the entity
-	 * @param anno	      {@link Annotation} by which the method can be identified
-	 * @param obj         {@link Object} which has the method
-	 * @param args        {@link Object} array which gets passed to the method
+	 *
+	 * @param entityType {@link Class} of the entity
+	 * @param anno       {@link Annotation} by which the method can be identified
+	 * @param obj        {@link Object} which has the method
+	 * @param args       {@link Object} array which gets passed to the method
 	 * @return {@code true} if all calls returned successfully
 	 */
 	public boolean callMethod(Class<?> entityType, Class<? extends Annotation> anno, Object obj, Object... args) {
