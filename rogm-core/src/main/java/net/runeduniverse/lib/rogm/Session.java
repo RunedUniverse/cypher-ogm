@@ -34,7 +34,7 @@ import net.runeduniverse.lib.rogm.querying.QueryBuilder;
  * recommended to use the Configuration provided with the Database-Module you
  * wish to use (usually prefixed with the Database-Name).
  *
- * @author Pl4yingNight
+ * @author VenaNocta
  */
 public interface Session extends AutoCloseable {
 

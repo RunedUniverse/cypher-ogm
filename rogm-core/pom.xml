@@ -34,9 +34,9 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<artifact-version>2</artifact-version>
-		<bom-version>2</bom-version>
-		<sources-bom-version>2</sources-bom-version>
+		<artifact-version>3</artifact-version>
+		<bom-version>3</bom-version>
+		<sources-bom-version>3</sources-bom-version>
 		<root-dir>..</root-dir>
 	</properties>
 
@@ -127,15 +127,6 @@
 	</dependencyManagement>
 
 	<profiles>
-		<profile>
-			<id>dev-install</id>
-			<build>
-				<defaultGoal>
-					clean
-					dev,dev-test/install]
-				</defaultGoal>
-			</build>
-		</profile>
 		<profile>
 			<id>install</id>
 			<build>

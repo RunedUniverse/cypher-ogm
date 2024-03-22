@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package net.runeduniverse.lib.rogm.modules.decorator.model;
 import net.runeduniverse.lib.rogm.modules.decorator.annotations.Decorated;
 
 public class ElectricCar extends Car {
-	
+
 	@Decorated
 	private Car car;
 

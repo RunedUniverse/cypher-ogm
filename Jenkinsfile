@@ -256,7 +256,7 @@ pipeline {
 			}
 		}
 
-		stage('License Check') {
+		stage('Code Validation') {
 			when {
 				anyOf {
 					environment name: 'CHANGES_ROGM_PARENT', value: '1'
@@ -270,7 +270,7 @@ pipeline {
 				}
 			}
 			steps {
-				sh 'mvn-dev -P ${REPOS},license-check,license-prj-utils-approve,license-apache2-approve'
+				sh 'mvn-dev -P ${REPOS},validate,license-prj-utils-approve,license-apache2-approve'
 			}
 		}
 

@@ -43,7 +43,7 @@ import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.utils.chain.Chain;
 import net.runeduniverse.lib.utils.chain.ChainRuntime;
 import net.runeduniverse.lib.utils.common.DataHashMap;
-import net.runeduniverse.lib.utils.common.DataMap;
+import net.runeduniverse.lib.utils.common.api.DataMap;
 
 public interface AssemblyLayers extends BufferTypes {
 

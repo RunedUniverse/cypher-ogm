@@ -1,6 +1,6 @@
 <!--
 
-    Copyright © 2023 VenaNocta (venanocta@gmail.com)
+    Copyright © 2024 VenaNocta (venanocta@gmail.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@
 	<properties>
 		<artifact-version>2</artifact-version>
 		<bom-version>2</bom-version>
-		<sources-bom-version>2</sources-bom-version>
+		<sources-bom-version>3</sources-bom-version>
 		<root-dir>..</root-dir>
 	</properties>
 

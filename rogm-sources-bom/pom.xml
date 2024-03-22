@@ -32,14 +32,14 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<artifact-version>2</artifact-version>
+		<artifact-version>3</artifact-version>
 		<root-dir>..</root-dir>
 		<!-- ARTIFACT VERSIONS -->
-		<runeduniverse-utils-common-version>[1.0.1,)</runeduniverse-utils-common-version>
-		<runeduniverse-utils-logging-version>[1.0.1,)</runeduniverse-utils-logging-version>
-		<runeduniverse-utils-errors-version>[1.0.1,)</runeduniverse-utils-errors-version>
-		<runeduniverse-utils-chain-version>[1.0.1,)</runeduniverse-utils-chain-version>
-		<runeduniverse-utils-scanner-version>[1.0.6,)</runeduniverse-utils-scanner-version>
+		<runeduniverse-utils-common-version>[1.1.0,1.2.0)</runeduniverse-utils-common-version>
+		<runeduniverse-utils-logging-version>[1.0.2,1.1.0)</runeduniverse-utils-logging-version>
+		<runeduniverse-utils-errors-version>[1.0.1,1.1.0)</runeduniverse-utils-errors-version>
+		<runeduniverse-utils-chain-version>[1.0.1,1.1.0)</runeduniverse-utils-chain-version>
+		<runeduniverse-utils-scanner-version>[1.1.0,1.2.0)</runeduniverse-utils-scanner-version>
 		<!-- ARTIFACT VERSIONS - OBJECT MAPPER -->
 		<jackson-databind-version>[2.12.6.1,)</jackson-databind-version>
 		<!-- ARTIFACT VERSIONS - OPTIONAL DRIVERS / DB CONNECTORS -->

@@ -179,10 +179,17 @@
 			</build>
 		</profile>
 		<profile>
+			<id>validate</id>
+			<build>
+				<defaultGoal>check/[validate]@pipeline</defaultGoal>
+			</build>
+		</profile>
+		<profile>
 			<id>install</id>
 			<build>
 				<defaultGoal>
-					clean install/install]@pipeline
+					clean@pipeline
+					install/install]@pipeline
 				</defaultGoal>
 			</build>
 		</profile>
@@ -293,12 +300,6 @@
 			</distributionManagement>
 		</profile>
 		<!-- LICENSES -->
-		<profile>
-			<id>license-check</id>
-			<build>
-				<defaultGoal>license:check</defaultGoal>
-			</build>
-		</profile>
 		<profile>
 			<id>license-apache2-approve</id>
 			<activation>

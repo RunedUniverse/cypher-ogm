@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import net.runeduniverse.lib.rogm.parser.Parser;
 import net.runeduniverse.lib.rogm.querying.*;
 import net.runeduniverse.lib.utils.logging.UniversalLogger;
 import net.runeduniverse.lib.utils.common.DataHashMap;
-import net.runeduniverse.lib.utils.common.DataMap;
+import net.runeduniverse.lib.utils.common.api.DataMap;
 import net.runeduniverse.lib.utils.common.StringVariableGenerator;
 
 @RequiredArgsConstructor

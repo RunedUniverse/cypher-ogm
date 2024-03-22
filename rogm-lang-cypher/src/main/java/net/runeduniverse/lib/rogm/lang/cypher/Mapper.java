@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import net.runeduniverse.lib.rogm.pipeline.chain.data.UpdatedEntryContainer;
 import net.runeduniverse.lib.rogm.querying.IDataContainer;
 import net.runeduniverse.lib.rogm.querying.IFRelation;
 import net.runeduniverse.lib.rogm.querying.IFilter;
-import net.runeduniverse.lib.utils.common.DataMap;
+import net.runeduniverse.lib.utils.common.api.DataMap;
 
 public class Mapper implements Language.ILoadMapper, Language.ISaveMapper, Language.IDeleteMapper, BufferTypes {
 

@@ -34,12 +34,12 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<artifact-version>2</artifact-version>
+		<artifact-version>3</artifact-version>
 		<root-dir>..</root-dir>
 		<!-- ARTIFACT VERSIONS -->
-		<min-core-version>2</min-core-version>
+		<min-core-version>3</min-core-version>
 		<min-parser-json-version>2</min-parser-json-version>
-		<min-lang-cypher-version>2</min-lang-cypher-version>
+		<min-lang-cypher-version>3</min-lang-cypher-version>
 		<min-module-decorator-version>2</min-module-decorator-version>
 		<min-module-neo4j-version>2</min-module-neo4j-version>
 	</properties>

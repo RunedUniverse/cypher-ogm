@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 VenaNocta (venanocta@gmail.com)
+ * Copyright © 2024 VenaNocta (venanocta@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,14 @@ import net.runeduniverse.lib.rogm.querying.IFNode;
 import net.runeduniverse.lib.rogm.querying.IFRelation;
 import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.utils.common.DataHashMap;
-import net.runeduniverse.lib.utils.common.DataMap;
+import net.runeduniverse.lib.utils.common.api.DataMap;
 import net.runeduniverse.lib.utils.chain.Chain;
 import net.runeduniverse.lib.utils.chain.ChainRuntime;
 
 public interface CleanupLayers {
 
-	@Chain(label = CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.LABEL, layers = {
-			CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.REDUCE_LAYERS })
+	@Chain(label = CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.LABEL,
+			layers = { CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.REDUCE_LAYERS })
 	public static Collection<String> reduceIds(final ChainRuntime<?> runtime, final CypherInstance cypher,
 			final Mapper mapper, final Module.Instance<?> module) throws Exception {
 		Collection<String> delIds = new HashSet<>();
@@ -65,14 +65,14 @@ public interface CleanupLayers {
 		return delIds;
 	}
 
-	@Chain(label = CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.LABEL, layers = {
-			CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.BUILD_QUERY })
+	@Chain(label = CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.LABEL,
+			layers = { CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.BUILD_QUERY })
 	public static String buildQry(final CypherInstance cypher, Collection<String> ids) {
 		return cypher.deleteRelations(ids);
 	}
 
-	@Chain(label = CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.LABEL, layers = {
-			CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.EXECUTE_ON_DATABASE })
+	@Chain(label = CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.LABEL,
+			layers = { CypherChains.DATABASE_CLEANUP_CHAIN.DROP_REMOVED_RELATIONS.EXECUTE_ON_DATABASE })
 	public static void executeQry(final Module.Instance<?> module, String qry) {
 		module.execute(qry);
 	}
