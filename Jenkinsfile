@@ -324,24 +324,29 @@ pipeline {
 							docker.image('docker.io/library/neo4j:4.4').withRun(
 									'-p 172.16.0.1:7474:7474 ' +
 									'-p 172.16.0.1:7687:7687 ' +
-									'--volume=${WORKSPACE}/src/test/resources/neo4j/conf:/var/lib/neo4j/conf:z ' +
-									'--volume=/var/run/neo4j-jenkins-rogm:/run:z'
+									'--volume=${WORKSPACE}/src/test/resources/neo4j/conf:/var/lib/neo4j/conf:z '
 								) { c ->
 
 								/* Wait until database service is up */
 								sh 'echo waiting for Neo4J to start'
-								sh 'until $(curl --output /dev/null --silent --head --fail http://172.16.0.1:7474); do sleep 5; done'
-
-								docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
-									/* Prepare Database */
-										sh	'echo Neo4J online > setting up database'
-										sh	'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
-									}
-
-								/* Run tests */
-								sh 'echo database loaded > starting tests'
-								sh 'printenv | sort'
-								sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=172.16.0.1 -Ddbuser=neo4j -Ddbpw=neo4j'
+								script {
+									def dbIp = sh(
+										returnStdout: true,
+										script: 'podman container inspect -f "{{.NetworkSettings.IPAddress}}" ${c.id} 2> cat'
+									)
+									echo c
+									sh 'until $(curl --output /dev/null --silent --head --fail ${dbIp}:7474); do sleep 5; done'
+									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
+										/* Prepare Database */
+											sh 'echo Neo4J online > setting up database'
+											sh 'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
+										}
+	
+									/* Run tests */
+									sh 'echo database loaded > starting tests'
+									sh 'printenv | sort'
+									sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=${dbIp} -Ddbuser=neo4j -Ddbpw=neo4j'
+								}
 							}
 						}
 					}
