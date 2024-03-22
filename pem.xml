@@ -183,7 +183,7 @@
 								<goal id="toolchain">
 									<modes>
 										<install />
-										<junit-jupiter />
+										<junit />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-toolchains-plugin</artifactId>
@@ -209,7 +209,7 @@
 								<goal id="resources">
 									<modes>
 										<install />
-										<junit-jupiter />
+										<junit />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-resources-plugin</artifactId>
@@ -221,7 +221,7 @@
 								<goal id="testResources">
 									<modes>
 										<install />
-										<junit-jupiter />
+										<junit />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-resources-plugin</artifactId>
@@ -459,7 +459,7 @@
 								<goal id="compile">
 									<modes>
 										<install />
-										<junit-jupiter />
+										<junit />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-compiler-plugin</artifactId>
@@ -471,7 +471,7 @@
 								<goal id="testCompile">
 									<modes>
 										<install />
-										<junit-jupiter />
+										<junit />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-compiler-plugin</artifactId>
@@ -482,7 +482,7 @@
 							<goals>
 								<goal id="test">
 									<modes>
-										<junit-jupiter />
+										<junit />
 									</modes>
 									<groupId>org.apache.maven.plugins</groupId>
 									<artifactId>maven-surefire-plugin</artifactId>

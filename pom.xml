@@ -197,7 +197,8 @@
 			<id>test-junit-jupiter</id>
 			<build>
 				<defaultGoal>
-					junit-jupiter/[validate],[test]@pipeline
+					junit/validate@pipeline
+					junit/test@pipeline
 				</defaultGoal>
 			</build>
 		</profile>
