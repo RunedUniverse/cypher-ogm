@@ -290,6 +290,7 @@ pipeline {
 				}
 			}
 			steps {
+				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,build-tests'
 				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-system'
 			}
 			post {

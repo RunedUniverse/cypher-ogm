@@ -194,6 +194,14 @@
 			</build>
 		</profile>
 		<profile>
+			<id>build-tests</id>
+			<build>
+				<defaultGoal>
+					junit/test-compile]@pipeline
+				</defaultGoal>
+			</build>
+		</profile>
+		<profile>
 			<id>test-junit-jupiter</id>
 			<build>
 				<defaultGoal>
