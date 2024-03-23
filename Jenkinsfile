@@ -329,7 +329,8 @@ pipeline {
 								/* Wait until database service is up */
 								sh 'echo waiting for Neo4J to start'
 								script {
-									echo c
+									sh 'podman container inspect ' + c.id
+									echo c.toString()
 									def dbIp = sh(
 										returnStdout: true,
 										script: 'podman container inspect -f "{{.NetworkSettings.IPAddress}}" ${c.id} 2> cat'
