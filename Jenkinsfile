@@ -329,11 +329,11 @@ pipeline {
 								/* Wait until database service is up */
 								sh 'echo waiting for Neo4J to start'
 								script {
+									echo c
 									def dbIp = sh(
 										returnStdout: true,
 										script: 'podman container inspect -f "{{.NetworkSettings.IPAddress}}" ${c.id} 2> cat'
 									)
-									echo c
 									sh 'until $(curl --output /dev/null --silent --head --fail ${dbIp}:7474); do sleep 5; done'
 									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
 										/* Prepare Database */
