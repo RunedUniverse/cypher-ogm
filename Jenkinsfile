@@ -331,8 +331,9 @@ pipeline {
 								script {
 									def dbIp = sh(
 										returnStdout: true,
-										script: 'docker container inspect -f "{{.NetworkSettings.IPAddress}}" ' + c.id + ' 2> cat'
+										script: ('docker container inspect -f "{{.NetworkSettings.IPAddress}}" ' + c.id + ' 2> cat')
 									)
+									echo dbIp
 									sh 'until $(curl --output /dev/null --silent --head --fail ${dbIp}:7474); do sleep 5; done'
 									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
 										/* Prepare Database */
