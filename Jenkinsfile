@@ -327,23 +327,23 @@ pipeline {
 								) { c ->
 
 								/* Wait until database service is up */
-								sh 'echo waiting for Neo4J to start'
+								echo 'waiting for Neo4J to start'
 								script {
-									sh 'podman container inspect ' + c.id
+									sh 'docker container inspect ' + c.id
 									echo c.toString()
 									def dbIp = sh(
 										returnStdout: true,
-										script: 'podman container inspect -f "{{.NetworkSettings.IPAddress}}" ${c.id} 2> cat'
+										script: 'docker container inspect -f "{{.NetworkSettings.IPAddress}}" ${c.id} 2> cat'
 									)
 									sh 'until $(curl --output /dev/null --silent --head --fail ${dbIp}:7474); do sleep 5; done'
 									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
 										/* Prepare Database */
-											sh 'echo Neo4J online > setting up database'
+											echo 'Neo4J online > setting up database'
 											sh 'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
 										}
 	
 									/* Run tests */
-									sh 'echo database loaded > starting tests'
+									echo 'database loaded > starting tests'
 									sh 'printenv | sort'
 									sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=${dbIp} -Ddbuser=neo4j -Ddbpw=neo4j'
 								}
