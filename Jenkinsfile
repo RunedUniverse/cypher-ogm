@@ -329,6 +329,10 @@ pipeline {
 								/* Wait until database service is up */
 								echo 'waiting for Neo4J to start'
 								script {
+									echo sh(
+										returnStdout: true,
+										script: ('docker container inspect -f "{{.NetworkSettings.IPAddress}}" ' + c.id + ' 2> cat')
+									)
 									def dbIp = sh(
 										returnStdout: true,
 										script: ('docker container inspect -f "{{.NetworkSettings.IPAddress}}" ' + c.id + ' 2> cat')
