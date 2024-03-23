@@ -333,7 +333,7 @@ pipeline {
 										returnStdout: true,
 										script: 'docker container inspect -f "{{.NetworkSettings.IPAddress}}" ' + c.id + ' 2> cat'
 									)
-									sh 'until $(curl --output /dev/null --silent --head --fail ' + dbIp + ':7474); do sleep 5; done'
+									sh 'until $(curl --output /dev/null --silent --head --fail ${dbIp}:7474); do sleep 5; done'
 									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
 										/* Prepare Database */
 											echo 'Neo4J online > setting up database'
@@ -343,7 +343,7 @@ pipeline {
 									/* Run tests */
 									echo 'database loaded > starting tests'
 									sh 'printenv | sort'
-									sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=' + dbIp + ' -Ddbuser=neo4j -Ddbpw=neo4j'
+									sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=${dbIp} -Ddbuser=neo4j -Ddbpw=neo4j'
 								}
 							}
 						}
