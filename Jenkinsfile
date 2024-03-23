@@ -329,16 +329,12 @@ pipeline {
 								/* Wait until database service is up */
 								echo 'waiting for Neo4J to start'
 								script {
-									echo sh(
-										returnStdout: true,
-										script: ('docker container inspect -f "{{.NetworkSettings.IPAddress}}" ' + c.id + ' 2> cat')
-									)
 									def dbIp = sh(
 										returnStdout: true,
 										script: ('docker container inspect -f "{{.NetworkSettings.IPAddress}}" ' + c.id + ' 2> cat')
 									)
 									echo dbIp
-									sh 'until $(curl --output /dev/null --silent --head --fail ${dbIp}:7474); do sleep 5; done'
+									sh ('until $(curl --output /dev/null --silent --head --fail ' + dbIp + ':7474); do sleep 5; done')
 									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
 										/* Prepare Database */
 											echo 'Neo4J online > setting up database'
