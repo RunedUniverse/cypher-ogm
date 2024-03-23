@@ -322,8 +322,7 @@ pipeline {
 					steps{
 						script {
 							docker.image('docker.io/library/neo4j:4.4').withRun(
-									'-p 172.16.0.1:7474:7474 ' +
-									'-p 172.16.0.1:7687:7687 ' +
+									'--rm --network podman ' +
 									'--volume=${WORKSPACE}/src/test/resources/neo4j/conf:/var/lib/neo4j/conf:z '
 								) { c ->
 
