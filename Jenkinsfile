@@ -251,38 +251,6 @@ pipeline {
 			}
 		}
 
-		stage('Package Build Result') {
-			when {
-				anyOf {
-					environment name: 'CHANGES_ROGM_PARENT', value: '1'
-					environment name: 'CHANGES_ROGM_BOM', value: '1'
-					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
-					environment name: 'CHANGES_ROGM_CORE', value: '1'
-					environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
-					environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
-					environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
-					environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
-				}
-			}
-			steps {
-				dir(path: "${env.RESULT_PATH}") {
-					sh 'ls -l'
-					sh 'tar -I "pxz -9" -cvf ${ARCHIVE_PATH}rogm.tar.xz *'
-					sh 'zip -9 ${ARCHIVE_PATH}rogm.zip *'
-				}
-			}
-			post {
-				always {
-					dir(path: "${env.RESULT_PATH}") {
-						archiveArtifacts artifacts: '*', fingerprint: true
-					}
-					dir(path: "${env.ARCHIVE_PATH}") {
-						archiveArtifacts artifacts: '*', fingerprint: true
-					}
-				}
-			}
-		}
-
 		stage('System Test') {
 			when {
 				anyOf {
@@ -366,6 +334,38 @@ pipeline {
 				failure {
 					junit '*/target/surefire-reports/*.xml'
 					archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
+				}
+			}
+		}
+
+		stage('Package Build Result') {
+			when {
+				anyOf {
+					environment name: 'CHANGES_ROGM_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_CORE', value: '1'
+					environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+					environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+				}
+			}
+			steps {
+				dir(path: "${env.RESULT_PATH}") {
+					sh 'ls -l'
+					sh 'tar -I "pxz -9" -cvf ${ARCHIVE_PATH}rogm.tar.xz *'
+					sh 'zip -9 ${ARCHIVE_PATH}rogm.zip *'
+				}
+			}
+			post {
+				always {
+					dir(path: "${env.RESULT_PATH}") {
+						archiveArtifacts artifacts: '*', fingerprint: true
+					}
+					dir(path: "${env.ARCHIVE_PATH}") {
+						archiveArtifacts artifacts: '*', fingerprint: true
+					}
 				}
 			}
 		}
