@@ -16,7 +16,6 @@
 package net.runeduniverse.lib.rogm.pattern;
 
 import java.io.Serializable;
-import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.runeduniverse.lib.rogm.annotations.IConverter;
@@ -26,11 +25,11 @@ import net.runeduniverse.lib.rogm.buffer.IBuffer;
 import net.runeduniverse.lib.rogm.querying.IFRelation;
 import net.runeduniverse.lib.rogm.querying.IFilter;
 import net.runeduniverse.lib.rogm.querying.IQueryBuilder;
-import net.runeduniverse.lib.utils.scanner.pattern.MethodPattern;
-import net.runeduniverse.lib.utils.scanner.pattern.TypePattern;
+import net.runeduniverse.lib.utils.scanner.pattern.DefaultTypePattern;
+import net.runeduniverse.lib.utils.scanner.pattern.api.MethodPattern;
 
 public abstract class APattern<B extends IQueryBuilder<?, ?, ? extends IFilter>>
-		extends TypePattern<FieldPattern, MethodPattern> implements IBaseQueryPattern<B>, IValidatable {
+		extends DefaultTypePattern<FieldPattern, MethodPattern> implements IBaseQueryPattern<B>, IValidatable {
 
 	protected final Archive archive;
 	protected FieldPattern idFieldPattern;
@@ -48,8 +47,8 @@ public abstract class APattern<B extends IQueryBuilder<?, ?, ? extends IFilter>>
 		this.idFieldPattern = super.getField(Id.class);
 		if (this.idFieldPattern != null)
 			this.idConverter = this.idFieldPattern.getConverter();
-		for (Map.Entry<?, FieldPattern> entry : this.fields.entrySet())
-			IValidatable.validate(entry.getValue());
+		for (FieldPattern pattern : getFields())
+			IValidatable.validate(pattern);
 		this.valid = true;
 	}
 

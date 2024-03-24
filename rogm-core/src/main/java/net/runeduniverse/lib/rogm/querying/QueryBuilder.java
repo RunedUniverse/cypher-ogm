@@ -44,6 +44,7 @@ import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 import net.runeduniverse.lib.utils.common.StringVariableGenerator;
 
 public final class QueryBuilder {
+
 	public static creator<NodeQueryBuilder> CREATOR_NODE_BUILDER = QueryBuilder::createNodeBuilder;
 	public static creator<RelationQueryBuilder> CREATOR_REALATION_BUILDER = QueryBuilder::createRelationBuilder;
 	private final Archive archive;

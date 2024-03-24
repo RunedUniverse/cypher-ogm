@@ -28,6 +28,7 @@ import net.runeduniverse.lib.rogm.test.model.relations.Slot;
 @Getter
 @Setter
 public class Inventory extends AEntity {
+
 	@Relationship
 	private Set<Slot> slots = new HashSet<>();
 

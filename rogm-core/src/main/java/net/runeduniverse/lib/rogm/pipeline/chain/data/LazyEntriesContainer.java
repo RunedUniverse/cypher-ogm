@@ -27,6 +27,7 @@ import net.runeduniverse.lib.rogm.buffer.BufferTypes.IEntry;
 @NoArgsConstructor
 @ToString
 public class LazyEntriesContainer {
+
 	@Getter
 	private final Set<IEntry> lazyEntries = new HashSet<>();
 

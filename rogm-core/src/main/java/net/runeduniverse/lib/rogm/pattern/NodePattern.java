@@ -50,7 +50,7 @@ public class NodePattern extends APattern<NodeQueryBuilder> implements INodePatt
 	public NodePattern(Archive archive, String pkg, ClassLoader loader, Class<?> type) {
 		super(archive, pkg, loader, type);
 
-		NodeEntity typeAnno = type.getAnnotation(NodeEntity.class);
+		final NodeEntity typeAnno = type.getAnnotation(NodeEntity.class);
 		String label = null;
 		if (typeAnno != null)
 			label = typeAnno.label();
@@ -62,9 +62,10 @@ public class NodePattern extends APattern<NodeQueryBuilder> implements INodePatt
 
 	@Override
 	public void validate() throws Exception {
-		for (FieldPattern fieldPattern : this.fields.values())
+		for (FieldPattern fieldPattern : this.getFields()) {
 			if (fieldPattern instanceof RelatedFieldPattern)
 				this.relFields.add((RelatedFieldPattern) fieldPattern);
+		}
 		super.validate();
 	}
 

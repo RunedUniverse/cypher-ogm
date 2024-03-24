@@ -37,12 +37,13 @@ import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pattern.FieldPattern;
 import net.runeduniverse.lib.rogm.pattern.NodePattern;
 import net.runeduniverse.lib.rogm.pattern.RelationPattern;
-import net.runeduniverse.lib.utils.scanner.pattern.MethodPattern;
-import net.runeduniverse.lib.utils.scanner.templates.MethodAnnotationScanner;
-import net.runeduniverse.lib.utils.scanner.templates.TypeAnnotationScanner;
-import net.runeduniverse.lib.utils.scanner.ScanOrder;
+import net.runeduniverse.lib.utils.scanner.pattern.DefaultMethodPattern;
+import net.runeduniverse.lib.utils.scanner.pattern.api.MethodPattern;
+import net.runeduniverse.lib.utils.scanner.templates.DefaultMethodAnnotationScanner;
+import net.runeduniverse.lib.utils.scanner.templates.DefaultTypeAnnotationScanner;
+import net.runeduniverse.lib.utils.scanner.templates.ScanOrder;
 
-public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPattern, APattern<?>> {
+public class TypeScanner extends DefaultTypeAnnotationScanner<FieldPattern, MethodPattern, APattern<?>> {
 
 	protected final Archive archive;
 
@@ -55,13 +56,13 @@ public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPatte
 		this.addFieldScanner(new FieldAnnoScanner(archive, Id.class, ScanOrder.FIRST));
 		this.addFieldScanner(new FieldAnnoScanner(archive, Converter.class, ScanOrder.ALL));
 		// Events
-		this.addFieldScanner(MethodAnnotationScanner.DEFAULT(PreReload.class, ScanOrder.FIRST));
-		this.addFieldScanner(MethodAnnotationScanner.DEFAULT(PreSave.class, ScanOrder.FIRST));
-		this.addFieldScanner(MethodAnnotationScanner.DEFAULT(PreDelete.class, ScanOrder.FIRST));
-		this.addFieldScanner(MethodAnnotationScanner.DEFAULT(PostLoad.class, ScanOrder.FIRST));
-		this.addFieldScanner(MethodAnnotationScanner.DEFAULT(PostReload.class, ScanOrder.FIRST));
-		this.addFieldScanner(MethodAnnotationScanner.DEFAULT(PostSave.class, ScanOrder.FIRST));
-		this.addFieldScanner(MethodAnnotationScanner.DEFAULT(PostDelete.class, ScanOrder.FIRST));
+		this.addMethodScanner(DefaultMethodAnnotationScanner.DEFAULT(PreReload.class, ScanOrder.FIRST));
+		this.addMethodScanner(DefaultMethodAnnotationScanner.DEFAULT(PreSave.class, ScanOrder.FIRST));
+		this.addMethodScanner(DefaultMethodAnnotationScanner.DEFAULT(PreDelete.class, ScanOrder.FIRST));
+		this.addMethodScanner(DefaultMethodAnnotationScanner.DEFAULT(PostLoad.class, ScanOrder.FIRST));
+		this.addMethodScanner(DefaultMethodAnnotationScanner.DEFAULT(PostReload.class, ScanOrder.FIRST));
+		this.addMethodScanner(DefaultMethodAnnotationScanner.DEFAULT(PostSave.class, ScanOrder.FIRST));
+		this.addMethodScanner(DefaultMethodAnnotationScanner.DEFAULT(PostDelete.class, ScanOrder.FIRST));
 	}
 
 	@Override

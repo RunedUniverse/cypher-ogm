@@ -24,6 +24,7 @@ import net.runeduniverse.lib.rogm.logging.PipelineLogger;
 import net.runeduniverse.lib.utils.chain.ChainManager;
 
 public final class Pipeline implements AutoCloseable {
+
 	private final APipelineFactory<?> factory;
 	private final ChainManager chain;
 	@Getter

@@ -16,5 +16,6 @@
 package net.runeduniverse.lib.rogm.querying;
 
 public interface IFilter {
+
 	FilterType getFilterType();
 }

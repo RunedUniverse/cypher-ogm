@@ -29,6 +29,7 @@ import net.runeduniverse.lib.rogm.annotations.Transient;
 @Setter
 @ToString(callSuper = true)
 public class House extends AEntity {
+
 	Address address;
 	List<Person> people = new ArrayList<>();
 	@Transient

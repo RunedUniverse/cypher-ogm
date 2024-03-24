@@ -79,5 +79,4 @@ public class FilterRelation extends AParamFilter<FilterRelation> implements IFRe
 		this.target = node;
 		return this;
 	}
-
 }

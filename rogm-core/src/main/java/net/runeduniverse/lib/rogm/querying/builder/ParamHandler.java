@@ -25,6 +25,7 @@ import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @NoArgsConstructor
 public class ParamHandler implements IParameterized, NoFilterType, ITraceable {
+
 	@Getter
 	private Map<String, Object> params = new HashMap<>();
 

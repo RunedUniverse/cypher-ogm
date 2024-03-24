@@ -33,6 +33,7 @@ import net.runeduniverse.lib.rogm.test.model.Item;
 @NoArgsConstructor
 @RelationshipEntity(label = "ITEM_SLOT", direction = Direction.OUTGOING)
 public class Slot extends ARelationEntity {
+
 	@Property
 	private Integer slot;
 	@StartNode

@@ -22,6 +22,7 @@ import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 
 @Getter
 public class SessionInfo {
+
 	private final PackageInfo pkgInfo;
 	private final ConnectionInfo[] conInfos;
 	private final Class<? extends APipelineFactory<?>> builderClass;

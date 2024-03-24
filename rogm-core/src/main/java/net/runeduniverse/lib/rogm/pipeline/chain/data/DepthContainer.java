@@ -19,6 +19,7 @@ import lombok.ToString;
 
 @ToString
 public class DepthContainer {
+
 	private int depth;
 
 	public DepthContainer(int depth) {

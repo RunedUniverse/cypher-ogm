@@ -24,6 +24,7 @@ import net.runeduniverse.lib.rogm.querying.IIdentified;
 
 @AllArgsConstructor
 public class IdentifiedHandler implements IIdentified<Serializable>, NoFilterType {
+
 	@Getter
 	@Setter
 	private Serializable id;

@@ -28,8 +28,10 @@ import net.runeduniverse.lib.rogm.buffer.BufferTypes.LoadState;
 @Setter
 @ToString
 public class UpdatedEntryContainer {
+
 	protected Serializable id;
 	protected Serializable entityId;
 	protected Object entity;
 	protected LoadState loadState;
+
 }

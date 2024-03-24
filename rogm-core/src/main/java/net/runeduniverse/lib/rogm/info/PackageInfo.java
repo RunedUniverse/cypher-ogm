@@ -27,6 +27,7 @@ import net.runeduniverse.lib.rogm.Configuration;
 @Getter
 @NoArgsConstructor
 public class PackageInfo {
+
 	private final Set<String> pkgs = new HashSet<>();
 	private final Set<ClassLoader> loader = new HashSet<>();
 	@Setter

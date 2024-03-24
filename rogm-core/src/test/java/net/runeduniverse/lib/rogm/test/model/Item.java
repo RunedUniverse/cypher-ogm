@@ -28,6 +28,7 @@ import net.runeduniverse.lib.rogm.annotations.Transient;
 @Setter
 @ToString(callSuper = true)
 public class Item extends AEntity {
+
 	@Relationship(label = "CONTAINS_INVENTORY", direction = Direction.OUTGOING)
 	private Inventory containingInventory;
 

@@ -28,6 +28,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(callSuper = true)
 public class City extends AEntity {
+
 	String name;
 	List<House> houses = new ArrayList<>();
 }

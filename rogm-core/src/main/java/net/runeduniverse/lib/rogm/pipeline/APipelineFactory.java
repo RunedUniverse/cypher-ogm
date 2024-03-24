@@ -27,6 +27,7 @@ import net.runeduniverse.lib.utils.chain.ChainManager;
 import net.runeduniverse.lib.utils.logging.UniversalLogger;
 
 public abstract class APipelineFactory<ROUTER extends AChainRouter> {
+
 	protected final Archive archive;
 	@Getter
 	protected final ROUTER router;

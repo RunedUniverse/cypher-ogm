@@ -20,8 +20,8 @@ import java.lang.annotation.Annotation;
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pattern.FieldPattern;
 import net.runeduniverse.lib.rogm.pattern.RelatedFieldPattern;
-import net.runeduniverse.lib.utils.scanner.ScanOrder;
-import net.runeduniverse.lib.utils.scanner.templates.FieldScanner;
+import net.runeduniverse.lib.utils.scanner.templates.DefaultFieldScanner;
+import net.runeduniverse.lib.utils.scanner.templates.ScanOrder;
 
 public class RelatedFieldAnnoScanner extends FieldAnnoScanner {
 
@@ -33,7 +33,7 @@ public class RelatedFieldAnnoScanner extends FieldAnnoScanner {
 		super(creator(archive), anno, order);
 	}
 
-	private static FieldScanner.PatternCreator<FieldPattern> creator(Archive archive) {
+	private static DefaultFieldScanner.PatternCreator<FieldPattern> creator(Archive archive) {
 		return f -> new RelatedFieldPattern(archive, f);
 	}
 

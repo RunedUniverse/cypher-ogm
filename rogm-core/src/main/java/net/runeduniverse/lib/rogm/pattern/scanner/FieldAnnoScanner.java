@@ -19,11 +19,11 @@ import java.lang.annotation.Annotation;
 
 import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pattern.FieldPattern;
-import net.runeduniverse.lib.utils.scanner.ScanOrder;
-import net.runeduniverse.lib.utils.scanner.templates.FieldScanner;
+import net.runeduniverse.lib.utils.scanner.templates.DefaultFieldScanner;
+import net.runeduniverse.lib.utils.scanner.templates.ScanOrder;
 
 public class FieldAnnoScanner
-		extends net.runeduniverse.lib.utils.scanner.templates.FieldAnnotationScanner<FieldPattern> {
+		extends net.runeduniverse.lib.utils.scanner.templates.DefaultFieldAnnotationScanner<FieldPattern> {
 
 	public FieldAnnoScanner(Archive archive, Class<? extends Annotation> anno) {
 		super(creator(archive), anno);
@@ -33,16 +33,17 @@ public class FieldAnnoScanner
 		super(creator(archive), anno, order);
 	}
 
-	public FieldAnnoScanner(FieldScanner.PatternCreator<FieldPattern> creator, Class<? extends Annotation> anno) {
+	public FieldAnnoScanner(DefaultFieldScanner.PatternCreator<FieldPattern> creator,
+			Class<? extends Annotation> anno) {
 		super(creator, anno);
 	}
 
-	public FieldAnnoScanner(FieldScanner.PatternCreator<FieldPattern> creator, Class<? extends Annotation> anno,
+	public FieldAnnoScanner(DefaultFieldScanner.PatternCreator<FieldPattern> creator, Class<? extends Annotation> anno,
 			ScanOrder order) {
 		super(creator, anno, order);
 	}
 
-	private static FieldScanner.PatternCreator<FieldPattern> creator(Archive archive) {
+	private static DefaultFieldScanner.PatternCreator<FieldPattern> creator(Archive archive) {
 		return f -> new FieldPattern(archive, f);
 	}
 }

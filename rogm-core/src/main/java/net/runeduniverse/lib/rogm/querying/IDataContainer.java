@@ -16,6 +16,7 @@
 package net.runeduniverse.lib.rogm.querying;
 
 public interface IDataContainer extends IFilter {
+
 	Object getData();
 
 	boolean persist();

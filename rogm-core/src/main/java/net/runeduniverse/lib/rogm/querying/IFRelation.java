@@ -18,6 +18,7 @@ package net.runeduniverse.lib.rogm.querying;
 import net.runeduniverse.lib.rogm.annotations.Direction;
 
 public interface IFRelation extends IFilter, ILabeled {
+
 	IFNode getStart();
 
 	IFNode getTarget();

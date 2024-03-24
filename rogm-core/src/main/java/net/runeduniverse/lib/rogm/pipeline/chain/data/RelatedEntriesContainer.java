@@ -27,6 +27,7 @@ import net.runeduniverse.lib.rogm.buffer.BufferTypes.IEntry;
 @NoArgsConstructor
 @ToString
 public class RelatedEntriesContainer {
+
 	@Getter
 	private final Set<IEntry> relatedEntries = new HashSet<>();
 
