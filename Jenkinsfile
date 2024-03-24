@@ -338,6 +338,10 @@ pipeline {
 									docker.image('docker.io/library/neo4j:4.4').inside {
 										/* Prepare Database */
 										echo 'Neo4J online > setting up database'
+										sh "pwd"
+										sh "id"
+										sh "tree"
+										sh "ls -laZ"
 										sh "JAVA_HOME=/opt/java/openjdk cypher-shell -a \"neo4j://${dbIp}:7687\" -u neo4j -p neo4j -f \"./src/test/resources/neo4j/setup/setup.cypher\""
 									}
 	
