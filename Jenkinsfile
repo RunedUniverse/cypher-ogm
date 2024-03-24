@@ -323,28 +323,24 @@ pipeline {
 						script {
 							docker.image('docker.io/library/neo4j:4.4').withRun(
 									'--rm --network podman ' +
-									'--volume=${WORKSPACE}/src/test/resources/neo4j/conf:/var/lib/neo4j/conf:z '
+									'--volume=${WORKSPACE}/src/test/resources/neo4j/conf:/var/lib/neo4j/conf:z ' +
+									'--volume=${WORKSPACE}/src/test/resources/neo4j/setup/:/var/lib/neo4j/setup/:ro,z '
 								) { c ->
-
-								/* Wait until database service is up */
-								echo 'waiting for Neo4J to start'
 								script {
 									def dbIp = sh(
 										returnStdout: true,
 										script: ("docker container inspect -f \"{{.NetworkSettings.IPAddress}}\" ${c.id} 2> cat")
 									)
 									echo "Neo4j started with IP: ${dbIp}"
+
+									/* Wait until database service is up */
+									echo 'waiting for Neo4J to start'
 									sh "until \$(./src/test/resources/neo4j/toolkit/db-ping-web.sh ${dbIp}); do sleep 5; done"
-									docker.image('docker.io/library/neo4j:4.4').inside {
-										/* Prepare Database */
-										echo 'Neo4J online > setting up database'
-										sh "pwd"
-										sh "id"
-										sh "tree"
-										sh "ls -laZ"
-										sh "JAVA_HOME=/opt/java/openjdk cypher-shell -a \"neo4j://${dbIp}:7687\" -u neo4j -p neo4j -f \"./src/test/resources/neo4j/setup/setup.cypher\""
-									}
-	
+
+									/* Prepare Database */
+									echo 'Neo4J online > setting up database'
+									sh "docker exec ${c.id} cypher-shell -u neo4j -p neo4j -f \"/var/lib/neo4j/setup/setup.cypher\""
+
 									/* Run tests */
 									echo 'database loaded > starting tests'
 									sh 'printenv | sort'
