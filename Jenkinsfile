@@ -334,8 +334,9 @@ pipeline {
 										script: ('docker container inspect -f "{{.NetworkSettings.IPAddress}}" ' + c.id + ' 2> cat')
 									)
 									sh 'printenv | sort'
-									echo 'Neo4j started with IP: ${dbIp}'
-									sh 'until $(curl --output /dev/null --silent --head --fail ${dbIp}:7474); do sleep 5; done'
+									echo 'Neo4j started with IP: ' + dbIp
+									sh 'echo Neo4j started with IP: ' + dbIp
+									sh script: ('until $(curl --output /dev/null --silent --head --fail ' + dbIp + '\:7474); do sleep 5; done')
 									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
 										/* Prepare Database */
 											echo 'Neo4J online > setting up database'
