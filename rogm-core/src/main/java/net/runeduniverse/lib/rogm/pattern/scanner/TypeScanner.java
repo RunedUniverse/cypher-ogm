@@ -77,7 +77,7 @@ public class TypeScanner extends TypeAnnotationScanner<FieldPattern, MethodPatte
 			super(archive, (type, loader, pkg) -> new NodePattern(archive, pkg, loader, type), NodeEntity.class,
 					consumer);
 			// Fields
-			this.addFieldScanner(new RelatedFieldAnnoScanner(archive, Relationship.class, ScanOrder.FIRST));
+			this.addFieldScanner(new RelatedFieldAnnoScanner(archive, Relationship.class, ScanOrder.ALL));
 		}
 	}
 
