@@ -339,7 +339,7 @@ pipeline {
 
 									/* Prepare Database */
 									echo 'Neo4J online > setting up database'
-									sh "docker exec ${c.id} cypher-shell -u neo4j -p neo4j -f \"/var/lib/neo4j/setup/setup.cypher\""
+									sh "docker exec -t ${c.id} cypher-shell -u neo4j -p neo4j -f \"/var/lib/neo4j/setup/setup.cypher\""
 
 									/* Run tests */
 									echo 'database loaded > starting tests'
