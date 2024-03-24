@@ -335,7 +335,7 @@ pipeline {
 									)
 									sh 'printenv | sort'
 									echo "Neo4j started with IP: ${dbIp}"
-									sh "until \$(curl --output /dev/null --silent --head --fail ${dbIp}\:7474); do sleep 5; done"
+									sh "until \$(curl --output /dev/null --silent --head --fail ${dbIp + ':'}7474); do sleep 5; done"
 									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
 										/* Prepare Database */
 											echo 'Neo4J online > setting up database'
