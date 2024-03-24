@@ -1,12 +1,5 @@
 pipeline {
 	agent any
-	options {
-		throttleJobProperty(
-			categories: ['runeduniverse-rogm'],
-			throttleEnabled: true,
-			throttleOption: 'category'
-		)
-	}
 	tools {
 		maven 'maven-latest'
 	}
