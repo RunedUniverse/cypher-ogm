@@ -324,7 +324,7 @@ pipeline {
 							docker.image('docker.io/library/neo4j:4.4').withRun(
 									'--rm --network podman ' +
 									'--volume=${WORKSPACE}/src/test/resources/neo4j/conf:/var/lib/neo4j/conf:z ' +
-									'--volume=${WORKSPACE}/src/test/resources/neo4j/setup/:/var/lib/neo4j/setup/:ro,z '
+									'--volume=${WORKSPACE}/src/test/resources/neo4j/setup/:/var/lib/neo4j/setup/:z '
 								) { c ->
 								script {
 									def dbIp = sh(
@@ -339,7 +339,7 @@ pipeline {
 
 									/* Prepare Database */
 									echo 'Neo4J online > setting up database'
-									sh "docker exec -t ${c.id} cypher-shell -u neo4j -p neo4j -f \"/var/lib/neo4j/setup/setup.cypher\""
+									sh "docker exec ${c.id} cypher-shell -u neo4j -p neo4j -f \"/var/lib/neo4j/setup/setup.cypher\""
 
 									/* Run tests */
 									echo 'database loaded > starting tests'
