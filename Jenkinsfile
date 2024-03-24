@@ -65,8 +65,12 @@ pipeline {
 					//		returnStdout: true,
 					//		script: 'git-check-version-tag rogm-module-decorator rogm-module-decorator'
 					//)
+					env.RESULT_PATH = "${WORKSPACE}/target/result/"
+					env.ARCHIVE_PATH = "${WORKSPACE}/target/archive/"
 				}
 				sh 'printenv | sort'
+				sh 'mkdir -p ${RESULT_PATH}'
+				sh 'mkdir -p ${ARCHIVE_PATH}'
 			}
 		}
 		stage('Update Maven Repo') {
@@ -85,7 +89,6 @@ pipeline {
 			steps {
 				sh 'mvn-dev -P ${REPOS} dependency:purge-local-repository -DactTransitively=false -DreResolve=false --non-recursive'
 				sh 'mvn-dev -P ${REPOS} dependency:resolve --non-recursive'
-				sh 'mkdir -p target/result/'
 			}
 		}
 		stage('Install ROGM Parent') {
@@ -94,15 +97,12 @@ pipeline {
 			}
 			steps {
 				sh 'mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,install --non-recursive'
-				sh 'mkdir -p target/result/'
 				sh 'ls -l target/'
 			}
 			post {
 				always {
 					dir(path: 'target') {
-						archiveArtifacts artifacts: '*.pom', fingerprint: true
-						archiveArtifacts artifacts: '*.asc', fingerprint: true
-						sh 'cp *.pom *.asc result/'
+						sh 'cp *.pom *.asc ${RESULT_PATH}'
 					}
 				}
 			}
@@ -119,9 +119,7 @@ pipeline {
 				always {
 					dir(path: 'rogm-sources-bom/target') {
 						sh 'ls -l'
-						archiveArtifacts artifacts: '*.pom', fingerprint: true
-						archiveArtifacts artifacts: '*.asc', fingerprint: true
-						sh 'cp *.pom *.asc ../../target/result/'
+						sh 'cp *.pom *.asc ${RESULT_PATH}'
 					}
 				}
 			}
@@ -137,9 +135,7 @@ pipeline {
 				always {
 					dir(path: 'rogm-bom/target') {
 						sh 'ls -l'
-						archiveArtifacts artifacts: '*.pom', fingerprint: true
-						archiveArtifacts artifacts: '*.asc', fingerprint: true
-						sh 'cp *.pom *.asc ../../target/result/'
+						sh 'cp *.pom *.asc ${RESULT_PATH}'
 					}
 				}
 			}
@@ -155,9 +151,7 @@ pipeline {
 				always {
 					dir(path: 'rogm-core/target') {
 						sh 'ls -l'
-						archiveArtifacts artifacts: '*.pom', fingerprint: true
-						archiveArtifacts artifacts: '*.asc', fingerprint: true
-						sh 'cp *.pom *.jar *.asc ../../target/result/'
+						sh 'cp *.pom *.jar *.asc ${RESULT_PATH}'
 					}
 				}
 			}
@@ -175,10 +169,7 @@ pipeline {
 						always {
 							dir(path: 'rogm-parser-json/target') {
 								sh 'ls -l'
-								archiveArtifacts artifacts: '*.pom', fingerprint: true
-								archiveArtifacts artifacts: '*.jar', fingerprint: true
-								archiveArtifacts artifacts: '*.asc', fingerprint: true
-								sh 'cp *.pom *.jar *.asc ../../target/result/'
+								sh 'cp *.pom *.jar *.asc ${RESULT_PATH}'
 							}
 						}
 					}
@@ -198,10 +189,7 @@ pipeline {
 						always {
 							dir(path: 'rogm-lang-cypher/target') {
 								sh 'ls -l'
-								archiveArtifacts artifacts: '*.pom', fingerprint: true
-								archiveArtifacts artifacts: '*.jar', fingerprint: true
-								archiveArtifacts artifacts: '*.asc', fingerprint: true
-								sh 'cp *.pom *.jar *.asc ../../target/result/'
+								sh 'cp *.pom *.jar *.asc ${RESULT_PATH}'
 							}
 						}
 					}
@@ -221,10 +209,7 @@ pipeline {
 						always {
 							dir(path: 'rogm-module-neo4j/target') {
 								sh 'ls -l'
-								archiveArtifacts artifacts: '*.pom', fingerprint: true
-								archiveArtifacts artifacts: '*.jar', fingerprint: true
-								archiveArtifacts artifacts: '*.asc', fingerprint: true
-								sh 'cp *.pom *.jar *.asc ../../target/result/'
+								sh 'cp *.pom *.jar *.asc ${RESULT_PATH}'
 							}
 						}
 					}
@@ -240,10 +225,7 @@ pipeline {
 				//		always {
 				//			dir(path: 'rogm-module-decorator/target') {
 				//				sh 'ls -l'
-				//				archiveArtifacts artifacts: '*.pom', fingerprint: true
-				//				archiveArtifacts artifacts: '*.jar', fingerprint: true
-				//				archiveArtifacts artifacts: '*.asc', fingerprint: true
-				//				sh 'cp *.pom *.jar *.asc ../../target/result/'
+				//				sh 'cp *.pom *.jar *.asc ${RESULT_PATH}'
 				//			}
 				//		}
 				//	}
@@ -266,6 +248,38 @@ pipeline {
 			}
 			steps {
 				sh 'mvn-dev -P ${REPOS},validate,license-prj-utils-approve,license-apache2-approve'
+			}
+		}
+
+		stage('Package Build Result') {
+			when {
+				anyOf {
+					environment name: 'CHANGES_ROGM_PARENT', value: '1'
+					environment name: 'CHANGES_ROGM_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
+					environment name: 'CHANGES_ROGM_CORE', value: '1'
+					environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
+					environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
+					environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
+				}
+			}
+			steps {
+				dir(path: "${env.RESULT_PATH}") {
+					sh 'ls -l'
+					sh 'tar -I "pxz -9" -cvf ${ARCHIVE_PATH}rogm.tar.xz *'
+					sh 'zip -9 ${ARCHIVE_PATH}rogm.zip *'
+				}
+			}
+			post {
+				always {
+					dir(path: "${env.RESULT_PATH}") {
+						archiveArtifacts artifacts: '*', fingerprint: true
+					}
+					dir(path: "${env.ARCHIVE_PATH}") {
+						archiveArtifacts artifacts: '*', fingerprint: true
+					}
+				}
 			}
 		}
 
@@ -352,36 +366,6 @@ pipeline {
 				failure {
 					junit '*/target/surefire-reports/*.xml'
 					archiveArtifacts artifacts: '*/target/surefire-reports/*.xml'
-				}
-			}
-		}
-
-		stage('Package Build Result') {
-			when {
-				anyOf {
-					environment name: 'CHANGES_ROGM_PARENT', value: '1'
-					environment name: 'CHANGES_ROGM_BOM', value: '1'
-					environment name: 'CHANGES_ROGM_SOURCES_BOM', value: '1'
-					environment name: 'CHANGES_ROGM_CORE', value: '1'
-					environment name: 'CHANGES_ROGM_PARSER_JSON', value: '1'
-					environment name: 'CHANGES_ROGM_LANG_CYPHER', value: '1'
-					environment name: 'CHANGES_ROGM_MODULE_NEO4J', value: '1'
-					environment name: 'CHANGES_ROGM_MODULE_DECORATOR', value: '1'
-				}
-			}
-			steps {
-				dir(path: 'target/result') {
-					sh 'ls -l'
-					sh 'tar -I "pxz -9" -cvf ../rogm.tar.xz *'
-					sh 'zip -9 ../rogm.zip *'
-				}
-			}
-			post {
-				always {
-					dir(path: 'target') {
-						archiveArtifacts artifacts: '*.tar.xz', fingerprint: true
-						archiveArtifacts artifacts: '*.zip', fingerprint: true
-					}
 				}
 			}
 		}

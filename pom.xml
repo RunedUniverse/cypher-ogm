@@ -501,7 +501,8 @@
 					<version>${plugin-revelc-formatter-version}</version>
 					<configuration>
 						<configFile>
-							${root-dir}/.code-formats/runed-code-format-java.xml</configFile>
+							${root-dir}/.code-formats/runed-code-format-java.xml
+						</configFile>
 						<lineEnding>LF</lineEnding>
 						<skipHtmlFormatting>true</skipHtmlFormatting>
 						<skipJsFormatting>true</skipJsFormatting>
