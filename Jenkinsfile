@@ -65,8 +65,8 @@ pipeline {
 					//		returnStdout: true,
 					//		script: 'git-check-version-tag rogm-module-decorator rogm-module-decorator'
 					//)
-					env.RESULT_PATH = "${WORKSPACE}/target/result/"
-					env.ARCHIVE_PATH = "${WORKSPACE}/target/archive/"
+					env.RESULT_PATH = "${WORKSPACE}/result/"
+					env.ARCHIVE_PATH = "${WORKSPACE}/archive/"
 				}
 				sh 'printenv | sort'
 				sh 'mkdir -p ${RESULT_PATH}'
