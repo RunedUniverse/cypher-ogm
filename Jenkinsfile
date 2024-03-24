@@ -344,7 +344,7 @@ pipeline {
 									/* Run tests */
 									echo 'database loaded > starting tests'
 									sh 'printenv | sort'
-									sh "mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=${dbIp} -Ddbuser=neo4j -Ddbpw=neo4j"
+									sh "mvn-dev -P ${REPOS},toolchain-openjdk-1-8-0,test-junit-jupiter,test-db-neo4j -Ddbhost=$dbIp -Ddbuser=neo4j -Ddbpw=neo4j"
 								}
 							}
 						}
