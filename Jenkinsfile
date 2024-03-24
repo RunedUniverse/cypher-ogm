@@ -333,13 +333,12 @@ pipeline {
 										returnStdout: true,
 										script: ("docker container inspect -f \"{{.NetworkSettings.IPAddress}}\" ${c.id} 2> cat")
 									)
-									sh 'printenv | sort'
 									echo "Neo4j started with IP: ${dbIp}"
 									sh "until \$(./src/test/resources/neo4j/toolkit/db-ping-web.sh ${dbIp}); do sleep 5; done"
-									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
+									docker.image('docker.io/library/neo4j:4.4').inside {
 										/* Prepare Database */
 										echo 'Neo4J online > setting up database'
-										sh 'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
+										sh "JAVA_HOME=/opt/java/openjdk cypher-shell -a \"neo4j://${dbIp}:7687\" -u neo4j -p neo4j -f \"./src/test/resources/neo4j/setup/setup.cypher\""
 									}
 	
 									/* Run tests */
