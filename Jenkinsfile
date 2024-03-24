@@ -335,12 +335,12 @@ pipeline {
 									)
 									sh 'printenv | sort'
 									echo "Neo4j started with IP: ${dbIp}"
-									sh "until \$(curl --output /dev/null --silent --head --fail ${dbIp}:7474 ); do sleep 5; done"
+									sh "until \$(./src/test/resources/neo4j/toolkit/db-ping-web.sh ${dbIp}); do sleep 5; done"
 									docker.image('docker.io/library/neo4j:4.4').inside("--link ${c.id}:database") {
 										/* Prepare Database */
-											echo 'Neo4J online > setting up database'
-											sh 'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
-										}
+										echo 'Neo4J online > setting up database'
+										sh 'JAVA_HOME=/opt/java/openjdk cypher-shell -a "neo4j://database:7687" -u neo4j -p neo4j -f "./src/test/resources/neo4j/setup/setup.cypher"'
+									}
 	
 									/* Run tests */
 									echo 'database loaded > starting tests'
