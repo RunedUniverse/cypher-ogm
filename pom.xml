@@ -24,7 +24,9 @@
 	<artifactId>rogm-parent</artifactId>
 	<version>${major-version}.${minor-version}.${artifact-version}</version>
 	<packaging>pom</packaging>
+	
 	<name>ROGM</name>
+	<description>ROGM provides a lightweight ORM/OGM Library</description>
 	<url>https://github.com/RunedUniverse/rogm</url>
 	<inceptionYear>2020</inceptionYear>
 
