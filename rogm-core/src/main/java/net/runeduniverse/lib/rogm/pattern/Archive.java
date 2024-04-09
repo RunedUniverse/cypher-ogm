@@ -18,8 +18,10 @@ package net.runeduniverse.lib.rogm.pattern;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -154,16 +156,18 @@ public final class Archive {
 
 	// QUERRYING
 	public Set<IPattern> getPatterns(Class<?> type) {
-		return this.patterns.get(type);
+		final Set<IPattern> rPatterns = this.patterns.get(type);
+		if (rPatterns == null)
+			return Collections.emptySet();
+		return rPatterns;
 	}
 
 	@SuppressWarnings("unchecked")
 	public <P extends IPattern> Set<P> getPatterns(Class<?> entityType, Class<P> patternType) {
-		Set<P> rPatterns = new HashSet<>();
+		final Set<P> rPatterns = new LinkedHashSet<>(1);
 		for (IPattern pattern : this.patterns.get(entityType))
 			if (patternType.isInstance(pattern))
 				rPatterns.add((P) pattern);
-
 		return rPatterns;
 	}
 
