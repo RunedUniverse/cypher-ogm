@@ -37,7 +37,6 @@ import net.runeduniverse.lib.rogm.pattern.Archive;
 import net.runeduniverse.lib.rogm.pattern.FieldPattern;
 import net.runeduniverse.lib.rogm.pattern.NodePattern;
 import net.runeduniverse.lib.rogm.pattern.RelationPattern;
-import net.runeduniverse.lib.utils.scanner.pattern.DefaultMethodPattern;
 import net.runeduniverse.lib.utils.scanner.pattern.api.MethodPattern;
 import net.runeduniverse.lib.utils.scanner.templates.DefaultMethodAnnotationScanner;
 import net.runeduniverse.lib.utils.scanner.templates.DefaultTypeAnnotationScanner;
