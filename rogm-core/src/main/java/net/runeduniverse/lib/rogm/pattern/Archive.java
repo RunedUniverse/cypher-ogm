@@ -18,11 +18,14 @@ package net.runeduniverse.lib.rogm.pattern;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -41,7 +44,6 @@ import net.runeduniverse.lib.rogm.querying.QueryBuilder;
 import net.runeduniverse.lib.utils.logging.Level;
 import net.runeduniverse.lib.utils.logging.logs.CompoundTree;
 import net.runeduniverse.lib.utils.scanner.PackageScanner;
-import net.runeduniverse.lib.utils.scanner.pattern.api.MethodPattern;
 import net.runeduniverse.lib.utils.scanner.pattern.api.TypePattern;
 
 public final class Archive {
@@ -56,13 +58,6 @@ public final class Archive {
 	private final IdTypeResolver idTypeResolver;
 	@Getter
 	private final QueryBuilder queryBuilder;
-	private final PackageScanner.Validator validator = new PackageScanner.Validator() {
-
-		@Override
-		public void validate() throws Exception {
-			IValidatable.validate(patterns.values());
-		}
-	};
 
 	public Archive(final PackageInfo info, IdTypeResolver idTypeResolver) {
 		this.info = info;
@@ -74,7 +69,7 @@ public final class Archive {
 
 	public void scan(TypeScanner... scanner) throws ScannerException {
 		try {
-			new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), this.validator)
+			new PackageScanner().includeOptions(this.loader, this.pkgs, Arrays.asList(scanner), getValidator())
 					.enableDebugMode(
 							PACKAGE_SCANNER_DEBUG_MODE || info.getLoggingLevel() != null && info.getLoggingLevel()
 									.intValue() < Level.INFO.intValue())
@@ -83,6 +78,14 @@ public final class Archive {
 		} catch (Exception e) {
 			throw new ScannerException("Pattern parsing failed! See surpressed Exceptions!", e);
 		}
+	}
+
+	protected PackageScanner.Validator getValidator() {
+		return this::validate;
+	}
+
+	protected void validate() throws Exception {
+		IValidatable.validate(patterns.values());
 	}
 
 	public void addEntry(Class<?> type, IPattern pattern) {
@@ -187,6 +190,45 @@ public final class Archive {
 				if (patternTypes[i].isInstance(pattern))
 					return pattern;
 		return null;
+	}
+
+	// + get all patterns which labels contain the provided labels
+	public Set<IPattern> getPatternsByLabels(final Collection<String> labels) {
+		return getPatternsByLabels(labels, null);
+	}
+
+	// + get all patterns which labels contain the provided labels
+	// + all types of the matched patterns must be castable to superType
+	public Set<IPattern> getPatternsByLabels(final Collection<String> labels, final Class<?> superType) {
+		final Set<IPattern> patterns = new LinkedHashSet<>();
+		for (Entry<Class<?>, Set<IPattern>> entry : this.patterns.entrySet()) {
+			if (superType != null && !superType.isAssignableFrom(entry.getKey()))
+				continue;
+			for (IPattern pattern : entry.getValue()) {
+				if (labels.containsAll(pattern.getLabels()))
+					patterns.add(pattern);
+			}
+		}
+		return patterns;
+	}
+
+	// + get all patterns which labels contain the provided labels
+	// + all types of the matched patterns must be castable to superType
+	// + all patterns must be instances of patternTypes, if any are provided
+	public Set<IPattern> getPatternsByLabels(final Collection<String> labels, final Class<?> superType,
+			Class<?>... patternTypes) {
+		final Set<IPattern> patterns = getPatternsByLabels(labels, superType);
+		if (patternTypes == null || patternTypes.length == 0)
+			return patterns;
+		loop: for (Iterator<IPattern> i = patterns.iterator(); i.hasNext();) {
+			final IPattern pattern = i.next();
+			for (Class<?> patternType : patternTypes) {
+				if (patternType.isInstance(pattern))
+					continue loop;
+			}
+			i.remove();
+		}
+		return patterns;
 	}
 
 	@SuppressWarnings("unchecked")
